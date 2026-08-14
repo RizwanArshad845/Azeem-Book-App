@@ -1,4 +1,4 @@
-package com.example.azeem_book_app
+package com.azeempublications.azeembooks
 
 import io.flutter.embedding.android.FlutterActivity
 

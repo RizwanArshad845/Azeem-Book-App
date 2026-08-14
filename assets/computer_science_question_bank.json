@@ -1,0 +1,1213 @@
+{
+  "subject": "Computer Science - 1st Year",
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "Software Development Life Cycle & Testing",
+      "mcqCount": 6,
+      "shortCount": 12
+    },
+    {
+      "chapter": 2,
+      "title": "Programming Constructs (Python)",
+      "mcqCount": 6,
+      "shortCount": 8
+    },
+    {
+      "chapter": 3,
+      "title": "Algorithms & Complexity",
+      "mcqCount": 6,
+      "shortCount": 8
+    },
+    {
+      "chapter": 4,
+      "title": "Trees & Data Structures",
+      "mcqCount": 6,
+      "shortCount": 8
+    },
+    {
+      "chapter": 5,
+      "title": "Data Collection & Analysis",
+      "mcqCount": 6,
+      "shortCount": 8
+    },
+    {
+      "chapter": 6,
+      "title": "Cloud, Edge & Serverless Computing",
+      "mcqCount": 6,
+      "shortCount": 12
+    },
+    {
+      "chapter": 7,
+      "title": "Terms of Service & Digital Agreements",
+      "mcqCount": 6,
+      "shortCount": 8
+    },
+    {
+      "chapter": 9,
+      "title": "Research, Innovation & Strategy",
+      "mcqCount": 6,
+      "shortCount": 12
+    }
+  ],
+  "mcqs": [
+    {
+      "question": "Which testing level checks how different modules work together?",
+      "options": [
+        "Unit Testing",
+        "Integration Testing",
+        "System Testing",
+        "Acceptance Testing"
+      ],
+      "correctIndex": 1,
+      "id": "c1_mcq_1",
+      "chapter": 1,
+      "type": "mcq"
+    },
+    {
+      "question": "Which testing checks the entire system as a whole?",
+      "options": [
+        "Unit Testing",
+        "Integration Testing",
+        "System Testing",
+        "Debugging"
+      ],
+      "correctIndex": 2,
+      "id": "c1_mcq_2",
+      "chapter": 1,
+      "type": "mcq"
+    },
+    {
+      "question": "What is the purpose of source code repositories?",
+      "options": [
+        "To write code",
+        "To store and track code changes",
+        "To develop code",
+        "To compile code"
+      ],
+      "correctIndex": 1,
+      "id": "c1_mcq_3",
+      "chapter": 1,
+      "type": "mcq"
+    },
+    {
+      "question": "Primary purpose of the Software Development Life Cycle (SDLC) is to:",
+      "options": [
+        "design websites",
+        "deliver high-quality software within time and cost estimates",
+        "manage database systems",
+        "create hardware components"
+      ],
+      "correctIndex": 1,
+      "id": "c1_mcq_4",
+      "chapter": 1,
+      "type": "mcq"
+    },
+    {
+      "question": "A type of requirement specifies system performance:",
+      "options": [
+        "Functional Requirements",
+        "Non-Functional Requirements",
+        "Technical Requirements",
+        "Operational Requirements"
+      ],
+      "correctIndex": 1,
+      "id": "c1_mcq_5",
+      "chapter": 1,
+      "type": "mcq"
+    },
+    {
+      "question": "Role of a framework in the context of SDLC is to:",
+      "options": [
+        "write code from scratch",
+        "provide a structured foundation with predefined components and architectures",
+        "manage hardware",
+        "perform manual testing"
+      ],
+      "correctIndex": 1,
+      "id": "c1_mcq_6",
+      "chapter": 1,
+      "type": "mcq"
+    },
+    {
+      "question": "Output of the following piece of code is:\nAge = 25\nprint(\"Age:\", Age)",
+      "options": [
+        "Age: 25",
+        "25",
+        "Age",
+        "age"
+      ],
+      "correctIndex": 0,
+      "id": "c2_mcq_1",
+      "chapter": 2,
+      "type": "mcq"
+    },
+    {
+      "question": "A loop used to iterate over a collection such as lists is:",
+      "options": [
+        "while",
+        "for",
+        "do-while",
+        "repeat"
+      ],
+      "correctIndex": 1,
+      "id": "c2_mcq_2",
+      "chapter": 2,
+      "type": "mcq"
+    },
+    {
+      "question": "Which tool is used to install Python packages?",
+      "options": [
+        "npm",
+        "apt",
+        "git",
+        "pip"
+      ],
+      "correctIndex": 3,
+      "id": "c2_mcq_3",
+      "chapter": 2,
+      "type": "mcq"
+    },
+    {
+      "question": "Which of the following is a built-in data structure in Python?",
+      "options": [
+        "array",
+        "list",
+        "tuples",
+        "Both b and c"
+      ],
+      "correctIndex": 3,
+      "id": "c2_mcq_4",
+      "chapter": 2,
+      "type": "mcq"
+    },
+    {
+      "question": "What will be the output of the following code?\nfruits = [\"Mango\", \"Apple\", \"Banana\"]\nprint(fruits[1])",
+      "options": [
+        "Mango",
+        "Banana",
+        "Apple",
+        "None of these"
+      ],
+      "correctIndex": 2,
+      "id": "c2_mcq_5",
+      "chapter": 2,
+      "type": "mcq"
+    },
+    {
+      "question": "How do you slice a string s = \"Python\" to get \"yth\"?",
+      "options": [
+        "s[1:4]",
+        "s[3:6]",
+        "s[0:3]",
+        "s[2:5]"
+      ],
+      "correctIndex": 3,
+      "id": "c2_mcq_6",
+      "chapter": 2,
+      "type": "mcq"
+    },
+    {
+      "question": "How does Selection Sort work?",
+      "options": [
+        "Swap adjacent",
+        "Select minimum from unsorted part",
+        "Use queue for nodes",
+        "Store intermediate results"
+      ],
+      "correctIndex": 1,
+      "id": "c3_mcq_1",
+      "chapter": 3,
+      "type": "mcq"
+    },
+    {
+      "question": "What do sorting algorithms mainly do?",
+      "options": [
+        "Network routing",
+        "Arrange data",
+        "Find node links",
+        "Search data"
+      ],
+      "correctIndex": 1,
+      "id": "c3_mcq_2",
+      "chapter": 3,
+      "type": "mcq"
+    },
+    {
+      "question": "How do BFS and DFS differ?",
+      "options": [
+        "BFS-stack, DFS-queue",
+        "BFS-level, DFS-depth",
+        "BFS-sort, DFS-search",
+        "BFS always slower"
+      ],
+      "correctIndex": 1,
+      "id": "c3_mcq_3",
+      "chapter": 3,
+      "type": "mcq"
+    },
+    {
+      "question": "What is role of algorithm in problem solving?",
+      "options": [
+        "Gives steps",
+        "Ignores logic",
+        "Random process",
+        "Blocks solutions"
+      ],
+      "correctIndex": 0,
+      "id": "c3_mcq_4",
+      "chapter": 3,
+      "type": "mcq"
+    },
+    {
+      "question": "Why use real-life tasks in algorithm learning?",
+      "options": [
+        "Show steps in life",
+        "Make it harder",
+        "Reduce interest",
+        "Add confusion"
+      ],
+      "correctIndex": 0,
+      "id": "c3_mcq_5",
+      "chapter": 3,
+      "type": "mcq"
+    },
+    {
+      "question": "When is Generate and Test best?",
+      "options": [
+        "Small problem space",
+        "Large problem space",
+        "No testing needed",
+        "No solutions exist"
+      ],
+      "correctIndex": 0,
+      "id": "c3_mcq_6",
+      "chapter": 3,
+      "type": "mcq"
+    },
+    {
+      "question": "The function used to add an item at the end of a list in Python:",
+      "options": [
+        "insert()",
+        "append()",
+        "remove()",
+        "pop()"
+      ],
+      "correctIndex": 1,
+      "id": "c4_mcq_1",
+      "chapter": 4,
+      "type": "mcq"
+    },
+    {
+      "question": "The operation used to add an item to a queue:",
+      "options": [
+        "Dequeue",
+        "Peek",
+        "Enqueue",
+        "Remove"
+      ],
+      "correctIndex": 2,
+      "id": "c4_mcq_2",
+      "chapter": 4,
+      "type": "mcq"
+    },
+    {
+      "question": "A scenario where a graph data structure is most suitable:",
+      "options": [
+        "Managing a to-do list",
+        "Modeling a line of customers in a store",
+        "Representing connections in a social network",
+        "All of the above"
+      ],
+      "correctIndex": 2,
+      "id": "c4_mcq_3",
+      "chapter": 4,
+      "type": "mcq"
+    },
+    {
+      "question": "What does index-based access mean in a list?",
+      "options": [
+        "Access by name",
+        "Random access",
+        "Access by position",
+        "Delete all items"
+      ],
+      "correctIndex": 2,
+      "id": "c4_mcq_4",
+      "chapter": 4,
+      "type": "mcq"
+    },
+    {
+      "question": "Which traversal is used for backing up files in a directory?",
+      "options": [
+        "In-order",
+        "Post-order",
+        "Pre-order",
+        "Level-order"
+      ],
+      "correctIndex": 1,
+      "id": "c4_mcq_5",
+      "chapter": 4,
+      "type": "mcq"
+    },
+    {
+      "question": "Which type of graph has edges with direction?",
+      "options": [
+        "Undirected graph",
+        "Directed graph",
+        "Weighted graph",
+        "Binary graph"
+      ],
+      "correctIndex": 1,
+      "id": "c4_mcq_6",
+      "chapter": 4,
+      "type": "mcq"
+    },
+    {
+      "question": "Numeric and measurable data is called?",
+      "options": [
+        "Text",
+        "Categorical",
+        "Quantitative",
+        "None of these"
+      ],
+      "correctIndex": 2,
+      "id": "c5_mcq_1",
+      "chapter": 5,
+      "type": "mcq"
+    },
+    {
+      "question": "A commonly used tool for creating data visualizations:",
+      "options": [
+        "MS Excel",
+        "Python (Matplotlib)",
+        "Tableau",
+        "All of the above"
+      ],
+      "correctIndex": 3,
+      "id": "c5_mcq_2",
+      "chapter": 5,
+      "type": "mcq"
+    },
+    {
+      "question": "Which of the following option is not considered a benefit of data visualization?",
+      "options": [
+        "Identifying trends and patterns",
+        "Communicating insights effectively",
+        "Making data more complex",
+        "Summarizing large datasets"
+      ],
+      "correctIndex": 2,
+      "id": "c5_mcq_3",
+      "chapter": 5,
+      "type": "mcq"
+    },
+    {
+      "question": "What is the purpose of data transformation?",
+      "options": [
+        "to remove data",
+        "to make data suitable for analysis",
+        "to store data",
+        "to hide data"
+      ],
+      "correctIndex": 1,
+      "id": "c5_mcq_4",
+      "chapter": 5,
+      "type": "mcq"
+    },
+    {
+      "question": "In probability, what is the total number of outcomes called?",
+      "options": [
+        "favorable outcomes",
+        "random events",
+        "sample space",
+        "total outcomes"
+      ],
+      "correctIndex": 2,
+      "id": "c5_mcq_5",
+      "chapter": 5,
+      "type": "mcq"
+    },
+    {
+      "question": "Which chart is used to show distribution of data?",
+      "options": [
+        "line graph",
+        "pie chart",
+        "histogram",
+        "boxplot"
+      ],
+      "correctIndex": 2,
+      "id": "c5_mcq_6",
+      "chapter": 5,
+      "type": "mcq"
+    },
+    {
+      "question": "The main benefit of edge computing:",
+      "options": [
+        "Lower cost",
+        "Reduced latency",
+        "Increased complexity",
+        "Enhanced security"
+      ],
+      "correctIndex": 1,
+      "id": "c6_mcq_1",
+      "chapter": 6,
+      "type": "mcq"
+    },
+    {
+      "question": "A cloud deployment model combining public and private cloud features:",
+      "options": [
+        "Public Cloud",
+        "Hybrid Cloud",
+        "Community Cloud",
+        "Multi-cloud"
+      ],
+      "correctIndex": 1,
+      "id": "c6_mcq_2",
+      "chapter": 6,
+      "type": "mcq"
+    },
+    {
+      "question": "Which of the following is an example of cloud storage?",
+      "options": [
+        "USB drive",
+        "Google Drive",
+        "Hard disk",
+        "Floppy disk"
+      ],
+      "correctIndex": 1,
+      "id": "c6_mcq_3",
+      "chapter": 6,
+      "type": "mcq"
+    },
+    {
+      "question": "On-demand access in cloud computing is similar to:",
+      "options": [
+        "building a well to get water",
+        "turning on a tap for water",
+        "waiting for rain",
+        "boiling water"
+      ],
+      "correctIndex": 1,
+      "id": "c6_mcq_4",
+      "chapter": 6,
+      "type": "mcq"
+    },
+    {
+      "question": "Using AWS for storage, Azure for apps and Google Cloud for analytics is an example of:",
+      "options": [
+        "hybrid cloud",
+        "multi-cloud",
+        "public cloud",
+        "single cloud"
+      ],
+      "correctIndex": 1,
+      "id": "c6_mcq_5",
+      "chapter": 6,
+      "type": "mcq"
+    },
+    {
+      "question": "Edge computing processes data closer to the:",
+      "options": [
+        "cloud center",
+        "source of data",
+        "office",
+        "server farm"
+      ],
+      "correctIndex": 1,
+      "id": "c6_mcq_6",
+      "chapter": 6,
+      "type": "mcq"
+    },
+    {
+      "question": "What is the main purpose of Terms of Use?",
+      "options": [
+        "make service look official",
+        "protect only the provider",
+        "build a fair user-provider relationship",
+        "attract more ads"
+      ],
+      "correctIndex": 2,
+      "id": "c7_mcq_1",
+      "chapter": 7,
+      "type": "mcq"
+    },
+    {
+      "question": "What may happen if someone breaks Terms of Use?",
+      "options": [
+        "get reward",
+        "get blocked or face legal action",
+        "get free access",
+        "get discount"
+      ],
+      "correctIndex": 1,
+      "id": "c7_mcq_2",
+      "chapter": 7,
+      "type": "mcq"
+    },
+    {
+      "question": "Why do companies use \"Limitation of Liability\"?",
+      "options": [
+        "charge more",
+        "avoid full blame for service issues",
+        "give more rights",
+        "allow illegal use"
+      ],
+      "correctIndex": 1,
+      "id": "c7_mcq_3",
+      "chapter": 7,
+      "type": "mcq"
+    },
+    {
+      "question": "What is a benefit of online education platforms?",
+      "options": [
+        "only for rich students",
+        "only for city schools",
+        "no internet needed",
+        "students can learn from top universities"
+      ],
+      "correctIndex": 3,
+      "id": "c7_mcq_4",
+      "chapter": 7,
+      "type": "mcq"
+    },
+    {
+      "question": "What is a privacy concern with computing?",
+      "options": [
+        "personal data can be misused",
+        "no data is stored",
+        "all sites are safe",
+        "passwords are always secure"
+      ],
+      "correctIndex": 0,
+      "id": "c7_mcq_5",
+      "chapter": 7,
+      "type": "mcq"
+    },
+    {
+      "question": "Why does misinformation spread online?",
+      "options": [
+        "fast sharing of unverified content",
+        "people read less",
+        "better education",
+        "slow internet"
+      ],
+      "correctIndex": 0,
+      "id": "c7_mcq_6",
+      "chapter": 7,
+      "type": "mcq"
+    },
+    {
+      "question": "The primary goal of entrepreneurship is:",
+      "options": [
+        "To create new technologies",
+        "To solve problems and create value",
+        "To manage finances",
+        "To compete with large corporations"
+      ],
+      "correctIndex": 1,
+      "id": "c9_mcq_1",
+      "chapter": 9,
+      "type": "mcq"
+    },
+    {
+      "question": "The purpose of collecting market insights is:",
+      "options": [
+        "To set product prices",
+        "To understand customer needs and market trends",
+        "To calculate taxes",
+        "To manage inventory"
+      ],
+      "correctIndex": 1,
+      "id": "c9_mcq_2",
+      "chapter": 9,
+      "type": "mcq"
+    },
+    {
+      "question": "How does the Ideate stage enhance creativity?",
+      "options": [
+        "Limits ideas",
+        "Encourages brainstorming",
+        "Focuses on feedback",
+        "Creates plans"
+      ],
+      "correctIndex": 1,
+      "id": "c9_mcq_3",
+      "chapter": 9,
+      "type": "mcq"
+    },
+    {
+      "question": "The first step in creating a business plan involves?",
+      "options": [
+        "Financial forecasting",
+        "Market Analysis",
+        "Defining the business idea",
+        "Setting sales targets"
+      ],
+      "correctIndex": 2,
+      "id": "c9_mcq_4",
+      "chapter": 9,
+      "type": "mcq"
+    },
+    {
+      "question": "What are collaborative tools used for?",
+      "options": [
+        "Individual work",
+        "Teamwork",
+        "Financial analysis",
+        "Marketing"
+      ],
+      "correctIndex": 1,
+      "id": "c9_mcq_5",
+      "chapter": 9,
+      "type": "mcq"
+    },
+    {
+      "question": "Which stage ensures the solution aligns with user needs?",
+      "options": [
+        "Ideate",
+        "Test",
+        "Define",
+        "Prototype"
+      ],
+      "correctIndex": 1,
+      "id": "c9_mcq_6",
+      "chapter": 9,
+      "type": "mcq"
+    }
+  ],
+  "shortQuestions": [
+    {
+      "question": "What are design patterns in software development?",
+      "modelAnswer": "Design patterns: Reusable solutions/templates for common software design problems",
+      "id": "c1_short_1",
+      "chapter": 1,
+      "type": "short"
+    },
+    {
+      "question": "What is the Singleton Pattern?",
+      "modelAnswer": "Singleton Pattern: Ensures only one instance of a class is created and provides global access",
+      "id": "c1_short_2",
+      "chapter": 1,
+      "type": "short"
+    },
+    {
+      "question": "Who usually does acceptance testing?",
+      "modelAnswer": "Acceptance testing done by: End users or clients",
+      "id": "c1_short_3",
+      "chapter": 1,
+      "type": "short"
+    },
+    {
+      "question": "What is the Factory Pattern?",
+      "modelAnswer": "Factory Pattern: Creates objects without specifying exact class; central object creation logic",
+      "id": "c1_short_4",
+      "chapter": 1,
+      "type": "short"
+    },
+    {
+      "question": "What is the Strategy Pattern used for?",
+      "modelAnswer": "Strategy Pattern: Used to define multiple algorithms and select one at runtime",
+      "id": "c1_short_5",
+      "chapter": 1,
+      "type": "short"
+    },
+    {
+      "question": "What is Debugging?",
+      "modelAnswer": "Debugging: Process of finding and fixing errors (bugs) in code",
+      "id": "c1_short_6",
+      "chapter": 1,
+      "type": "short"
+    },
+    {
+      "question": "Describe testing in software development.",
+      "modelAnswer": "Testing in software development: Process of checking software for errors, bugs, and requirements compliance",
+      "id": "c1_short_7",
+      "chapter": 1,
+      "type": "short"
+    },
+    {
+      "question": "What is system testing?",
+      "modelAnswer": "System testing: Testing the complete system as a whole after integration",
+      "id": "c1_short_8",
+      "chapter": 1,
+      "type": "short"
+    },
+    {
+      "question": "Differentiate between functional and non-functional requirements.",
+      "modelAnswer": "Functional vs Non-functional requirements: Functional = what system does (features), Non-functional = how system performs (speed, security, reliability)",
+      "id": "c1_short_9",
+      "chapter": 1,
+      "type": "short"
+    },
+    {
+      "question": "Explain why the testing phase is important in the SDLC, and provide two reasons for its significance.",
+      "modelAnswer": "Importance of testing (2 reasons): Finds bugs before release, improves software quality and reliability",
+      "id": "c1_short_10",
+      "chapter": 1,
+      "type": "short"
+    },
+    {
+      "question": "Illustrate the concept of continuous integration in agile methodology and discuss its importance in software development.",
+      "modelAnswer": "Continuous Integration (CI): Developers frequently merge code into shared repository; automatic testing runs Importance: early bug detection, faster development, better collaboration",
+      "id": "c1_short_11",
+      "chapter": 1,
+      "type": "short"
+    },
+    {
+      "question": "Evaluate the main steps involved in risk assessment and management, and assess their importance in a software project.",
+      "modelAnswer": "Risk assessment steps: Identify risks, analyze risks, evaluate impact, plan mitigation, monitor risks Importance: reduces project failure, improves decision making, ensures project stability",
+      "id": "c1_short_12",
+      "chapter": 1,
+      "type": "short"
+    },
+    {
+      "question": "Explain the purpose of using comments in Python code?",
+      "modelAnswer": "Purpose of comments in Python: Used to explain code, improve readability, ignored by compiler/interpreter, debugging help",
+      "id": "c2_short_1",
+      "chapter": 2,
+      "type": "short"
+    },
+    {
+      "question": "Describe the difference between integer and float data types in Python. Provide an example of each.",
+      "modelAnswer": "Integer vs Float: Integer = whole numbers (e.g., 10), Float = decimal numbers (e.g., 10.5)",
+      "id": "c2_short_2",
+      "chapter": 2,
+      "type": "short"
+    },
+    {
+      "question": "Why is Python considered beginner-friendly?",
+      "modelAnswer": "Why Python is beginner-friendly: Simple syntax, easy to read, fewer rules, large library support",
+      "id": "c2_short_3",
+      "chapter": 2,
+      "type": "short"
+    },
+    {
+      "question": "What is the purpose of the PATH environment variable in Python installation?",
+      "modelAnswer": "PATH environment variable: Allows system to run Python from any directory using command line",
+      "id": "c2_short_4",
+      "chapter": 2,
+      "type": "short"
+    },
+    {
+      "question": "What is the output of the following code?",
+      "modelAnswer": "Output: ['apple', 'banana', 'orange', 'mango', 'grape']",
+      "id": "c2_short_5",
+      "chapter": 2,
+      "type": "short"
+    },
+    {
+      "question": "What is the output of the following code?",
+      "modelAnswer": "Output: tomato",
+      "id": "c2_short_6",
+      "chapter": 2,
+      "type": "short"
+    },
+    {
+      "question": "What is the output of the following code?",
+      "modelAnswer": "Output: ['apple', 'orange']",
+      "id": "c2_short_7",
+      "chapter": 2,
+      "type": "short"
+    },
+    {
+      "question": "What is the difference between the remove() and sort() methods in a Python list?",
+      "modelAnswer": "remove() vs sort(): remove() deletes specific value from list, sort() arranges list in order (ascending/descending) Q3 Long Questions a. Check Positive, Negative or Zero num = int(input(\"Enter a number: \")) if num > 0: print(\"Positive\") elif num < 0: print(\"Negative\") else: print(\"Zero\") b. First 10 Odd Numbers using for loop for i in range(1, 20, 2): print(i)",
+      "id": "c2_short_8",
+      "chapter": 2,
+      "type": "short"
+    },
+    {
+      "question": "What is Bubble Sort good for?",
+      "modelAnswer": "Bubble Sort is good for small datasets and is mainly used for educational purposes because it is simple to understand.",
+      "id": "c3_short_1",
+      "chapter": 3,
+      "type": "short"
+    },
+    {
+      "question": "What is an algorithm?",
+      "modelAnswer": "An algorithm is a step-by-step procedure used to solve a problem or perform a task.",
+      "id": "c3_short_2",
+      "chapter": 3,
+      "type": "short"
+    },
+    {
+      "question": "What are Searching Algorithms used for?",
+      "modelAnswer": "They are used to find a specific item or value within a data structure like an array or list.",
+      "id": "c3_short_3",
+      "chapter": 3,
+      "type": "short"
+    },
+    {
+      "question": "What is Binary Search?",
+      "modelAnswer": "Binary Search is a fast searching method that works on sorted data by repeatedly dividing the search range in half.",
+      "id": "c3_short_4",
+      "chapter": 3,
+      "type": "short"
+    },
+    {
+      "question": "What is an optimization problem?",
+      "modelAnswer": "It is a problem where we try to find the best solution from all possible solutions under given constraints.",
+      "id": "c3_short_5",
+      "chapter": 3,
+      "type": "short"
+    },
+    {
+      "question": "What is the Generate and Test algorithm?",
+      "modelAnswer": "It is a problem-solving method where possible solutions are generated and each is tested until a correct one is found.",
+      "id": "c3_short_6",
+      "chapter": 3,
+      "type": "short"
+    },
+    {
+      "question": "When should you avoid Generate and Test?",
+      "modelAnswer": "It should be avoided when the problem space is large because it becomes very slow and inefficient.",
+      "id": "c3_short_7",
+      "chapter": 3,
+      "type": "short"
+    },
+    {
+      "question": "What is a search problem?",
+      "modelAnswer": "A search problem involves finding a desired solution or item from a set of possible options. Q3 Long Question Time Complexity in Algorithm Analysis Time complexity is a way to measure how the running time of an algorithm increases as the input size increases. It helps us understand how efficient an algorithm is. Instead of measuring actual time in seconds, we focus on the number of basic operations an algorithm performs. Big O Notation: Big O notation is used to describe the worst-case time complexity of an algorithm. It shows how performance grows with input size. Common Examples: O(1) — Constant Time: Accessing an element in an array, e.g. arr[i] O(log n) — Logarithmic Time: Binary Search — each step divides the problem in half. O(n) — Linear Time: Linear Search — each element is checked once. O(n²) — Quadratic Time: Bubble Sort, Selection Sort — nested loops over data.",
+      "id": "c3_short_8",
+      "chapter": 3,
+      "type": "short"
+    },
+    {
+      "question": "Explain the potential issues, which could arise when two variables reference the same list in a program? Provide an example.",
+      "modelAnswer": "Aliasing problem — changes made through one variable affect the other, since both point to the same memory reference (shared list).",
+      "id": "c4_short_1",
+      "chapter": 4,
+      "type": "short"
+    },
+    {
+      "question": "Differentiate between the Enqueue and Dequeue operations of queue.",
+      "modelAnswer": "Enqueue: insert item (rear of queue) Dequeue: remove item (front of queue)",
+      "id": "c4_short_2",
+      "chapter": 4,
+      "type": "short"
+    },
+    {
+      "question": "Name two basic operations performed on stack.",
+      "modelAnswer": "Push and Pop.",
+      "id": "c4_short_3",
+      "chapter": 4,
+      "type": "short"
+    },
+    {
+      "question": "What are primitive computational structures?",
+      "modelAnswer": "Basic data structures such as Stack, Queue, List, and Array.",
+      "id": "c4_short_4",
+      "chapter": 4,
+      "type": "short"
+    },
+    {
+      "question": "How are lists created in Python?",
+      "modelAnswer": "Using square brackets [ ]. Example: myList = [1, 2, 3]",
+      "id": "c4_short_5",
+      "chapter": 4,
+      "type": "short"
+    },
+    {
+      "question": "What is index-based access in lists?",
+      "modelAnswer": "Accessing elements using their position/index number. Example: list[0]",
+      "id": "c4_short_6",
+      "chapter": 4,
+      "type": "short"
+    },
+    {
+      "question": "How do you remove an item by value from a list?",
+      "modelAnswer": "Using the remove(value) method. Example: list.remove(10)",
+      "id": "c4_short_7",
+      "chapter": 4,
+      "type": "short"
+    },
+    {
+      "question": "Write the real-life example of a stack.",
+      "modelAnswer": "A stack of plates or books (LIFO: Last In First Out). Q3 Long Question Tree Definition A Tree is a non-linear hierarchical data structure consisting of nodes connected by edges. Properties of a Tree: Root node (top node) Parent and child relationship Leaf nodes (no children) Subtrees No cycles Connected structure N nodes → N−1 edges Hierarchical structure",
+      "id": "c4_short_8",
+      "chapter": 4,
+      "type": "short"
+    },
+    {
+      "question": "List two types of data visualizations and describe when you would use each.",
+      "modelAnswer": "Bar chart — compare categories/data. Line graph — show trends over time.",
+      "id": "c5_short_1",
+      "chapter": 5,
+      "type": "short"
+    },
+    {
+      "question": "What is variance?",
+      "modelAnswer": "Variance: a measure of data spread — how far values differ from the mean.",
+      "id": "c5_short_2",
+      "chapter": 5,
+      "type": "short"
+    },
+    {
+      "question": "What is probability? Give an example of probability on daily life.",
+      "modelAnswer": "Probability: the chance of an event happening; example — probability of rain, or tossing a coin.",
+      "id": "c5_short_3",
+      "chapter": 5,
+      "type": "short"
+    },
+    {
+      "question": "When would you use a bar chart?",
+      "modelAnswer": "Bar chart use: to compare categories, compare values, and show differences.",
+      "id": "c5_short_4",
+      "chapter": 5,
+      "type": "short"
+    },
+    {
+      "question": "How can Excel or Google Sheets help with data visualization?",
+      "modelAnswer": "Excel/Google Sheets: build charts and graphs to organize data and visualize trends.",
+      "id": "c5_short_5",
+      "chapter": 5,
+      "type": "short"
+    },
+    {
+      "question": "What is the purpose of surveys?",
+      "modelAnswer": "Purpose of surveys: to collect information, opinions, feedback, and research data.",
+      "id": "c5_short_6",
+      "chapter": 5,
+      "type": "short"
+    },
+    {
+      "question": "How do you calculate the median?",
+      "modelAnswer": "Calculate median: arrange the data in order, then find the middle value.",
+      "id": "c5_short_7",
+      "chapter": 5,
+      "type": "short"
+    },
+    {
+      "question": "What is the mode in a dataset?",
+      "modelAnswer": "Mode in a dataset: the most frequent (repeated) value. Q3 Long Question Data Collection Methods Surveys — collect opinions and feedback using questionnaires. Interviews — ask questions directly to gather detailed information. Observation — collect data by watching behavior/events. Experiments — test conditions and collect results. Online research — gather information from websites, databases, reports. Purpose: collect accurate, relevant, and useful data for analysis and decision-making.",
+      "id": "c5_short_8",
+      "chapter": 5,
+      "type": "short"
+    },
+    {
+      "question": "Differentiate between Elasticity and On-Demand access in cloud computing.",
+      "modelAnswer": "Elasticity: automatic increase/decrease of resources. On-demand access: use resources anytime when needed.",
+      "id": "c6_short_1",
+      "chapter": 6,
+      "type": "short"
+    },
+    {
+      "question": "How does 5G differ from previous wireless technologies?",
+      "modelAnswer": "5G difference: faster speed, low latency, better connectivity, supports more devices.",
+      "id": "c6_short_2",
+      "chapter": 6,
+      "type": "short"
+    },
+    {
+      "question": "Define scalability in cloud computing.",
+      "modelAnswer": "Scalability: the ability to increase or decrease resources according to demand.",
+      "id": "c6_short_3",
+      "chapter": 6,
+      "type": "short"
+    },
+    {
+      "question": "Define cloud computing.",
+      "modelAnswer": "Cloud computing: delivery of computing services over the internet (storage, software, servers).",
+      "id": "c6_short_4",
+      "chapter": 6,
+      "type": "short"
+    },
+    {
+      "question": "What is a public cloud?",
+      "modelAnswer": "Public cloud: cloud services available to everyone over the internet.",
+      "id": "c6_short_5",
+      "chapter": 6,
+      "type": "short"
+    },
+    {
+      "question": "What is a hybrid cloud?",
+      "modelAnswer": "Hybrid cloud: a combination of public cloud and private cloud.",
+      "id": "c6_short_6",
+      "chapter": 6,
+      "type": "short"
+    },
+    {
+      "question": "What is PaaS used for?",
+      "modelAnswer": "PaaS used for: app development, testing, deployment — a software development platform.",
+      "id": "c6_short_7",
+      "chapter": 6,
+      "type": "short"
+    },
+    {
+      "question": "Why is AI considered an emerging technology?",
+      "modelAnswer": "AI as emerging technology: driving innovation, smart systems, automation, continuous growth.",
+      "id": "c6_short_8",
+      "chapter": 6,
+      "type": "short"
+    },
+    {
+      "question": "What is on-demand access in cloud computing?",
+      "modelAnswer": "On-demand access: accessing cloud resources anytime as needed.",
+      "id": "c6_short_9",
+      "chapter": 6,
+      "type": "short"
+    },
+    {
+      "question": "What are the key benefits of serverless computing for developers?",
+      "modelAnswer": "Benefits of serverless computing: no server management, automatic scaling, lower cost, faster development.",
+      "id": "c6_short_10",
+      "chapter": 6,
+      "type": "short"
+    },
+    {
+      "question": "What is serverless computing?",
+      "modelAnswer": "Serverless computing: a cloud model where the provider manages servers automatically.",
+      "id": "c6_short_11",
+      "chapter": 6,
+      "type": "short"
+    },
+    {
+      "question": "Why is edge computing important for smart cities?",
+      "modelAnswer": "Edge computing for smart cities: reduced latency, real-time processing, faster decisions, IoT support.",
+      "id": "c6_short_12",
+      "chapter": 6,
+      "type": "short"
+    },
+    {
+      "question": "What is spam, and how does it affect users?",
+      "modelAnswer": "Spam: unwanted messages/emails and ads that waste time, and carry scam or virus risk.",
+      "id": "c7_short_1",
+      "chapter": 7,
+      "type": "short"
+    },
+    {
+      "question": "How can you recognize a phishing email?",
+      "modelAnswer": "Phishing email: fake sender, suspicious links, spelling mistakes, asks for personal information/passwords.",
+      "id": "c7_short_2",
+      "chapter": 7,
+      "type": "short"
+    },
+    {
+      "question": "What are privacy and security threats, and why are they a concern?",
+      "modelAnswer": "Privacy and security threats: data theft, hacking, malware, unauthorized access — a concern because personal information is at risk.",
+      "id": "c7_short_3",
+      "chapter": 7,
+      "type": "short"
+    },
+    {
+      "question": "Why is antivirus software important for online safety?",
+      "modelAnswer": "Antivirus software: detects viruses, removes malware, and protects devices/data for online safety.",
+      "id": "c7_short_4",
+      "chapter": 7,
+      "type": "short"
+    },
+    {
+      "question": "How has computing helped the economy grow?",
+      "modelAnswer": "Computing and the economy: drives business growth, automation, job creation, faster communication, increased productivity.",
+      "id": "c7_short_5",
+      "chapter": 7,
+      "type": "short"
+    },
+    {
+      "question": "Give an example of direct communication.",
+      "modelAnswer": "Direct communication example: phone call, face-to-face meeting, video call, or email.",
+      "id": "c7_short_6",
+      "chapter": 7,
+      "type": "short"
+    },
+    {
+      "question": "What is plagiarism, and how can it be avoided?",
+      "modelAnswer": "Plagiarism: copying someone's work without credit; avoided through citation, references, and original work.",
+      "id": "c7_short_7",
+      "chapter": 7,
+      "type": "short"
+    },
+    {
+      "question": "What is collaborative problem solving?",
+      "modelAnswer": "Collaborative problem solving: teamwork and sharing ideas to work together toward solving problems. Q3 Long Question Common Clauses in Terms of Use and Their Protection Privacy and Data Use — protects user information and explains data collection. User Obligations — sets out users' rules/responsibilities and prevents misuse. Limitation of Liability — protects service providers from full blame for issues. Termination of Service — allows account suspension if rules are broken. Dispute Resolution — helps resolve conflicts between provider and users fairly. Protection: these clauses protect service providers by reducing risk and protecting the service, and protect users by explaining their rights, privacy, safety, and fair-use rules.",
+      "id": "c7_short_8",
+      "chapter": 7,
+      "type": "short"
+    },
+    {
+      "question": "Define entrepreneurship in your own words.",
+      "modelAnswer": "Entrepreneurship: starting a business, solving problems, creating value through innovation.",
+      "id": "c9_short_1",
+      "chapter": 9,
+      "type": "short"
+    },
+    {
+      "question": "Why is market research important for a new business?",
+      "modelAnswer": "Market research importance: understand customer needs, market trends, competition, and make better decisions.",
+      "id": "c9_short_2",
+      "chapter": 9,
+      "type": "short"
+    },
+    {
+      "question": "How can storytelling benefit a business?",
+      "modelAnswer": "Storytelling benefit in business: builds customer connection, trust, brand identity, and engagement.",
+      "id": "c9_short_3",
+      "chapter": 9,
+      "type": "short"
+    },
+    {
+      "question": "What does the 'Empathize' stage mean?",
+      "modelAnswer": "Empathize stage: understand users, their needs, feelings, and problems.",
+      "id": "c9_short_4",
+      "chapter": 9,
+      "type": "short"
+    },
+    {
+      "question": "What is the purpose of the 'Ideate' stage?",
+      "modelAnswer": "Purpose of Ideate stage: brainstorming to generate ideas and creative solutions.",
+      "id": "c9_short_5",
+      "chapter": 9,
+      "type": "short"
+    },
+    {
+      "question": "What is done in the 'Test' stage?",
+      "modelAnswer": "Test stage: gather feedback, check the solution, improve the product, ensure user satisfaction.",
+      "id": "c9_short_6",
+      "chapter": 9,
+      "type": "short"
+    },
+    {
+      "question": "What is a business plan?",
+      "modelAnswer": "Business plan: sets out business goals, strategies, financial planning, and a roadmap.",
+      "id": "c9_short_7",
+      "chapter": 9,
+      "type": "short"
+    },
+    {
+      "question": "What is quantitative research?",
+      "modelAnswer": "Quantitative research: research based on numerical data, statistics, surveys, and measurable results.",
+      "id": "c9_short_8",
+      "chapter": 9,
+      "type": "short"
+    },
+    {
+      "question": "What is predictive analysis?",
+      "modelAnswer": "Predictive analysis: forecasting trends and future outcomes through data analysis.",
+      "id": "c9_short_9",
+      "chapter": 9,
+      "type": "short"
+    },
+    {
+      "question": "What is a sales strategy?",
+      "modelAnswer": "Sales strategy: a plan to increase sales, attract customers, using marketing methods.",
+      "id": "c9_short_10",
+      "chapter": 9,
+      "type": "short"
+    },
+    {
+      "question": "What is innovation?",
+      "modelAnswer": "Innovation: new ideas that lead to improved products/services and creative solutions.",
+      "id": "c9_short_11",
+      "chapter": 9,
+      "type": "short"
+    },
+    {
+      "question": "What is storytelling?",
+      "modelAnswer": "Storytelling: sharing ideas/messages through stories to engage an audience.",
+      "id": "c9_short_12",
+      "chapter": 9,
+      "type": "short"
+    }
+  ]
+}

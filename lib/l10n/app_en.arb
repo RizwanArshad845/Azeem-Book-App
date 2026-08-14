@@ -1,0 +1,103 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Azeem Publications",
+
+  "commonNext": "Next",
+  "commonBack": "Back",
+  "commonContinue": "Continue",
+  "commonSkip": "Skip",
+  "commonCancel": "Cancel",
+  "commonConfirm": "Confirm",
+  "commonRetry": "Retry",
+  "commonComingSoon": "Coming soon",
+  "commonRequiredField": "This field is required",
+  "commonErrorGeneric": "Something went wrong. Please try again.",
+
+  "phoneTitle": "Enter your phone number",
+  "phoneWelcomeTitle": "Welcome to Azeem Books!",
+  "phoneSubtitle": "We'll send a verification code to this number",
+  "phoneCountryCode": "+92",
+  "phoneLabel": "Phone number",
+  "phoneHint": "3XX XXXXXXX",
+  "phoneInvalid": "Enter a valid 10-digit phone number",
+  "phoneContinueButton": "Send code",
+
+  "otpTitle": "Verify your number",
+  "otpSubtitle": "Enter the 4-digit code sent to {phone}",
+  "@otpSubtitle": {
+    "placeholders": { "phone": { "type": "String" } }
+  },
+  "otpVerifyButton": "Verify",
+  "otpIncorrect": "Incorrect code. Please try again.",
+  "otpTooManyAttempts": "Too many attempts. Restarting...",
+
+  "personalInfoTitle": "Personal Information",
+  "personalInfoSubtitle": "Help us personalize your learning experience",
+  "personalInfoAcademicSection": "Academic Details",
+  "personalInfoOptionalSection": "Optional",
+  "nameLabel": "Full name",
+  "nameHint": "e.g. Ali Raza",
+  "cityLabel": "City",
+  "cityHint": "e.g. Lahore",
+  "collegeLabel": "College",
+  "collegeHint": "Search for your college",
+  "classLevelLabel": "Class level",
+  "classCodeLabel": "Teacher's class code (optional)",
+  "classCodeHint": "6-character code",
+  "classCodeNote": "You can add this later from your profile",
+
+  "subjectCountTitle": "How many subjects are you studying?",
+  "subjectCountSubtitle": "Choose a number between 1 and 8",
+
+  "subjectSelectionTitle": "Select your subjects",
+  "subjectSelectionSubtitle": "Select your enrolled subjects to customize your study dashboard.",
+  "subjectSelectionLabel": "Subject {index}",
+  "@subjectSelectionLabel": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "subjectSelectionHint": "Choose a subject",
+
+  "homeGreeting": "Hi, {name}",
+  "@homeGreeting": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "homeDiagnosticTestTitle": "Diagnostic Test",
+  "homeDiagnosticTestSubtitle": "Free · Computer Science",
+  "homeAiGuessPapersTitle": "AI Guess Papers",
+  "homeAiGuessPapersSubtitle": "Coming soon",
+  "homeStudyPlanTitle": "Study Plan",
+  "homeStudyPlanSubtitle": "Coming soon",
+
+  "subjectPickerTitle": "Choose a subject",
+  "subjectPickerComputerScience": "Computer Science",
+
+  "selfAssessmentTitle": "Rate your confidence",
+  "selfAssessmentSubtitle": "How confident do you feel in each chapter?",
+  "selfAssessmentStartButton": "Start Test",
+
+  "consentTitle": "Before you start",
+  "consentBody": "This test will be screen-recorded for plagiarism review.",
+  "consentCheckboxLabel": "I understand and agree to be recorded",
+  "consentStartButton": "Start Test",
+
+  "testRecLabel": "REC",
+  "testProgressLabel": "Q {current}/{total}",
+  "@testProgressLabel": {
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "testPreviousButton": "Previous",
+  "testNextButton": "Next",
+  "testSubmitButton": "Submit Test",
+  "testJumpToQuestion": "Jump to question",
+  "testShortAnswerHint": "Type your answer here",
+  "testExitDialogTitle": "Leave test?",
+  "testExitDialogBody": "Your progress will be lost if you leave now.",
+  "testExitDialogConfirm": "Leave",
+
+  "resultsTitle": "Your Results",
+  "resultsOverallReadiness": "Overall Readiness",
+  "resultsChapterScores": "Chapter-wise Scores",
+  "resultsStudyPlanCta": "Get personalized study plan",
+  "resultsReturnHome": "Return to Home"
+}
