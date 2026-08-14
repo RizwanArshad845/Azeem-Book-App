@@ -1,9 +1,7 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
-
 import '../extensions/context_extensions.dart';
 
-/// Searchable dropdown built on `dropdown_search`, themed via [context.colors].
 class AppDropdown<T> extends StatelessWidget {
   const AppDropdown({
     super.key,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../domain/diagnostic/entities/test_session.dart';
 import '../../presentation/diagnostic/view/consent_view.dart';
 import '../../presentation/diagnostic/view/results_view.dart';
@@ -30,9 +29,6 @@ int _furthestAllowedOnboardingIndex(OnboardingState s) {
   if (!s.isPersonalInfoComplete) return 1;
   return _onboardingStepOrder.length - 1;
 }
-
-/// Cheap GPU-composited (opacity + transform only) page transition used for
-/// every route, instead of the platform default, for a more polished feel.
 CustomTransitionPage<void> _appPage(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
@@ -59,9 +55,6 @@ const _diagnosticRoutes = {
   AppRoutes.diagnosticTest,
   AppRoutes.diagnosticResults,
 };
-
-/// Bridges Riverpod state changes into go_router's `refreshListenable` so
-/// `redirect` re-evaluates whenever onboarding or test session state changes.
 class _RouterRefreshNotifier extends ChangeNotifier {
   _RouterRefreshNotifier(Ref ref) {
     ref.listen(onboardingViewModelProvider, (_, _) => notifyListeners());
