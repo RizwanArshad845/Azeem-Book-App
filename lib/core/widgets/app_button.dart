@@ -59,3 +59,108 @@ class AppButton extends StatelessWidget {
     return PressScale(enabled: !isDisabled, child: button);
   }
 }
+
+class AppPrimaryButton extends StatelessWidget {
+  const AppPrimaryButton({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.loading = false,
+    this.icon,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+  final bool loading;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppButton(
+      label: label,
+      onPressed: onPressed,
+      variant: AppButtonVariant.primary,
+      loading: loading,
+      icon: icon,
+    );
+  }
+}
+
+class AppOutlinedButton extends StatelessWidget {
+  const AppOutlinedButton({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.loading = false,
+    this.icon,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+  final bool loading;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppButton(
+      label: label,
+      onPressed: onPressed,
+      variant: AppButtonVariant.outlined,
+      loading: loading,
+      icon: icon,
+    );
+  }
+}
+
+class AppDangerButton extends StatelessWidget {
+  const AppDangerButton({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.loading = false,
+    this.icon,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+  final bool loading;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDisabled = onPressed == null || loading;
+    final effectiveOnPressed = isDisabled ? null : onPressed;
+
+    final child = loading
+        ? SizedBox(
+            height: context.dimens.iconMd,
+            width: context.dimens.iconMd,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(context.colors.error),
+            ),
+          )
+        : icon == null
+            ? Text(label, style: TextStyle(color: context.colors.error))
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, size: context.dimens.iconMd, color: context.colors.error),
+                  SizedBox(width: context.dimens.sm),
+                  Text(label, style: TextStyle(color: context.colors.error)),
+                ],
+              );
+
+    return PressScale(
+      enabled: !isDisabled,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: context.colors.error,
+          side: BorderSide(color: context.colors.error),
+        ),
+        onPressed: effectiveOnPressed,
+        child: child,
+      ),
+    );
+  }
+}

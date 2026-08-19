@@ -1,0 +1,14 @@
+{
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "custom-plugin-flutter": true,
+    "custom-plugin-flutter@local": true
+  },
+  "extraPlugins": [
+    "./.claude-plugins/custom-plugin-flutter",
+    "./.claude/plugins/custom-plugin-flutter"
+  ]
+}

@@ -40,7 +40,7 @@ class _SplashViewState extends ConsumerState<SplashView>
     final colors = context.colors;
 
     ref.listen(splashViewModelProvider, (previous, isReady) {
-      if (isReady) context.go(AppRoutes.onboardingPhone);
+      if (isReady) context.go(AppRoutes.authRoleSelect);
     });
 
     return Scaffold(

@@ -1,34 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../domain/diagnostic/entities/test_session.dart';
-import '../../presentation/diagnostic/view/consent_view.dart';
-import '../../presentation/diagnostic/view/results_view.dart';
-import '../../presentation/diagnostic/view/self_assessment_view.dart';
-import '../../presentation/diagnostic/view/test_view.dart';
-import '../../presentation/home/view/home_view.dart';
-import '../../presentation/onboarding/state/onboarding_state.dart';
-import '../../presentation/onboarding/view/personal_info_view.dart';
-import '../../presentation/onboarding/view/phone_number_view.dart';
-import '../../presentation/onboarding/view/subject_count_view.dart';
-import '../../presentation/onboarding/view/subject_selection_view.dart';
-import '../../presentation/diagnostic/viewmodel/test_viewmodel.dart';
-import '../../presentation/onboarding/viewmodel/onboarding_viewmodel.dart';
+
+import '../../domain/auth/entities/user_role.dart';
+import '../../presentation/auth/view/otp_verify_view.dart';
+import '../../presentation/auth/view/phone_entry_view.dart';
+import '../../presentation/auth/view/role_select_view.dart';
+import '../../presentation/auth/viewmodel/auth_viewmodel.dart';
+import '../../presentation/notifications/view/notifications_view.dart';
 import '../../presentation/splash/view/splash_view.dart';
+import '../../presentation/student_cart/view/checkout_view.dart';
+import '../../presentation/student_cart/view/student_cart_view.dart';
+import '../../presentation/student_progress/view/student_progress_view.dart';
+import '../../presentation/live_test_registration/view/live_tests_view.dart';
+import '../../presentation/student_home/view/chapter_list_view.dart';
+import '../../presentation/student_home/view/student_home_view.dart';
+import '../../presentation/student_home/view/test_list_view.dart';
+import '../../presentation/student_onboarding/view/board_class_select_view.dart';
+import '../../presentation/student_onboarding/view/campus_select_view.dart';
+import '../../presentation/student_onboarding/view/subject_teacher_select_view.dart';
+import '../../presentation/student_profile/view/student_profile_view.dart';
+import '../../presentation/teacher_profile/view/teacher_profile_view.dart';
+import '../../presentation/student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
+import '../../presentation/test_taking/view/test_taking_view.dart';
+import '../../presentation/teacher_onboarding/view/teacher_pending_approval_view.dart';
+import '../../presentation/teacher_onboarding/view/teacher_signup_view.dart';
+import '../../presentation/teacher_earnings/view/teacher_earnings_view.dart';
+import '../../presentation/teacher_overview/view/teacher_overview_view.dart';
+import '../../presentation/teacher_students/view/student_progress_detail_view.dart';
+import '../../presentation/teacher_students/view/teacher_students_view.dart';
+import '../../presentation/teacher_onboarding/viewmodel/teacher_onboarding_viewmodel.dart';
 import '../constants/app_routes.dart';
+import '../widgets/app_scaffold_with_bottom_nav.dart';
 
-const _onboardingStepOrder = [
-  AppRoutes.onboardingPhone,
-  AppRoutes.onboardingPersonalInfo,
-  AppRoutes.onboardingSubjectCount,
-  AppRoutes.onboardingSubjects,
-];
-
-int _furthestAllowedOnboardingIndex(OnboardingState s) {
-  if (!s.otpVerified) return 0;
-  if (!s.isPersonalInfoComplete) return 1;
-  return _onboardingStepOrder.length - 1;
-}
 CustomTransitionPage<void> _appPage(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
@@ -49,17 +53,135 @@ CustomTransitionPage<void> _appPage(GoRouterState state, Widget child) {
   );
 }
 
-const _diagnosticRoutes = {
-  AppRoutes.diagnosticSelfAssessment,
-  AppRoutes.diagnosticConsent,
-  AppRoutes.diagnosticTest,
-  AppRoutes.diagnosticResults,
+const _studentDestinations = [
+  BottomNavDestinationSpec(icon: Icons.home_outlined, label: 'Home'),
+  BottomNavDestinationSpec(icon: Icons.shopping_cart_outlined, label: 'Cart'),
+  BottomNavDestinationSpec(icon: Icons.insights_outlined, label: 'Progress'),
+  BottomNavDestinationSpec(
+    icon: Icons.notifications_outlined,
+    label: 'Notifications',
+  ),
+  BottomNavDestinationSpec(icon: Icons.person_outline, label: 'Profile'),
+];
+
+const _teacherDestinations = [
+  BottomNavDestinationSpec(icon: Icons.home_outlined, label: 'Overview'),
+  BottomNavDestinationSpec(icon: Icons.people_outline, label: 'Students'),
+  BottomNavDestinationSpec(
+    icon: Icons.account_balance_wallet_outlined,
+    label: 'Earnings',
+  ),
+  BottomNavDestinationSpec(
+    icon: Icons.notifications_outlined,
+    label: 'Notifications',
+  ),
+  BottomNavDestinationSpec(icon: Icons.person_outline, label: 'Profile'),
+];
+
+const _authRoutes = {
+  AppRoutes.authRoleSelect,
+  AppRoutes.authPhone,
+  AppRoutes.authOtp,
 };
+
+const _studentOnboardingRoutes = {
+  AppRoutes.studentOnboardingCampus,
+  AppRoutes.studentOnboardingBoardClass,
+  AppRoutes.studentOnboardingSubjects,
+};
+
+const _studentShellRoutes = {
+  AppRoutes.studentHome,
+  AppRoutes.studentCart,
+  AppRoutes.studentProgress,
+  AppRoutes.studentNotifications,
+  AppRoutes.studentProfile,
+};
+
+const _teacherShellRoutes = {
+  AppRoutes.teacherOverview,
+  AppRoutes.teacherStudents,
+  AppRoutes.teacherEarnings,
+  AppRoutes.teacherNotifications,
+  AppRoutes.teacherProfile,
+};
+
+// Pushed on top of either shell (or before it) once a role/onboarding stage
+// is fully resolved — live tests, checkout, per-student detail. `testTaking`
+// is checked separately via a prefix match since it carries a `:testId`
+// path param, so `state.matchedLocation` is a concrete path like
+// `/test-taking/abc123`, never the literal `AppRoutes.testTaking` pattern.
+const _outsideShellRoutes = {
+  AppRoutes.cartCheckout,
+};
+
+bool _isOutsideShellRoute(String location) =>
+    _outsideShellRoutes.contains(location) ||
+    location.startsWith('/test-taking/') ||
+    (location.startsWith('/teacher/students/') &&
+        location.endsWith('/progress'));
+
+/// Re-evaluates the router `redirect` whenever session or onboarding state
+/// changes — e.g. right after OTP verification succeeds, or right after an
+/// onboarding form submits, since neither of those flows navigates itself
+/// (§10.2: redirect owns "where does an authenticated user belong").
 class _RouterRefreshNotifier extends ChangeNotifier {
   _RouterRefreshNotifier(Ref ref) {
-    ref.listen(onboardingViewModelProvider, (_, _) => notifyListeners());
-    ref.listen(testViewModelProvider, (_, _) => notifyListeners());
+    ref.listen(currentUserProvider, (_, _) => notifyListeners());
+    ref.listen(teacherOnboardingViewModelProvider, (_, _) => notifyListeners());
+    ref.listen(studentOnboardingViewModelProvider, (_, _) => notifyListeners());
   }
+}
+
+/// Single source of truth for "where does this request belong right now,"
+/// given the current auth session and (role-specific) onboarding progress.
+/// Returns `null` to allow the requested [location] as-is.
+String? _redirectFor(Ref ref, String location) {
+  if (location == AppRoutes.splash) return null;
+
+  final session = ref.read(currentUserProvider);
+  if (session == null) {
+    return _authRoutes.contains(location) ? null : AppRoutes.authRoleSelect;
+  }
+
+  if (session.role == UserRole.teacher) {
+    final teacherAsync = ref.read(teacherOnboardingViewModelProvider);
+    if (teacherAsync.isLoading && !teacherAsync.hasValue) return null;
+
+    final teacher = teacherAsync.value;
+    if (teacher == null) {
+      return location == AppRoutes.teacherOnboardingSignup
+          ? null
+          : AppRoutes.teacherOnboardingSignup;
+    }
+
+    if (teacherOnboardingStageOf(teacher) ==
+        TeacherOnboardingStage.pendingApproval) {
+      return location == AppRoutes.teacherOnboardingPending
+          ? null
+          : AppRoutes.teacherOnboardingPending;
+    }
+
+    final allowed =
+        _teacherShellRoutes.contains(location) || _isOutsideShellRoute(location);
+    return allowed ? null : AppRoutes.teacherOverview;
+  }
+
+  final studentAsync = ref.read(studentOnboardingViewModelProvider);
+  if (studentAsync.isLoading && !studentAsync.hasValue) return null;
+
+  final student = studentAsync.value;
+  if (student == null) {
+    return _studentOnboardingRoutes.contains(location)
+        ? null
+        : AppRoutes.studentOnboardingCampus;
+  }
+
+  final allowed =
+      _studentShellRoutes.contains(location) ||
+      _isOutsideShellRoute(location) ||
+      location.startsWith('${AppRoutes.studentHome}/');
+  return allowed ? null : AppRoutes.studentHome;
 }
 
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -69,93 +191,218 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: AppRoutes.splash,
     refreshListenable: refreshNotifier,
-    redirect: (context, state) {
-      final onboarding = ref.read(onboardingViewModelProvider);
-      final testSession = ref.read(testViewModelProvider);
-      final location = state.matchedLocation;
-
-      if (location == AppRoutes.splash) return null;
-
-      if (_onboardingStepOrder.contains(location)) {
-        if (onboarding.isOnboardingComplete) return AppRoutes.home;
-        final requestedIndex = _onboardingStepOrder.indexOf(location);
-        final furthest = _furthestAllowedOnboardingIndex(onboarding);
-        if (requestedIndex > furthest) return _onboardingStepOrder[furthest];
-        return null;
-      }
-
-      if (location == AppRoutes.home) {
-        if (!onboarding.isOnboardingComplete) {
-          return _onboardingStepOrder[_furthestAllowedOnboardingIndex(onboarding)];
-        }
-        return null;
-      }
-
-      if (_diagnosticRoutes.contains(location)) {
-        if (!onboarding.isOnboardingComplete) return AppRoutes.home;
-
-        if (location == AppRoutes.diagnosticTest) {
-          if (testSession.status == TestSessionStatus.completed) {
-            return AppRoutes.diagnosticResults;
-          }
-          if (!testSession.consentAcknowledged || testSession.questions.isEmpty) {
-            return AppRoutes.diagnosticConsent;
-          }
-          return null;
-        }
-
-        if (location == AppRoutes.diagnosticResults) {
-          if (testSession.status != TestSessionStatus.completed) {
-            return AppRoutes.home;
-          }
-          return null;
-        }
-
-        return null;
-      }
-
-      return null;
-    },
+    redirect: (context, state) => _redirectFor(ref, state.matchedLocation),
     routes: [
       GoRoute(
         path: AppRoutes.splash,
         pageBuilder: (context, state) => _appPage(state, const SplashView()),
       ),
+
+      // Auth (outside shell)
       GoRoute(
-        path: AppRoutes.onboardingPhone,
-        pageBuilder: (context, state) => _appPage(state, const PhoneNumberView()),
+        path: AppRoutes.authRoleSelect,
+        pageBuilder: (context, state) =>
+            _appPage(state, const RoleSelectView()),
       ),
       GoRoute(
-        path: AppRoutes.onboardingPersonalInfo,
-        pageBuilder: (context, state) => _appPage(state, const PersonalInfoView()),
+        path: AppRoutes.authPhone,
+        pageBuilder: (context, state) =>
+            _appPage(state, const PhoneEntryView()),
       ),
       GoRoute(
-        path: AppRoutes.onboardingSubjectCount,
-        pageBuilder: (context, state) => _appPage(state, const SubjectCountView()),
+        path: AppRoutes.authOtp,
+        pageBuilder: (context, state) =>
+            _appPage(state, const OtpVerifyView()),
+      ),
+
+      // Teacher onboarding (outside shell)
+      GoRoute(
+        path: AppRoutes.teacherOnboardingSignup,
+        pageBuilder: (context, state) =>
+            _appPage(state, const TeacherSignupView()),
       ),
       GoRoute(
-        path: AppRoutes.onboardingSubjects,
-        pageBuilder: (context, state) => _appPage(state, const SubjectSelectionView()),
+        path: AppRoutes.teacherOnboardingPending,
+        pageBuilder: (context, state) =>
+            _appPage(state, const TeacherPendingApprovalView()),
+      ),
+
+      // Student onboarding (outside shell)
+      GoRoute(
+        path: AppRoutes.studentOnboardingCampus,
+        pageBuilder: (context, state) =>
+            _appPage(state, const CampusSelectView()),
       ),
       GoRoute(
-        path: AppRoutes.home,
-        pageBuilder: (context, state) => _appPage(state, const HomeView()),
+        path: AppRoutes.studentOnboardingBoardClass,
+        pageBuilder: (context, state) =>
+            _appPage(state, const BoardClassSelectView()),
       ),
       GoRoute(
-        path: AppRoutes.diagnosticSelfAssessment,
-        pageBuilder: (context, state) => _appPage(state, const SelfAssessmentView()),
+        path: AppRoutes.studentOnboardingSubjects,
+        pageBuilder: (context, state) =>
+            _appPage(state, const SubjectTeacherSelectView()),
+      ),
+
+      // Student shell (§10.2 tab set)
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            AppScaffoldWithBottomNav(
+              navigationShell: navigationShell,
+              destinations: _studentDestinations,
+            ),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.studentHome,
+                pageBuilder: (context, state) =>
+                    _appPage(state, const StudentHomeView()),
+                routes: [
+                  GoRoute(
+                    path: 'subject/:subjectId/chapters',
+                    pageBuilder: (context, state) => _appPage(
+                      state,
+                      ChapterListView(
+                        subjectId: state.pathParameters['subjectId']!,
+                      ),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'subject/:subjectId/chapter/:chapterId/tests',
+                    pageBuilder: (context, state) => _appPage(
+                      state,
+                      TestListView(
+                        subjectId: state.pathParameters['subjectId']!,
+                        chapterId: state.pathParameters['chapterId']!,
+                      ),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'live-tests',
+                    pageBuilder: (context, state) =>
+                        _appPage(state, const LiveTestsView()),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.studentCart,
+                pageBuilder: (context, state) =>
+                    _appPage(state, const StudentCartView()),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.studentProgress,
+                pageBuilder: (context, state) =>
+                    _appPage(state, const StudentProgressView()),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.studentNotifications,
+                pageBuilder: (context, state) =>
+                    _appPage(state, const NotificationsView()),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.studentProfile,
+                pageBuilder: (context, state) =>
+                    _appPage(state, const StudentProfileView()),
+              ),
+            ],
+          ),
+        ],
+      ),
+
+      // Teacher shell (§10.2 tab set)
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            AppScaffoldWithBottomNav(
+              navigationShell: navigationShell,
+              destinations: _teacherDestinations,
+            ),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.teacherOverview,
+                pageBuilder: (context, state) =>
+                    _appPage(state, const TeacherOverviewView()),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.teacherStudents,
+                pageBuilder: (context, state) =>
+                    _appPage(state, const TeacherStudentsView()),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.teacherEarnings,
+                pageBuilder: (context, state) =>
+                    _appPage(state, const TeacherEarningsView()),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.teacherNotifications,
+                pageBuilder: (context, state) =>
+                    _appPage(state, const NotificationsView()),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.teacherProfile,
+                pageBuilder: (context, state) =>
+                    _appPage(state, const TeacherProfileView()),
+              ),
+            ],
+          ),
+        ],
+      ),
+
+      // Outside-shell, pushed on top (bottom nav disappears mid-task)
+      GoRoute(
+        path: AppRoutes.testTaking,
+        pageBuilder: (context, state) => _appPage(
+          state,
+          TestTakingView(testId: state.pathParameters['testId']!),
+        ),
       ),
       GoRoute(
-        path: AppRoutes.diagnosticConsent,
-        pageBuilder: (context, state) => _appPage(state, const ConsentView()),
+        path: AppRoutes.cartCheckout,
+        pageBuilder: (context, state) =>
+            _appPage(state, const CheckoutView()),
       ),
       GoRoute(
-        path: AppRoutes.diagnosticTest,
-        pageBuilder: (context, state) => _appPage(state, const TestView()),
-      ),
-      GoRoute(
-        path: AppRoutes.diagnosticResults,
-        pageBuilder: (context, state) => _appPage(state, const ResultsView()),
+        path: AppRoutes.teacherStudentProgressDetail,
+        pageBuilder: (context, state) => _appPage(
+          state,
+          StudentProgressDetailView(
+            studentId: state.pathParameters['studentId']!,
+          ),
+        ),
       ),
     ],
   );

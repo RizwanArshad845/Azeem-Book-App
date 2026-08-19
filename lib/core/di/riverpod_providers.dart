@@ -1,34 +1,38 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/diagnostic/usecases/build_test_session_usecase.dart';
-import '../../domain/diagnostic/usecases/calculate_results_usecase.dart';
-import '../../domain/diagnostic/usecases/grade_short_answer_usecase.dart';
-import '../../domain/onboarding/repositories/city_repository.dart';
-import '../../domain/onboarding/repositories/college_repository.dart';
-import '../../domain/onboarding/repositories/subject_repository.dart';
-import '../../domain/question_bank/repositories/question_bank_repository.dart';
+import '../../domain/campus_directory/repositories/campus_repository.dart';
+import '../../domain/campus_directory/usecases/get_campuses_usecase.dart';
+import '../../domain/catalog/repositories/catalog_repository.dart';
+import '../../domain/catalog/usecases/get_board_classes_usecase.dart';
+import '../../domain/catalog/usecases/get_chapters_usecase.dart';
+import '../../domain/catalog/usecases/get_questions_usecase.dart';
+import '../../domain/catalog/usecases/get_subjects_usecase.dart';
+import '../../domain/catalog/usecases/get_tests_usecase.dart';
 import '../services/logger.dart';
 import 'injection.dart';
 
 final loggerProvider = Provider<Logger>((ref) => sl<Logger>());
 
-final questionBankRepositoryProvider =
-    Provider<QuestionBankRepository>((ref) => sl<QuestionBankRepository>());
+// catalog
+final catalogRepositoryProvider =
+    Provider<CatalogRepository>((ref) => sl<CatalogRepository>());
+final getBoardClassesUseCaseProvider =
+    Provider<GetBoardClassesUseCase>((ref) => sl<GetBoardClassesUseCase>());
+final getSubjectsUseCaseProvider =
+    Provider<GetSubjectsUseCase>((ref) => sl<GetSubjectsUseCase>());
+final getChaptersUseCaseProvider =
+    Provider<GetChaptersUseCase>((ref) => sl<GetChaptersUseCase>());
+final getTestsUseCaseProvider =
+    Provider<GetTestsUseCase>((ref) => sl<GetTestsUseCase>());
+final getQuestionsUseCaseProvider =
+    Provider<GetQuestionsUseCase>((ref) => sl<GetQuestionsUseCase>());
 
-final collegeRepositoryProvider =
-    Provider<CollegeRepository>((ref) => sl<CollegeRepository>());
+// campus-directory
+final campusRepositoryProvider =
+    Provider<CampusRepository>((ref) => sl<CampusRepository>());
+final getCampusesUseCaseProvider =
+    Provider<GetCampusesUseCase>((ref) => sl<GetCampusesUseCase>());
 
-final cityRepositoryProvider =
-    Provider<CityRepository>((ref) => sl<CityRepository>());
-
-final subjectRepositoryProvider =
-    Provider<SubjectRepository>((ref) => sl<SubjectRepository>());
-
-final buildTestSessionUseCaseProvider =
-    Provider<BuildTestSessionUseCase>((ref) => sl<BuildTestSessionUseCase>());
-
-final gradeShortAnswerUseCaseProvider = Provider<GradeShortAnswerUseCase>(
-    (ref) => sl<GradeShortAnswerUseCase>());
-
-final calculateResultsUseCaseProvider = Provider<CalculateResultsUseCase>(
-    (ref) => sl<CalculateResultsUseCase>());
+// auth: authViewModelProvider / currentUserProvider live in
+// presentation/auth/viewmodel/auth_viewmodel.dart (self-contained, same
+// pattern as splashViewModelProvider).
