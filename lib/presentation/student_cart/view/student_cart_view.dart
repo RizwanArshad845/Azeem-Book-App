@@ -23,7 +23,6 @@ class StudentCartView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cartAsync = ref.watch(studentCartViewModelProvider);
-    final testsById = ref.watch(cartTestsByIdProvider).value ?? const {};
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.cartTitle)),
@@ -51,13 +50,11 @@ class StudentCartView extends ConsumerWidget {
                           SizedBox(height: context.dimens.sm),
                       itemBuilder: (context, index) {
                         final item = items[index];
-                        final test = testsById[item.testId];
                         return CartItemCard(
                           item: item,
-                          title: test?.title ?? item.testId,
                           onRemove: () => ref
                               .read(studentCartViewModelProvider.notifier)
-                              .removeTest(item.testId),
+                              .removeSubject(item.subjectId),
                         );
                       },
                     ),

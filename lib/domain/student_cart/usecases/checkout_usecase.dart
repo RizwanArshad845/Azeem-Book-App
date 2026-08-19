@@ -1,4 +1,3 @@
-import '../../catalog/entities/test.dart';
 import '../../common/result.dart';
 import '../../earnings/usecases/record_earnings_usecase.dart';
 import '../../student_onboarding/entities/subject_enrollment.dart';
@@ -15,17 +14,20 @@ import '../repositories/cart_repository.dart';
 /// subject/enrollment", §9.2 `EarningsRecord`). This lives here rather than
 /// inside `CartRepository`/`earnings` because it is a cross-feature side
 /// effect of checkout succeeding, not part of the cart's own persistence —
-/// matching how `CartRepository.addItem` already takes `Test`/
-/// `SubjectEnrollment` entities from its caller instead of reaching into
-/// other repositories itself.
+/// matching how `CartRepository.addSubjectBundle` already takes `Subject`/
+/// `Test`/`SubjectEnrollment` entities from its caller instead of reaching
+/// into other repositories itself.
 ///
-/// [cartItems]/[testsById]/[subjectEnrollments] must reflect the cart
-/// *before* checkout clears it — the caller (viewmodel) reads its own
-/// already-resolved `Cart` state and the `Test`/`SubjectEnrollment` data it
-/// already has (mirrors `StudentCartViewModel.addTest`'s use of
+/// [cartItems]/[subjectEnrollments] must reflect the cart *before* checkout
+/// clears it — the caller (viewmodel) reads its own already-resolved `Cart`
+/// state and the `SubjectEnrollment` data it already has (mirrors
+/// `StudentCartViewModel.addSubjectBundle`'s use of
 /// `studentOnboardingViewModelProvider`) and passes them straight through,
 /// so this use case never needs a `CatalogRepository`/`StudentRepository`
-/// dependency of its own.
+/// dependency of its own. `CartItem.subjectId` is now direct (bundle-only
+/// purchasing, see `CartItem` doc comment), so unlike before, no
+/// `Test`/`testsById` lookup is needed to resolve a cart item to its
+/// subject.
 class CheckoutUseCase {
   const CheckoutUseCase(this._repository, this._recordEarnings);
 
@@ -43,7 +45,6 @@ class CheckoutUseCase {
   Future<Result<Payment>> call(
     String studentId, {
     required List<CartItem> cartItems,
-    required Map<String, Test> testsById,
     required List<SubjectEnrollment> subjectEnrollments,
   }) async {
     final result = await _repository.checkout(studentId);
@@ -52,7 +53,6 @@ class CheckoutUseCase {
       await _attributeEarnings(
         studentId: studentId,
         cartItems: cartItems,
-        testsById: testsById,
         subjectEnrollments: subjectEnrollments,
       );
     }
@@ -69,16 +69,12 @@ class CheckoutUseCase {
   Future<void> _attributeEarnings({
     required String studentId,
     required List<CartItem> cartItems,
-    required Map<String, Test> testsById,
     required List<SubjectEnrollment> subjectEnrollments,
   }) async {
     for (final item in cartItems) {
-      final test = testsById[item.testId];
-      if (test == null) continue;
-
       String? teacherId;
       for (final enrollment in subjectEnrollments) {
-        if (enrollment.subjectId == test.subjectId &&
+        if (enrollment.subjectId == item.subjectId &&
             enrollment.teacherId != null) {
           teacherId = enrollment.teacherId;
           break;

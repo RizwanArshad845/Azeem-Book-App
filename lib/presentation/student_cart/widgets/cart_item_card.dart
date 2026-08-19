@@ -5,48 +5,55 @@ import '../../../core/widgets/app_list_row.dart';
 import '../../../domain/student_cart/entities/cart_item.dart';
 
 class CartItemCard extends StatelessWidget {
-  const CartItemCard({
-    super.key,
-    required this.item,
-    required this.title,
-    required this.onRemove,
-  });
+  const CartItemCard({super.key, required this.item, required this.onRemove});
 
   final CartItem item;
-  final String title;
   final VoidCallback onRemove;
 
   @override
   Widget build(BuildContext context) {
     final discountedPrice = item.discountedPrice;
     return AppListRow(
-      title: title,
+      title: item.subjectName,
       titleMaxLines: 2,
-      subtitle: discountedPrice != null
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Rs. ${item.price.toStringAsFixed(0)}',
-                  style: context.textStyles.bodySmall?.copyWith(
-                    color: context.colors.textSecondary,
-                    decoration: TextDecoration.lineThrough,
-                  ),
-                ),
-                SizedBox(width: context.dimens.sm),
-                Text(
-                  'Rs. ${discountedPrice.toStringAsFixed(0)}',
-                  style: context.textStyles.bodyMedium?.copyWith(
-                    color: context.colors.success,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            )
-          : Text(
-              'Rs. ${item.price.toStringAsFixed(0)}',
-              style: context.textStyles.bodyMedium,
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            context.l10n.cartItemTestCount(item.testCount),
+            style: context.textStyles.bodySmall?.copyWith(
+              color: context.colors.textSecondary,
             ),
+          ),
+          SizedBox(height: context.dimens.xs),
+          discountedPrice != null
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Rs. ${item.price.toStringAsFixed(0)}',
+                      style: context.textStyles.bodySmall?.copyWith(
+                        color: context.colors.textSecondary,
+                        decoration: TextDecoration.lineThrough,
+                      ),
+                    ),
+                    SizedBox(width: context.dimens.sm),
+                    Text(
+                      'Rs. ${discountedPrice.toStringAsFixed(0)}',
+                      style: context.textStyles.bodyMedium?.copyWith(
+                        color: context.colors.success,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                )
+              : Text(
+                  'Rs. ${item.price.toStringAsFixed(0)}',
+                  style: context.textStyles.bodyMedium,
+                ),
+        ],
+      ),
       trailing: IconButton(
         icon: Icon(Icons.close, color: context.colors.textSecondary),
         tooltip: context.l10n.cartRemoveTooltip,

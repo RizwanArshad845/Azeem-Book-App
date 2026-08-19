@@ -7,6 +7,7 @@ class ApiEndpoints {
   static const String authOtpRequest = '/auth/otp/request';
   static const String authOtpVerify = '/auth/otp/verify';
 
+  static const String catalogClassLevels = '/catalog/class-levels';
   static const String catalogBoardClasses = '/catalog/board-classes';
   static const String catalogSubjects = '/catalog/subjects';
   static const String catalogChapters = '/catalog/chapters';

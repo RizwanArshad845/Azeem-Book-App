@@ -216,8 +216,11 @@ Extends User with a required `campusId` (their College/Campus, declared directly
 **Salesman**
 A minimal entity: `name`, a system-generated `uniqueCode` (sole login credential, one-time/no-logout), and the list of teachers they've onboarded.
 
-**BoardClass** (e.g., FSc, Medical, 9th, Matric)
-Admin-managed catalog entity. Only `enabled` board/classes are selectable by students/teachers; others render as "coming soon."
+**ClassLevel** (e.g., 9th, 10th, 11th, 12th, Matric)
+Admin-managed catalog entity for the coarse grade axis — the thing a student picks *first*, before any group. Exists as a separate entity from `BoardClass` because a class level may have zero, one, or several `BoardClass` leaves depending on whether it splits into groups (9th/10th don't split — one leaf each; 11th/12th split into Pre-Medical/Pre-Engineering — two leaves each). Only `enabled` class levels are selectable; others render as "coming soon."
+
+**BoardClass** (e.g., 9th, Pre-Medical, Pre-Engineering, Matric)
+Admin-managed catalog entity — a leaf group nested under a `ClassLevel` via `classLevelId`. For class levels that don't split (9th, 10th), a single `BoardClass` row stands in for the class level itself (e.g. name "9th" duplicating its parent `ClassLevel.name`); for class levels that do split (11th, 12th), each `BoardClass` row is one group. This is what `Student.boardClassId`, `Subject.boardClassId`, and `Test.boardClassId` actually point at — a more granular leaf than "the grade" alone, e.g. "11th Pre-Medical" rather than just "11th". Only `enabled` board/classes are selectable by students/teachers; others render as "coming soon."
 
 **Subject**
 Catalog entity (Physics, Chemistry, Computer Science, etc.), always scoped to a `boardClassId`. This is what drives the subject-selection screen: once a Student's `boardClassId` is set, only subjects belonging to that board/class are offered — a subject can't exist unscoped or leak across board/classes it doesn't belong to.
@@ -247,7 +250,7 @@ Triggered when a student completes a paid-pack purchase; attributes a commission
 Generic entity: `recipientId`, `recipientRole`, `type` (e.g., `studentRegistered`, `profileUpdatePending`, `teacherAwaitingApproval`, `newTestUploaded`, `discountAnnouncement`), `message`, `isRead`, `createdAt`.
 
 **CartItem / Cart**
-Belongs to a Student; holds selected purchasable `testIds` (extensible later to video lectures, guess papers) and a computed total reflecting the teacher-selection discount.
+Belongs to a Student; holds selected purchasable subject bundles (extensible later to video lectures, guess papers) and a computed total reflecting the teacher-selection discount. Purchasing is bundle-only, per a deliberate user decision: a `CartItem`/purchase is scoped to a whole `subjectId`, not an individual `testId` — a student who buys a subject gets every test in it, including tests Admin adds to that subject *after* the purchase. This is why the purchase gate (`getPurchasedSubjectIds`) tracks `subjectId`s rather than a per-test snapshot.
 
 **Payment**
 Belongs to a Student; records a redirect to an external payment gateway, `status` (`pending|success|failed`), and `gatewayReference`.
@@ -318,11 +321,20 @@ components:
         teacherIds: { type: array, items: string, foreignKey: Teacher.id, required: false }
         createdAt: { type: DateTime, required: true }
 
+    ClassLevel:
+      type: object
+      description: Coarse grade axis (9th/10th/11th/12th); BoardClass leaves nest under it via classLevelId.
+      properties:
+        id: { type: string, required: true, unique: true }
+        name: { type: string, required: true, example: "9th, 10th, 11th, 12th" }
+        isEnabled: { type: boolean, required: true, default: false, note: "false renders as 'coming soon'" }
+
     BoardClass:
       type: object
       properties:
         id: { type: string, required: true, unique: true }
-        name: { type: string, required: true, example: "FSc, Medical, 9th" }
+        name: { type: string, required: true, example: "Pre-Medical, Pre-Engineering, 9th" }
+        classLevelId: { type: string, required: true, foreignKey: ClassLevel.id }
         isEnabled: { type: boolean, required: true, default: false, note: "false renders as 'coming soon'" }
 
     Subject:
@@ -439,8 +451,11 @@ components:
 
     CartItem:
       type: object
+      description: "Bundle-only purchasing (user decision): scoped to a whole subject, not an individual test — see CartItem/Cart prose above."
       properties:
-        testId: { type: string, required: true, foreignKey: Test.id }
+        subjectId: { type: string, required: true, foreignKey: Subject.id }
+        subjectName: { type: string, required: true, note: "denormalized for cart display, same rationale as price living here not on Test" }
+        testCount: { type: int, required: true, note: "tests included at add-time, for display (e.g. '4 tests')" }
         price: { type: double, required: true }
         discountedPrice: { type: double, required: false }
 

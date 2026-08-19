@@ -232,5 +232,25 @@
   "liveTestsEmpty": "فی الحال کوئی لائیو ٹیسٹ مقرر نہیں ہے۔ بعد میں دوبارہ چیک کریں۔",
   "liveTestDateTba": "لائیو کی تاریخ جلد بتائی جائے گی",
   "liveTestEnter": "داخل ہوں",
-  "liveTestDateFormatted": "لائیو تاریخ: {date}"
+  "liveTestDateFormatted": "لائیو تاریخ: {date}",
+
+  "cartItemTestCount": "{count} ٹیسٹ",
+  "chapterListAddToCartButton": "کارٹ میں شامل کریں — Rs. {price}",
+  "chapterListPurchasedBadge": "خریدا جا چکا ہے",
+  "chapterListAddedToCart": "کارٹ میں شامل ہو گیا",
+  "subjectCardOwnedBadge": "خریدا گیا",
+
+  "studentBasicInfoTitle": "بنیادی معلومات",
+  "studentBasicInfoHeadline": "چلیں آپ کو رجسٹر کرتے ہیں",
+  "studentBasicInfoSubtitle": "اپنا نام اور وہ کیمپس بتائیں جس میں آپ داخل ہیں تاکہ ہم آپ کی تیاری کو بہتر بنا سکیں۔",
+  "studentAcademicInfoTitle": "تعلیمی معلومات",
+  "studentAcademicInfoHeadline": "آپ کی کلاس اور مضامین",
+  "studentAcademicInfoSubtitle": "اپنی کلاس منتخب کریں، پھر وہ مضامین چنیں جن کی آپ تیاری کرنا چاہتے ہیں۔",
+  "studentAcademicInfoClassLabel": "کلاس",
+  "studentAcademicInfoGroupLabel": "گروپ",
+
+  "teacherSignupHeadline": "بطور ٹیچر رجسٹر ہوں",
+  "teacherSignupAboutYouSection": "آپ کے بارے میں",
+  "teacherSignupWhatYouTeachSection": "آپ کیا پڑھاتے ہیں",
+  "teacherSignupOptionalSection": "اختیاری"
 }

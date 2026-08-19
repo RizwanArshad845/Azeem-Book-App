@@ -51,6 +51,23 @@ final enrolledSubjectsProvider = FutureProvider<List<Subject>>((ref) async {
   );
 });
 
+/// Looks up a single enrolled [Subject] by id from [enrolledSubjectsProvider]
+/// — used by `ChapterListView`'s bundle-purchase header, which only knows
+/// `subjectId` (the router only passes that path param, see
+/// `app_router.dart`'s `subject/:subjectId/chapters` route) but needs the
+/// full `Subject` entity to call `StudentCartViewModel.addSubjectBundle`.
+/// `null` (not an error) if the id isn't among the student's enrolled
+/// subjects.
+final subjectByIdProvider = FutureProvider.family<Subject?, String>(
+  (ref, subjectId) async {
+    final subjects = await ref.watch(enrolledSubjectsProvider.future);
+    for (final subject in subjects) {
+      if (subject.id == subjectId) return subject;
+    }
+    return null;
+  },
+);
+
 /// Chapters for a tapped subject, ordered by `Chapter.order` (§9.1 —
 /// "first chapter free" and the chapter drill-down both depend on order).
 final chaptersForSubjectProvider = FutureProvider.family<List<Chapter>, String>(

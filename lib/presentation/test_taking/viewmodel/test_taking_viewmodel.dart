@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/injection.dart';
 import '../../../core/di/riverpod_providers.dart';
 import '../../../domain/common/failure.dart';
-import '../../../domain/student_cart/usecases/get_purchased_test_ids_usecase.dart';
+import '../../../domain/student_cart/usecases/get_purchased_subject_ids_usecase.dart';
 import '../../../domain/test_taking/entities/submission_answer.dart';
 import '../../../domain/test_taking/entities/test_attempt.dart';
 import '../../../domain/test_taking/usecases/submit_test_attempt_usecase.dart';
@@ -65,14 +65,15 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
     }
 
     // Purchase gate (must run before questions are loaded): a student may
-    // attempt a test only if it's a free sample or its id is in their
-    // purchased-test-ids set.
+    // attempt a test only if it's a free sample or its subject is in their
+    // purchased-subject-ids set (bundle-only purchasing — see `CartItem`
+    // doc comment).
     if (!test.isFreeSample) {
-      final purchasedResult = await sl<GetPurchasedTestIdsUseCase>()(
+      final purchasedResult = await sl<GetPurchasedSubjectIdsUseCase>()(
         session.userId,
       );
       final isPurchased = purchasedResult.when(
-        success: (ids) => ids.contains(test.id),
+        success: (ids) => ids.contains(test.subjectId),
         failure: (_) => false,
       );
       if (!isPurchased) {

@@ -108,117 +108,151 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
       teacherOnboardingViewModelProvider.select((s) => s.isLoading),
     );
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: context.dimens.contentMaxWidth),
-        child: ListView(
-          padding: EdgeInsets.all(context.dimens.lg),
-          children: [
-            Text(
-              context.l10n.teacherSignupSubtitle,
-              style: context.textStyles.bodyMedium?.copyWith(
-                color: context.colors.textSecondary,
-              ),
-            ),
-            SizedBox(height: context.dimens.lg),
-            AppTextField(
-              label: context.l10n.nameLabel,
-              controller: _nameController,
-              textCapitalization: TextCapitalization.words,
-              errorText: _nameError,
-            ),
-            SizedBox(height: context.dimens.lg),
-            AsyncValueWidget<List<Campus>>(
-              value: campusesAsync,
-              onRetry: () => ref.invalidate(teacherSignupCampusesProvider),
-              data: (campuses) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppDropdown<Campus>(
-                    label: context.l10n.campusLabel,
-                    items: campuses,
-                    selectedItem: _campus,
-                    itemAsString: (c) => '${c.name} — ${c.city}',
-                    onChanged: (campus) =>
-                        setState(() => _campus = campus),
-                  ),
-                  if (_campusError != null) ...[
-                    SizedBox(height: context.dimens.xs),
-                    Text(
-                      _campusError!,
-                      style: context.textStyles.bodySmall?.copyWith(
-                        color: context.colors.error,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            SizedBox(height: context.dimens.lg),
-            AsyncValueWidget<List<BoardClass>>(
-              value: boardClassesAsync,
-              onRetry: () => ref.invalidate(teacherSignupBoardClassesProvider),
-              data: (boardClasses) => MultiSelectChipField<BoardClass>(
-                label: context.l10n.teacherSignupClassesLabel,
-                options: boardClasses,
-                optionLabel: (b) => b.name,
-                optionId: (b) => b.id,
-                selectedIds: _selectedClassIds,
-                onChanged: _onClassesChanged,
-                emptyMessage: context.l10n.teacherSignupClassesEmpty,
-              ),
-            ),
-            SizedBox(height: context.dimens.lg),
-            AsyncValueWidget<List<Subject>>(
-              value: subjectsAsync,
-              onRetry: () => ref.invalidate(
-                teacherSignupSubjectsForClassesProvider(_classIdsKey),
-              ),
-              data: (subjects) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MultiSelectChipField<Subject>(
-                    label: context.l10n.teacherSignupSubjectsLabel,
-                    options: subjects,
-                    optionLabel: (s) => s.name,
-                    optionId: (s) => s.id,
-                    selectedIds: _selectedSubjectIds,
-                    onChanged: (next) =>
-                        setState(() => _selectedSubjectIds
-                          ..clear()
-                          ..addAll(next)),
-                    emptyMessage: _selectedClassIds.isEmpty
-                        ? context.l10n.teacherSignupSelectClassFirst
-                        : context.l10n.teacherSignupNoSubjectsFound,
-                  ),
-                  if (_subjectsError != null) ...[
-                    SizedBox(height: context.dimens.xs),
-                    Text(
-                      _subjectsError!,
-                      style: context.textStyles.bodySmall?.copyWith(
-                        color: context.colors.error,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            SizedBox(height: context.dimens.lg),
-            AppCard(
-              child: AppTextField(
-                label: context.l10n.teacherSignupApproxStudentsLabel,
-                controller: _studentCountController,
-                keyboardType: TextInputType.number,
-              ),
-            ),
-            SizedBox(height: context.dimens.xl),
-            AppPrimaryButton(
-              label: context.l10n.teacherSignupSubmitButton,
-              loading: isSubmitting,
-              onPressed: isSubmitting ? null : _handleSubmit,
-            ),
-          ],
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          context.l10n.teacherSignupSubtitle,
+          style: context.textStyles.bodyMedium?.copyWith(
+            color: context.colors.textSecondary,
+          ),
         ),
+        SizedBox(height: context.dimens.lg),
+        _SectionLabel(context.l10n.teacherSignupAboutYouSection),
+        SizedBox(height: context.dimens.sm),
+        AppCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppTextField(
+                label: context.l10n.nameLabel,
+                controller: _nameController,
+                textCapitalization: TextCapitalization.words,
+                errorText: _nameError,
+              ),
+              SizedBox(height: context.dimens.lg),
+              AsyncValueWidget<List<Campus>>(
+                value: campusesAsync,
+                onRetry: () => ref.invalidate(teacherSignupCampusesProvider),
+                data: (campuses) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppDropdown<Campus>(
+                      label: context.l10n.campusLabel,
+                      items: campuses,
+                      selectedItem: _campus,
+                      itemAsString: (c) => '${c.name} — ${c.city}',
+                      onChanged: (campus) =>
+                          setState(() => _campus = campus),
+                    ),
+                    if (_campusError != null) ...[
+                      SizedBox(height: context.dimens.xs),
+                      Text(
+                        _campusError!,
+                        style: context.textStyles.bodySmall?.copyWith(
+                          color: context.colors.error,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: context.dimens.lg),
+        _SectionLabel(context.l10n.teacherSignupWhatYouTeachSection),
+        SizedBox(height: context.dimens.sm),
+        AppCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AsyncValueWidget<List<BoardClass>>(
+                value: boardClassesAsync,
+                onRetry: () =>
+                    ref.invalidate(teacherSignupBoardClassesProvider),
+                data: (boardClasses) => MultiSelectChipField<BoardClass>(
+                  label: context.l10n.teacherSignupClassesLabel,
+                  options: boardClasses,
+                  optionLabel: (b) => b.name,
+                  optionId: (b) => b.id,
+                  selectedIds: _selectedClassIds,
+                  onChanged: _onClassesChanged,
+                  emptyMessage: context.l10n.teacherSignupClassesEmpty,
+                ),
+              ),
+              SizedBox(height: context.dimens.lg),
+              AsyncValueWidget<List<Subject>>(
+                value: subjectsAsync,
+                onRetry: () => ref.invalidate(
+                  teacherSignupSubjectsForClassesProvider(_classIdsKey),
+                ),
+                data: (subjects) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MultiSelectChipField<Subject>(
+                      label: context.l10n.teacherSignupSubjectsLabel,
+                      options: subjects,
+                      optionLabel: (s) => s.name,
+                      optionId: (s) => s.id,
+                      selectedIds: _selectedSubjectIds,
+                      onChanged: (next) =>
+                          setState(() => _selectedSubjectIds
+                            ..clear()
+                            ..addAll(next)),
+                      emptyMessage: _selectedClassIds.isEmpty
+                          ? context.l10n.teacherSignupSelectClassFirst
+                          : context.l10n.teacherSignupNoSubjectsFound,
+                    ),
+                    if (_subjectsError != null) ...[
+                      SizedBox(height: context.dimens.xs),
+                      Text(
+                        _subjectsError!,
+                        style: context.textStyles.bodySmall?.copyWith(
+                          color: context.colors.error,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: context.dimens.lg),
+        _SectionLabel(context.l10n.teacherSignupOptionalSection),
+        SizedBox(height: context.dimens.sm),
+        AppCard(
+          child: AppTextField(
+            label: context.l10n.teacherSignupApproxStudentsLabel,
+            controller: _studentCountController,
+            keyboardType: TextInputType.number,
+          ),
+        ),
+        SizedBox(height: context.dimens.xl),
+        AppPrimaryButton(
+          label: context.l10n.teacherSignupSubmitButton,
+          loading: isSubmitting,
+          onPressed: isSubmitting ? null : _handleSubmit,
+        ),
+      ],
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label,
+      style: context.textStyles.labelSmall?.copyWith(
+        color: context.colors.textSecondary,
+        fontWeight: FontWeight.w600,
       ),
     );
   }

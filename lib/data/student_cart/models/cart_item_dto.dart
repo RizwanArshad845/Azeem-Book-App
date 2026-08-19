@@ -10,7 +10,9 @@ abstract class CartItemDto with _$CartItemDto {
   const CartItemDto._();
 
   const factory CartItemDto({
-    required String testId,
+    required String subjectId,
+    required String subjectName,
+    required int testCount,
     required double price,
     double? discountedPrice,
   }) = _CartItemDto;
@@ -18,11 +20,18 @@ abstract class CartItemDto with _$CartItemDto {
   factory CartItemDto.fromJson(Map<String, dynamic> json) =>
       _$CartItemDtoFromJson(json);
 
-  CartItem toDomain() =>
-      CartItem(testId: testId, price: price, discountedPrice: discountedPrice);
+  CartItem toDomain() => CartItem(
+    subjectId: subjectId,
+    subjectName: subjectName,
+    testCount: testCount,
+    price: price,
+    discountedPrice: discountedPrice,
+  );
 
   factory CartItemDto.fromDomain(CartItem entity) => CartItemDto(
-    testId: entity.testId,
+    subjectId: entity.subjectId,
+    subjectName: entity.subjectName,
+    testCount: entity.testCount,
     price: entity.price,
     discountedPrice: entity.discountedPrice,
   );

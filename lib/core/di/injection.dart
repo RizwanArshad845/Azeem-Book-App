@@ -19,6 +19,7 @@ import '../../domain/campus_directory/usecases/get_campuses_usecase.dart';
 import '../../domain/catalog/repositories/catalog_repository.dart';
 import '../../domain/catalog/usecases/get_board_classes_usecase.dart';
 import '../../domain/catalog/usecases/get_chapters_usecase.dart';
+import '../../domain/catalog/usecases/get_class_levels_usecase.dart';
 import '../../domain/catalog/usecases/get_questions_usecase.dart';
 import '../../domain/catalog/usecases/get_subjects_usecase.dart';
 import '../../domain/catalog/usecases/get_tests_usecase.dart';
@@ -64,10 +65,10 @@ import '../../data/student_cart/datasources/local/cart_dummy_datasource.dart';
 import '../../data/student_cart/datasources/remote/cart_remote_datasource.dart';
 import '../../data/student_cart/repositories/cart_repository_impl.dart';
 import '../../domain/student_cart/repositories/cart_repository.dart';
-import '../../domain/student_cart/usecases/add_to_cart_usecase.dart';
+import '../../domain/student_cart/usecases/add_subject_bundle_usecase.dart';
 import '../../domain/student_cart/usecases/checkout_usecase.dart';
 import '../../domain/student_cart/usecases/get_cart_usecase.dart';
-import '../../domain/student_cart/usecases/get_purchased_test_ids_usecase.dart';
+import '../../domain/student_cart/usecases/get_purchased_subject_ids_usecase.dart';
 import '../../domain/student_cart/usecases/remove_from_cart_usecase.dart';
 import '../../data/test_taking/datasources/local/test_attempt_dummy_datasource.dart';
 import '../../data/test_taking/datasources/remote/test_attempt_remote_datasource.dart';
@@ -105,6 +106,7 @@ void setupLocator() {
   sl.registerLazySingleton<CatalogRepository>(
     () => CatalogRepositoryImpl(remote: sl(), dummy: sl()),
   );
+  sl.registerFactory(() => GetClassLevelsUseCase(sl()));
   sl.registerFactory(() => GetBoardClassesUseCase(sl()));
   sl.registerFactory(() => GetSubjectsUseCase(sl()));
   sl.registerFactory(() => GetChaptersUseCase(sl()));
@@ -237,10 +239,10 @@ void setupLocator() {
     ),
   );
   sl.registerFactory(() => GetCartUseCase(sl()));
-  sl.registerFactory(() => AddToCartUseCase(sl()));
+  sl.registerFactory(() => AddSubjectBundleUseCase(sl()));
   sl.registerFactory(() => RemoveFromCartUseCase(sl()));
   sl.registerFactory(() => CheckoutUseCase(sl(), sl()));
-  sl.registerFactory(() => GetPurchasedTestIdsUseCase(sl()));
+  sl.registerFactory(() => GetPurchasedSubjectIdsUseCase(sl()));
 
   // test-taking
   sl.registerLazySingleton<TestAttemptRemoteDataSource>(

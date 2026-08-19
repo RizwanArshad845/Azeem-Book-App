@@ -13,12 +13,10 @@ class AppRoutes {
   static const String teacherOnboardingPending = '/teacher-onboarding/pending';
 
   // Student onboarding (outside shell)
-  static const String studentOnboardingName = '/student-onboarding/name';
-  static const String studentOnboardingCampus = '/student-onboarding/campus';
-  static const String studentOnboardingBoardClass =
-      '/student-onboarding/board-class';
-  static const String studentOnboardingSubjects =
-      '/student-onboarding/subjects';
+  static const String studentOnboardingBasicInfo =
+      '/student-onboarding/basic-info';
+  static const String studentOnboardingAcademicInfo =
+      '/student-onboarding/academic-info';
 
   // Student shell tabs
   static const String studentHome = '/student/home';

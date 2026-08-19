@@ -1,23 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'board_class_dto.dart';
+part of 'class_level_dto.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_BoardClassDto _$BoardClassDtoFromJson(Map<String, dynamic> json) =>
-    _BoardClassDto(
+_ClassLevelDto _$ClassLevelDtoFromJson(Map<String, dynamic> json) =>
+    _ClassLevelDto(
       id: json['id'] as String,
       name: json['name'] as String,
-      classLevelId: json['classLevelId'] as String,
       isEnabled: json['isEnabled'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$BoardClassDtoToJson(_BoardClassDto instance) =>
+Map<String, dynamic> _$ClassLevelDtoToJson(_ClassLevelDto instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'classLevelId': instance.classLevelId,
       'isEnabled': instance.isEnabled,
     };

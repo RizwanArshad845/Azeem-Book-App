@@ -9,26 +9,26 @@ import '../../models/payment_dto.dart';
 abstract class CartDummyDataSource {
   Future<Result<CartDto>> getCart(String studentId);
 
-  Future<Result<CartDto>> addItem(String studentId, CartItemDto item);
+  Future<Result<CartDto>> addSubjectBundle(String studentId, CartItemDto item);
 
-  Future<Result<CartDto>> removeItem(String studentId, String testId);
+  Future<Result<CartDto>> removeItem(String studentId, String subjectId);
 
   Future<Result<PaymentDto>> checkout(String studentId);
 
-  Future<Result<Set<String>>> getPurchasedTestIds(String studentId);
+  Future<Result<Set<String>>> getPurchasedSubjectIds(String studentId);
 }
 
-/// In-memory per-student cart + purchased-test-id tracking. `checkout`
+/// In-memory per-student cart + purchased-subject-id tracking. `checkout`
 /// always resolves `success` after a short simulated gateway delay (no real
 /// backend to fail against yet), clears the cart's items, and accumulates
-/// the checked-out `testId`s into that student's purchased set — this is
-/// what backs `GetPurchasedTestIdsUseCase` for the whole app session.
+/// the checked-out `subjectId`s into that student's purchased set — this is
+/// what backs `GetPurchasedSubjectIdsUseCase` for the whole app session.
 class CartDummyDataSourceImpl implements CartDummyDataSource {
   static const _latency = Duration(milliseconds: 400);
   static const _checkoutLatency = Duration(milliseconds: 900);
 
   final Map<String, CartDto> _cartsByStudentId = {};
-  final Map<String, Set<String>> _purchasedTestIdsByStudentId = {};
+  final Map<String, Set<String>> _purchasedSubjectIdsByStudentId = {};
 
   int _cartCounter = 0;
   int _paymentCounter = 0;
@@ -55,12 +55,15 @@ class CartDummyDataSourceImpl implements CartDummyDataSource {
   }
 
   @override
-  Future<Result<CartDto>> addItem(String studentId, CartItemDto item) async {
+  Future<Result<CartDto>> addSubjectBundle(
+    String studentId,
+    CartItemDto item,
+  ) async {
     await Future.delayed(_latency);
     final cart = _cartFor(studentId);
     final items = List<CartItemDto>.from(cart.items ?? const []);
 
-    if (items.any((existing) => existing.testId == item.testId)) {
+    if (items.any((existing) => existing.subjectId == item.subjectId)) {
       // Already in the cart — no-op per the repository contract.
       return Success(cart);
     }
@@ -72,11 +75,11 @@ class CartDummyDataSourceImpl implements CartDummyDataSource {
   }
 
   @override
-  Future<Result<CartDto>> removeItem(String studentId, String testId) async {
+  Future<Result<CartDto>> removeItem(String studentId, String subjectId) async {
     await Future.delayed(_latency);
     final cart = _cartFor(studentId);
     final items = (cart.items ?? const [])
-        .where((item) => item.testId != testId)
+        .where((item) => item.subjectId != subjectId)
         .toList();
     final updated = cart.copyWith(items: items, totalAmount: _total(items));
     _cartsByStudentId[studentId] = updated;
@@ -99,11 +102,11 @@ class CartDummyDataSourceImpl implements CartDummyDataSource {
       createdAt: DateTime.now(),
     );
 
-    final purchased = _purchasedTestIdsByStudentId.putIfAbsent(
+    final purchased = _purchasedSubjectIdsByStudentId.putIfAbsent(
       studentId,
       () => <String>{},
     );
-    purchased.addAll(items.map((item) => item.testId));
+    purchased.addAll(items.map((item) => item.subjectId));
 
     _cartsByStudentId[studentId] = cart.copyWith(items: const [], totalAmount: 0);
 
@@ -111,10 +114,12 @@ class CartDummyDataSourceImpl implements CartDummyDataSource {
   }
 
   @override
-  Future<Result<Set<String>>> getPurchasedTestIds(String studentId) async {
+  Future<Result<Set<String>>> getPurchasedSubjectIds(String studentId) async {
     await Future.delayed(_latency);
     return Success(
-      Set.unmodifiable(_purchasedTestIdsByStudentId[studentId] ?? const <String>{}),
+      Set.unmodifiable(
+        _purchasedSubjectIdsByStudentId[studentId] ?? const <String>{},
+      ),
     );
   }
 }

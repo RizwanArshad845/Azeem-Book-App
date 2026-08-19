@@ -20,13 +20,13 @@ import '../../models/payment_dto.dart';
 abstract class CartRemoteDataSource {
   Future<Result<CartDto>> getCart(String studentId);
 
-  Future<Result<CartDto>> addItem(String studentId, CartItemDto item);
+  Future<Result<CartDto>> addSubjectBundle(String studentId, CartItemDto item);
 
-  Future<Result<CartDto>> removeItem(String studentId, String testId);
+  Future<Result<CartDto>> removeItem(String studentId, String subjectId);
 
   Future<Result<PaymentDto>> checkout(String studentId);
 
-  Future<Result<Set<String>>> getPurchasedTestIds(String studentId);
+  Future<Result<Set<String>>> getPurchasedSubjectIds(String studentId);
 }
 
 class CartRemoteDataSourceImpl implements CartRemoteDataSource {
@@ -45,7 +45,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   }
 
   @override
-  Future<Result<CartDto>> addItem(String studentId, CartItemDto item) {
+  Future<Result<CartDto>> addSubjectBundle(String studentId, CartItemDto item) {
     return _guard(() async {
       final response = await _dio.post<Map<String, dynamic>>(
         ApiEndpoints.studentCart(studentId),
@@ -56,11 +56,11 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   }
 
   @override
-  Future<Result<CartDto>> removeItem(String studentId, String testId) {
+  Future<Result<CartDto>> removeItem(String studentId, String subjectId) {
     return _guard(() async {
       final response = await _dio.delete<Map<String, dynamic>>(
         ApiEndpoints.studentCart(studentId),
-        queryParameters: {'testId': testId},
+        queryParameters: {'subjectId': subjectId},
       );
       return CartDto.fromJson(response.data!);
     });
@@ -78,15 +78,16 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   }
 
   @override
-  Future<Result<Set<String>>> getPurchasedTestIds(String studentId) {
+  Future<Result<Set<String>>> getPurchasedSubjectIds(String studentId) {
     return _guard(() async {
       final response = await _dio.get<Map<String, dynamic>>(
         ApiEndpoints.paymentStatus,
         queryParameters: {'studentId': studentId},
       );
-      final ids = (response.data?['purchasedTestIds'] as List<dynamic>? ?? [])
-          .map((e) => e as String)
-          .toSet();
+      final ids =
+          (response.data?['purchasedSubjectIds'] as List<dynamic>? ?? [])
+              .map((e) => e as String)
+              .toSet();
       return ids;
     });
   }

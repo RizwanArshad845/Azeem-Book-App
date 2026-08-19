@@ -258,5 +258,31 @@
   "liveTestDateFormatted": "Live on {date}",
   "@liveTestDateFormatted": {
     "placeholders": { "date": { "type": "String" } }
-  }
+  },
+
+  "cartItemTestCount": "{count} tests",
+  "@cartItemTestCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "chapterListAddToCartButton": "Add to cart — Rs. {price}",
+  "@chapterListAddToCartButton": {
+    "placeholders": { "price": { "type": "String" } }
+  },
+  "chapterListPurchasedBadge": "Purchased",
+  "chapterListAddedToCart": "Added to cart",
+  "subjectCardOwnedBadge": "Owned",
+
+  "studentBasicInfoTitle": "Basic Info",
+  "studentBasicInfoHeadline": "Let's get you set up",
+  "studentBasicInfoSubtitle": "Tell us your name and the campus you're enrolled in so we can personalize your test prep.",
+  "studentAcademicInfoTitle": "Academic Info",
+  "studentAcademicInfoHeadline": "Your class & subjects",
+  "studentAcademicInfoSubtitle": "Choose your class, then pick the subjects you want to prepare for.",
+  "studentAcademicInfoClassLabel": "Class",
+  "studentAcademicInfoGroupLabel": "Group",
+
+  "teacherSignupHeadline": "Register as a teacher",
+  "teacherSignupAboutYouSection": "About you",
+  "teacherSignupWhatYouTeachSection": "What you teach",
+  "teacherSignupOptionalSection": "Optional"
 }

@@ -4,6 +4,7 @@ import '../../../core/di/injection.dart';
 import '../../../core/di/riverpod_providers.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
 import '../../../domain/catalog/entities/board_class.dart';
+import '../../../domain/catalog/entities/class_level.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/student_onboarding/entities/student.dart';
@@ -187,6 +188,30 @@ final boardClassesProvider = FutureProvider<List<BoardClass>>((ref) async {
   );
 });
 
+/// Every Admin-authored [ClassLevel] (enabled and disabled) — step 1 of
+/// `StudentAcademicInfoView`'s class -> group -> subjects flow (§3 of the
+/// onboarding-merge plan).
+final classLevelsProvider = FutureProvider<List<ClassLevel>>((ref) async {
+  final result = await ref.read(getClassLevelsUseCaseProvider)();
+  return result.when(
+    success: (classLevels) => classLevels,
+    failure: (f) => throw f,
+  );
+});
+
+/// [BoardClass] leaves under a single [classLevelId], filtered client-side
+/// from [boardClassesProvider]'s full list (`GetBoardClassesUseCase` has no
+/// filtered variant, and the full catalog is small — see plan §3). Powers
+/// the auto-select-if-single-leaf / show-group-picker-if-multiple logic on
+/// `StudentAcademicInfoView`.
+final boardClassesForClassLevelProvider =
+    FutureProvider.family<List<BoardClass>, String>((ref, classLevelId) async {
+      final boardClasses = await ref.watch(boardClassesProvider.future);
+      return boardClasses
+          .where((b) => b.classLevelId == classLevelId)
+          .toList();
+    });
+
 final subjectsForBoardClassProvider =
     FutureProvider.family<List<Subject>, String>((ref, boardClassId) async {
       final result = await ref.read(getSubjectsUseCaseProvider)(boardClassId);
@@ -264,4 +289,57 @@ class StudentNameErrorViewModel extends Notifier<String?> {
 final studentNameErrorViewModelProvider =
     NotifierProvider.autoDispose<StudentNameErrorViewModel, String?>(
       StudentNameErrorViewModel.new,
+    );
+
+/// Campus tapped/picked on `StudentBasicInfoView`. Replaces that screen's
+/// (deleted) local `setState`-based `_selected` field — CLAUDE.md forbids
+/// `setState` for anything that drives what a screen renders, including a
+/// dropdown selection that gates the "Continue" button. `.autoDispose`
+/// clears it on leaving the screen, same as [StudentNameErrorViewModel].
+class SelectedCampusViewModel extends Notifier<Campus?> {
+  @override
+  Campus? build() => null;
+
+  void select(Campus? campus) => state = campus;
+}
+
+final selectedCampusViewModelProvider =
+    NotifierProvider.autoDispose<SelectedCampusViewModel, Campus?>(
+      SelectedCampusViewModel.new,
+    );
+
+/// `ClassLevel.id` tapped on `StudentAcademicInfoView`'s class list.
+/// Selecting a new class level also resets [selectedBoardClassViewModelProvider]
+/// (mirrors [StudentOnboardingViewModel.selectBoardClass] clearing subject
+/// selections on a board/class change) since a leaf chosen under the
+/// previous class level is meaningless under a new one.
+class SelectedClassLevelViewModel extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void select(String? classLevelId) {
+    state = classLevelId;
+    ref.read(selectedBoardClassViewModelProvider.notifier).select(null);
+  }
+}
+
+final selectedClassLevelViewModelProvider =
+    NotifierProvider.autoDispose<SelectedClassLevelViewModel, String?>(
+      SelectedClassLevelViewModel.new,
+    );
+
+/// Resolved leaf `BoardClass.id` on `StudentAcademicInfoView` — either
+/// auto-selected (class levels with exactly one enabled leaf, e.g. 9th/10th)
+/// or user-picked from the Group picker (class levels with more than one
+/// enabled leaf, e.g. 11th/12th's Pre-Medical/Pre-Engineering).
+class SelectedBoardClassViewModel extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void select(String? boardClassId) => state = boardClassId;
+}
+
+final selectedBoardClassViewModelProvider =
+    NotifierProvider.autoDispose<SelectedBoardClassViewModel, String?>(
+      SelectedBoardClassViewModel.new,
     );

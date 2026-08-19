@@ -16,10 +16,8 @@ import '../../presentation/live_test_registration/view/live_tests_view.dart';
 import '../../presentation/student_home/view/chapter_list_view.dart';
 import '../../presentation/student_home/view/student_home_view.dart';
 import '../../presentation/student_home/view/test_list_view.dart';
-import '../../presentation/student_onboarding/view/board_class_select_view.dart';
-import '../../presentation/student_onboarding/view/campus_select_view.dart';
-import '../../presentation/student_onboarding/view/student_name_entry_view.dart';
-import '../../presentation/student_onboarding/view/subject_teacher_select_view.dart';
+import '../../presentation/student_onboarding/view/student_academic_info_view.dart';
+import '../../presentation/student_onboarding/view/student_basic_info_view.dart';
 import '../../presentation/student_profile/view/student_profile_view.dart';
 import '../../presentation/teacher_profile/view/teacher_profile_view.dart';
 import '../../presentation/student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
@@ -86,10 +84,8 @@ const _authRoutes = {
 };
 
 const _studentOnboardingRoutes = {
-  AppRoutes.studentOnboardingName,
-  AppRoutes.studentOnboardingCampus,
-  AppRoutes.studentOnboardingBoardClass,
-  AppRoutes.studentOnboardingSubjects,
+  AppRoutes.studentOnboardingBasicInfo,
+  AppRoutes.studentOnboardingAcademicInfo,
 };
 
 const _studentShellRoutes = {
@@ -176,7 +172,7 @@ String? _redirectFor(Ref ref, String location) {
   if (student == null) {
     return _studentOnboardingRoutes.contains(location)
         ? null
-        : AppRoutes.studentOnboardingName;
+        : AppRoutes.studentOnboardingBasicInfo;
   }
 
   final allowed =
@@ -231,24 +227,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
       // Student onboarding (outside shell)
       GoRoute(
-        path: AppRoutes.studentOnboardingName,
+        path: AppRoutes.studentOnboardingBasicInfo,
         pageBuilder: (context, state) =>
-            _appPage(state, const StudentNameEntryView()),
+            _appPage(state, const StudentBasicInfoView()),
       ),
       GoRoute(
-        path: AppRoutes.studentOnboardingCampus,
+        path: AppRoutes.studentOnboardingAcademicInfo,
         pageBuilder: (context, state) =>
-            _appPage(state, const CampusSelectView()),
-      ),
-      GoRoute(
-        path: AppRoutes.studentOnboardingBoardClass,
-        pageBuilder: (context, state) =>
-            _appPage(state, const BoardClassSelectView()),
-      ),
-      GoRoute(
-        path: AppRoutes.studentOnboardingSubjects,
-        pageBuilder: (context, state) =>
-            _appPage(state, const SubjectTeacherSelectView()),
+            _appPage(state, const StudentAcademicInfoView()),
       ),
 
       // Student shell (§10.2 tab set)

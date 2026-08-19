@@ -3,6 +3,7 @@ import '../../../../domain/catalog/entities/test.dart';
 import '../../../../domain/common/result.dart';
 import '../../models/board_class_dto.dart';
 import '../../models/chapter_dto.dart';
+import '../../models/class_level_dto.dart';
 import '../../models/question_dto.dart';
 import '../../models/subject_dto.dart';
 import '../../models/test_dto.dart';
@@ -12,6 +13,8 @@ import '../../models/test_dto.dart';
 /// simulates network latency via [Future.delayed] so viewmodels exercise
 /// the same `AsyncValue` loading states they will against the real API.
 abstract class CatalogDummyDataSource {
+  Future<Result<List<ClassLevelDto>>> getClassLevels();
+
   Future<Result<List<BoardClassDto>>> getBoardClasses();
 
   Future<Result<List<SubjectDto>>> getSubjects(String boardClassId);
@@ -30,6 +33,7 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
 
   static const _latency = Duration(milliseconds: 400);
 
+  final List<ClassLevelDto> _classLevels = [];
   final List<BoardClassDto> _boardClasses = [];
   final List<SubjectDto> _subjects = [];
   final List<ChapterDto> _chapters = [];
@@ -37,6 +41,12 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
   final List<QuestionDto> _questions = [];
 
   int _testCounter = 0;
+
+  @override
+  Future<Result<List<ClassLevelDto>>> getClassLevels() async {
+    await Future.delayed(_latency);
+    return Success(List.unmodifiable(_classLevels));
+  }
 
   @override
   Future<Result<List<BoardClassDto>>> getBoardClasses() async {
@@ -84,130 +94,307 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
   // Seed data
   // ---------------------------------------------------------------------
 
+  /// Class levels are the coarse grade axis ("9th"..."12th"); `BoardClass`
+  /// leaves nest under them and either represent the class level directly
+  /// (9th/10th, which don't split) or a group within it (11th/12th's
+  /// Pre-Medical/Pre-Engineering split) — see project_spec.md §9.2
+  /// `ClassLevel` prose for the full rationale.
+  static const _premedChapterTitles = <String, List<String>>{
+    'Physics': [
+      'Measurements',
+      'Vectors and Equilibrium',
+      'Motion and Force',
+      'Work and Energy',
+      'Circular Motion',
+      'Fluid Dynamics',
+    ],
+    'Chemistry': [
+      'Basic Concepts of Chemistry',
+      'Experimental Techniques in Chemistry',
+      'Gases',
+      'Liquids and Solids',
+      'Atomic Structure',
+      'Chemical Bonding',
+    ],
+    'Biology': [
+      'Introduction to Biology',
+      'Biological Molecules',
+      'Enzymes',
+      'Cell Structure and Function',
+      'Cell Cycle',
+      'Variety of Life',
+    ],
+    'English': [
+      'Grammar and Composition',
+      'Comprehension Passages',
+      'Translation (Urdu to English)',
+      'Letter and Application Writing',
+      'Precis Writing',
+    ],
+  };
+
+  static const _preengChapterTitles = <String, List<String>>{
+    'Physics': [
+      'Measurements',
+      'Vectors and Equilibrium',
+      'Motion and Force',
+      'Work and Energy',
+      'Circular Motion',
+      'Fluid Dynamics',
+    ],
+    'Chemistry': [
+      'Basic Concepts of Chemistry',
+      'Experimental Techniques in Chemistry',
+      'Gases',
+      'Liquids and Solids',
+      'Atomic Structure',
+      'Chemical Bonding',
+    ],
+    'Mathematics': [
+      'Number Systems',
+      'Sets, Functions and Groups',
+      'Matrices and Determinants',
+      'Quadratic Equations',
+      'Partial Fractions',
+      'Sequences and Series',
+    ],
+    'Computer Science': [
+      'Introduction to Computer',
+      'Computer Architecture',
+      'Data Representation',
+      'Number Systems and Boolean Algebra',
+      'Programming Fundamentals',
+    ],
+  };
+
+  /// Minimal placeholder subject set for 9th/10th — no existing content for
+  /// these grades yet, so a short demo chapter list per subject is enough
+  /// to exercise the flow end-to-end.
+  static const _lowerGradeChapterTitles = <String, List<String>>{
+    'Math': ['Real Numbers', 'Algebraic Expressions', 'Linear Equations', 'Geometry Basics'],
+    'Science': ['Matter and its States', 'Force and Motion', 'Energy', 'The Living World'],
+    'English': ['Grammar Basics', 'Reading Comprehension', 'Essay Writing'],
+    'Urdu': ['Grammar (Qawaid)', 'Nasr (Prose)', 'Nazm (Poetry)'],
+  };
+
   void _seed() {
-    _boardClasses.addAll(const [
-      BoardClassDto(id: 'bc-premed', name: 'FSc Pre-Medical', isEnabled: true),
-      BoardClassDto(
-        id: 'bc-preeng',
-        name: 'FSc Pre-Engineering',
-        isEnabled: true,
-      ),
-      BoardClassDto(id: 'bc-matric', name: 'Matric', isEnabled: false),
+    _classLevels.addAll(const [
+      ClassLevelDto(id: 'cl-9', name: '9th', isEnabled: true),
+      ClassLevelDto(id: 'cl-10', name: '10th', isEnabled: true),
+      ClassLevelDto(id: 'cl-11', name: '11th', isEnabled: true),
+      ClassLevelDto(id: 'cl-12', name: '12th', isEnabled: true),
+      ClassLevelDto(id: 'cl-matric', name: 'Matric', isEnabled: false),
     ]);
 
-    // FSc Pre-Medical subjects.
+    _boardClasses.addAll(const [
+      BoardClassDto(
+        id: 'bc-9',
+        name: '9th',
+        classLevelId: 'cl-9',
+        isEnabled: true,
+      ),
+      BoardClassDto(
+        id: 'bc-10',
+        name: '10th',
+        classLevelId: 'cl-10',
+        isEnabled: true,
+      ),
+      BoardClassDto(
+        id: 'bc-11-premed',
+        name: 'Pre-Medical',
+        classLevelId: 'cl-11',
+        isEnabled: true,
+      ),
+      BoardClassDto(
+        id: 'bc-11-preeng',
+        name: 'Pre-Engineering',
+        classLevelId: 'cl-11',
+        isEnabled: true,
+      ),
+      BoardClassDto(
+        id: 'bc-12-premed',
+        name: 'Pre-Medical',
+        classLevelId: 'cl-12',
+        isEnabled: true,
+      ),
+      BoardClassDto(
+        id: 'bc-12-preeng',
+        name: 'Pre-Engineering',
+        classLevelId: 'cl-12',
+        isEnabled: true,
+      ),
+      BoardClassDto(
+        id: 'bc-matric',
+        name: 'Matric',
+        classLevelId: 'cl-matric',
+        isEnabled: false,
+      ),
+    ]);
+
+    // 11th/12th Pre-Medical subjects — identical content duplicated per
+    // board-class leaf (subject ids are unique per leaf since
+    // `getSubjects(boardClassId)` filters by `SubjectDto.boardClassId`).
     _buildSubject(
-      subjectId: 'subj-pm-phy',
+      subjectId: 'subj-11pm-phy',
       subjectName: 'Physics',
-      boardClassId: 'bc-premed',
-      chapterTitles: const [
-        'Measurements',
-        'Vectors and Equilibrium',
-        'Motion and Force',
-        'Work and Energy',
-        'Circular Motion',
-        'Fluid Dynamics',
-      ],
+      boardClassId: 'bc-11-premed',
+      chapterTitles: _premedChapterTitles['Physics']!,
     );
     _buildSubject(
-      subjectId: 'subj-pm-chem',
+      subjectId: 'subj-11pm-chem',
       subjectName: 'Chemistry',
-      boardClassId: 'bc-premed',
-      chapterTitles: const [
-        'Basic Concepts of Chemistry',
-        'Experimental Techniques in Chemistry',
-        'Gases',
-        'Liquids and Solids',
-        'Atomic Structure',
-        'Chemical Bonding',
-      ],
+      boardClassId: 'bc-11-premed',
+      chapterTitles: _premedChapterTitles['Chemistry']!,
     );
     _buildSubject(
-      subjectId: 'subj-pm-bio',
+      subjectId: 'subj-11pm-bio',
       subjectName: 'Biology',
-      boardClassId: 'bc-premed',
-      chapterTitles: const [
-        'Introduction to Biology',
-        'Biological Molecules',
-        'Enzymes',
-        'Cell Structure and Function',
-        'Cell Cycle',
-        'Variety of Life',
-      ],
+      boardClassId: 'bc-11-premed',
+      chapterTitles: _premedChapterTitles['Biology']!,
     );
     _buildSubject(
-      subjectId: 'subj-pm-eng',
+      subjectId: 'subj-11pm-eng',
       subjectName: 'English',
-      boardClassId: 'bc-premed',
-      chapterTitles: const [
-        'Grammar and Composition',
-        'Comprehension Passages',
-        'Translation (Urdu to English)',
-        'Letter and Application Writing',
-        'Precis Writing',
-      ],
+      boardClassId: 'bc-11-premed',
+      chapterTitles: _premedChapterTitles['English']!,
     );
 
-    // FSc Pre-Engineering subjects.
     _buildSubject(
-      subjectId: 'subj-pe-phy',
+      subjectId: 'subj-12pm-phy',
       subjectName: 'Physics',
-      boardClassId: 'bc-preeng',
-      chapterTitles: const [
-        'Measurements',
-        'Vectors and Equilibrium',
-        'Motion and Force',
-        'Work and Energy',
-        'Circular Motion',
-        'Fluid Dynamics',
-      ],
+      boardClassId: 'bc-12-premed',
+      chapterTitles: _premedChapterTitles['Physics']!,
     );
     _buildSubject(
-      subjectId: 'subj-pe-chem',
+      subjectId: 'subj-12pm-chem',
       subjectName: 'Chemistry',
-      boardClassId: 'bc-preeng',
-      chapterTitles: const [
-        'Basic Concepts of Chemistry',
-        'Experimental Techniques in Chemistry',
-        'Gases',
-        'Liquids and Solids',
-        'Atomic Structure',
-        'Chemical Bonding',
-      ],
+      boardClassId: 'bc-12-premed',
+      chapterTitles: _premedChapterTitles['Chemistry']!,
     );
     _buildSubject(
-      subjectId: 'subj-pe-math',
+      subjectId: 'subj-12pm-bio',
+      subjectName: 'Biology',
+      boardClassId: 'bc-12-premed',
+      chapterTitles: _premedChapterTitles['Biology']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-12pm-eng',
+      subjectName: 'English',
+      boardClassId: 'bc-12-premed',
+      chapterTitles: _premedChapterTitles['English']!,
+    );
+
+    // 11th/12th Pre-Engineering subjects — identical content duplicated per
+    // board-class leaf.
+    _buildSubject(
+      subjectId: 'subj-11pe-phy',
+      subjectName: 'Physics',
+      boardClassId: 'bc-11-preeng',
+      chapterTitles: _preengChapterTitles['Physics']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-11pe-chem',
+      subjectName: 'Chemistry',
+      boardClassId: 'bc-11-preeng',
+      chapterTitles: _preengChapterTitles['Chemistry']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-11pe-math',
       subjectName: 'Mathematics',
-      boardClassId: 'bc-preeng',
-      chapterTitles: const [
-        'Number Systems',
-        'Sets, Functions and Groups',
-        'Matrices and Determinants',
-        'Quadratic Equations',
-        'Partial Fractions',
-        'Sequences and Series',
-      ],
+      boardClassId: 'bc-11-preeng',
+      chapterTitles: _preengChapterTitles['Mathematics']!,
     );
     _buildSubject(
-      subjectId: 'subj-pe-cs',
+      subjectId: 'subj-11pe-cs',
       subjectName: 'Computer Science',
-      boardClassId: 'bc-preeng',
-      chapterTitles: const [
-        'Introduction to Computer',
-        'Computer Architecture',
-        'Data Representation',
-        'Number Systems and Boolean Algebra',
-        'Programming Fundamentals',
-      ],
+      boardClassId: 'bc-11-preeng',
+      chapterTitles: _preengChapterTitles['Computer Science']!,
+    );
+
+    _buildSubject(
+      subjectId: 'subj-12pe-phy',
+      subjectName: 'Physics',
+      boardClassId: 'bc-12-preeng',
+      chapterTitles: _preengChapterTitles['Physics']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-12pe-chem',
+      subjectName: 'Chemistry',
+      boardClassId: 'bc-12-preeng',
+      chapterTitles: _preengChapterTitles['Chemistry']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-12pe-math',
+      subjectName: 'Mathematics',
+      boardClassId: 'bc-12-preeng',
+      chapterTitles: _preengChapterTitles['Mathematics']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-12pe-cs',
+      subjectName: 'Computer Science',
+      boardClassId: 'bc-12-preeng',
+      chapterTitles: _preengChapterTitles['Computer Science']!,
+    );
+
+    // 9th/10th subjects — minimal placeholder content (no group split).
+    _buildSubject(
+      subjectId: 'subj-9-math',
+      subjectName: 'Math',
+      boardClassId: 'bc-9',
+      chapterTitles: _lowerGradeChapterTitles['Math']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-9-sci',
+      subjectName: 'Science',
+      boardClassId: 'bc-9',
+      chapterTitles: _lowerGradeChapterTitles['Science']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-9-eng',
+      subjectName: 'English',
+      boardClassId: 'bc-9',
+      chapterTitles: _lowerGradeChapterTitles['English']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-9-urdu',
+      subjectName: 'Urdu',
+      boardClassId: 'bc-9',
+      chapterTitles: _lowerGradeChapterTitles['Urdu']!,
+    );
+
+    _buildSubject(
+      subjectId: 'subj-10-math',
+      subjectName: 'Math',
+      boardClassId: 'bc-10',
+      chapterTitles: _lowerGradeChapterTitles['Math']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-10-sci',
+      subjectName: 'Science',
+      boardClassId: 'bc-10',
+      chapterTitles: _lowerGradeChapterTitles['Science']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-10-eng',
+      subjectName: 'English',
+      boardClassId: 'bc-10',
+      chapterTitles: _lowerGradeChapterTitles['English']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-10-urdu',
+      subjectName: 'Urdu',
+      boardClassId: 'bc-10',
+      chapterTitles: _lowerGradeChapterTitles['Urdu']!,
     );
 
     // Admin schedules live tests occasionally, not continuously: exactly 3
     // tests across the whole dataset are flagged live, with a near-future
-    // liveDate.
+    // liveDate. Two under bc-11-premed, one under bc-12-preeng (arbitrary
+    // choice — just needs to stay "exactly 3 live tests total").
     _markLiveTests(const {
-      'subj-pm-phy-ch1-test1': 5,
-      'subj-pe-math-ch3-test1': 9,
-      'subj-pm-chem-ch5-test2': 14,
+      'subj-11pm-phy-ch1-test1': 5,
+      'subj-11pm-chem-ch5-test2': 14,
+      'subj-12pe-math-ch3-test1': 9,
     });
   }
 

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BoardClass {
 
- String get id; String get name; bool get isEnabled;
+ String get id; String get name; String get classLevelId; bool get isEnabled;
 /// Create a copy of BoardClass
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $BoardClassCopyWith<BoardClass> get copyWith => _$BoardClassCopyWithImpl<BoardCl
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BoardClass&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BoardClass&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.classLevelId, classLevelId) || other.classLevelId == classLevelId)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isEnabled);
+int get hashCode => Object.hash(runtimeType,id,name,classLevelId,isEnabled);
 
 @override
 String toString() {
-  return 'BoardClass(id: $id, name: $name, isEnabled: $isEnabled)';
+  return 'BoardClass(id: $id, name: $name, classLevelId: $classLevelId, isEnabled: $isEnabled)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $BoardClassCopyWith<$Res>  {
   factory $BoardClassCopyWith(BoardClass value, $Res Function(BoardClass) _then) = _$BoardClassCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, bool isEnabled
+ String id, String name, String classLevelId, bool isEnabled
 });
 
 
@@ -62,10 +62,11 @@ class _$BoardClassCopyWithImpl<$Res>
 
 /// Create a copy of BoardClass
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? isEnabled = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? classLevelId = null,Object? isEnabled = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,classLevelId: null == classLevelId ? _self.classLevelId : classLevelId // ignore: cast_nullable_to_non_nullable
 as String,isEnabled: null == isEnabled ? _self.isEnabled : isEnabled // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
@@ -152,10 +153,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  bool isEnabled)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String classLevelId,  bool isEnabled)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BoardClass() when $default != null:
-return $default(_that.id,_that.name,_that.isEnabled);case _:
+return $default(_that.id,_that.name,_that.classLevelId,_that.isEnabled);case _:
   return orElse();
 
 }
@@ -173,10 +174,10 @@ return $default(_that.id,_that.name,_that.isEnabled);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  bool isEnabled)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String classLevelId,  bool isEnabled)  $default,) {final _that = this;
 switch (_that) {
 case _BoardClass():
-return $default(_that.id,_that.name,_that.isEnabled);case _:
+return $default(_that.id,_that.name,_that.classLevelId,_that.isEnabled);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +194,10 @@ return $default(_that.id,_that.name,_that.isEnabled);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  bool isEnabled)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String classLevelId,  bool isEnabled)?  $default,) {final _that = this;
 switch (_that) {
 case _BoardClass() when $default != null:
-return $default(_that.id,_that.name,_that.isEnabled);case _:
+return $default(_that.id,_that.name,_that.classLevelId,_that.isEnabled);case _:
   return null;
 
 }
@@ -208,11 +209,12 @@ return $default(_that.id,_that.name,_that.isEnabled);case _:
 
 
 class _BoardClass implements BoardClass {
-  const _BoardClass({required this.id, required this.name, this.isEnabled = false});
+  const _BoardClass({required this.id, required this.name, required this.classLevelId, this.isEnabled = false});
   
 
 @override final  String id;
 @override final  String name;
+@override final  String classLevelId;
 @override@JsonKey() final  bool isEnabled;
 
 /// Create a copy of BoardClass
@@ -225,16 +227,16 @@ _$BoardClassCopyWith<_BoardClass> get copyWith => __$BoardClassCopyWithImpl<_Boa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BoardClass&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BoardClass&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.classLevelId, classLevelId) || other.classLevelId == classLevelId)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isEnabled);
+int get hashCode => Object.hash(runtimeType,id,name,classLevelId,isEnabled);
 
 @override
 String toString() {
-  return 'BoardClass(id: $id, name: $name, isEnabled: $isEnabled)';
+  return 'BoardClass(id: $id, name: $name, classLevelId: $classLevelId, isEnabled: $isEnabled)';
 }
 
 
@@ -245,7 +247,7 @@ abstract mixin class _$BoardClassCopyWith<$Res> implements $BoardClassCopyWith<$
   factory _$BoardClassCopyWith(_BoardClass value, $Res Function(_BoardClass) _then) = __$BoardClassCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, bool isEnabled
+ String id, String name, String classLevelId, bool isEnabled
 });
 
 
@@ -262,10 +264,11 @@ class __$BoardClassCopyWithImpl<$Res>
 
 /// Create a copy of BoardClass
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? isEnabled = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? classLevelId = null,Object? isEnabled = null,}) {
   return _then(_BoardClass(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,classLevelId: null == classLevelId ? _self.classLevelId : classLevelId // ignore: cast_nullable_to_non_nullable
 as String,isEnabled: null == isEnabled ? _self.isEnabled : isEnabled // ignore: cast_nullable_to_non_nullable
 as bool,
   ));

@@ -5,6 +5,7 @@ import '../../../../domain/common/failure.dart';
 import '../../../../domain/common/result.dart';
 import '../../models/board_class_dto.dart';
 import '../../models/chapter_dto.dart';
+import '../../models/class_level_dto.dart';
 import '../../models/question_dto.dart';
 import '../../models/subject_dto.dart';
 import '../../models/test_dto.dart';
@@ -14,6 +15,8 @@ import '../../models/test_dto.dart';
 /// `ApiEndpoints`/`Dio` signatures so the eventual mock -> real swap is a
 /// one-line config change (project_spec.md §6).
 abstract class CatalogRemoteDataSource {
+  Future<Result<List<ClassLevelDto>>> getClassLevels();
+
   Future<Result<List<BoardClassDto>>> getBoardClasses();
 
   Future<Result<List<SubjectDto>>> getSubjects(String boardClassId);
@@ -29,6 +32,14 @@ class CatalogRemoteDataSourceImpl implements CatalogRemoteDataSource {
   CatalogRemoteDataSourceImpl(this._dio);
 
   final Dio _dio;
+
+  @override
+  Future<Result<List<ClassLevelDto>>> getClassLevels() {
+    return _getList(
+      ApiEndpoints.catalogClassLevels,
+      ClassLevelDto.fromJson,
+    );
+  }
 
   @override
   Future<Result<List<BoardClassDto>>> getBoardClasses() {

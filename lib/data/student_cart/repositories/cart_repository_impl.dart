@@ -1,10 +1,11 @@
 import '../../../core/config/app_config.dart';
+import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
 import '../../../domain/common/result.dart';
 import '../../../domain/student_cart/entities/cart.dart';
 import '../../../domain/student_cart/entities/payment.dart';
 import '../../../domain/student_cart/repositories/cart_repository.dart';
-import '../../../domain/student_cart/usecases/price_for_test.dart';
+import '../../../domain/student_cart/usecases/price_for_subject_bundle.dart';
 import '../../../domain/student_onboarding/entities/subject_enrollment.dart';
 import '../datasources/local/cart_dummy_datasource.dart';
 import '../datasources/remote/cart_remote_datasource.dart';
@@ -14,11 +15,12 @@ import '../models/cart_item_dto.dart';
 /// on `AppConfig.isMockMode` (project_spec.md §6.2) and maps DTOs to domain
 /// entities so nothing above this layer ever sees a DTO.
 ///
-/// Also owns the pricing/discount computation for [addItem] (§9.2 pricing
-/// note + teacher-discount rule) since `Test` has no price field and the
-/// discount depends on the student's `SubjectEnrollment`s passed in by the
-/// caller — see `CartRepository.addItem` doc comment for why those are
-/// parameters instead of being looked up here via another repository.
+/// Also owns the pricing/discount computation for [addSubjectBundle] (§9.2
+/// pricing note + teacher-discount rule) since `Test` has no price field and
+/// the discount depends on the student's `SubjectEnrollment`s passed in by
+/// the caller — see `CartRepository.addSubjectBundle` doc comment for why
+/// those are parameters instead of being looked up here via another
+/// repository.
 class CartRepositoryImpl implements CartRepository {
   CartRepositoryImpl({
     required this.remote,
@@ -31,7 +33,7 @@ class CartRepositoryImpl implements CartRepository {
   final bool isMockMode;
 
   /// 20% off (arbitrary but consistent demo rate — §9.2 doesn't specify
-  /// one) applied when the student picked a teacher for the test's subject.
+  /// one) applied when the student picked a teacher for the subject.
   static const _teacherDiscountMultiplier = 0.8;
 
   @override
@@ -46,16 +48,17 @@ class CartRepositoryImpl implements CartRepository {
   }
 
   @override
-  Future<Result<Cart>> addItem(
+  Future<Result<Cart>> addSubjectBundle(
     String studentId,
-    Test test, {
+    Subject subject,
+    List<Test> tests, {
     required List<SubjectEnrollment> subjectEnrollments,
   }) async {
-    final basePrice = priceForTest(test);
+    final basePrice = priceForSubjectBundle(tests);
 
     SubjectEnrollment? enrollment;
     for (final candidate in subjectEnrollments) {
-      if (candidate.subjectId == test.subjectId) {
+      if (candidate.subjectId == subject.id) {
         enrollment = candidate;
         break;
       }
@@ -65,14 +68,16 @@ class CartRepositoryImpl implements CartRepository {
         : null;
 
     final item = CartItemDto(
-      testId: test.id,
+      subjectId: subject.id,
+      subjectName: subject.name,
+      testCount: tests.length,
       price: basePrice,
       discountedPrice: discountedPrice,
     );
 
     final result = isMockMode
-        ? await dummy.addItem(studentId, item)
-        : await remote.addItem(studentId, item);
+        ? await dummy.addSubjectBundle(studentId, item)
+        : await remote.addSubjectBundle(studentId, item);
     return result.when(
       success: (dto) => Success(dto.toDomain()),
       failure: (f) => ResultFailure(f),
@@ -80,10 +85,10 @@ class CartRepositoryImpl implements CartRepository {
   }
 
   @override
-  Future<Result<Cart>> removeItem(String studentId, String testId) async {
+  Future<Result<Cart>> removeItem(String studentId, String subjectId) async {
     final result = isMockMode
-        ? await dummy.removeItem(studentId, testId)
-        : await remote.removeItem(studentId, testId);
+        ? await dummy.removeItem(studentId, subjectId)
+        : await remote.removeItem(studentId, subjectId);
     return result.when(
       success: (dto) => Success(dto.toDomain()),
       failure: (f) => ResultFailure(f),
@@ -102,9 +107,9 @@ class CartRepositoryImpl implements CartRepository {
   }
 
   @override
-  Future<Result<Set<String>>> getPurchasedTestIds(String studentId) {
+  Future<Result<Set<String>>> getPurchasedSubjectIds(String studentId) {
     return isMockMode
-        ? dummy.getPurchasedTestIds(studentId)
-        : remote.getPurchasedTestIds(studentId);
+        ? dummy.getPurchasedSubjectIds(studentId)
+        : remote.getPurchasedSubjectIds(studentId);
   }
 }

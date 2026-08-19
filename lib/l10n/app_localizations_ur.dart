@@ -693,4 +693,61 @@ class AppLocalizationsUr extends AppLocalizations {
   String liveTestDateFormatted(String date) {
     return 'لائیو تاریخ: $date';
   }
+
+  @override
+  String cartItemTestCount(int count) {
+    return '$count ٹیسٹ';
+  }
+
+  @override
+  String chapterListAddToCartButton(String price) {
+    return 'کارٹ میں شامل کریں — Rs. $price';
+  }
+
+  @override
+  String get chapterListPurchasedBadge => 'خریدا جا چکا ہے';
+
+  @override
+  String get chapterListAddedToCart => 'کارٹ میں شامل ہو گیا';
+
+  @override
+  String get subjectCardOwnedBadge => 'خریدا گیا';
+
+  @override
+  String get studentBasicInfoTitle => 'بنیادی معلومات';
+
+  @override
+  String get studentBasicInfoHeadline => 'چلیں آپ کو رجسٹر کرتے ہیں';
+
+  @override
+  String get studentBasicInfoSubtitle =>
+      'اپنا نام اور وہ کیمپس بتائیں جس میں آپ داخل ہیں تاکہ ہم آپ کی تیاری کو بہتر بنا سکیں۔';
+
+  @override
+  String get studentAcademicInfoTitle => 'تعلیمی معلومات';
+
+  @override
+  String get studentAcademicInfoHeadline => 'آپ کی کلاس اور مضامین';
+
+  @override
+  String get studentAcademicInfoSubtitle =>
+      'اپنی کلاس منتخب کریں، پھر وہ مضامین چنیں جن کی آپ تیاری کرنا چاہتے ہیں۔';
+
+  @override
+  String get studentAcademicInfoClassLabel => 'کلاس';
+
+  @override
+  String get studentAcademicInfoGroupLabel => 'گروپ';
+
+  @override
+  String get teacherSignupHeadline => 'بطور ٹیچر رجسٹر ہوں';
+
+  @override
+  String get teacherSignupAboutYouSection => 'آپ کے بارے میں';
+
+  @override
+  String get teacherSignupWhatYouTeachSection => 'آپ کیا پڑھاتے ہیں';
+
+  @override
+  String get teacherSignupOptionalSection => 'اختیاری';
 }

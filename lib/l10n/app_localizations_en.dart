@@ -687,4 +687,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String liveTestDateFormatted(String date) {
     return 'Live on $date';
   }
+
+  @override
+  String cartItemTestCount(int count) {
+    return '$count tests';
+  }
+
+  @override
+  String chapterListAddToCartButton(String price) {
+    return 'Add to cart — Rs. $price';
+  }
+
+  @override
+  String get chapterListPurchasedBadge => 'Purchased';
+
+  @override
+  String get chapterListAddedToCart => 'Added to cart';
+
+  @override
+  String get subjectCardOwnedBadge => 'Owned';
+
+  @override
+  String get studentBasicInfoTitle => 'Basic Info';
+
+  @override
+  String get studentBasicInfoHeadline => 'Let\'s get you set up';
+
+  @override
+  String get studentBasicInfoSubtitle =>
+      'Tell us your name and the campus you\'re enrolled in so we can personalize your test prep.';
+
+  @override
+  String get studentAcademicInfoTitle => 'Academic Info';
+
+  @override
+  String get studentAcademicInfoHeadline => 'Your class & subjects';
+
+  @override
+  String get studentAcademicInfoSubtitle =>
+      'Choose your class, then pick the subjects you want to prepare for.';
+
+  @override
+  String get studentAcademicInfoClassLabel => 'Class';
+
+  @override
+  String get studentAcademicInfoGroupLabel => 'Group';
+
+  @override
+  String get teacherSignupHeadline => 'Register as a teacher';
+
+  @override
+  String get teacherSignupAboutYouSection => 'About you';
+
+  @override
+  String get teacherSignupWhatYouTeachSection => 'What you teach';
+
+  @override
+  String get teacherSignupOptionalSection => 'Optional';
 }

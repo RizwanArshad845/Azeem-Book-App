@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BoardClassDto {
 
- String get id; String get name; bool get isEnabled;
+ String get id; String get name; String get classLevelId; bool get isEnabled;
 /// Create a copy of BoardClassDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $BoardClassDtoCopyWith<BoardClassDto> get copyWith => _$BoardClassDtoCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BoardClassDto&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BoardClassDto&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.classLevelId, classLevelId) || other.classLevelId == classLevelId)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isEnabled);
+int get hashCode => Object.hash(runtimeType,id,name,classLevelId,isEnabled);
 
 @override
 String toString() {
-  return 'BoardClassDto(id: $id, name: $name, isEnabled: $isEnabled)';
+  return 'BoardClassDto(id: $id, name: $name, classLevelId: $classLevelId, isEnabled: $isEnabled)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $BoardClassDtoCopyWith<$Res>  {
   factory $BoardClassDtoCopyWith(BoardClassDto value, $Res Function(BoardClassDto) _then) = _$BoardClassDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, bool isEnabled
+ String id, String name, String classLevelId, bool isEnabled
 });
 
 
@@ -65,10 +65,11 @@ class _$BoardClassDtoCopyWithImpl<$Res>
 
 /// Create a copy of BoardClassDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? isEnabled = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? classLevelId = null,Object? isEnabled = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,classLevelId: null == classLevelId ? _self.classLevelId : classLevelId // ignore: cast_nullable_to_non_nullable
 as String,isEnabled: null == isEnabled ? _self.isEnabled : isEnabled // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
@@ -155,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  bool isEnabled)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String classLevelId,  bool isEnabled)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BoardClassDto() when $default != null:
-return $default(_that.id,_that.name,_that.isEnabled);case _:
+return $default(_that.id,_that.name,_that.classLevelId,_that.isEnabled);case _:
   return orElse();
 
 }
@@ -176,10 +177,10 @@ return $default(_that.id,_that.name,_that.isEnabled);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  bool isEnabled)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String classLevelId,  bool isEnabled)  $default,) {final _that = this;
 switch (_that) {
 case _BoardClassDto():
-return $default(_that.id,_that.name,_that.isEnabled);case _:
+return $default(_that.id,_that.name,_that.classLevelId,_that.isEnabled);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +197,10 @@ return $default(_that.id,_that.name,_that.isEnabled);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  bool isEnabled)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String classLevelId,  bool isEnabled)?  $default,) {final _that = this;
 switch (_that) {
 case _BoardClassDto() when $default != null:
-return $default(_that.id,_that.name,_that.isEnabled);case _:
+return $default(_that.id,_that.name,_that.classLevelId,_that.isEnabled);case _:
   return null;
 
 }
@@ -211,11 +212,12 @@ return $default(_that.id,_that.name,_that.isEnabled);case _:
 @JsonSerializable()
 
 class _BoardClassDto extends BoardClassDto {
-  const _BoardClassDto({required this.id, required this.name, this.isEnabled = false}): super._();
+  const _BoardClassDto({required this.id, required this.name, required this.classLevelId, this.isEnabled = false}): super._();
   factory _BoardClassDto.fromJson(Map<String, dynamic> json) => _$BoardClassDtoFromJson(json);
 
 @override final  String id;
 @override final  String name;
+@override final  String classLevelId;
 @override@JsonKey() final  bool isEnabled;
 
 /// Create a copy of BoardClassDto
@@ -231,16 +233,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BoardClassDto&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BoardClassDto&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.classLevelId, classLevelId) || other.classLevelId == classLevelId)&&(identical(other.isEnabled, isEnabled) || other.isEnabled == isEnabled));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,isEnabled);
+int get hashCode => Object.hash(runtimeType,id,name,classLevelId,isEnabled);
 
 @override
 String toString() {
-  return 'BoardClassDto(id: $id, name: $name, isEnabled: $isEnabled)';
+  return 'BoardClassDto(id: $id, name: $name, classLevelId: $classLevelId, isEnabled: $isEnabled)';
 }
 
 
@@ -251,7 +253,7 @@ abstract mixin class _$BoardClassDtoCopyWith<$Res> implements $BoardClassDtoCopy
   factory _$BoardClassDtoCopyWith(_BoardClassDto value, $Res Function(_BoardClassDto) _then) = __$BoardClassDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, bool isEnabled
+ String id, String name, String classLevelId, bool isEnabled
 });
 
 
@@ -268,10 +270,11 @@ class __$BoardClassDtoCopyWithImpl<$Res>
 
 /// Create a copy of BoardClassDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? isEnabled = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? classLevelId = null,Object? isEnabled = null,}) {
   return _then(_BoardClassDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,classLevelId: null == classLevelId ? _self.classLevelId : classLevelId // ignore: cast_nullable_to_non_nullable
 as String,isEnabled: null == isEnabled ? _self.isEnabled : isEnabled // ignore: cast_nullable_to_non_nullable
 as bool,
   ));

@@ -1351,6 +1351,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Live on {date}'**
   String liveTestDateFormatted(String date);
+
+  /// No description provided for @cartItemTestCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} tests'**
+  String cartItemTestCount(int count);
+
+  /// No description provided for @chapterListAddToCartButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to cart — Rs. {price}'**
+  String chapterListAddToCartButton(String price);
+
+  /// No description provided for @chapterListPurchasedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchased'**
+  String get chapterListPurchasedBadge;
+
+  /// No description provided for @chapterListAddedToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to cart'**
+  String get chapterListAddedToCart;
+
+  /// No description provided for @subjectCardOwnedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Owned'**
+  String get subjectCardOwnedBadge;
+
+  /// No description provided for @studentBasicInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Info'**
+  String get studentBasicInfoTitle;
+
+  /// No description provided for @studentBasicInfoHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s get you set up'**
+  String get studentBasicInfoHeadline;
+
+  /// No description provided for @studentBasicInfoSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us your name and the campus you\'re enrolled in so we can personalize your test prep.'**
+  String get studentBasicInfoSubtitle;
+
+  /// No description provided for @studentAcademicInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Academic Info'**
+  String get studentAcademicInfoTitle;
+
+  /// No description provided for @studentAcademicInfoHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Your class & subjects'**
+  String get studentAcademicInfoHeadline;
+
+  /// No description provided for @studentAcademicInfoSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your class, then pick the subjects you want to prepare for.'**
+  String get studentAcademicInfoSubtitle;
+
+  /// No description provided for @studentAcademicInfoClassLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Class'**
+  String get studentAcademicInfoClassLabel;
+
+  /// No description provided for @studentAcademicInfoGroupLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get studentAcademicInfoGroupLabel;
+
+  /// No description provided for @teacherSignupHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Register as a teacher'**
+  String get teacherSignupHeadline;
+
+  /// No description provided for @teacherSignupAboutYouSection.
+  ///
+  /// In en, this message translates to:
+  /// **'About you'**
+  String get teacherSignupAboutYouSection;
+
+  /// No description provided for @teacherSignupWhatYouTeachSection.
+  ///
+  /// In en, this message translates to:
+  /// **'What you teach'**
+  String get teacherSignupWhatYouTeachSection;
+
+  /// No description provided for @teacherSignupOptionalSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get teacherSignupOptionalSection;
 }
 
 class _AppLocalizationsDelegate

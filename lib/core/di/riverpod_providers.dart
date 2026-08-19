@@ -5,6 +5,7 @@ import '../../domain/campus_directory/usecases/get_campuses_usecase.dart';
 import '../../domain/catalog/repositories/catalog_repository.dart';
 import '../../domain/catalog/usecases/get_board_classes_usecase.dart';
 import '../../domain/catalog/usecases/get_chapters_usecase.dart';
+import '../../domain/catalog/usecases/get_class_levels_usecase.dart';
 import '../../domain/catalog/usecases/get_questions_usecase.dart';
 import '../../domain/catalog/usecases/get_subjects_usecase.dart';
 import '../../domain/catalog/usecases/get_tests_usecase.dart';
@@ -16,6 +17,8 @@ final loggerProvider = Provider<Logger>((ref) => sl<Logger>());
 // catalog
 final catalogRepositoryProvider =
     Provider<CatalogRepository>((ref) => sl<CatalogRepository>());
+final getClassLevelsUseCaseProvider =
+    Provider<GetClassLevelsUseCase>((ref) => sl<GetClassLevelsUseCase>());
 final getBoardClassesUseCaseProvider =
     Provider<GetBoardClassesUseCase>((ref) => sl<GetBoardClassesUseCase>());
 final getSubjectsUseCaseProvider =

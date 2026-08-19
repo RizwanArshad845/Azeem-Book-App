@@ -1,6 +1,7 @@
 import '../../../core/config/app_config.dart';
 import '../../../domain/catalog/entities/board_class.dart';
 import '../../../domain/catalog/entities/chapter.dart';
+import '../../../domain/catalog/entities/class_level.dart';
 import '../../../domain/catalog/entities/question.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
@@ -22,6 +23,17 @@ class CatalogRepositoryImpl implements CatalogRepository {
   final CatalogRemoteDataSource remote;
   final CatalogDummyDataSource dummy;
   final bool isMockMode;
+
+  @override
+  Future<Result<List<ClassLevel>>> getClassLevels() async {
+    final result = isMockMode
+        ? await dummy.getClassLevels()
+        : await remote.getClassLevels();
+    return result.when(
+      success: (dtos) => Success(dtos.map((d) => d.toDomain()).toList()),
+      failure: (f) => ResultFailure(f),
+    );
+  }
 
   @override
   Future<Result<List<BoardClass>>> getBoardClasses() async {
