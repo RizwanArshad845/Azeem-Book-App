@@ -23,6 +23,8 @@
   "roleStudentDesc": "Prepare for exams, take tests, track progress",
   "roleTeacher": "Teacher",
   "roleTeacherDesc": "Manage students, track earnings, guide learning",
+  "roleSelectRequired": "Please select a role before requesting an OTP.",
+  "otpRequestRequired": "Please request an OTP before verifying.",
 
   "phoneTitle": "Enter your phone number",
   "phoneWelcomeTitle": "Welcome to Azeem Books!",
@@ -56,6 +58,9 @@
   "classCodeLabel": "Teacher's class code (optional)",
   "classCodeHint": "6-character code",
   "classCodeNote": "You can add this later from your profile",
+
+  "studentNameEntryTitle": "What's your name?",
+  "studentNameEntrySubtitle": "This is how teachers and admins will see you",
 
   "campusSelectTitle": "Select Your Campus",
   "campusSelectSubtitle": "Choose the campus you are enrolled in",

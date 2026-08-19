@@ -11,7 +11,7 @@ import '../../../core/widgets/section_progress_indicator.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
 import '../viewmodel/student_onboarding_viewmodel.dart';
 
-/// Step 1/3 of student onboarding (§10.2: onboarding pushed outside the
+/// Step 2/4 of student onboarding (§10.2: onboarding pushed outside the
 /// shell) — picks the student's campus, which later scopes the per-subject
 /// teacher picker (`SubjectTeacherSelectView`) to teachers at this campus.
 class CampusSelectView extends ConsumerStatefulWidget {
@@ -45,7 +45,7 @@ class _CampusSelectViewState extends ConsumerState<CampusSelectView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionProgressIndicator(currentStep: 0, totalSteps: 3),
+              const SectionProgressIndicator(currentStep: 1, totalSteps: 4),
               SizedBox(height: context.dimens.lg),
               Text(
                 context.l10n.campusSelectSubtitle,

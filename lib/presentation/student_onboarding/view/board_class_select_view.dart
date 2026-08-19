@@ -12,7 +12,7 @@ import '../../../domain/catalog/entities/board_class.dart';
 import '../viewmodel/student_onboarding_viewmodel.dart';
 import '../widgets/board_class_row.dart';
 
-/// Step 2/3 of student onboarding. Renders every Admin-managed board/class,
+/// Step 3/4 of student onboarding. Renders every Admin-managed board/class,
 /// including disabled ones — disabled rows render visibly but unselectable
 /// ("coming soon"), per §9.1/§9.2 (`BoardClass.isEnabled == false`).
 class BoardClassSelectView extends ConsumerStatefulWidget {
@@ -47,7 +47,7 @@ class _BoardClassSelectViewState extends ConsumerState<BoardClassSelectView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionProgressIndicator(currentStep: 1, totalSteps: 3),
+              const SectionProgressIndicator(currentStep: 2, totalSteps: 4),
               SizedBox(height: context.dimens.lg),
               Text(
                 context.l10n.boardClassSelectSubtitle,

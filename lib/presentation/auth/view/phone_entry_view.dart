@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../domain/common/failure.dart';
 import '../viewmodel/auth_viewmodel.dart';
+import 'otp_verify_view.dart';
 
 /// Second screen of the generic OTP auth flow (§10.2) — collects the phone
 /// number and requests an OTP for the role picked on `RoleSelectView`.
@@ -30,15 +30,25 @@ class _PhoneEntryViewState extends ConsumerState<PhoneEntryView> {
 
   void _handleSubmit() {
     final notifier = ref.read(authViewModelProvider.notifier);
+    final phoneNumber = '${context.l10n.phoneCountryCode} ${_controller.text.trim()}';
     notifier
         .submitPhoneNumber(
           _controller.text,
           invalidPhoneMessage: context.l10n.phoneInvalid,
+          roleRequiredMessage: context.l10n.roleSelectRequired,
         )
         .then((success) {
       if (!mounted) return;
       if (success) {
-        context.push(AppRoutes.authOtp);
+        AppBottomSheet.show(
+          context: context,
+          title: context.l10n.otpTitle,
+          subtitle: context.l10n.otpSubtitle(phoneNumber),
+          child: OtpVerifyView(
+            phone: phoneNumber,
+            isBottomSheet: true,
+          ),
+        );
       } else {
         final failure = ref.read(authViewModelProvider).error;
         AppSnackbar.show(

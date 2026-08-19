@@ -8,13 +8,6 @@ import '../../../domain/auth/entities/user_role.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import '../widgets/role_option_card.dart';
 
-/// First screen of the generic OTP auth flow (§10.2) — picks which role the
-/// phone number is acting as before requesting an OTP for it. Salesman/
-/// Admin are separate apps and excluded per §9.1.
-///
-/// Per §10.1, role choice is two prominent tappable `AppCard`s rather than
-/// two competing `AppButton`s — tapping a card is itself the one primary
-/// action on this screen.
 class RoleSelectView extends ConsumerWidget {
   const RoleSelectView({super.key});
 

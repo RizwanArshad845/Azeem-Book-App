@@ -19,9 +19,16 @@ class AppDimens {
   static const double iconLg = 32;
   static const double avatarLg = 68;
 
+  /// Drag handle dimensions for modal bottom sheets.
+  static const double dragHandleWidth = 40;
+  static const double dragHandleHeight = 4;
+
   /// Caps the width of centered form content (auth/onboarding cards) on
   /// wide screens.
   static const double contentMaxWidth = 420;
+
+  /// Max width for modal dialogs.
+  static const double dialogMaxWidth = 400;
 
   /// Standard tappable button height, matching `AppTheme`'s button themes —
   /// used when a screen needs a custom button style that can't go through

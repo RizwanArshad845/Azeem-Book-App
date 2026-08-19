@@ -18,6 +18,7 @@ import '../../presentation/student_home/view/student_home_view.dart';
 import '../../presentation/student_home/view/test_list_view.dart';
 import '../../presentation/student_onboarding/view/board_class_select_view.dart';
 import '../../presentation/student_onboarding/view/campus_select_view.dart';
+import '../../presentation/student_onboarding/view/student_name_entry_view.dart';
 import '../../presentation/student_onboarding/view/subject_teacher_select_view.dart';
 import '../../presentation/student_profile/view/student_profile_view.dart';
 import '../../presentation/teacher_profile/view/teacher_profile_view.dart';
@@ -85,6 +86,7 @@ const _authRoutes = {
 };
 
 const _studentOnboardingRoutes = {
+  AppRoutes.studentOnboardingName,
   AppRoutes.studentOnboardingCampus,
   AppRoutes.studentOnboardingBoardClass,
   AppRoutes.studentOnboardingSubjects,
@@ -174,7 +176,7 @@ String? _redirectFor(Ref ref, String location) {
   if (student == null) {
     return _studentOnboardingRoutes.contains(location)
         ? null
-        : AppRoutes.studentOnboardingCampus;
+        : AppRoutes.studentOnboardingName;
   }
 
   final allowed =
@@ -228,6 +230,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // Student onboarding (outside shell)
+      GoRoute(
+        path: AppRoutes.studentOnboardingName,
+        pageBuilder: (context, state) =>
+            _appPage(state, const StudentNameEntryView()),
+      ),
       GoRoute(
         path: AppRoutes.studentOnboardingCampus,
         pageBuilder: (context, state) =>

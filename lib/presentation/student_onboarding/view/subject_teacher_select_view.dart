@@ -14,7 +14,7 @@ import '../../../domain/student_onboarding/entities/teacher_option.dart';
 import '../viewmodel/student_onboarding_viewmodel.dart';
 import '../widgets/subject_row.dart';
 
-/// Step 3/3 of student onboarding — a multi-select of subjects (scoped to
+/// Step 4/4 of student onboarding — a multi-select of subjects (scoped to
 /// the board/class chosen in step 2), where each selected subject can
 /// optionally get a teacher assigned from the campus (chosen in step 1)
 /// teacher directory.
@@ -52,8 +52,11 @@ class SubjectTeacherSelectView extends ConsumerWidget {
       studentOnboardingViewModelProvider.select((s) => s.isLoading),
     );
 
-    final selectedSubjectIds = notifier.selectedSubjectIds;
-    final teacherBySubject = notifier.teacherIdBySubjectId;
+    final teacherBySubject = ref.watch(subjectSelectionViewModelProvider);
+    final selectedSubjectIds = teacherBySubject.keys.toSet();
+    final selectionNotifier = ref.read(
+      subjectSelectionViewModelProvider.notifier,
+    );
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.subjectTeacherSelectTitle)),
@@ -63,7 +66,7 @@ class SubjectTeacherSelectView extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SectionProgressIndicator(currentStep: 2, totalSteps: 3),
+              const SectionProgressIndicator(currentStep: 3, totalSteps: 4),
               SizedBox(height: context.dimens.lg),
               Text(
                 context.l10n.subjectTeacherSelectSubtitle,
@@ -102,7 +105,7 @@ class SubjectTeacherSelectView extends ConsumerWidget {
                           subjectName: subject.name,
                           isSelected: isSelected,
                           onSelectedChanged: (_) =>
-                              notifier.toggleSubject(subject.id),
+                              selectionNotifier.toggleSubject(subject.id),
                           teacherPicker: !isSelected
                               ? null
                               : teachersForSubject.isEmpty
@@ -117,7 +120,8 @@ class SubjectTeacherSelectView extends ConsumerWidget {
                                       items: teachersForSubject,
                                       selectedItem: assignedTeacher,
                                       itemAsString: (t) => t.name,
-                                      onChanged: (teacher) => notifier.assignTeacher(
+                                      onChanged: (teacher) =>
+                                          selectionNotifier.assignTeacher(
                                         subject.id,
                                         teacher?.id,
                                       ),
@@ -135,7 +139,10 @@ class SubjectTeacherSelectView extends ConsumerWidget {
                 loading: isSubmitting,
                 onPressed: selectedSubjectIds.isEmpty || isSubmitting
                     ? null
-                    : notifier.submit,
+                    : () {
+                        notifier.replaceSubjectSelections(teacherBySubject);
+                        notifier.submit();
+                      },
               ),
             ],
           ),

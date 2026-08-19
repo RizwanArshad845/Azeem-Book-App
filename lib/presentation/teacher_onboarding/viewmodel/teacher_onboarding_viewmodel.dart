@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/config/app_config.dart';
 import '../../../core/di/injection.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
@@ -63,9 +64,11 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
   /// `null` (no salesman-seeded record matched this phone number). Builds
   /// the new `Teacher` from the current `AuthSession` (`id`/`phoneNumber`/
   /// `role`) plus the form's own fields, and always creates it as
-  /// `selfSignup`/`pendingAdminApproval` per §9.1. Deliberately does not
-  /// navigate — callers should just let this `AsyncValue` resolve; router
-  /// redirect logic lands in a later batch.
+  /// `selfSignup` per §9.1 — `approvalStatus` is `pendingAdminApproval` in
+  /// real-API mode, but auto-`approved` in mock mode (see inline comment
+  /// below) since there's no in-app way to approve it otherwise. Deliberately
+  /// does not navigate — callers should just let this `AsyncValue` resolve;
+  /// router redirect logic lands in a later batch.
   Future<bool> submitSignUp({
     required String name,
     required String campusId,
@@ -97,7 +100,14 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
       declaredStudentCount: declaredStudentCount,
       salesmanId: null,
       onboardingSource: TeacherOnboardingSource.selfSignup,
-      approvalStatus: TeacherApprovalStatus.pendingAdminApproval,
+      // Dummy mode has no way to ever flip this back to `approved` — the
+      // Admin App that would do so is a separate, out-of-scope codebase
+      // (project_spec.md line 4) — so self-signup teachers auto-approve in
+      // mock mode to keep the teacher flow testable end-to-end. Real-API
+      // mode keeps the actual approval gate.
+      approvalStatus: AppConfig.isMockMode
+          ? TeacherApprovalStatus.approved
+          : TeacherApprovalStatus.pendingAdminApproval,
       actualEarnings: 0,
       projectedEarnings: null,
     );

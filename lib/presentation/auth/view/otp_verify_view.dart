@@ -10,13 +10,16 @@ import '../../../domain/common/failure.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import '../widgets/otp_digit_box.dart';
 
-/// Final screen of the generic OTP auth flow (§10.2). Deliberately does not
-/// navigate on success — router redirect logic (unauthenticated -> auth,
-/// role shell selection) is wired in a later batch once teacher/student
-/// onboarding exist. This screen just lets the `AsyncValue` resolve to the
-/// verified `AuthSession`.
+
 class OtpVerifyView extends ConsumerWidget {
-  const OtpVerifyView({super.key});
+  const OtpVerifyView({
+    super.key,
+    this.phone = '',
+    this.isBottomSheet = false,
+  });
+
+  final String phone;
+  final bool isBottomSheet;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,11 +30,71 @@ class OtpVerifyView extends ConsumerWidget {
       if (err is Failure && previous?.error != err) {
         AppSnackbar.show(context, err.message);
       }
+      if (next.hasValue && next.value != null && (previous?.value == null)) {
+        if (isBottomSheet && Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
+      }
     });
 
     final failure = authState.error;
     final isVerified = authState.hasValue && authState.value != null;
     final isLoading = authState.isLoading;
+
+    final content = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (!isBottomSheet) ...[
+          Text(
+            context.l10n.otpSubtitle(phone),
+            style: context.textStyles.bodyMedium?.copyWith(
+              color: context.colors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: context.dimens.xl),
+        ],
+        if (isVerified)
+          Column(
+            children: [
+              Icon(
+                Icons.check_circle_outline,
+                size: context.dimens.iconLg * 1.5,
+                color: context.colors.success,
+              ),
+              SizedBox(height: context.dimens.md),
+              Text(
+                context.l10n.otpVerified,
+                style: context.textStyles.titleMedium,
+              ),
+            ],
+          )
+        else ...[
+          OtpDigitBox(
+            length: AppConfig.otpLength,
+            enabled: !isLoading,
+            resetToken: failure,
+            onCompleted: (code) => ref
+                .read(authViewModelProvider.notifier)
+                .verifyOtp(
+                  code,
+                  otpRequiredMessage: context.l10n.otpRequestRequired,
+                ),
+          ),
+          SizedBox(height: context.dimens.lg),
+          if (isLoading) const LoadingIndicator(),
+          if (!isLoading && failure is Failure)
+            Padding(
+              padding: EdgeInsets.only(top: context.dimens.md),
+              child: AppErrorView(message: failure.message),
+            ),
+        ],
+      ],
+    );
+
+    if (isBottomSheet) {
+      return content;
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.otpTitle)),
@@ -43,48 +106,7 @@ class OtpVerifyView extends ConsumerWidget {
             ),
             child: Padding(
               padding: EdgeInsets.all(context.dimens.lg),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    context.l10n.otpSubtitle(''),
-                    style: context.textStyles.bodyMedium?.copyWith(
-                      color: context.colors.textSecondary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: context.dimens.xl),
-                  if (isVerified)
-                    Column(
-                      children: [
-                        Icon(
-                          Icons.check_circle_outline,
-                          size: context.dimens.iconLg * 1.5,
-                          color: context.colors.success,
-                        ),
-                        SizedBox(height: context.dimens.md),
-                        Text(context.l10n.otpVerifyButton, style: context.textStyles.titleMedium),
-                      ],
-                    )
-                  else ...[
-                    OtpDigitBox(
-                      length: AppConfig.otpLength,
-                      enabled: !isLoading,
-                      resetToken: failure,
-                      onCompleted: (code) => ref
-                          .read(authViewModelProvider.notifier)
-                          .verifyOtp(code),
-                    ),
-                    SizedBox(height: context.dimens.lg),
-                    if (isLoading) const LoadingIndicator(),
-                    if (!isLoading && failure is Failure)
-                      Padding(
-                        padding: EdgeInsets.only(top: context.dimens.md),
-                        child: AppErrorView(message: failure.message),
-                      ),
-                  ],
-                ],
-              ),
+              child: content,
             ),
           ),
         ),

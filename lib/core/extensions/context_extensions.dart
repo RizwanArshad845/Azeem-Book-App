@@ -36,6 +36,9 @@ class AppDimensType {
   double get avatarLg => AppDimens.avatarLg;
 
   double get contentMaxWidth => AppDimens.contentMaxWidth;
+  double get dialogMaxWidth => AppDimens.dialogMaxWidth;
+  double get dragHandleWidth => AppDimens.dragHandleWidth;
+  double get dragHandleHeight => AppDimens.dragHandleHeight;
   double get buttonHeight => AppDimens.buttonHeight;
   double get logoWatermarkSize => AppDimens.logoWatermarkSize;
 }

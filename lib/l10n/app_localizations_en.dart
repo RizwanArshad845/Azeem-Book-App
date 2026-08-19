@@ -71,6 +71,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Manage students, track earnings, guide learning';
 
   @override
+  String get roleSelectRequired =>
+      'Please select a role before requesting an OTP.';
+
+  @override
+  String get otpRequestRequired => 'Please request an OTP before verifying.';
+
+  @override
   String get phoneTitle => 'Enter your phone number';
 
   @override
@@ -153,6 +160,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get classCodeNote => 'You can add this later from your profile';
+
+  @override
+  String get studentNameEntryTitle => 'What\'s your name?';
+
+  @override
+  String get studentNameEntrySubtitle =>
+      'This is how teachers and admins will see you';
 
   @override
   String get campusSelectTitle => 'Select Your Campus';

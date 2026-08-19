@@ -23,6 +23,8 @@
   "roleStudentDesc": "امتحانات کی تیاری کریں، ٹیسٹ دیں، پیشرفت دیکھیں",
   "roleTeacher": "استاد",
   "roleTeacherDesc": "طلباء کا انتظام کریں، آمدنی دیکھیں، رہنمائی کریں",
+  "roleSelectRequired": "کوڈ کی درخواست سے پہلے اپنا کردار منتخب کریں۔",
+  "otpRequestRequired": "تصدیق سے پہلے تصدیقی کوڈ کی درخواست کریں۔",
 
   "phoneTitle": "اپنا فون نمبر درج کریں",
   "phoneWelcomeTitle": "عظیم بکس میں خوش آمدید!",
@@ -54,6 +56,9 @@
   "classCodeLabel": "ٹیچر کا کلاس کوڈ (اختیاری)",
   "classCodeHint": "6 حروف کا کوڈ",
   "classCodeNote": "آپ اسے بعد میں اپنے پروفائل سے بھی شامل کر سکتے ہیں",
+
+  "studentNameEntryTitle": "آپ کا نام کیا ہے؟",
+  "studentNameEntrySubtitle": "اساتذہ اور ایڈمن آپ کو اسی نام سے دیکھیں گے",
 
   "campusSelectTitle": "اپنا کیمپس منتخب کریں",
   "campusSelectSubtitle": "وہ کیمپس منتخب کریں جس میں آپ داخل ہیں",

@@ -73,6 +73,13 @@ class AppLocalizationsUr extends AppLocalizations {
       'طلباء کا انتظام کریں، آمدنی دیکھیں، رہنمائی کریں';
 
   @override
+  String get roleSelectRequired =>
+      'کوڈ کی درخواست سے پہلے اپنا کردار منتخب کریں۔';
+
+  @override
+  String get otpRequestRequired => 'تصدیق سے پہلے تصدیقی کوڈ کی درخواست کریں۔';
+
+  @override
   String get phoneTitle => 'اپنا فون نمبر درج کریں';
 
   @override
@@ -156,6 +163,13 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get classCodeNote =>
       'آپ اسے بعد میں اپنے پروفائل سے بھی شامل کر سکتے ہیں';
+
+  @override
+  String get studentNameEntryTitle => 'آپ کا نام کیا ہے؟';
+
+  @override
+  String get studentNameEntrySubtitle =>
+      'اساتذہ اور ایڈمن آپ کو اسی نام سے دیکھیں گے';
 
   @override
   String get campusSelectTitle => 'اپنا کیمپس منتخب کریں';

@@ -23,6 +23,7 @@ import '../../auth/viewmodel/auth_viewmodel.dart';
 /// `AuthViewModel` — this is a hand-written `AsyncNotifier` with a manually
 /// declared provider rather than `@riverpod` codegen.
 class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
+  String? _name;
   String? _campusId;
   String? _boardClassId;
   final Set<String> _selectedSubjectIds = {};
@@ -30,6 +31,8 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
 
   @override
   Future<Student?> build() async => null;
+
+  String? get name => _name;
 
   String? get campusId => _campusId;
 
@@ -39,6 +42,12 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
 
   Map<String, String?> get teacherIdBySubjectId =>
       Map.unmodifiable(_teacherIdBySubjectId);
+
+  /// Records the name entered on `StudentNameEntryView`. Called from that
+  /// view's "Continue" handler, mirroring [selectCampus] below.
+  void recordName(String name) {
+    _name = name.trim();
+  }
 
   /// Records the campus chosen on `CampusSelectView`. Called from that
   /// view's "Continue" handler, mirroring `AuthViewModel.selectRole`.
@@ -96,11 +105,12 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
   /// redirect lands in a separate manual step per this batch's scope).
   Future<void> submit() async {
     final session = ref.read(currentUserProvider);
+    final name = _name;
     final campusId = _campusId;
-    if (session == null || campusId == null) {
+    if (session == null || name == null || name.isEmpty || campusId == null) {
       state = AsyncError<Student?>(
         const ValidationFailure(
-          'Select a campus before completing onboarding.',
+          'Enter your name and select a campus before completing onboarding.',
         ),
         StackTrace.current,
       );
@@ -120,13 +130,7 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
 
     final student = Student(
       id: session.userId,
-      // `name` isn't collected anywhere in this feature's 3-step
-      // campus -> board/class -> subjects flow (no name-entry screen is in
-      // scope per this batch's route list) — profile/name editing is a
-      // separate not-yet-built feature (§10.2 Profile tab). Placeholder
-      // mirrors `AuthDummyDataSourceImpl`'s own placeholder-identity
-      // convention so this compiles and round-trips today.
-      name: 'Student ${session.phoneNumber}',
+      name: name,
       phoneNumber: session.phoneNumber,
       role: session.role,
       isDeleted: false,
@@ -204,3 +208,60 @@ final teachersForCampusProvider =
         failure: (f) => throw f,
       );
     });
+
+// ---------------------------------------------------------------------
+// Reactive local UI state for individual onboarding screens. `flutter_
+// riverpod ^3.4.2` dropped the legacy `StateProvider` (see
+// `TeacherStudentsSearchQueryNotifier` for the established precedent this
+// mirrors), so these are hand-written `Notifier`s rather than plain field
+// mutation on [StudentOnboardingViewModel] — mutating that notifier's
+// private fields directly (as `toggleSubject`/`assignTeacher` do) never
+// reassigns `state`, so nothing watching it ever rebuilds. Per CLAUDE.md
+// §2, `setState` is not an option for this business/shared state either.
+// ---------------------------------------------------------------------
+
+/// Selection made on `SubjectTeacherSelectView` — subject id -> optionally
+/// assigned teacher id. Kept local to that screen (mirroring the
+/// local-state-until-commit pattern `CampusSelectView`/`BoardClassSelectView`
+/// use, implemented with Riverpod instead of `setState`) and only written
+/// into [StudentOnboardingViewModel] via `replaceSubjectSelections` right
+/// before `submit()`. `.autoDispose` means every fresh visit to the screen
+/// starts from an empty selection.
+class SubjectSelectionViewModel extends Notifier<Map<String, String?>> {
+  @override
+  Map<String, String?> build() => const {};
+
+  void toggleSubject(String subjectId) {
+    final next = Map<String, String?>.from(state);
+    if (next.containsKey(subjectId)) {
+      next.remove(subjectId);
+    } else {
+      next[subjectId] = null;
+    }
+    state = next;
+  }
+
+  void assignTeacher(String subjectId, String? teacherId) {
+    if (!state.containsKey(subjectId)) return;
+    state = {...state, subjectId: teacherId};
+  }
+}
+
+final subjectSelectionViewModelProvider = NotifierProvider.autoDispose<
+  SubjectSelectionViewModel,
+  Map<String, String?>
+>(SubjectSelectionViewModel.new);
+
+/// Inline validation error shown on `StudentNameEntryView` when Continue is
+/// tapped with an empty name. `.autoDispose` clears it on leaving the screen.
+class StudentNameErrorViewModel extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void setError(String? message) => state = message;
+}
+
+final studentNameErrorViewModelProvider =
+    NotifierProvider.autoDispose<StudentNameErrorViewModel, String?>(
+      StudentNameErrorViewModel.new,
+    );

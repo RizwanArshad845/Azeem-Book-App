@@ -218,6 +218,18 @@ abstract class AppLocalizations {
   /// **'Manage students, track earnings, guide learning'**
   String get roleTeacherDesc;
 
+  /// No description provided for @roleSelectRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a role before requesting an OTP.'**
+  String get roleSelectRequired;
+
+  /// No description provided for @otpRequestRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please request an OTP before verifying.'**
+  String get otpRequestRequired;
+
   /// No description provided for @phoneTitle.
   ///
   /// In en, this message translates to:
@@ -379,6 +391,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You can add this later from your profile'**
   String get classCodeNote;
+
+  /// No description provided for @studentNameEntryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your name?'**
+  String get studentNameEntryTitle;
+
+  /// No description provided for @studentNameEntrySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This is how teachers and admins will see you'**
+  String get studentNameEntrySubtitle;
 
   /// No description provided for @campusSelectTitle.
   ///

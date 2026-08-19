@@ -9,16 +9,7 @@ import '../../../domain/auth/usecases/request_otp_usecase.dart';
 import '../../../domain/auth/usecases/verify_otp_usecase.dart';
 import '../../../domain/common/failure.dart';
 
-/// Generic role-select -> phone -> OTP-verify flow (§9.1/§9.2, §10.2).
-/// Establishes "this phone number, verified via OTP, is acting as role X,
-/// with session token Y." Does NOT know about Teacher/Student profile
-/// completeness or router redirects — those land with teacher-onboarding /
-/// student-onboarding in the next batch, reading `currentUserProvider`.
-///
-/// Note: this project's `pubspec.yaml` does not include `riverpod_generator`
-/// / `riverpod_annotation` (only `flutter_riverpod`), so — consistent with
-/// the existing `SplashViewModel` — this is a hand-written `AsyncNotifier`
-/// with a manually declared provider rather than `@riverpod` codegen.
+
 class AuthViewModel extends AsyncNotifier<AuthSession?> {
   UserRole? _selectedRole;
   String? _phoneNumber;
@@ -36,6 +27,7 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
   Future<bool> submitPhoneNumber(
     String rawPhone, {
     required String invalidPhoneMessage,
+    String? roleRequiredMessage,
   }) async {
     final phone = rawPhone.trim();
     if (!Validators.isValidPhone10Digits(phone)) {
@@ -45,16 +37,21 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
       );
       return false;
     }
-    return requestOtp(phone);
+    return requestOtp(phone, roleRequiredMessage: roleRequiredMessage);
   }
 
   /// Requests an OTP for [phoneNumber] under the previously selected role.
   /// Returns `true` on success so the view can navigate to OTP entry.
-  Future<bool> requestOtp(String phoneNumber) async {
+  Future<bool> requestOtp(
+    String phoneNumber, {
+    String? roleRequiredMessage,
+  }) async {
     final role = _selectedRole;
     if (role == null) {
       state = AsyncError<AuthSession?>(
-        const ValidationFailure('Select a role before requesting an OTP.'),
+        ValidationFailure(
+          roleRequiredMessage ?? 'Select a role before requesting an OTP.',
+        ),
         StackTrace.current,
       );
       return false;
@@ -79,12 +76,17 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
   /// [requestOtp]. Deliberately does not signal navigation — callers should
   /// simply let this `AsyncValue` resolve (§ task scope: router redirect is
   /// wired in a later batch).
-  Future<void> verifyOtp(String otp) async {
+  Future<void> verifyOtp(
+    String otp, {
+    String? otpRequiredMessage,
+  }) async {
     final role = _selectedRole;
     final phoneNumber = _phoneNumber;
     if (role == null || phoneNumber == null) {
       state = AsyncError<AuthSession?>(
-        const ValidationFailure('Request an OTP before verifying it.'),
+        ValidationFailure(
+          otpRequiredMessage ?? 'Request an OTP before verifying it.',
+        ),
         StackTrace.current,
       );
       return;
