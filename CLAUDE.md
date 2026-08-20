@@ -38,3 +38,58 @@
 7. **Code Generation & Models**:
    - `freezed` for models/entities, `json_serializable` for JSON mapping.
    - Run `flutter pub run build_runner build --delete-conflicting-outputs` after any model change (ViewModels are hand-written, not codegen'd — see §2).
+
+## UI & Flow Guidelines (Handwritten Corrections & Specs)
+
+1. **Floating Card Onboarding UI ("Kiraya" Card Layout)**:
+   - Onboarding screens (Student & Teacher) must use a centered floating `Card` container sitting over a branded background pattern populated with generated icons/emojis and optional dialogue bubbles.
+   - Azeem Publications Logo must be displayed prominently at the top of every onboarding screen layout.
+   - Phone number input stays inside the card (no full-screen phone page). On phone submit, an inline/modal **OTP Sheet** opens directly over the card for immediate verification.
+
+2. **Student Class & Subject Rules**:
+   - Class options are strictly: `9th`, `Matric`, `1st year`, `2nd year`.
+   - If `1st year` or `2nd year` is selected, dynamically present stream selection: `Pre-Engineering`, `Pre-Medical`, `I.Com`, `F.A`, `I.C.S`.
+   - Native Flutter icons must be used for subject representation.
+   - Post-onboarding subject additions: Subject cards permit direct subject addition/purchase with animated badge updates on the navigation bar Cart icon.
+
+3. **Teacher Onboarding & Validation Rules**:
+   - Initial check: "Onboarded via Azeem Developer/Book" vs "Outside Teacher". Pre-seeded Azeem Developer teachers log in directly via SMS OTP (fetching pre-entered details to dashboard); outside teachers proceed through full onboarding.
+   - Phone field validation: Strict 11-digit format starting with `03...` (e.g. `03001234567`) with inline error/toast feedback.
+   - Class selection: Mandatory single-class choice (not optional). Subjects auto-filter by class.
+   - Required fields marked with a prominent **red asterisk (`*`)**.
+   - Student count widget: Integer counter input with explicit `+` / `-` increment & decrement buttons.
+   - Submit buttons: Greyed out / disabled until all mandatory fields pass validation.
+
+4. **App Header, Navigation & Action Menu**:
+   - AppBar titles must be centered with highlighted background separation.
+   - Unified **App Action Menu** (bottom sheet/popup): Contains Profile link, Language Selector (English & Urdu bottom sheet), and Logout button.
+   - Remove redundant/raw logout buttons from Navbar/Profile; preserve functional logout for testing student/teacher role switching & profile sync.
+
+5. **Test-Taking, Scoring & Analytics**:
+   - Question lock: Next question button disabled/greyed out if answer is not selected/entered.
+   - Score screen: Display detailed solutions for wrong answers and weak topics.
+   - Re-attempt option: Enabled based on test score/results, dynamically updating student attempt records & progress.
+   - View expected test preview option prior to attempt.
+   - Progress Screen: Visually attractive & detailed analytics with filter toggles for **Overall Cumulative Progress** vs **Per-Subject Progress**. Center empty states when no progress exists.
+   - Teacher Earnings: Creative card layout, projected revenue metrics, and personalized greeting (e.g., "Welcome back, [Teacher Name]!").
+
+## Subagents & Specialized Skills (`.claude/`)
+
+### 1. Dedicated Project Subagents (`.claude/agents/`)
+- **`feature-builder`**: Autonomous Clean Architecture feature builder for scaffolding entities, DTOs, datasources, repositories, ViewModels, and views.
+- **`schema-auditor`**: Entity & backend contract auditor that verifies synchronization between Flutter DTOs (`freezed`), API endpoints, and Django models.
+- **Domain Subagents**: `flutter-ui-development`, `state-management`, `backend-integration`, `database-storage`, `performance-optimization`, `testing-qa`, `devops-deployment`, `flutter-platform-native`.
+
+### 2. Custom Project Skills (`.claude/skills/`)
+- **`scaffold-feature`**: Standardized scaffold generator for feature modules across `domain/`, `data/`, and `presentation/`.
+- **`add-schema-entity`**: Generator for new `freezed` data models, DTOs, and repository interfaces.
+- **Domain Skills**: `flutter-ui`, `state-management`, `backend-integration`, `database-storage`, `performance`, `testing`, `devops`, `accessibility`, `animations`, `localization`, `navigation`, `plugins`.
+
+## Universal Agent Skills (`.agents/skills/`)
+
+The workspace includes installed skill plugins for Flutter and Dart AI agents:
+- **`flutter/agent-plugins`**: Architecture best practices, responsive layouts, layout issue diagnostics, JSON serialization patterns, declarative routing (`go_router`), localization, HTTP package integration.
+- **`dart-lang/skills`**: Package conflict resolution, static analysis, pattern matching, primary constructors, FFI assets, ffigen, documentation standards.
+
+
+
