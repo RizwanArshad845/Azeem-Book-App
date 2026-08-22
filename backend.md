@@ -9,7 +9,7 @@
 | Django app | Owns (§9.2 entities) | Notes |
 |---|---|---|
 | `accounts` | `User` (abstract base, not a table — see §2.1), `Teacher`, `Student`, `Salesman`, `Admin` | OTP auth lives here too — it's a `User`-scoped concern, not a separate app |
-| `catalog` | `BoardClass`, `Subject`, `Chapter`, `Campus`, `Test`, `Question` | Pure reference data + Admin-authored content. `Campus` is **independent** of `Test`/`Chapter` — confirmed no `campusId` anywhere in the catalog schema (a deliberate correction from the original spec read: an Admin uploads generic tests app-wide, not per-campus) |
+| `catalog` | `ClassLevel`, `BoardClass`, `Subject`, `Chapter`, `Campus`, `Test`, `Question` | Pure reference data + Admin-authored content. `Campus` is **independent** of `Test`/`Chapter` — confirmed no `campusId` anywhere in the catalog schema (a deliberate correction from the original spec read: an Admin uploads generic tests app-wide, not per-campus). `ClassLevel`/`BoardClass` is a two-tier catalog, not a flat enum — see §2.2 |
 | `tests` | `TestAttempt`, `SubmissionAnswer`, `LiveTestRegistration` | Grading logic (MCQ auto-grade, keyword-overlap text grade) and the weak/strong-chapter computation run here, mirroring `lib/domain/test_taking/usecases/` |
 | `commerce` | `Cart`, `CartItem`, `Payment`, `EarningsRecord` | Owns the purchase-gate and commission-attribution business rules (§4.6) — **not** to be trusted from client input |
 | `notifications` | `Notification` | Single generic model, fanned out to all 4 roles via `recipientRole` |
@@ -48,10 +48,11 @@ User (concrete base table)
 |---|---|
 | `User` | `id: UUID/PK`, `name: CharField(120)`, `phone_number: CharField, unique`, `role: CharField(choices=[teacher,student,salesman])`, `is_deleted: BooleanField(default=False)`, `created_at/updated_at: DateTimeField` |
 | `Admin` | `id, name, role: CharField(choices=[admin]), created_at` — no self-signup, seeded only |
-| `Teacher` | `campus: FK(Campus)`, `subjects: M2M(Subject)`, `classes: M2M(BoardClass, null=True)`, `declared_student_count: IntegerField(null=True)`, `salesman: FK(Salesman, null=True)`, `onboarding_source: CharField(choices=[azeemDeveloper,salesmanSeeded,selfSignup])`, `approval_status: CharField(choices=[approved,pendingAdminApproval])`, `actual_earnings: DecimalField(default=0)`, `projected_earnings: DecimalField(null=True)` |
-| `Student` | `campus: FK(Campus)`, `board_class: FK(BoardClass, null=True)` (choices: `9th`, `Matric`, `1st year`, `2nd year`), `stream: CharField(choices=[preEngineering,preMedical,iCom,fa,ics], null=True)` (mandatory if `1st year`/`2nd year`), `cart: OneToOne(Cart, null=True)` (`subject_enrollments` = reverse FK) |
+| `Teacher` | `campus: FK(Campus)`, `subjects: M2M(Subject)`, `classes: M2M(BoardClass, null=True)`, `declared_student_count: IntegerField(null=True)`, `salesman: FK(Salesman, null=True)`, `onboarding_source: CharField(choices=[salesmanSeeded,selfSignup])`, `approval_status: CharField(choices=[approved,pendingAdminApproval])`, `actual_earnings: DecimalField(default=0)`, `projected_earnings: DecimalField(null=True)` |
+| `Student` | `campus: FK(Campus)`, `board_class: FK(BoardClass, null=True)` — the stream (e.g. Pre-Medical, I.Com) is encoded by *which* `BoardClass` leaf the FK points to, not a separate field; see `ClassLevel`/`BoardClass` below | `cart: OneToOne(Cart, null=True)` (`subject_enrollments` = reverse FK) |
 | `Salesman` | `id, name, unique_code: CharField(unique=True)`, `teachers: reverse FK from Teacher.salesman`, `created_at` |
-| `BoardClass` | `id, name (9th, Matric, 1st year, 2nd year), is_enabled: BooleanField(default=False)` |
+| `ClassLevel` | `id, name` (`9th`, `Matric`, `1st year`, `2nd year`), `is_enabled: BooleanField(default=False)` — the coarse grade axis. `1st year`/`2nd year` each split into multiple `BoardClass` leaves below; `9th`/`Matric` don't split (exactly one leaf each) |
+| `BoardClass` | `id, name, class_level: FK(ClassLevel), is_enabled: BooleanField(default=False)` — a leaf under a `ClassLevel`: `9th`→"9th", `Matric`→"Matric", `1st year`/`2nd year`→one of `Pre-Medical`, `Pre-Engineering`, `I.Com`, `F.A`, `I.C.S`. This is the FK `Student.board_class` and `Test.board_class` actually point at — there is no separate flat "stream" field anywhere in the schema |
 | `Subject` | `id, name, board_class: FK(BoardClass)` |
 | `Chapter` | `id, subject: FK(Subject), title, order: IntegerField` (1-based; `order==1` is the free-sample chapter) |
 | `Campus` | `id, name, city` |
@@ -174,6 +175,7 @@ Recommend a consistent DRF error body shape across all 400/401/403/404/500 respo
 ## 5. OTP Auth Design
 
 - **Flow**: `POST /auth/otp/request` (phone + role) → SMS sent → `POST /auth/otp/verify` (phone + OTP + role) → JWT issued. Passwordless — no password/email fallback exists anywhere in this app, by design (§9.1).
+- **Phone format**: `phoneNumber` is the 11-digit local Pakistani format `03XXXXXXXXX` (leading `0`, no separate country-code field) — matches the Flutter client's `Validators` regex `^03\d{9}$`. Store/validate server-side as this exact string shape, not E.164; if a country-code-qualified format is ever needed for an SMS gateway, normalize at the SMS-vendor integration boundary, not in the stored/API-facing field.
 - **Token issuance**: short-lived access JWT + refresh token, embedding `user_id` and `role` as claims so DRF permission classes can scope every `{studentId}`/`{teacherId}` path without an extra DB lookup per request.
 - **Rate-limit/lockout**: the Flutter side already has client-facing constants for this shape (`AppConfig.otpMaxAttempts`, `otpLockoutRestartSeconds`) that currently only gate the dummy datasource's local retry counter — the backend needs its own real enforcement (e.g. `django-ratelimit` or a Redis-backed attempt counter keyed by phone number) since a client-side-only lockout is trivially bypassed.
 - **Open items — flagged verbatim from spec §12, not resolved here**:
