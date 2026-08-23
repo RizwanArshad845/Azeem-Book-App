@@ -818,4 +818,168 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get teacherSignupStep4Subtitle =>
       'براہ کرم منظوری کے لیے جمع کروانے سے پہلے اپنی تفصیلات کی تصدیق کریں۔';
+
+  @override
+  String get teacherSignupCityLabel => 'شہر *';
+
+  @override
+  String get teacherSignupCityHint => 'اپنا شہر منتخب کریں';
+
+  @override
+  String get teacherSignupCityError => 'براہ کرم شہر کا انتخاب کریں۔';
+
+  @override
+  String get teacherSignupSelectCityFirst =>
+      'دستیاب کیمپس دیکھنے کے لیے پہلے اوپر شہر منتخب کریں۔';
+
+  @override
+  String get teacherSignupCampusesLabel =>
+      'کیمپس / ادارے * (1 یا زیادہ منتخب کریں)';
+
+  @override
+  String get teacherSignupCampusesError =>
+      'براہ کرم کم از کم ایک کیمپس منتخب کریں۔';
+
+  @override
+  String get teacherSignupSummaryCity => 'شہر';
+
+  @override
+  String get teacherSignupSummaryCampuses => 'کیمپس';
+
+  @override
+  String teacherWelcomeBack(String name) {
+    return 'خوش آمدید، $name 👋';
+  }
+
+  @override
+  String get teacherActualEarnings => 'اصل آمدن';
+
+  @override
+  String get teacherProjectedEarnings => 'تخمینی آمدن';
+
+  @override
+  String get teacherCommissionAndEarnings => 'کمیشن اور آمدن';
+
+  @override
+  String get teacherPerStudentRate => '500 روپے / طالب علم';
+
+  @override
+  String teacherUnlockUpTo(String amount) {
+    return 'مزید $amount تک حاصل کریں!';
+  }
+
+  @override
+  String teacherDeclaredStudentsDesc(
+    int declared,
+    int onboarded,
+    int remaining,
+  ) {
+    return 'آپ کے بتائے گئے ~$declared طلباء کی بنیاد پر ($onboarded شامل ہوئے، $remaining باقی)۔';
+  }
+
+  @override
+  String teacherGoalOnboarded(int onboarded, int declared) {
+    return '$declared میں سے $onboarded شامل ہوئے';
+  }
+
+  @override
+  String get teacherQuickActions => 'فوری کارروائیاں';
+
+  @override
+  String teacherStudentsRoster(int count) {
+    return 'طلباء ($count)';
+  }
+
+  @override
+  String teacherStudentsRosterSub(int paid, int free) {
+    return '$paid ادا شدہ • $free مفت';
+  }
+
+  @override
+  String get teacherEarningsLedger => 'آمدن کا ریکارڈ';
+
+  @override
+  String get teacherEarningsLedgerSub => 'ٹرانزیکشنز دیکھیں';
+
+  @override
+  String get teacherCustomTest => 'کسٹم ٹیسٹ';
+
+  @override
+  String get teacherCustomTestSub => 'بنائیں اور اپلوڈ کریں';
+
+  @override
+  String get teacherShareReferral => 'ریفرل شیئر کریں';
+
+  @override
+  String get teacherShareReferralSub => 'طلباء کو مدعو کریں';
+
+  @override
+  String get teacherRecentActivity => 'حالیہ سرگرمی';
+
+  @override
+  String get teacherAllStudents => 'تمام طلباء';
+
+  @override
+  String get teacherActivePaid => 'فعال (ادا شدہ)';
+
+  @override
+  String get teacherFreeUnpaid => 'مفت (غیر ادا شدہ)';
+
+  @override
+  String get teacherCommissionEarned => '+500 روپے کمیشن حاصل کیا';
+
+  @override
+  String get teacherBundleNotPurchased => 'ابھی بنڈل نہیں خریدا گیا';
+
+  @override
+  String get teacherViewProgress => 'کارکردگی دیکھیں';
+
+  @override
+  String get teacherSortRecentlyJoined => 'حالیہ شامل شدہ';
+
+  @override
+  String get teacherSortTopPerformers => 'بہترین کارکردگی والے';
+
+  @override
+  String get teacherSortAlphabetical => 'حروف تہجی کے لحاظ سے';
+
+  @override
+  String get teacherAllCampuses => 'تمام کیمپسز';
+
+  @override
+  String get teacherSearchHint => 'طالب علم کے نام یا فون سے تلاش کریں...';
+
+  @override
+  String get teacherPhoneChangeOtpPrompt => 'نئے فون نمبر کی تصدیق';
+
+  @override
+  String teacherPhoneChangeOtpMessage(String phone) {
+    return 'ہم نے $phone پر 4 ہندسوں کا تصدیقی کوڈ بھیجا ہے۔ فون نمبر کی تبدیلی کی تصدیق کے لیے درج کریں۔';
+  }
+
+  @override
+  String get teacherProfileCampusesTaught => 'کیمپس اور ادارے';
+
+  @override
+  String get teacherProfileClassesTaught => 'پڑھائی جانے والی کلاسیں';
+
+  @override
+  String get teacherProfileSubjectsTaught => 'پڑھائے جانے والے مضامین';
+
+  @override
+  String get teacherProfileDeclaredReach => 'بتائی گئی طلباء کی تعداد';
+
+  @override
+  String get notificationsMarkAllRead => 'سب کو پڑھا ہوا نشان زد کریں';
+
+  @override
+  String get notificationsClearAll => 'سب صاف کریں';
+
+  @override
+  String get notificationsClearConfirmTitle =>
+      'کیا تمام نوٹیفکیشنز صاف کرنا چاہتے ہیں؟';
+
+  @override
+  String get notificationsClearConfirmMessage =>
+      'کیا آپ واقعی اپنی فیڈ سے تمام نوٹیفکیشنز ختم کرنا چاہتے ہیں؟';
 }

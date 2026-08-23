@@ -812,4 +812,166 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get teacherSignupStep4Subtitle =>
       'Please verify your details before submitting for approval.';
+
+  @override
+  String get teacherSignupCityLabel => 'City *';
+
+  @override
+  String get teacherSignupCityHint => 'Select your city';
+
+  @override
+  String get teacherSignupCityError => 'Please select a city.';
+
+  @override
+  String get teacherSignupSelectCityFirst =>
+      'Select a city above to view available campuses.';
+
+  @override
+  String get teacherSignupCampusesLabel =>
+      'Campuses / Institutions * (Select 1 or more)';
+
+  @override
+  String get teacherSignupCampusesError => 'Please select at least one campus.';
+
+  @override
+  String get teacherSignupSummaryCity => 'City';
+
+  @override
+  String get teacherSignupSummaryCampuses => 'Campuses';
+
+  @override
+  String teacherWelcomeBack(String name) {
+    return 'Welcome back, $name 👋';
+  }
+
+  @override
+  String get teacherActualEarnings => 'Actual Earnings';
+
+  @override
+  String get teacherProjectedEarnings => 'Projected Earnings';
+
+  @override
+  String get teacherCommissionAndEarnings => 'Commission & Earnings';
+
+  @override
+  String get teacherPerStudentRate => 'Rs. 500 / Student';
+
+  @override
+  String teacherUnlockUpTo(String amount) {
+    return 'Unlock up to $amount more!';
+  }
+
+  @override
+  String teacherDeclaredStudentsDesc(
+    int declared,
+    int onboarded,
+    int remaining,
+  ) {
+    return 'Based on your ~$declared declared students ($onboarded joined, $remaining remaining).';
+  }
+
+  @override
+  String teacherGoalOnboarded(int onboarded, int declared) {
+    return '$onboarded of $declared onboarded';
+  }
+
+  @override
+  String get teacherQuickActions => 'Quick Actions';
+
+  @override
+  String teacherStudentsRoster(int count) {
+    return 'Students ($count)';
+  }
+
+  @override
+  String teacherStudentsRosterSub(int paid, int free) {
+    return '$paid Paid • $free Free';
+  }
+
+  @override
+  String get teacherEarningsLedger => 'Earnings Ledger';
+
+  @override
+  String get teacherEarningsLedgerSub => 'View transactions';
+
+  @override
+  String get teacherCustomTest => 'Custom Test';
+
+  @override
+  String get teacherCustomTestSub => 'Create & Upload';
+
+  @override
+  String get teacherShareReferral => 'Share Referral';
+
+  @override
+  String get teacherShareReferralSub => 'Invite students';
+
+  @override
+  String get teacherRecentActivity => 'Recent Activity';
+
+  @override
+  String get teacherAllStudents => 'All Students';
+
+  @override
+  String get teacherActivePaid => 'Active (Paid)';
+
+  @override
+  String get teacherFreeUnpaid => 'Free (Unpaid)';
+
+  @override
+  String get teacherCommissionEarned => '+Rs. 500 Commission Earned';
+
+  @override
+  String get teacherBundleNotPurchased => 'Bundle not purchased yet';
+
+  @override
+  String get teacherViewProgress => 'View Progress';
+
+  @override
+  String get teacherSortRecentlyJoined => 'Recently Joined';
+
+  @override
+  String get teacherSortTopPerformers => 'Top Test Performers';
+
+  @override
+  String get teacherSortAlphabetical => 'Alphabetical (A-Z)';
+
+  @override
+  String get teacherAllCampuses => 'All Campuses';
+
+  @override
+  String get teacherSearchHint => 'Search by student name or phone...';
+
+  @override
+  String get teacherPhoneChangeOtpPrompt => 'Verify New Phone Number';
+
+  @override
+  String teacherPhoneChangeOtpMessage(String phone) {
+    return 'We sent a 4-digit verification code to $phone. Please enter it below to confirm your phone number change.';
+  }
+
+  @override
+  String get teacherProfileCampusesTaught => 'Campuses & Institutions';
+
+  @override
+  String get teacherProfileClassesTaught => 'Classes Taught';
+
+  @override
+  String get teacherProfileSubjectsTaught => 'Subjects Taught';
+
+  @override
+  String get teacherProfileDeclaredReach => 'Declared Student Reach';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all as read';
+
+  @override
+  String get notificationsClearAll => 'Clear all';
+
+  @override
+  String get notificationsClearConfirmTitle => 'Clear All Notifications?';
+
+  @override
+  String get notificationsClearConfirmMessage =>
+      'Are you sure you want to remove all notifications from your feed?';
 }

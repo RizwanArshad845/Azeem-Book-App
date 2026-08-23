@@ -304,5 +304,83 @@
   "teacherSignupNextTeaching": "Continue to Teaching Info",
   "teacherSignupNextStudents": "Continue to Student Info",
   "teacherSignupStep4Title": "Review Registration",
-  "teacherSignupStep4Subtitle": "Please verify your details before submitting for approval."
+  "teacherSignupStep4Subtitle": "Please verify your details before submitting for approval.",
+  "teacherSignupCityLabel": "City *",
+  "teacherSignupCityHint": "Select your city",
+  "teacherSignupCityError": "Please select a city.",
+  "teacherSignupSelectCityFirst": "Select a city above to view available campuses.",
+  "teacherSignupCampusesLabel": "Campuses / Institutions * (Select 1 or more)",
+  "teacherSignupCampusesError": "Please select at least one campus.",
+  "teacherSignupSummaryCity": "City",
+  "teacherSignupSummaryCampuses": "Campuses",
+  "teacherWelcomeBack": "Welcome back, {name} 👋",
+  "@teacherWelcomeBack": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "teacherActualEarnings": "Actual Earnings",
+  "teacherProjectedEarnings": "Projected Earnings",
+  "teacherCommissionAndEarnings": "Commission & Earnings",
+  "teacherPerStudentRate": "Rs. 500 / Student",
+  "teacherUnlockUpTo": "Unlock up to {amount} more!",
+  "@teacherUnlockUpTo": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "teacherDeclaredStudentsDesc": "Based on your ~{declared} declared students ({onboarded} joined, {remaining} remaining).",
+  "@teacherDeclaredStudentsDesc": {
+    "placeholders": {
+      "declared": { "type": "int" },
+      "onboarded": { "type": "int" },
+      "remaining": { "type": "int" }
+    }
+  },
+  "teacherGoalOnboarded": "{onboarded} of {declared} onboarded",
+  "@teacherGoalOnboarded": {
+    "placeholders": {
+      "onboarded": { "type": "int" },
+      "declared": { "type": "int" }
+    }
+  },
+  "teacherQuickActions": "Quick Actions",
+  "teacherStudentsRoster": "Students ({count})",
+  "@teacherStudentsRoster": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "teacherStudentsRosterSub": "{paid} Paid • {free} Free",
+  "@teacherStudentsRosterSub": {
+    "placeholders": {
+      "paid": { "type": "int" },
+      "free": { "type": "int" }
+    }
+  },
+  "teacherEarningsLedger": "Earnings Ledger",
+  "teacherEarningsLedgerSub": "View transactions",
+  "teacherCustomTest": "Custom Test",
+  "teacherCustomTestSub": "Create & Upload",
+  "teacherShareReferral": "Share Referral",
+  "teacherShareReferralSub": "Invite students",
+  "teacherRecentActivity": "Recent Activity",
+  "teacherAllStudents": "All Students",
+  "teacherActivePaid": "Active (Paid)",
+  "teacherFreeUnpaid": "Free (Unpaid)",
+  "teacherCommissionEarned": "+Rs. 500 Commission Earned",
+  "teacherBundleNotPurchased": "Bundle not purchased yet",
+  "teacherViewProgress": "View Progress",
+  "teacherSortRecentlyJoined": "Recently Joined",
+  "teacherSortTopPerformers": "Top Test Performers",
+  "teacherSortAlphabetical": "Alphabetical (A-Z)",
+  "teacherAllCampuses": "All Campuses",
+  "teacherSearchHint": "Search by student name or phone...",
+  "teacherPhoneChangeOtpPrompt": "Verify New Phone Number",
+  "teacherPhoneChangeOtpMessage": "We sent a 4-digit verification code to {phone}. Please enter it below to confirm your phone number change.",
+  "@teacherPhoneChangeOtpMessage": {
+    "placeholders": { "phone": { "type": "String" } }
+  },
+  "teacherProfileCampusesTaught": "Campuses & Institutions",
+  "teacherProfileClassesTaught": "Classes Taught",
+  "teacherProfileSubjectsTaught": "Subjects Taught",
+  "teacherProfileDeclaredReach": "Declared Student Reach",
+  "notificationsMarkAllRead": "Mark all as read",
+  "notificationsClearAll": "Clear all",
+  "notificationsClearConfirmTitle": "Clear All Notifications?",
+  "notificationsClearConfirmMessage": "Are you sure you want to remove all notifications from your feed?"
 }

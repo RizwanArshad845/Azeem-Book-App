@@ -1573,6 +1573,292 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please verify your details before submitting for approval.'**
   String get teacherSignupStep4Subtitle;
+
+  /// No description provided for @teacherSignupCityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'City *'**
+  String get teacherSignupCityLabel;
+
+  /// No description provided for @teacherSignupCityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your city'**
+  String get teacherSignupCityHint;
+
+  /// No description provided for @teacherSignupCityError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a city.'**
+  String get teacherSignupCityError;
+
+  /// No description provided for @teacherSignupSelectCityFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a city above to view available campuses.'**
+  String get teacherSignupSelectCityFirst;
+
+  /// No description provided for @teacherSignupCampusesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Campuses / Institutions * (Select 1 or more)'**
+  String get teacherSignupCampusesLabel;
+
+  /// No description provided for @teacherSignupCampusesError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one campus.'**
+  String get teacherSignupCampusesError;
+
+  /// No description provided for @teacherSignupSummaryCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get teacherSignupSummaryCity;
+
+  /// No description provided for @teacherSignupSummaryCampuses.
+  ///
+  /// In en, this message translates to:
+  /// **'Campuses'**
+  String get teacherSignupSummaryCampuses;
+
+  /// No description provided for @teacherWelcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back, {name} 👋'**
+  String teacherWelcomeBack(String name);
+
+  /// No description provided for @teacherActualEarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual Earnings'**
+  String get teacherActualEarnings;
+
+  /// No description provided for @teacherProjectedEarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Projected Earnings'**
+  String get teacherProjectedEarnings;
+
+  /// No description provided for @teacherCommissionAndEarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Commission & Earnings'**
+  String get teacherCommissionAndEarnings;
+
+  /// No description provided for @teacherPerStudentRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Rs. 500 / Student'**
+  String get teacherPerStudentRate;
+
+  /// No description provided for @teacherUnlockUpTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock up to {amount} more!'**
+  String teacherUnlockUpTo(String amount);
+
+  /// No description provided for @teacherDeclaredStudentsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on your ~{declared} declared students ({onboarded} joined, {remaining} remaining).'**
+  String teacherDeclaredStudentsDesc(
+    int declared,
+    int onboarded,
+    int remaining,
+  );
+
+  /// No description provided for @teacherGoalOnboarded.
+  ///
+  /// In en, this message translates to:
+  /// **'{onboarded} of {declared} onboarded'**
+  String teacherGoalOnboarded(int onboarded, int declared);
+
+  /// No description provided for @teacherQuickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get teacherQuickActions;
+
+  /// No description provided for @teacherStudentsRoster.
+  ///
+  /// In en, this message translates to:
+  /// **'Students ({count})'**
+  String teacherStudentsRoster(int count);
+
+  /// No description provided for @teacherStudentsRosterSub.
+  ///
+  /// In en, this message translates to:
+  /// **'{paid} Paid • {free} Free'**
+  String teacherStudentsRosterSub(int paid, int free);
+
+  /// No description provided for @teacherEarningsLedger.
+  ///
+  /// In en, this message translates to:
+  /// **'Earnings Ledger'**
+  String get teacherEarningsLedger;
+
+  /// No description provided for @teacherEarningsLedgerSub.
+  ///
+  /// In en, this message translates to:
+  /// **'View transactions'**
+  String get teacherEarningsLedgerSub;
+
+  /// No description provided for @teacherCustomTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Test'**
+  String get teacherCustomTest;
+
+  /// No description provided for @teacherCustomTestSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Create & Upload'**
+  String get teacherCustomTestSub;
+
+  /// No description provided for @teacherShareReferral.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Referral'**
+  String get teacherShareReferral;
+
+  /// No description provided for @teacherShareReferralSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite students'**
+  String get teacherShareReferralSub;
+
+  /// No description provided for @teacherRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Activity'**
+  String get teacherRecentActivity;
+
+  /// No description provided for @teacherAllStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'All Students'**
+  String get teacherAllStudents;
+
+  /// No description provided for @teacherActivePaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Active (Paid)'**
+  String get teacherActivePaid;
+
+  /// No description provided for @teacherFreeUnpaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Free (Unpaid)'**
+  String get teacherFreeUnpaid;
+
+  /// No description provided for @teacherCommissionEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'+Rs. 500 Commission Earned'**
+  String get teacherCommissionEarned;
+
+  /// No description provided for @teacherBundleNotPurchased.
+  ///
+  /// In en, this message translates to:
+  /// **'Bundle not purchased yet'**
+  String get teacherBundleNotPurchased;
+
+  /// No description provided for @teacherViewProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'View Progress'**
+  String get teacherViewProgress;
+
+  /// No description provided for @teacherSortRecentlyJoined.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently Joined'**
+  String get teacherSortRecentlyJoined;
+
+  /// No description provided for @teacherSortTopPerformers.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Test Performers'**
+  String get teacherSortTopPerformers;
+
+  /// No description provided for @teacherSortAlphabetical.
+  ///
+  /// In en, this message translates to:
+  /// **'Alphabetical (A-Z)'**
+  String get teacherSortAlphabetical;
+
+  /// No description provided for @teacherAllCampuses.
+  ///
+  /// In en, this message translates to:
+  /// **'All Campuses'**
+  String get teacherAllCampuses;
+
+  /// No description provided for @teacherSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by student name or phone...'**
+  String get teacherSearchHint;
+
+  /// No description provided for @teacherPhoneChangeOtpPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify New Phone Number'**
+  String get teacherPhoneChangeOtpPrompt;
+
+  /// No description provided for @teacherPhoneChangeOtpMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a 4-digit verification code to {phone}. Please enter it below to confirm your phone number change.'**
+  String teacherPhoneChangeOtpMessage(String phone);
+
+  /// No description provided for @teacherProfileCampusesTaught.
+  ///
+  /// In en, this message translates to:
+  /// **'Campuses & Institutions'**
+  String get teacherProfileCampusesTaught;
+
+  /// No description provided for @teacherProfileClassesTaught.
+  ///
+  /// In en, this message translates to:
+  /// **'Classes Taught'**
+  String get teacherProfileClassesTaught;
+
+  /// No description provided for @teacherProfileSubjectsTaught.
+  ///
+  /// In en, this message translates to:
+  /// **'Subjects Taught'**
+  String get teacherProfileSubjectsTaught;
+
+  /// No description provided for @teacherProfileDeclaredReach.
+  ///
+  /// In en, this message translates to:
+  /// **'Declared Student Reach'**
+  String get teacherProfileDeclaredReach;
+
+  /// No description provided for @notificationsMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as read'**
+  String get notificationsMarkAllRead;
+
+  /// No description provided for @notificationsClearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get notificationsClearAll;
+
+  /// No description provided for @notificationsClearConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All Notifications?'**
+  String get notificationsClearConfirmTitle;
+
+  /// No description provided for @notificationsClearConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove all notifications from your feed?'**
+  String get notificationsClearConfirmMessage;
 }
 
 class _AppLocalizationsDelegate
