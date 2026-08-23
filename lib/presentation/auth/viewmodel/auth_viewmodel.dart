@@ -30,7 +30,7 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
     String? roleRequiredMessage,
   }) async {
     final phone = rawPhone.trim();
-    if (!Validators.isValidPhone10Digits(phone)) {
+    if (!Validators.isValidPhoneLocal(phone)) {
       state = AsyncError<AuthSession?>(
         ValidationFailure(invalidPhoneMessage),
         StackTrace.current,
@@ -40,29 +40,32 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
     return requestOtp(phone, roleRequiredMessage: roleRequiredMessage);
   }
 
+  UserRole get selectedRole => _selectedRole ?? UserRole.student;
+
   /// Requests an OTP for [phoneNumber] under the previously selected role.
   /// Returns `true` on success so the view can navigate to OTP entry.
   Future<bool> requestOtp(
     String phoneNumber, {
     String? roleRequiredMessage,
   }) async {
-    final role = _selectedRole;
-    if (role == null) {
-      state = AsyncError<AuthSession?>(
-        ValidationFailure(
-          roleRequiredMessage ?? 'Select a role before requesting an OTP.',
-        ),
-        StackTrace.current,
-      );
-      return false;
-    }
+    final role = selectedRole;
 
     _phoneNumber = phoneNumber;
     state = const AsyncLoading<AuthSession?>();
     final result = await sl<RequestOtpUseCase>()(phoneNumber, role);
     return result.when(
-      success: (session) {
-        state = AsyncData<AuthSession?>(session);
+      success: (_) {
+        // Deliberately does NOT store the returned (unverified, `token:
+        // null`) session in `state` — `currentUserProvider` reads `state`
+        // as "is anyone logged in," and the router/onboarding viewmodels
+        // treat any non-null value as a green light to navigate away from
+        // the auth flow. Doing that here — before the OTP is actually
+        // verified — was kicking the user off the phone-entry screen (and
+        // dismissing the OTP bottom sheet with it) the instant an OTP was
+        // merely requested. `_phoneNumber`/`_selectedRole` already carry
+        // everything `verifyOtp` needs, so `state` can just stay `null`
+        // until a real, verified session exists.
+        state = const AsyncData<AuthSession?>(null);
         return true;
       },
       failure: (failure) {

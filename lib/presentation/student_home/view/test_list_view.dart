@@ -8,6 +8,7 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../domain/catalog/entities/test.dart';
+import '../../test_taking/widgets/expected_test_preview_sheet.dart';
 import '../viewmodel/student_home_viewmodel.dart';
 import '../../../core/widgets/status_badge.dart';
 
@@ -54,8 +55,18 @@ class TestListView extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   final test = tests[index];
                   return AppCard(
-                    onTap: () =>
-                        context.push(AppRoutes.testTakingPath(test.id)),
+                    onTap: () async {
+                      // Expected-test-preview first (CLAUDE.md §5): shows
+                      // chapters covered + question count before the
+                      // student commits to starting the attempt.
+                      final start = await ExpectedTestPreviewSheet.show(
+                        context,
+                        test,
+                      );
+                      if (start == true && context.mounted) {
+                        context.push(AppRoutes.testTakingPath(test.id));
+                      }
+                    },
                     child: Row(
                       children: [
                         Expanded(

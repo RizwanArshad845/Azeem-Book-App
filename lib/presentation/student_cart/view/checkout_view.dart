@@ -57,7 +57,9 @@ class CheckoutView extends ConsumerWidget {
         ),
         SizedBox(height: context.dimens.md),
         Text(
-          isSuccess ? context.l10n.checkoutSuccessStatus : context.l10n.checkoutPendingStatus,
+          isSuccess
+              ? context.l10n.checkoutSuccessStatus
+              : context.l10n.checkoutPendingStatus,
           style: context.textStyles.titleMedium,
         ),
         SizedBox(height: context.dimens.sm),

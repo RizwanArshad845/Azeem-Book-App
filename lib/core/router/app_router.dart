@@ -11,6 +11,7 @@ import '../../presentation/notifications/view/notifications_view.dart';
 import '../../presentation/splash/view/splash_view.dart';
 import '../../presentation/student_cart/view/checkout_view.dart';
 import '../../presentation/student_cart/view/student_cart_view.dart';
+import '../../presentation/student_cart/viewmodel/student_cart_viewmodel.dart';
 import '../../presentation/student_progress/view/student_progress_view.dart';
 import '../../presentation/live_test_registration/view/live_tests_view.dart';
 import '../../presentation/student_home/view/chapter_list_view.dart';
@@ -30,18 +31,22 @@ import '../../presentation/teacher_students/view/student_progress_detail_view.da
 import '../../presentation/teacher_students/view/teacher_students_view.dart';
 import '../../presentation/teacher_onboarding/viewmodel/teacher_onboarding_viewmodel.dart';
 import '../constants/app_routes.dart';
+import '../extensions/context_extensions.dart';
 import '../widgets/app_scaffold_with_bottom_nav.dart';
 
 CustomTransitionPage<void> _appPage(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
     child: child,
-    transitionDuration: const Duration(milliseconds: 260),
-    reverseTransitionDuration: const Duration(milliseconds: 200),
+    // Tightened from 260ms/200ms (Workstream 7 — motion polish) so
+    // navigation reads as immediate rather than sluggish, while keeping the
+    // same easeOutCubic-style feel.
+    transitionDuration: const Duration(milliseconds: 200),
+    reverseTransitionDuration: const Duration(milliseconds: 160),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       final fade = CurvedAnimation(parent: animation, curve: Curves.easeOut);
       final slide = Tween<Offset>(
-        begin: const Offset(0, 0.04),
+        begin: const Offset(0, 0.03),
         end: Offset.zero,
       ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
       return FadeTransition(
@@ -52,30 +57,82 @@ CustomTransitionPage<void> _appPage(GoRouterState state, Widget child) {
   );
 }
 
-const _studentDestinations = [
-  BottomNavDestinationSpec(icon: Icons.home_outlined, label: 'Home'),
-  BottomNavDestinationSpec(icon: Icons.shopping_cart_outlined, label: 'Cart'),
-  BottomNavDestinationSpec(icon: Icons.insights_outlined, label: 'Progress'),
-  BottomNavDestinationSpec(
-    icon: Icons.notifications_outlined,
-    label: 'Notifications',
-  ),
-  BottomNavDestinationSpec(icon: Icons.person_outline, label: 'Profile'),
-];
+/// Faster, directional transition for onboarding step-to-step navigation
+/// (basic info -> academic info) — distinct from the generic cross-app
+/// `_appPage` fade+slide so advancing through onboarding reads as
+/// progress, not a context switch. Scoped to just these routes; the global
+/// `_appPage` transition is untouched.
+CustomTransitionPage<void> _onboardingStepPage(GoRouterState state, Widget child) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 200),
+    reverseTransitionDuration: const Duration(milliseconds: 180),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final incoming = Tween<Offset>(
+        begin: const Offset(0.25, 0),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+      final outgoing = Tween<Offset>(
+        begin: Offset.zero,
+        end: const Offset(-0.15, 0),
+      ).animate(CurvedAnimation(parent: secondaryAnimation, curve: Curves.easeInCubic));
+      return SlideTransition(
+        position: outgoing,
+        child: SlideTransition(
+          position: incoming,
+          child: FadeTransition(opacity: animation, child: child),
+        ),
+      );
+    },
+  );
+}
 
-const _teacherDestinations = [
-  BottomNavDestinationSpec(icon: Icons.home_outlined, label: 'Overview'),
-  BottomNavDestinationSpec(icon: Icons.people_outline, label: 'Students'),
-  BottomNavDestinationSpec(
-    icon: Icons.account_balance_wallet_outlined,
-    label: 'Earnings',
-  ),
-  BottomNavDestinationSpec(
-    icon: Icons.notifications_outlined,
-    label: 'Notifications',
-  ),
-  BottomNavDestinationSpec(icon: Icons.person_outline, label: 'Profile'),
-];
+List<BottomNavDestinationSpec> _buildStudentDestinations(
+  BuildContext context,
+  int cartCount,
+) {
+  return [
+    BottomNavDestinationSpec(
+      icon: Icons.home_outlined,
+      label: context.l10n.navHome,
+    ),
+    BottomNavDestinationSpec(
+      icon: Icons.shopping_cart_outlined,
+      label: context.l10n.navCart,
+      badgeCount: cartCount,
+    ),
+    BottomNavDestinationSpec(
+      icon: Icons.insights_outlined,
+      label: context.l10n.navProgress,
+    ),
+    BottomNavDestinationSpec(
+      icon: Icons.notifications_outlined,
+      label: context.l10n.navNotifications,
+    ),
+  ];
+}
+
+List<BottomNavDestinationSpec> _buildTeacherDestinations(BuildContext context) {
+  return [
+    BottomNavDestinationSpec(
+      icon: Icons.home_outlined,
+      label: context.l10n.navOverview,
+    ),
+    BottomNavDestinationSpec(
+      icon: Icons.people_outline,
+      label: context.l10n.navStudents,
+    ),
+    BottomNavDestinationSpec(
+      icon: Icons.account_balance_wallet_outlined,
+      label: context.l10n.navEarnings,
+    ),
+    BottomNavDestinationSpec(
+      icon: Icons.notifications_outlined,
+      label: context.l10n.navNotifications,
+    ),
+  ];
+}
 
 const _authRoutes = {
   AppRoutes.authRoleSelect,
@@ -93,7 +150,6 @@ const _studentShellRoutes = {
   AppRoutes.studentCart,
   AppRoutes.studentProgress,
   AppRoutes.studentNotifications,
-  AppRoutes.studentProfile,
 };
 
 const _teacherShellRoutes = {
@@ -101,7 +157,6 @@ const _teacherShellRoutes = {
   AppRoutes.teacherStudents,
   AppRoutes.teacherEarnings,
   AppRoutes.teacherNotifications,
-  AppRoutes.teacherProfile,
 };
 
 // Pushed on top of either shell (or before it) once a role/onboarding stage
@@ -111,6 +166,7 @@ const _teacherShellRoutes = {
 // `/test-taking/abc123`, never the literal `AppRoutes.testTaking` pattern.
 const _outsideShellRoutes = {
   AppRoutes.cartCheckout,
+  AppRoutes.studentProfile,
 };
 
 bool _isOutsideShellRoute(String location) =>
@@ -225,25 +281,38 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             _appPage(state, const TeacherPendingApprovalView()),
       ),
 
-      // Student onboarding (outside shell)
+      // Student onboarding (outside shell) — own faster, directional
+      // step-to-step transition (see `_onboardingStepPage`).
       GoRoute(
         path: AppRoutes.studentOnboardingBasicInfo,
         pageBuilder: (context, state) =>
-            _appPage(state, const StudentBasicInfoView()),
+            _onboardingStepPage(state, const StudentBasicInfoView()),
       ),
       GoRoute(
         path: AppRoutes.studentOnboardingAcademicInfo,
         pageBuilder: (context, state) =>
-            _appPage(state, const StudentAcademicInfoView()),
+            _onboardingStepPage(state, const StudentAcademicInfoView()),
       ),
 
       // Student shell (§10.2 tab set)
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) =>
-            AppScaffoldWithBottomNav(
+        builder: (context, state, navigationShell) => Consumer(
+          builder: (context, ref, _) {
+            // Scoped to the student shell only — watching the cart here
+            // (rather than inside `AppScaffoldWithBottomNav` itself) keeps
+            // the teacher shell from ever building a `StudentCartViewModel`
+            // for a teacher session.
+            final cartCount = ref.watch(
+              studentCartViewModelProvider.select(
+                (c) => c.value?.items?.length ?? 0,
+              ),
+            );
+            return AppScaffoldWithBottomNav(
               navigationShell: navigationShell,
-              destinations: _studentDestinations,
-            ),
+              destinations: _buildStudentDestinations(context, cartCount),
+            );
+          },
+        ),
         branches: [
           StatefulShellBranch(
             routes: [
@@ -307,15 +376,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoutes.studentProfile,
-                pageBuilder: (context, state) =>
-                    _appPage(state, const StudentProfileView()),
-              ),
-            ],
-          ),
         ],
       ),
 
@@ -324,7 +384,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state, navigationShell) =>
             AppScaffoldWithBottomNav(
               navigationShell: navigationShell,
-              destinations: _teacherDestinations,
+              destinations: _buildTeacherDestinations(context),
             ),
         branches: [
           StatefulShellBranch(
@@ -363,19 +423,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoutes.teacherProfile,
-                pageBuilder: (context, state) =>
-                    _appPage(state, const TeacherProfileView()),
-              ),
-            ],
-          ),
         ],
       ),
 
       // Outside-shell, pushed on top (bottom nav disappears mid-task)
+      GoRoute(
+        path: AppRoutes.studentProfile,
+        pageBuilder: (context, state) =>
+            _appPage(state, const StudentProfileView()),
+      ),
+      GoRoute(
+        path: AppRoutes.teacherProfile,
+        pageBuilder: (context, state) =>
+            _appPage(state, const TeacherProfileView()),
+      ),
       GoRoute(
         path: AppRoutes.testTaking,
         pageBuilder: (context, state) => _appPage(

@@ -22,6 +22,7 @@ class TeacherEarningsCard extends StatelessWidget {
         children: [
           StatSummaryCard(
             wrapInCard: false,
+            useGradientIconBadge: true,
             icon: Icons.account_balance_wallet_outlined,
             iconColor: context.colors.secondary,
             label: context.l10n.teacherOverviewActualEarnings,
@@ -32,7 +33,8 @@ class TeacherEarningsCard extends StatelessWidget {
           SizedBox(height: context.dimens.lg),
           StatSummaryCard(
             wrapInCard: false,
-            icon: Icons.trending_up_outlined,
+            useGradientIconBadge: true,
+            icon: Icons.hourglass_top_outlined,
             iconColor: context.colors.textSecondary,
             label: context.l10n.teacherOverviewProjectedEarnings,
             value: projected != null

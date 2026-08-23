@@ -89,16 +89,14 @@ class AppLocalizationsUr extends AppLocalizations {
   String get phoneSubtitle => 'ہم اس نمبر پر تصدیقی کوڈ بھیجیں گے';
 
   @override
-  String get phoneCountryCode => '+92';
-
-  @override
   String get phoneLabel => 'فون نمبر';
 
   @override
-  String get phoneHint => '3XX XXXXXXX';
+  String get phoneHint => '03001234567';
 
   @override
-  String get phoneInvalid => 'ایک درست 10 ہندسوں کا فون نمبر درج کریں';
+  String get phoneInvalid =>
+      'ایک درست 11 ہندسوں کا فون نمبر درج کریں جو 03 سے شروع ہو';
 
   @override
   String get phoneContinueButton => 'کوڈ بھیجیں';
@@ -306,6 +304,42 @@ class AppLocalizationsUr extends AppLocalizations {
   String get testExitDialogConfirm => 'چھوڑیں';
 
   @override
+  String get testQuestionTypeMcq => 'کثیر انتخابی سوال';
+
+  @override
+  String get testQuestionTypeShortAnswer => 'مختصر جواب';
+
+  @override
+  String get testQuestionTypeLongAnswer => 'تفصیلی جواب';
+
+  @override
+  String get testPreviewTitle => 'ٹیسٹ کا جائزہ';
+
+  @override
+  String testPreviewQuestionCount(int count) {
+    return '$count سوالات';
+  }
+
+  @override
+  String get testPreviewChaptersCovered => 'شامل ابواب';
+
+  @override
+  String get testPreviewChaptersUnknown =>
+      'اس ٹیسٹ کے لیے باب کی تفصیلات ابھی دستیاب نہیں ہیں۔';
+
+  @override
+  String get testPreviewStartButton => 'ٹیسٹ شروع کریں';
+
+  @override
+  String get testResultsBreakdownTitle => 'جوابات کی تفصیل';
+
+  @override
+  String get testResultsSolutionLabel => 'حل';
+
+  @override
+  String get testResultsReattemptButton => 'دوبارہ کوشش کریں';
+
+  @override
   String get resultsTitle => 'آپ کے نتائج';
 
   @override
@@ -352,6 +386,38 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get progressTestsTaken => 'دیے گئے ٹیسٹ';
+
+  @override
+  String get progressViewOverall => 'مجموعی';
+
+  @override
+  String get progressViewPerSubject => 'مضمون کے لحاظ سے';
+
+  @override
+  String get progressMasteryTitle => 'مجموعی مہارت';
+
+  @override
+  String progressMasteryTestsCount(int count) {
+    return '$count ٹیسٹ دیے گئے';
+  }
+
+  @override
+  String get progressSubjectEmpty =>
+      'ابھی تک مضمون کے لحاظ سے کوئی ڈیٹا موجود نہیں۔ مختلف مضامین میں ٹیسٹ دیں تاکہ یہاں تفصیل نظر آئے۔';
+
+  @override
+  String get progressSubjectAvgScore => 'اوسط سکور';
+
+  @override
+  String get progressSubjectWeakChapters => 'کمزور';
+
+  @override
+  String get progressSubjectStrongChapters => 'مضبوط';
+
+  @override
+  String progressSubjectTestsCount(int count) {
+    return '$count ٹیسٹ';
+  }
 
   @override
   String get teacherOverviewTitle => 'ٹیچر ڈیش بورڈ';
@@ -402,6 +468,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get profileLogout => 'لاگ آؤٹ';
 
   @override
+  String get profileLogoutConfirmTitle => 'لاگ آؤٹ کریں؟';
+
+  @override
+  String get profileLogoutConfirmMessage =>
+      'دوبارہ سائن ان کرنے کے لیے آپ کو اپنا فون نمبر دوبارہ تصدیق کرنا ہوگا۔';
+
+  @override
   String get profileDeleteAccount => 'اکاؤنٹ حذف کریں';
 
   @override
@@ -418,6 +491,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String get subjectSelectionTitle => 'آپ کے مضامین';
 
   @override
+  String studentHomeWelcomeName(String name) {
+    return 'ہیلو، $name! 👋';
+  }
+
+  @override
+  String get studentHomeWelcomeSubtitle =>
+      'آج پڑھائی جاری رکھنے کے لیے تیار ہیں؟';
+
+  @override
   String get progressEmpty =>
       'ابھی تک کوئی ٹیسٹ نہیں دیا گیا۔ اپنے نتائج دیکھنے کے لیے ہوم ٹیب سے ٹیسٹ دیں۔';
 
@@ -426,6 +508,15 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get teacherOverviewWelcome => 'خوش آمدید،';
+
+  @override
+  String teacherOverviewWelcomeName(String name) {
+    return 'خوش آمدید، $name! 👋';
+  }
+
+  @override
+  String get teacherOverviewWelcomeSubtitle =>
+      'آئیے دیکھتے ہیں آپ کے طلباء کی کارکردگی';
 
   @override
   String get teacherOverviewActualEarnings => 'اصل آمدنی';
@@ -680,6 +771,12 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
+  String get teacherEarningsBreakdownTitle => 'کمیشن کی تفصیل';
+
+  @override
+  String get teacherEarningsTriggerPaidPackPurchase => 'پیڈ پیک کی خریداری';
+
+  @override
   String get liveTestsEmpty =>
       'فی الحال کوئی لائیو ٹیسٹ مقرر نہیں ہے۔ بعد میں دوبارہ چیک کریں۔';
 
@@ -712,6 +809,17 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get subjectCardOwnedBadge => 'خریدا گیا';
+
+  @override
+  String get subjectCardInCartBadge => 'کارٹ میں';
+
+  @override
+  String subjectCardAddToCart(String price) {
+    return 'Rs. $price';
+  }
+
+  @override
+  String get subjectCardExploreHint => 'ابواب دیکھیں';
 
   @override
   String get studentBasicInfoTitle => 'بنیادی معلومات';
@@ -750,4 +858,67 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get teacherSignupOptionalSection => 'اختیاری';
+
+  @override
+  String get navHome => 'ہوم';
+
+  @override
+  String get navCart => 'کارٹ';
+
+  @override
+  String get navProgress => 'پیشرفت';
+
+  @override
+  String get navNotifications => 'اطلاعات';
+
+  @override
+  String get navOverview => 'جائزہ';
+
+  @override
+  String get navStudents => 'طلباء';
+
+  @override
+  String get navEarnings => 'آمدنی';
+
+  @override
+  String get subjectComputerScience => 'کمپیوٹر سائنس';
+
+  @override
+  String get subjectPhysics => 'فزکس';
+
+  @override
+  String get subjectChemistry => 'کیمسٹری';
+
+  @override
+  String get subjectBiology => 'بائیولوجی';
+
+  @override
+  String get subjectMathematics => 'ریاضی';
+
+  @override
+  String get subjectMath => 'ریاضی';
+
+  @override
+  String get subjectEnglish => 'انگریزی';
+
+  @override
+  String get subjectUrdu => 'اردو';
+
+  @override
+  String get subjectScience => 'سائنس';
+
+  @override
+  String get subjectAccounting => 'اصولِ محاسبہ';
+
+  @override
+  String get subjectBusinessMath => 'کاروباری ریاضی';
+
+  @override
+  String get subjectEconomics => 'معاشیات';
+
+  @override
+  String get subjectEducation => 'علمِ تعلیم';
+
+  @override
+  String get subjectCivics => 'شہریت';
 }

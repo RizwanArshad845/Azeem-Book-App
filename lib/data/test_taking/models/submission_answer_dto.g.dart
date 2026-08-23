@@ -13,6 +13,7 @@ _SubmissionAnswerDto _$SubmissionAnswerDtoFromJson(Map<String, dynamic> json) =>
       selectedOptionIndex: (json['selectedOptionIndex'] as num?)?.toInt(),
       isCorrect: json['isCorrect'] as bool?,
       gradedByAi: json['gradedByAi'] as bool? ?? false,
+      solutionExplanation: json['solutionExplanation'] as String?,
     );
 
 Map<String, dynamic> _$SubmissionAnswerDtoToJson(
@@ -23,4 +24,5 @@ Map<String, dynamic> _$SubmissionAnswerDtoToJson(
   'selectedOptionIndex': instance.selectedOptionIndex,
   'isCorrect': instance.isCorrect,
   'gradedByAi': instance.gradedByAi,
+  'solutionExplanation': instance.solutionExplanation,
 };

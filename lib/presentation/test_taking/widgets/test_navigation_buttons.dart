@@ -9,6 +9,7 @@ class TestNavigationButtons extends StatelessWidget {
     required this.showPrevious,
     required this.isLastQuestion,
     required this.isSubmitting,
+    required this.canGoNext,
     required this.onPrevious,
     required this.onNext,
     required this.onSubmit,
@@ -17,12 +18,18 @@ class TestNavigationButtons extends StatelessWidget {
   final bool showPrevious;
   final bool isLastQuestion;
   final bool isSubmitting;
+
+  /// Whether the current question already has a recorded answer. Gates
+  /// [onNext]/[onSubmit] — CLAUDE.md's question-lock rule ("Next question
+  /// button disabled/greyed out if answer is not selected/entered").
+  final bool canGoNext;
   final VoidCallback onPrevious;
   final VoidCallback onNext;
   final VoidCallback onSubmit;
 
   @override
   Widget build(BuildContext context) {
+    final blocked = isSubmitting || !canGoNext;
     return Row(
       children: [
         if (showPrevious) ...[
@@ -39,11 +46,11 @@ class TestNavigationButtons extends StatelessWidget {
               ? AppPrimaryButton(
                   label: context.l10n.testSubmitButton,
                   loading: isSubmitting,
-                  onPressed: isSubmitting ? null : onSubmit,
+                  onPressed: blocked ? null : onSubmit,
                 )
               : AppPrimaryButton(
                   label: context.l10n.testNextButton,
-                  onPressed: isSubmitting ? null : onNext,
+                  onPressed: blocked ? null : onNext,
                 ),
         ),
       ],

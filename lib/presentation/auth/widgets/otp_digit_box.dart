@@ -97,7 +97,14 @@ class _OtpDigitBoxState extends State<OtpDigitBox> {
               maxLength: 1,
               style: context.textStyles.headlineSmall,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: const InputDecoration(counterText: ''),
+              decoration: InputDecoration(
+                counterText: '',
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: context.dimens.sm,
+                  horizontal: context.dimens.xs,
+                ),
+              ),
               onChanged: (value) => _onChanged(i, value),
             ),
           ),

@@ -43,6 +43,7 @@ class AppButton extends StatelessWidget {
         ? Text(label)
         : Row(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(icon, size: context.dimens.iconMd),
               SizedBox(width: context.dimens.sm),
@@ -50,8 +51,68 @@ class AppButton extends StatelessWidget {
             ],
           );
 
+    if (variant == AppButtonVariant.primary) {
+      final primaryColor = context.colors.primary;
+      final secondaryColor = context.colors.secondary;
+      final gradientEnd = Color.lerp(primaryColor, secondaryColor, 0.45) ?? secondaryColor;
+
+      return PressScale(
+        enabled: !isDisabled,
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 200),
+          opacity: isDisabled ? 0.55 : 1.0,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [primaryColor, gradientEnd],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(context.dimens.pillRadius),
+              boxShadow: isDisabled
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: primaryColor.withValues(alpha: 0.32),
+                        blurRadius: 14,
+                        spreadRadius: 1,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: effectiveOnPressed,
+                borderRadius: BorderRadius.circular(context.dimens.pillRadius),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.dimens.lg,
+                    vertical: context.dimens.md - 2,
+                  ),
+                  child: Center(
+                    child: DefaultTextStyle.merge(
+                      style: context.textStyles.labelLarge?.copyWith(
+                        color: context.colors.onPrimary,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.4,
+                      ),
+                      child: IconTheme.merge(
+                        data: IconThemeData(color: context.colors.onPrimary),
+                        child: child,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     final button = switch (variant) {
-      AppButtonVariant.primary => ElevatedButton(onPressed: effectiveOnPressed, child: child),
+      AppButtonVariant.primary => const SizedBox.shrink(),
       AppButtonVariant.outlined => OutlinedButton(onPressed: effectiveOnPressed, child: child),
       AppButtonVariant.text => TextButton(onPressed: effectiveOnPressed, child: child),
     };

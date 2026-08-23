@@ -1,8 +1,11 @@
 class Validators {
   const Validators._();
 
-  static bool isValidPhone10Digits(String value) {
-    return RegExp(r'^\d{10}$').hasMatch(value);
+  /// 11-digit local phone format: `03XXXXXXXXX` (CLAUDE.md's mandated
+  /// format app-wide — replaces the old 10-digit + separate country-code
+  /// prefix scheme).
+  static bool isValidPhoneLocal(String value) {
+    return RegExp(r'^03\d{9}$').hasMatch(value);
   }
 
   static bool isRequired(String value) => value.trim().isNotEmpty;

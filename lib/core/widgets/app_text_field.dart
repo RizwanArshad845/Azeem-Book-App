@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../extensions/context_extensions.dart';
+
 class AppTextField extends StatelessWidget {
   const AppTextField({
     super.key,
@@ -13,6 +15,7 @@ class AppTextField extends StatelessWidget {
     this.maxLength,
     this.prefixText,
     this.textCapitalization = TextCapitalization.none,
+    this.isRequired = false,
   });
 
   final String label;
@@ -26,6 +29,12 @@ class AppTextField extends StatelessWidget {
   final String? prefixText;
   final TextCapitalization textCapitalization;
 
+  /// When `true`, renders a prominent red `*` appended to [label] (CLAUDE.md
+  /// teacher-onboarding rule: "Required fields marked with a prominent red
+  /// asterisk"). Purely visual — this widget doesn't itself enforce
+  /// required-ness; callers still validate via [errorText].
+  final bool isRequired;
+
   @override
   Widget build(BuildContext context) {
     return TextField(
@@ -36,7 +45,21 @@ class AppTextField extends StatelessWidget {
       maxLength: maxLength,
       textCapitalization: textCapitalization,
       decoration: InputDecoration(
-        labelText: label,
+        label: isRequired
+            ? RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style,
+                  children: [
+                    TextSpan(text: label),
+                    TextSpan(
+                      text: ' *',
+                      style: TextStyle(color: context.colors.error),
+                    ),
+                  ],
+                ),
+              )
+            : null,
+        labelText: isRequired ? null : label,
         hintText: hint,
         errorText: errorText,
         prefixText: prefixText,

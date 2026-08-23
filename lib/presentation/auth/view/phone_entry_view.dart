@@ -6,6 +6,9 @@ import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
+import '../../../core/widgets/onboarding_icon_pattern_background.dart';
+import '../../../core/widgets/onboarding_scaffold.dart';
+import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/common/failure.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import 'otp_verify_view.dart';
@@ -30,10 +33,10 @@ class _PhoneEntryViewState extends ConsumerState<PhoneEntryView> {
 
   void _handleSubmit() {
     final notifier = ref.read(authViewModelProvider.notifier);
-    final phoneNumber = '${context.l10n.phoneCountryCode} ${_controller.text.trim()}';
+    final phoneNumber = _controller.text.trim();
     notifier
         .submitPhoneNumber(
-          _controller.text,
+          phoneNumber,
           invalidPhoneMessage: context.l10n.phoneInvalid,
           roleRequiredMessage: context.l10n.roleSelectRequired,
         )
@@ -62,51 +65,39 @@ class _PhoneEntryViewState extends ConsumerState<PhoneEntryView> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
+    final role = ref.read(authViewModelProvider.notifier).selectedRole;
     final isLoading = authState.isLoading;
     final failure = authState.error;
     final isValidationFailure = failure is ValidationFailure;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.phoneTitle)),
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: context.dimens.contentMaxWidth,
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(context.dimens.lg),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    context.l10n.phoneSubtitle,
-                    style: context.textStyles.bodyMedium?.copyWith(
-                      color: context.colors.textSecondary,
-                    ),
-                  ),
-                  SizedBox(height: context.dimens.lg),
-                  AppTextField(
-                    label: context.l10n.phoneLabel,
-                    hint: context.l10n.phoneHint,
-                    controller: _controller,
-                    keyboardType: TextInputType.phone,
-                    maxLength: 10,
-                    errorText: isValidationFailure ? failure.message : null,
-                    prefixText: '${context.l10n.phoneCountryCode} ',
-                  ),
-                  SizedBox(height: context.dimens.lg),
-                  AppPrimaryButton(
-                    label: context.l10n.phoneContinueButton,
-                    loading: isLoading,
-                    onPressed: isLoading ? null : _handleSubmit,
-                  ),
-                ],
-              ),
-            ),
+    return OnboardingScaffold(
+      appBarTitle: context.l10n.phoneTitle,
+      role: role == UserRole.teacher
+          ? OnboardingRole.teacher
+          : OnboardingRole.student,
+      speechBubbleMessage: context.l10n.phoneSubtitle,
+      onBack: Navigator.of(context).canPop()
+          ? () => Navigator.of(context).pop()
+          : null,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppTextField(
+            label: context.l10n.phoneLabel,
+            hint: context.l10n.phoneHint,
+            controller: _controller,
+            keyboardType: TextInputType.phone,
+            maxLength: 11,
+            errorText: isValidationFailure ? failure.message : null,
           ),
-        ),
+          SizedBox(height: context.dimens.lg),
+          AppPrimaryButton(
+            label: context.l10n.phoneContinueButton,
+            loading: isLoading,
+            onPressed: isLoading ? null : _handleSubmit,
+          ),
+        ],
       ),
     );
   }

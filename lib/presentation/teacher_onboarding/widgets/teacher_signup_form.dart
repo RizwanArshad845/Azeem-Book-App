@@ -2,93 +2,70 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
-import '../../../core/utils/validators.dart';
-import '../../../core/widgets/app_button.dart';
-import '../../../core/widgets/app_card.dart';
-import '../../../core/widgets/app_dropdown.dart';
 import '../../../core/widgets/app_snackbar.dart';
-import '../../../core/widgets/app_text_field.dart';
-import '../../../core/widgets/async_value_widget.dart';
-import '../../../domain/campus_directory/entities/campus.dart';
-import '../../../domain/catalog/entities/board_class.dart';
-import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/common/failure.dart';
 import '../viewmodel/teacher_onboarding_viewmodel.dart';
 import '../viewmodel/teacher_signup_form_providers.dart';
-import 'multi_select_chip_field.dart';
+import '../viewmodel/teacher_signup_form_state.dart';
+import 'teacher_signup_step1_card.dart';
+import 'teacher_signup_step2_card.dart';
 
-class TeacherSignupForm extends ConsumerStatefulWidget {
+/// 100% Stateless & Riverpod-driven teacher registration form — zero [setState].
+class TeacherSignupForm extends ConsumerWidget {
   const TeacherSignupForm({super.key});
 
-  @override
-  ConsumerState<TeacherSignupForm> createState() => _TeacherSignupFormState();
-}
-
-class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
-  final _nameController = TextEditingController();
-  final _studentCountController = TextEditingController();
-
-  Campus? _campus;
-  final Set<String> _selectedClassIds = {};
-  final Set<String> _selectedSubjectIds = {};
-
-  String? _nameError;
-  String? _campusError;
-  String? _subjectsError;
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _studentCountController.dispose();
-    super.dispose();
-  }
-
-  String get _classIdsKey {
-    final sorted = _selectedClassIds.toList()..sort();
+  String _classIdsKey(Set<String> classIds) {
+    final sorted = classIds.toList()..sort();
     return sorted.join(',');
   }
 
-  void _onClassesChanged(Set<String> next) {
-    setState(() {
-      _selectedClassIds
-        ..clear()
-        ..addAll(next);
-      _selectedSubjectIds.clear();
-    });
+  void _handleNextStep1(
+    BuildContext context,
+    TeacherFormNotifier notifier,
+  ) {
+    if (notifier.validateStep1(
+      requiredNameMsg: context.l10n.teacherSignupNameError,
+      requiredCampusMsg: context.l10n.teacherSignupCampusError,
+    )) {
+      notifier.setStep(2);
+    }
   }
 
-  bool _validate() {
-    final name = _nameController.text.trim();
-    setState(() {
-      _nameError = Validators.isRequired(name) ? null : context.l10n.teacherSignupNameError;
-      _campusError = _campus == null ? context.l10n.teacherSignupCampusError : null;
-      _subjectsError = _selectedSubjectIds.isEmpty
-          ? context.l10n.teacherSignupSubjectsError
-          : null;
-    });
-    return _nameError == null && _campusError == null && _subjectsError == null;
-  }
-
-  void _handleSubmit() {
-    if (!_validate()) return;
-
-    final declaredStudentCount = int.tryParse(
-      _studentCountController.text.trim(),
+  void _handleSubmit(
+    BuildContext context,
+    WidgetRef ref,
+    TeacherFormNotifier notifier,
+    TeacherFormState formState,
+  ) {
+    // Step 1 is already guaranteed valid by the time step 2 is reachable —
+    // `_handleNextStep1` only advances `currentStep` after `validateStep1`
+    // passes, and the only way back to step 1 is `onBack`, which requires
+    // re-validating step 1 to return here. Re-checking it at submit time
+    // would set step-1 field errors the user can no longer see (step 2's
+    // card is the one on screen), so only step 2 needs validating here.
+    final isStep2Valid = notifier.validateStep2(
+      requiredClassesMsg: context.l10n.teacherSignupClassesEmpty,
+      requiredSubjectsMsg: context.l10n.teacherSignupSubjectsError,
     );
+
+    if (!isStep2Valid) return;
+
+    final declaredStudentCount =
+        formState.studentCount > 0 ? formState.studentCount : null;
 
     ref
         .read(teacherOnboardingViewModelProvider.notifier)
         .submitSignUp(
-          name: _nameController.text.trim(),
-          campusId: _campus!.id,
-          subjectIds: _selectedSubjectIds.toList(),
-          classIds: _selectedClassIds.isEmpty
+          name: formState.name.trim(),
+          campusId: formState.campus!.id,
+          subjectIds: formState.selectedSubjectIds.toList(),
+          classIds: formState.selectedClassIds.isEmpty
               ? null
-              : _selectedClassIds.toList(),
+              : formState.selectedClassIds.toList(),
           declaredStudentCount: declaredStudentCount,
         )
         .then((success) {
-      if (!mounted || success) return;
+      if (!context.mounted || success) return;
       final failure = ref.read(teacherOnboardingViewModelProvider).error;
       AppSnackbar.show(
         context,
@@ -98,162 +75,72 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final campusesAsync = ref.watch(teacherSignupCampusesProvider);
-    final boardClassesAsync = ref.watch(teacherSignupBoardClassesProvider);
-    final subjectsAsync = ref.watch(
-      teacherSignupSubjectsForClassesProvider(_classIdsKey),
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final formState = ref.watch(teacherFormNotifierProvider);
+    final notifier = ref.read(teacherFormNotifierProvider.notifier);
     final isSubmitting = ref.watch(
       teacherOnboardingViewModelProvider.select((s) => s.isLoading),
     );
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          context.l10n.teacherSignupSubtitle,
-          style: context.textStyles.bodyMedium?.copyWith(
-            color: context.colors.textSecondary,
-          ),
-        ),
-        SizedBox(height: context.dimens.lg),
-        _SectionLabel(context.l10n.teacherSignupAboutYouSection),
-        SizedBox(height: context.dimens.sm),
-        AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppTextField(
-                label: context.l10n.nameLabel,
-                controller: _nameController,
-                textCapitalization: TextCapitalization.words,
-                errorText: _nameError,
+    final stepChild = formState.currentStep == 1
+        ? TeacherSignupStep1Card(
+            key: const ValueKey('step1'),
+            name: formState.name,
+            campus: formState.campus,
+            studentCount: formState.studentCount,
+            campusesAsync: ref.watch(teacherSignupCampusesProvider),
+            nameError: formState.nameError,
+            campusError: formState.campusError,
+            onNameChanged: notifier.updateName,
+            onCampusChanged: notifier.updateCampus,
+            onStudentCountChanged: notifier.updateStudentCount,
+            onNext: () => _handleNextStep1(context, notifier),
+            onRetryCampuses: () =>
+                ref.invalidate(teacherSignupCampusesProvider),
+          )
+        : TeacherSignupStep2Card(
+            key: const ValueKey('step2'),
+            selectedClassIds: formState.selectedClassIds,
+            selectedSubjectIds: formState.selectedSubjectIds,
+            boardClassesAsync: ref.watch(teacherSignupBoardClassesProvider),
+            subjectsAsync: ref.watch(
+              teacherSignupSubjectsForClassesProvider(
+                _classIdsKey(formState.selectedClassIds),
               ),
-              SizedBox(height: context.dimens.lg),
-              AsyncValueWidget<List<Campus>>(
-                value: campusesAsync,
-                onRetry: () => ref.invalidate(teacherSignupCampusesProvider),
-                data: (campuses) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppDropdown<Campus>(
-                      label: context.l10n.campusLabel,
-                      items: campuses,
-                      selectedItem: _campus,
-                      itemAsString: (c) => '${c.name} — ${c.city}',
-                      onChanged: (campus) =>
-                          setState(() => _campus = campus),
-                    ),
-                    if (_campusError != null) ...[
-                      SizedBox(height: context.dimens.xs),
-                      Text(
-                        _campusError!,
-                        style: context.textStyles.bodySmall?.copyWith(
-                          color: context.colors.error,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+            ),
+            classesError: formState.classesError,
+            subjectsError: formState.subjectsError,
+            isSubmitting: isSubmitting,
+            onClassesChanged: notifier.updateClasses,
+            onSubjectsChanged: notifier.updateSubjects,
+            onBack: () => notifier.setStep(1),
+            onSubmit: () => _handleSubmit(context, ref, notifier, formState),
+            onRetryBoardClasses: () =>
+                ref.invalidate(teacherSignupBoardClassesProvider),
+            onRetrySubjects: () => ref.invalidate(
+              teacherSignupSubjectsForClassesProvider(
+                _classIdsKey(formState.selectedClassIds),
               ),
-            ],
-          ),
-        ),
-        SizedBox(height: context.dimens.lg),
-        _SectionLabel(context.l10n.teacherSignupWhatYouTeachSection),
-        SizedBox(height: context.dimens.sm),
-        AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AsyncValueWidget<List<BoardClass>>(
-                value: boardClassesAsync,
-                onRetry: () =>
-                    ref.invalidate(teacherSignupBoardClassesProvider),
-                data: (boardClasses) => MultiSelectChipField<BoardClass>(
-                  label: context.l10n.teacherSignupClassesLabel,
-                  options: boardClasses,
-                  optionLabel: (b) => b.name,
-                  optionId: (b) => b.id,
-                  selectedIds: _selectedClassIds,
-                  onChanged: _onClassesChanged,
-                  emptyMessage: context.l10n.teacherSignupClassesEmpty,
-                ),
-              ),
-              SizedBox(height: context.dimens.lg),
-              AsyncValueWidget<List<Subject>>(
-                value: subjectsAsync,
-                onRetry: () => ref.invalidate(
-                  teacherSignupSubjectsForClassesProvider(_classIdsKey),
-                ),
-                data: (subjects) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    MultiSelectChipField<Subject>(
-                      label: context.l10n.teacherSignupSubjectsLabel,
-                      options: subjects,
-                      optionLabel: (s) => s.name,
-                      optionId: (s) => s.id,
-                      selectedIds: _selectedSubjectIds,
-                      onChanged: (next) =>
-                          setState(() => _selectedSubjectIds
-                            ..clear()
-                            ..addAll(next)),
-                      emptyMessage: _selectedClassIds.isEmpty
-                          ? context.l10n.teacherSignupSelectClassFirst
-                          : context.l10n.teacherSignupNoSubjectsFound,
-                    ),
-                    if (_subjectsError != null) ...[
-                      SizedBox(height: context.dimens.xs),
-                      Text(
-                        _subjectsError!,
-                        style: context.textStyles.bodySmall?.copyWith(
-                          color: context.colors.error,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: context.dimens.lg),
-        _SectionLabel(context.l10n.teacherSignupOptionalSection),
-        SizedBox(height: context.dimens.sm),
-        AppCard(
-          child: AppTextField(
-            label: context.l10n.teacherSignupApproxStudentsLabel,
-            controller: _studentCountController,
-            keyboardType: TextInputType.number,
-          ),
-        ),
-        SizedBox(height: context.dimens.xl),
-        AppPrimaryButton(
-          label: context.l10n.teacherSignupSubmitButton,
-          loading: isSubmitting,
-          onPressed: isSubmitting ? null : _handleSubmit,
-        ),
-      ],
-    );
-  }
-}
+            ),
+          );
 
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.label);
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      label,
-      style: context.textStyles.labelSmall?.copyWith(
-        color: context.colors.textSecondary,
-        fontWeight: FontWeight.w600,
-      ),
+    // A quick directional crossfade between steps reads as forward/backward
+    // progress instead of the form instantly jump-cutting.
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 220),
+      switchInCurve: Curves.easeOut,
+      switchOutCurve: Curves.easeIn,
+      transitionBuilder: (child, animation) {
+        final offset = Tween<Offset>(
+          begin: Offset(child.key == const ValueKey('step2') ? 0.08 : -0.08, 0),
+          end: Offset.zero,
+        ).animate(animation);
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(position: offset, child: child),
+        );
+      },
+      child: stepChild,
     );
   }
 }

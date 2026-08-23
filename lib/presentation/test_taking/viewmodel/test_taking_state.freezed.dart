@@ -235,8 +235,8 @@ return $default(_that.status,_that.test,_that.questions,_that.currentIndex,_that
 /// @nodoc
 
 
-class _TestTakingState implements TestTakingState {
-  const _TestTakingState({required this.status, this.test, this.questions = const <Question>[], this.currentIndex = 0, this.answers = const <String, SubmissionAnswer>{}, this.secondsRemaining = 0, this.result});
+class _TestTakingState extends TestTakingState {
+  const _TestTakingState({required this.status, this.test, this.questions = const <Question>[], this.currentIndex = 0, this.answers = const <String, SubmissionAnswer>{}, this.secondsRemaining = 0, this.result}): super._();
   
 
 @override final  TestTakingStatus status;

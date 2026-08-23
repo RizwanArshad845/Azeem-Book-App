@@ -17,6 +17,7 @@ _QuestionDto _$QuestionDtoFromJson(Map<String, dynamic> json) => _QuestionDto(
       .toList(),
   correctOptionIndex: (json['correctOptionIndex'] as num?)?.toInt(),
   expectedAnswer: json['expectedAnswer'] as String?,
+  solutionExplanation: json['solutionExplanation'] as String?,
 );
 
 Map<String, dynamic> _$QuestionDtoToJson(_QuestionDto instance) =>
@@ -29,6 +30,7 @@ Map<String, dynamic> _$QuestionDtoToJson(_QuestionDto instance) =>
       'options': instance.options,
       'correctOptionIndex': instance.correctOptionIndex,
       'expectedAnswer': instance.expectedAnswer,
+      'solutionExplanation': instance.solutionExplanation,
     };
 
 const _$QuestionTypeEnumMap = {

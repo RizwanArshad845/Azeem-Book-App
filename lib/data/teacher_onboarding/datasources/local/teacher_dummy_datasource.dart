@@ -20,8 +20,8 @@ abstract class TeacherDummyDataSource {
 /// In-memory Teacher store seeded with a handful of salesman-seeded,
 /// already-approved Teacher records (§9.1: pre-seeded Teachers log in via
 /// OTP only and skip signup entirely). Phone numbers below are valid per
-/// `Validators.isValidPhone10Digits` (exactly 10 digits) so the OTP phone
-/// entry screen accepts them unmodified.
+/// `Validators.isValidPhoneLocal` (11-digit local `03XXXXXXXXX` format) so
+/// the OTP phone entry screen accepts them unmodified.
 class TeacherDummyDataSourceImpl implements TeacherDummyDataSource {
   TeacherDummyDataSourceImpl() {
     _seed();
@@ -87,7 +87,7 @@ class TeacherDummyDataSourceImpl implements TeacherDummyDataSource {
       TeacherDto(
         id: 'teacher-seed-001',
         name: 'Ahmed Raza',
-        phoneNumber: '3001234567',
+        phoneNumber: '03001234567',
         role: UserRole.teacher,
         isDeleted: false,
         createdAt: now.subtract(const Duration(days: 120)),
@@ -105,7 +105,7 @@ class TeacherDummyDataSourceImpl implements TeacherDummyDataSource {
       TeacherDto(
         id: 'teacher-seed-002',
         name: 'Sana Fatima',
-        phoneNumber: '3011234567',
+        phoneNumber: '03011234567',
         role: UserRole.teacher,
         isDeleted: false,
         createdAt: now.subtract(const Duration(days: 90)),
@@ -123,7 +123,7 @@ class TeacherDummyDataSourceImpl implements TeacherDummyDataSource {
       TeacherDto(
         id: 'teacher-seed-003',
         name: 'Bilal Hussain',
-        phoneNumber: '3211234567',
+        phoneNumber: '03211234567',
         role: UserRole.teacher,
         isDeleted: false,
         createdAt: now.subtract(const Duration(days: 60)),

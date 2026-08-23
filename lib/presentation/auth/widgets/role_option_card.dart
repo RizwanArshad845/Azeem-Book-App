@@ -21,12 +21,20 @@ class RoleOptionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       onTap: onTap,
+      padding: EdgeInsets.all(context.dimens.lg),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: context.dimens.iconLg,
-            color: context.colors.primary,
+          Container(
+            padding: EdgeInsets.all(context.dimens.sm + 2),
+            decoration: BoxDecoration(
+              color: context.colors.primary.withValues(alpha: 0.10),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              size: context.dimens.iconLg,
+              color: context.colors.primary,
+            ),
           ),
           SizedBox(width: context.dimens.md),
           Expanded(

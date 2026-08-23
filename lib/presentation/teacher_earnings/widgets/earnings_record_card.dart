@@ -20,7 +20,22 @@ class EarningsRecordCard extends StatelessWidget {
     final currency = NumberFormat.currency(symbol: 'Rs. ', decimalDigits: 0);
 
     return AppListRow(
-      leading: Icon(Icons.payments_outlined, color: context.colors.secondary),
+      leading: Container(
+        padding: EdgeInsets.all(context.dimens.sm),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [context.colors.secondary, context.colors.primary],
+          ),
+          borderRadius: BorderRadius.circular(context.dimens.radiusMd),
+        ),
+        child: Icon(
+          Icons.payments_outlined,
+          color: context.colors.onPrimary,
+          size: context.dimens.iconMd,
+        ),
+      ),
       title: 'Commission',
       subtitle: Text(
         DateFormat('MMM d, yyyy').format(record.createdAt),

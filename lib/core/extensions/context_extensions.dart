@@ -42,3 +42,39 @@ class AppDimensType {
   double get buttonHeight => AppDimens.buttonHeight;
   double get logoWatermarkSize => AppDimens.logoWatermarkSize;
 }
+
+extension LocalizedSubjectName on AppLocalizations {
+  String localizedSubjectName(String rawName) {
+    switch (rawName.trim()) {
+      case 'Computer Science':
+        return subjectComputerScience;
+      case 'Physics':
+        return subjectPhysics;
+      case 'Chemistry':
+        return subjectChemistry;
+      case 'Biology':
+        return subjectBiology;
+      case 'Mathematics':
+      case 'Math':
+        return subjectMathematics;
+      case 'English':
+        return subjectEnglish;
+      case 'Urdu':
+        return subjectUrdu;
+      case 'Science':
+        return subjectScience;
+      case 'Principles of Accounting':
+        return subjectAccounting;
+      case 'Business Mathematics':
+        return subjectBusinessMath;
+      case 'Economics':
+        return subjectEconomics;
+      case 'Education':
+        return subjectEducation;
+      case 'Civics':
+        return subjectCivics;
+      default:
+        return rawName;
+    }
+  }
+}

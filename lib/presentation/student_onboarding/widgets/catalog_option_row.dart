@@ -17,6 +17,7 @@ class CatalogOptionRow extends StatelessWidget {
     required this.isEnabled,
     required this.isSelected,
     required this.onTap,
+    this.icon,
   });
 
   final String label;
@@ -24,12 +25,24 @@ class CatalogOptionRow extends StatelessWidget {
   final bool isSelected;
   final VoidCallback? onTap;
 
+  /// Distinct native icon for this option (class/stream chip) — CLAUDE.md
+  /// mandates native Flutter icons over text-only rows.
+  final IconData? icon;
+
   @override
   Widget build(BuildContext context) {
     return AppCard(
       onTap: onTap,
       child: Row(
         children: [
+          if (icon != null) ...[
+            Icon(
+              icon,
+              size: context.dimens.iconMd,
+              color: isEnabled ? context.colors.primary : context.colors.textSecondary,
+            ),
+            SizedBox(width: context.dimens.sm),
+          ],
           Expanded(
             child: Text(
               label,

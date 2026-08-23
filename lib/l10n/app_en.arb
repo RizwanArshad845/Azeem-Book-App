@@ -29,10 +29,9 @@
   "phoneTitle": "Enter your phone number",
   "phoneWelcomeTitle": "Welcome to Azeem Books!",
   "phoneSubtitle": "We'll send a verification code to this number",
-  "phoneCountryCode": "+92",
   "phoneLabel": "Phone number",
-  "phoneHint": "3XX XXXXXXX",
-  "phoneInvalid": "Enter a valid 10-digit phone number",
+  "phoneHint": "03001234567",
+  "phoneInvalid": "Enter a valid 11-digit phone number starting with 03",
   "phoneContinueButton": "Send code",
 
   "otpTitle": "Verify your number",
@@ -115,6 +114,20 @@
   "testExitDialogTitle": "Leave test?",
   "testExitDialogBody": "Your progress will be lost if you leave now.",
   "testExitDialogConfirm": "Leave",
+  "testQuestionTypeMcq": "Multiple choice",
+  "testQuestionTypeShortAnswer": "Short answer",
+  "testQuestionTypeLongAnswer": "Long answer",
+  "testPreviewTitle": "Test preview",
+  "testPreviewQuestionCount": "{count} questions",
+  "@testPreviewQuestionCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "testPreviewChaptersCovered": "Chapters covered",
+  "testPreviewChaptersUnknown": "Chapter details aren't available for this test yet.",
+  "testPreviewStartButton": "Start test",
+  "testResultsBreakdownTitle": "Answer breakdown",
+  "testResultsSolutionLabel": "Solution",
+  "testResultsReattemptButton": "Reattempt test",
 
   "resultsTitle": "Your Results",
   "resultsOverallReadiness": "Overall Readiness",
@@ -134,6 +147,21 @@
   "progressTitle": "Your Progress",
   "progressOverall": "Overall Score",
   "progressTestsTaken": "Tests Taken",
+  "progressViewOverall": "Overall",
+  "progressViewPerSubject": "Per Subject",
+  "progressMasteryTitle": "Overall Mastery",
+  "progressMasteryTestsCount": "{count} tests attempted",
+  "@progressMasteryTestsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "progressSubjectEmpty": "No per-subject data yet. Attempt tests across different subjects to see a breakdown here.",
+  "progressSubjectAvgScore": "Avg. score",
+  "progressSubjectWeakChapters": "Weak",
+  "progressSubjectStrongChapters": "Strong",
+  "progressSubjectTestsCount": "{count} tests",
+  "@progressSubjectTestsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
 
   "teacherOverviewTitle": "Teacher Dashboard",
   "teacherOverviewStudents": "Students Onboarded",
@@ -154,15 +182,27 @@
   "profileEnglish": "English",
   "profileUrdu": "اردو (Urdu)",
   "profileLogout": "Log Out",
+  "profileLogoutConfirmTitle": "Log out?",
+  "profileLogoutConfirmMessage": "You'll need to verify your phone number again to sign back in.",
   "profileDeleteAccount": "Delete Account",
   "profileDeleteDialogTitle": "Delete Account?",
   "profileDeleteDialogBody": "This action cannot be undone. All your data will be permanently removed.",
 
   "campusLabel": "Campus",
   "subjectSelectionTitle": "Your subjects",
+  "studentHomeWelcomeName": "Hi, {name}! 👋",
+  "@studentHomeWelcomeName": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "studentHomeWelcomeSubtitle": "Ready to keep the streak going?",
   "progressEmpty": "No attempted tests yet. Take a test from the Home tab to see your progress here.",
   "progressAttempted": "Attempted tests",
   "teacherOverviewWelcome": "Welcome back,",
+  "teacherOverviewWelcomeName": "Welcome back, {name}! 👋",
+  "@teacherOverviewWelcomeName": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "teacherOverviewWelcomeSubtitle": "Here's how your students are doing",
   "teacherOverviewActualEarnings": "Actual earnings",
   "teacherOverviewProjectedEarnings": "Projected earnings",
   "teacherStudentsSearch": "Search students",
@@ -252,6 +292,8 @@
   "@teacherEarningsTransactionCount": {
     "placeholders": { "count": { "type": "int" } }
   },
+  "teacherEarningsBreakdownTitle": "Commission breakdown",
+  "teacherEarningsTriggerPaidPackPurchase": "Paid pack purchases",
   "liveTestsEmpty": "No live tests are scheduled right now. Admin schedules these occasionally — check back later.",
   "liveTestDateTba": "Live date to be announced",
   "liveTestEnter": "Enter",
@@ -271,6 +313,14 @@
   "chapterListPurchasedBadge": "Purchased",
   "chapterListAddedToCart": "Added to cart",
   "subjectCardOwnedBadge": "Owned",
+  "subjectCardInCartBadge": "In Cart",
+  "subjectCardAddToCart": "Rs. {price}",
+  "@subjectCardAddToCart": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "subjectCardExploreHint": "Explore chapters",
 
   "studentBasicInfoTitle": "Basic Info",
   "studentBasicInfoHeadline": "Let's get you set up",
@@ -284,5 +334,28 @@
   "teacherSignupHeadline": "Register as a teacher",
   "teacherSignupAboutYouSection": "About you",
   "teacherSignupWhatYouTeachSection": "What you teach",
-  "teacherSignupOptionalSection": "Optional"
+  "teacherSignupOptionalSection": "Optional",
+
+  "navHome": "Home",
+  "navCart": "Cart",
+  "navProgress": "Progress",
+  "navNotifications": "Notifications",
+  "navOverview": "Overview",
+  "navStudents": "Students",
+  "navEarnings": "Earnings",
+
+  "subjectComputerScience": "Computer Science",
+  "subjectPhysics": "Physics",
+  "subjectChemistry": "Chemistry",
+  "subjectBiology": "Biology",
+  "subjectMathematics": "Mathematics",
+  "subjectMath": "Math",
+  "subjectEnglish": "English",
+  "subjectUrdu": "Urdu",
+  "subjectScience": "Science",
+  "subjectAccounting": "Principles of Accounting",
+  "subjectBusinessMath": "Business Mathematics",
+  "subjectEconomics": "Economics",
+  "subjectEducation": "Education",
+  "subjectCivics": "Civics"
 }

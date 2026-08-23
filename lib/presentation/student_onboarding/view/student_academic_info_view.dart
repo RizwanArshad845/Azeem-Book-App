@@ -6,6 +6,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_dropdown.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/onboarding_icon_pattern_background.dart';
 import '../../../core/widgets/onboarding_scaffold.dart';
 import '../../../core/widgets/onboarding_step_header.dart';
 import '../../../domain/catalog/entities/board_class.dart';
@@ -54,6 +55,7 @@ class StudentAcademicInfoView extends ConsumerWidget {
     return OnboardingScaffold(
       currentStep: 2,
       totalSteps: 2,
+      role: OnboardingRole.student,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -75,6 +77,7 @@ class StudentAcademicInfoView extends ConsumerWidget {
                       for (final level in classLevels) ...[
                         CatalogOptionRow(
                           label: level.name,
+                          icon: _classLevelIcon(level.name),
                           isEnabled: level.isEnabled,
                           isSelected: level.id == selectedClassLevelId,
                           onTap: level.isEnabled
@@ -105,6 +108,7 @@ class StudentAcademicInfoView extends ConsumerWidget {
                     for (final leaf in leaves) ...[
                       CatalogOptionRow(
                         label: leaf.name,
+                        icon: _boardClassIcon(leaf.name),
                         isEnabled: leaf.isEnabled,
                         isSelected: leaf.id == selectedBoardClassId,
                         onTap: leaf.isEnabled
@@ -142,6 +146,41 @@ class StudentAcademicInfoView extends ConsumerWidget {
         ],
       ),
     );
+  }
+}
+
+/// Distinct native icon per [ClassLevel] name — CLAUDE.md mandates native
+/// Flutter icons over text-only class chips.
+IconData _classLevelIcon(String name) {
+  switch (name) {
+    case '9th':
+      return Icons.looks_one_outlined;
+    case 'Matric':
+      return Icons.school_outlined;
+    case '1st year':
+      return Icons.looks_two_outlined;
+    case '2nd year':
+      return Icons.filter_3_outlined;
+    default:
+      return Icons.class_outlined;
+  }
+}
+
+/// Distinct native icon per [BoardClass] stream leaf name.
+IconData _boardClassIcon(String name) {
+  switch (name) {
+    case 'Pre-Medical':
+      return Icons.biotech_outlined;
+    case 'Pre-Engineering':
+      return Icons.engineering_outlined;
+    case 'I.Com':
+      return Icons.account_balance_outlined;
+    case 'F.A':
+      return Icons.palette_outlined;
+    case 'I.C.S':
+      return Icons.computer_outlined;
+    default:
+      return Icons.menu_book_outlined;
   }
 }
 

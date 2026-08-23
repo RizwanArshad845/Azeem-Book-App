@@ -108,10 +108,21 @@ class _NavBarItemTile extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                spec.icon,
-                color: isSelected ? activeColor : inactiveColor,
-                size: context.dimens.iconMd,
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(
+                    spec.icon,
+                    color: isSelected ? activeColor : inactiveColor,
+                    size: context.dimens.iconMd,
+                  ),
+                  if ((spec.badgeCount ?? 0) > 0)
+                    Positioned(
+                      right: -context.dimens.xs,
+                      top: -context.dimens.xs / 2,
+                      child: _CountBadge(count: spec.badgeCount!),
+                    ),
+                ],
               ),
               SizedBox(height: context.dimens.xs / 2),
               AnimatedDefaultTextStyle(
@@ -127,6 +138,51 @@ class _NavBarItemTile extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Small animated count badge for a nav destination icon (e.g. the Cart
+/// tab's item count). Keyed by [count] so `AnimatedSwitcher` scale-transitions
+/// in whenever the count changes, rather than the badge just snapping to a
+/// new number.
+class _CountBadge extends StatelessWidget {
+  const _CountBadge({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 220),
+      transitionBuilder: (child, animation) =>
+          ScaleTransition(scale: animation, child: child),
+      child: Container(
+        key: ValueKey<int>(count),
+        constraints: BoxConstraints(
+          minWidth: context.dimens.iconSm,
+          minHeight: context.dimens.iconSm,
+        ),
+        padding: EdgeInsets.symmetric(horizontal: context.dimens.xs / 2),
+        decoration: BoxDecoration(
+          color: context.colors.secondary,
+          shape: count > 9 ? BoxShape.rectangle : BoxShape.circle,
+          borderRadius: count > 9
+              ? BorderRadius.circular(context.dimens.pillRadius)
+              : null,
+          border: Border.all(color: context.colors.surface, width: 1.5),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          count > 99 ? '99+' : '$count',
+          style: context.textStyles.labelSmall?.copyWith(
+            color: context.colors.onSecondary,
+            fontWeight: FontWeight.bold,
+            fontSize: 10,
+            height: 1,
           ),
         ),
       ),

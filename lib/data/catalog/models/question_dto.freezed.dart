@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$QuestionDto {
 
- String get id; String get testId; String get chapterId; QuestionType get type; String get questionText; List<String>? get options; int? get correctOptionIndex; String? get expectedAnswer;
+ String get id; String get testId; String get chapterId; QuestionType get type; String get questionText; List<String>? get options; int? get correctOptionIndex; String? get expectedAnswer; String? get solutionExplanation;
 /// Create a copy of QuestionDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $QuestionDtoCopyWith<QuestionDto> get copyWith => _$QuestionDtoCopyWithImpl<Ques
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is QuestionDto&&(identical(other.id, id) || other.id == id)&&(identical(other.testId, testId) || other.testId == testId)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.type, type) || other.type == type)&&(identical(other.questionText, questionText) || other.questionText == questionText)&&const DeepCollectionEquality().equals(other.options, options)&&(identical(other.correctOptionIndex, correctOptionIndex) || other.correctOptionIndex == correctOptionIndex)&&(identical(other.expectedAnswer, expectedAnswer) || other.expectedAnswer == expectedAnswer));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is QuestionDto&&(identical(other.id, id) || other.id == id)&&(identical(other.testId, testId) || other.testId == testId)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.type, type) || other.type == type)&&(identical(other.questionText, questionText) || other.questionText == questionText)&&const DeepCollectionEquality().equals(other.options, options)&&(identical(other.correctOptionIndex, correctOptionIndex) || other.correctOptionIndex == correctOptionIndex)&&(identical(other.expectedAnswer, expectedAnswer) || other.expectedAnswer == expectedAnswer)&&(identical(other.solutionExplanation, solutionExplanation) || other.solutionExplanation == solutionExplanation));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,testId,chapterId,type,questionText,const DeepCollectionEquality().hash(options),correctOptionIndex,expectedAnswer);
+int get hashCode => Object.hash(runtimeType,id,testId,chapterId,type,questionText,const DeepCollectionEquality().hash(options),correctOptionIndex,expectedAnswer,solutionExplanation);
 
 @override
 String toString() {
-  return 'QuestionDto(id: $id, testId: $testId, chapterId: $chapterId, type: $type, questionText: $questionText, options: $options, correctOptionIndex: $correctOptionIndex, expectedAnswer: $expectedAnswer)';
+  return 'QuestionDto(id: $id, testId: $testId, chapterId: $chapterId, type: $type, questionText: $questionText, options: $options, correctOptionIndex: $correctOptionIndex, expectedAnswer: $expectedAnswer, solutionExplanation: $solutionExplanation)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $QuestionDtoCopyWith<$Res>  {
   factory $QuestionDtoCopyWith(QuestionDto value, $Res Function(QuestionDto) _then) = _$QuestionDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String testId, String chapterId, QuestionType type, String questionText, List<String>? options, int? correctOptionIndex, String? expectedAnswer
+ String id, String testId, String chapterId, QuestionType type, String questionText, List<String>? options, int? correctOptionIndex, String? expectedAnswer, String? solutionExplanation
 });
 
 
@@ -65,7 +65,7 @@ class _$QuestionDtoCopyWithImpl<$Res>
 
 /// Create a copy of QuestionDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? testId = null,Object? chapterId = null,Object? type = null,Object? questionText = null,Object? options = freezed,Object? correctOptionIndex = freezed,Object? expectedAnswer = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? testId = null,Object? chapterId = null,Object? type = null,Object? questionText = null,Object? options = freezed,Object? correctOptionIndex = freezed,Object? expectedAnswer = freezed,Object? solutionExplanation = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,testId: null == testId ? _self.testId : testId // ignore: cast_nullable_to_non_nullable
@@ -75,6 +75,7 @@ as QuestionType,questionText: null == questionText ? _self.questionText : questi
 as String,options: freezed == options ? _self.options : options // ignore: cast_nullable_to_non_nullable
 as List<String>?,correctOptionIndex: freezed == correctOptionIndex ? _self.correctOptionIndex : correctOptionIndex // ignore: cast_nullable_to_non_nullable
 as int?,expectedAnswer: freezed == expectedAnswer ? _self.expectedAnswer : expectedAnswer // ignore: cast_nullable_to_non_nullable
+as String?,solutionExplanation: freezed == solutionExplanation ? _self.solutionExplanation : solutionExplanation // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String testId,  String chapterId,  QuestionType type,  String questionText,  List<String>? options,  int? correctOptionIndex,  String? expectedAnswer)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String testId,  String chapterId,  QuestionType type,  String questionText,  List<String>? options,  int? correctOptionIndex,  String? expectedAnswer,  String? solutionExplanation)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _QuestionDto() when $default != null:
-return $default(_that.id,_that.testId,_that.chapterId,_that.type,_that.questionText,_that.options,_that.correctOptionIndex,_that.expectedAnswer);case _:
+return $default(_that.id,_that.testId,_that.chapterId,_that.type,_that.questionText,_that.options,_that.correctOptionIndex,_that.expectedAnswer,_that.solutionExplanation);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.id,_that.testId,_that.chapterId,_that.type,_that.questionT
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String testId,  String chapterId,  QuestionType type,  String questionText,  List<String>? options,  int? correctOptionIndex,  String? expectedAnswer)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String testId,  String chapterId,  QuestionType type,  String questionText,  List<String>? options,  int? correctOptionIndex,  String? expectedAnswer,  String? solutionExplanation)  $default,) {final _that = this;
 switch (_that) {
 case _QuestionDto():
-return $default(_that.id,_that.testId,_that.chapterId,_that.type,_that.questionText,_that.options,_that.correctOptionIndex,_that.expectedAnswer);case _:
+return $default(_that.id,_that.testId,_that.chapterId,_that.type,_that.questionText,_that.options,_that.correctOptionIndex,_that.expectedAnswer,_that.solutionExplanation);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.id,_that.testId,_that.chapterId,_that.type,_that.questionT
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String testId,  String chapterId,  QuestionType type,  String questionText,  List<String>? options,  int? correctOptionIndex,  String? expectedAnswer)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String testId,  String chapterId,  QuestionType type,  String questionText,  List<String>? options,  int? correctOptionIndex,  String? expectedAnswer,  String? solutionExplanation)?  $default,) {final _that = this;
 switch (_that) {
 case _QuestionDto() when $default != null:
-return $default(_that.id,_that.testId,_that.chapterId,_that.type,_that.questionText,_that.options,_that.correctOptionIndex,_that.expectedAnswer);case _:
+return $default(_that.id,_that.testId,_that.chapterId,_that.type,_that.questionText,_that.options,_that.correctOptionIndex,_that.expectedAnswer,_that.solutionExplanation);case _:
   return null;
 
 }
@@ -216,7 +217,7 @@ return $default(_that.id,_that.testId,_that.chapterId,_that.type,_that.questionT
 @JsonSerializable()
 
 class _QuestionDto extends QuestionDto {
-  const _QuestionDto({required this.id, required this.testId, required this.chapterId, required this.type, required this.questionText, this.options, this.correctOptionIndex, this.expectedAnswer}): super._();
+  const _QuestionDto({required this.id, required this.testId, required this.chapterId, required this.type, required this.questionText, this.options, this.correctOptionIndex, this.expectedAnswer, this.solutionExplanation}): super._();
   factory _QuestionDto.fromJson(Map<String, dynamic> json) => _$QuestionDtoFromJson(json);
 
 @override final  String id;
@@ -227,6 +228,7 @@ class _QuestionDto extends QuestionDto {
 @override final  List<String>? options;
 @override final  int? correctOptionIndex;
 @override final  String? expectedAnswer;
+@override final  String? solutionExplanation;
 
 /// Create a copy of QuestionDto
 /// with the given fields replaced by the non-null parameter values.
@@ -241,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _QuestionDto&&(identical(other.id, id) || other.id == id)&&(identical(other.testId, testId) || other.testId == testId)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.type, type) || other.type == type)&&(identical(other.questionText, questionText) || other.questionText == questionText)&&const DeepCollectionEquality().equals(other.options, options)&&(identical(other.correctOptionIndex, correctOptionIndex) || other.correctOptionIndex == correctOptionIndex)&&(identical(other.expectedAnswer, expectedAnswer) || other.expectedAnswer == expectedAnswer));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _QuestionDto&&(identical(other.id, id) || other.id == id)&&(identical(other.testId, testId) || other.testId == testId)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.type, type) || other.type == type)&&(identical(other.questionText, questionText) || other.questionText == questionText)&&const DeepCollectionEquality().equals(other.options, options)&&(identical(other.correctOptionIndex, correctOptionIndex) || other.correctOptionIndex == correctOptionIndex)&&(identical(other.expectedAnswer, expectedAnswer) || other.expectedAnswer == expectedAnswer)&&(identical(other.solutionExplanation, solutionExplanation) || other.solutionExplanation == solutionExplanation));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,testId,chapterId,type,questionText,const DeepCollectionEquality().hash(options),correctOptionIndex,expectedAnswer);
+int get hashCode => Object.hash(runtimeType,id,testId,chapterId,type,questionText,const DeepCollectionEquality().hash(options),correctOptionIndex,expectedAnswer,solutionExplanation);
 
 @override
 String toString() {
-  return 'QuestionDto(id: $id, testId: $testId, chapterId: $chapterId, type: $type, questionText: $questionText, options: $options, correctOptionIndex: $correctOptionIndex, expectedAnswer: $expectedAnswer)';
+  return 'QuestionDto(id: $id, testId: $testId, chapterId: $chapterId, type: $type, questionText: $questionText, options: $options, correctOptionIndex: $correctOptionIndex, expectedAnswer: $expectedAnswer, solutionExplanation: $solutionExplanation)';
 }
 
 
@@ -261,7 +263,7 @@ abstract mixin class _$QuestionDtoCopyWith<$Res> implements $QuestionDtoCopyWith
   factory _$QuestionDtoCopyWith(_QuestionDto value, $Res Function(_QuestionDto) _then) = __$QuestionDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String testId, String chapterId, QuestionType type, String questionText, List<String>? options, int? correctOptionIndex, String? expectedAnswer
+ String id, String testId, String chapterId, QuestionType type, String questionText, List<String>? options, int? correctOptionIndex, String? expectedAnswer, String? solutionExplanation
 });
 
 
@@ -278,7 +280,7 @@ class __$QuestionDtoCopyWithImpl<$Res>
 
 /// Create a copy of QuestionDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? testId = null,Object? chapterId = null,Object? type = null,Object? questionText = null,Object? options = freezed,Object? correctOptionIndex = freezed,Object? expectedAnswer = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? testId = null,Object? chapterId = null,Object? type = null,Object? questionText = null,Object? options = freezed,Object? correctOptionIndex = freezed,Object? expectedAnswer = freezed,Object? solutionExplanation = freezed,}) {
   return _then(_QuestionDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,testId: null == testId ? _self.testId : testId // ignore: cast_nullable_to_non_nullable
@@ -288,6 +290,7 @@ as QuestionType,questionText: null == questionText ? _self.questionText : questi
 as String,options: freezed == options ? _self.options : options // ignore: cast_nullable_to_non_nullable
 as List<String>?,correctOptionIndex: freezed == correctOptionIndex ? _self.correctOptionIndex : correctOptionIndex // ignore: cast_nullable_to_non_nullable
 as int?,expectedAnswer: freezed == expectedAnswer ? _self.expectedAnswer : expectedAnswer // ignore: cast_nullable_to_non_nullable
+as String?,solutionExplanation: freezed == solutionExplanation ? _self.solutionExplanation : solutionExplanation // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

@@ -7,7 +7,10 @@ import '../../../core/widgets/empty_state_view.dart';
 import '../../../domain/test_taking/entities/test_attempt.dart';
 import '../viewmodel/student_progress_viewmodel.dart';
 import '../widgets/chapter_summary_section.dart';
+import '../widgets/overall_mastery_card.dart';
+import '../widgets/progress_view_mode_toggle.dart';
 import '../widgets/student_attempts_list.dart';
+import '../widgets/subject_progress_list.dart';
 
 /// Student shell Progress tab root (§10.2: "Attempted tests list, overall
 /// progress, per-test report (pie chart)"). Read-only — no primary action
@@ -27,6 +30,7 @@ class StudentProgressView extends ConsumerWidget {
             ref.invalidate(studentTestAttemptsProvider);
             ref.invalidate(progressTestsByIdProvider);
             ref.invalidate(chapterProgressSummaryProvider);
+            ref.invalidate(perSubjectProgressProvider);
           },
           child: AsyncValueWidget<List<TestAttempt>>(
             value: attemptsAsync,
@@ -43,14 +47,29 @@ class StudentProgressView extends ConsumerWidget {
                 );
               }
 
+              final mode = ref.watch(progressViewModeProvider);
+              final averageScorePercent =
+                  attempts.map((a) => a.scorePercent).reduce((a, b) => a + b) /
+                  attempts.length;
+
               return ListView(
                 padding: EdgeInsets.all(context.dimens.lg),
                 children: [
-                  const ChapterSummarySection(),
+                  OverallMasteryCard(
+                    masteryPercent: averageScorePercent,
+                    testsAttempted: attempts.length,
+                  ),
                   SizedBox(height: context.dimens.lg),
-                  Text(context.l10n.progressAttempted, style: context.textStyles.titleMedium),
-                  SizedBox(height: context.dimens.md),
-                  StudentAttemptsList(attempts: attempts),
+                  const ProgressViewModeToggle(),
+                  SizedBox(height: context.dimens.lg),
+                  if (mode == ProgressViewMode.overall) ...[
+                    const ChapterSummarySection(),
+                    SizedBox(height: context.dimens.lg),
+                    Text(context.l10n.progressAttempted, style: context.textStyles.titleMedium),
+                    SizedBox(height: context.dimens.md),
+                    StudentAttemptsList(attempts: attempts),
+                  ] else
+                    const SubjectProgressList(),
                 ],
               );
             },

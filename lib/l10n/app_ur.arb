@@ -29,10 +29,9 @@
   "phoneTitle": "اپنا فون نمبر درج کریں",
   "phoneWelcomeTitle": "عظیم بکس میں خوش آمدید!",
   "phoneSubtitle": "ہم اس نمبر پر تصدیقی کوڈ بھیجیں گے",
-  "phoneCountryCode": "+92",
   "phoneLabel": "فون نمبر",
-  "phoneHint": "3XX XXXXXXX",
-  "phoneInvalid": "ایک درست 10 ہندسوں کا فون نمبر درج کریں",
+  "phoneHint": "03001234567",
+  "phoneInvalid": "ایک درست 11 ہندسوں کا فون نمبر درج کریں جو 03 سے شروع ہو",
   "phoneContinueButton": "کوڈ بھیجیں",
 
   "otpTitle": "اپنے نمبر کی تصدیق کریں",
@@ -107,6 +106,20 @@
   "testExitDialogTitle": "ٹیسٹ چھوڑیں؟",
   "testExitDialogBody": "اگر آپ ابھی چھوڑ دیں گے تو آپ کی پیشرفت ضائع ہو جائے گی۔",
   "testExitDialogConfirm": "چھوڑیں",
+  "testQuestionTypeMcq": "کثیر انتخابی سوال",
+  "testQuestionTypeShortAnswer": "مختصر جواب",
+  "testQuestionTypeLongAnswer": "تفصیلی جواب",
+  "testPreviewTitle": "ٹیسٹ کا جائزہ",
+  "testPreviewQuestionCount": "{count} سوالات",
+  "@testPreviewQuestionCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "testPreviewChaptersCovered": "شامل ابواب",
+  "testPreviewChaptersUnknown": "اس ٹیسٹ کے لیے باب کی تفصیلات ابھی دستیاب نہیں ہیں۔",
+  "testPreviewStartButton": "ٹیسٹ شروع کریں",
+  "testResultsBreakdownTitle": "جوابات کی تفصیل",
+  "testResultsSolutionLabel": "حل",
+  "testResultsReattemptButton": "دوبارہ کوشش کریں",
 
   "resultsTitle": "آپ کے نتائج",
   "resultsOverallReadiness": "مجموعی تیاری",
@@ -126,6 +139,21 @@
   "progressTitle": "آپ کی پیشرفت",
   "progressOverall": "مجموعی سکور",
   "progressTestsTaken": "دیے گئے ٹیسٹ",
+  "progressViewOverall": "مجموعی",
+  "progressViewPerSubject": "مضمون کے لحاظ سے",
+  "progressMasteryTitle": "مجموعی مہارت",
+  "progressMasteryTestsCount": "{count} ٹیسٹ دیے گئے",
+  "@progressMasteryTestsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "progressSubjectEmpty": "ابھی تک مضمون کے لحاظ سے کوئی ڈیٹا موجود نہیں۔ مختلف مضامین میں ٹیسٹ دیں تاکہ یہاں تفصیل نظر آئے۔",
+  "progressSubjectAvgScore": "اوسط سکور",
+  "progressSubjectWeakChapters": "کمزور",
+  "progressSubjectStrongChapters": "مضبوط",
+  "progressSubjectTestsCount": "{count} ٹیسٹ",
+  "@progressSubjectTestsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
 
   "teacherOverviewTitle": "ٹیچر ڈیش بورڈ",
   "teacherOverviewStudents": "شامل شدہ طلباء",
@@ -147,14 +175,26 @@
   "profileUrdu": "اردو (Urdu)",
   "profileLogout": "لاگ آؤٹ",
   "profileDeleteAccount": "اکاؤنٹ حذف کریں",
+  "profileLogoutConfirmTitle": "لاگ آؤٹ کریں؟",
+  "profileLogoutConfirmMessage": "دوبارہ سائن ان کرنے کے لیے آپ کو اپنا فون نمبر دوبارہ تصدیق کرنا ہوگا۔",
   "profileDeleteDialogTitle": "اکاؤنٹ حذف کریں؟",
   "profileDeleteDialogBody": "یہ عمل واپس نہیں ہو سکتا۔ آپ کا تمام ڈیٹا مستقل طور پر ختم ہو جائے گا۔",
 
   "campusLabel": "کیمپس",
   "subjectSelectionTitle": "آپ کے مضامین",
+  "studentHomeWelcomeName": "ہیلو، {name}! 👋",
+  "@studentHomeWelcomeName": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "studentHomeWelcomeSubtitle": "آج پڑھائی جاری رکھنے کے لیے تیار ہیں؟",
   "progressEmpty": "ابھی تک کوئی ٹیسٹ نہیں دیا گیا۔ اپنے نتائج دیکھنے کے لیے ہوم ٹیب سے ٹیسٹ دیں۔",
   "progressAttempted": "دیے گئے ٹیسٹ",
   "teacherOverviewWelcome": "خوش آمدید،",
+  "teacherOverviewWelcomeName": "خوش آمدید، {name}! 👋",
+  "@teacherOverviewWelcomeName": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "teacherOverviewWelcomeSubtitle": "آئیے دیکھتے ہیں آپ کے طلباء کی کارکردگی",
   "teacherOverviewActualEarnings": "اصل آمدنی",
   "teacherOverviewProjectedEarnings": "متوقع آمدنی",
   "teacherStudentsSearch": "طلباء تلاش کریں",
@@ -229,6 +269,8 @@
   "studentProgressDetailEmpty": "اس طالب علم نے ابھی تک کوئی ٹیسٹ نہیں دیا۔",
   "teacherEarningsEmpty": "ابھی تک کوئی کمیشن نہیں ہے۔ جیسے ہی آپ کے طلباء کوئی کورس خریدیں گے، آمدنی یہاں نظر آئے گی۔",
   "teacherEarningsTransactionCount": "{count} لین دین",
+  "teacherEarningsBreakdownTitle": "کمیشن کی تفصیل",
+  "teacherEarningsTriggerPaidPackPurchase": "پیڈ پیک کی خریداری",
   "liveTestsEmpty": "فی الحال کوئی لائیو ٹیسٹ مقرر نہیں ہے۔ بعد میں دوبارہ چیک کریں۔",
   "liveTestDateTba": "لائیو کی تاریخ جلد بتائی جائے گی",
   "liveTestEnter": "داخل ہوں",
@@ -239,6 +281,14 @@
   "chapterListPurchasedBadge": "خریدا جا چکا ہے",
   "chapterListAddedToCart": "کارٹ میں شامل ہو گیا",
   "subjectCardOwnedBadge": "خریدا گیا",
+  "subjectCardInCartBadge": "کارٹ میں",
+  "subjectCardAddToCart": "Rs. {price}",
+  "@subjectCardAddToCart": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "subjectCardExploreHint": "ابواب دیکھیں",
 
   "studentBasicInfoTitle": "بنیادی معلومات",
   "studentBasicInfoHeadline": "چلیں آپ کو رجسٹر کرتے ہیں",
@@ -252,5 +302,28 @@
   "teacherSignupHeadline": "بطور ٹیچر رجسٹر ہوں",
   "teacherSignupAboutYouSection": "آپ کے بارے میں",
   "teacherSignupWhatYouTeachSection": "آپ کیا پڑھاتے ہیں",
-  "teacherSignupOptionalSection": "اختیاری"
+  "teacherSignupOptionalSection": "اختیاری",
+
+  "navHome": "ہوم",
+  "navCart": "کارٹ",
+  "navProgress": "پیشرفت",
+  "navNotifications": "اطلاعات",
+  "navOverview": "جائزہ",
+  "navStudents": "طلباء",
+  "navEarnings": "آمدنی",
+
+  "subjectComputerScience": "کمپیوٹر سائنس",
+  "subjectPhysics": "فزکس",
+  "subjectChemistry": "کیمسٹری",
+  "subjectBiology": "بائیولوجی",
+  "subjectMathematics": "ریاضی",
+  "subjectMath": "ریاضی",
+  "subjectEnglish": "انگریزی",
+  "subjectUrdu": "اردو",
+  "subjectScience": "سائنس",
+  "subjectAccounting": "اصولِ محاسبہ",
+  "subjectBusinessMath": "کاروباری ریاضی",
+  "subjectEconomics": "معاشیات",
+  "subjectEducation": "علمِ تعلیم",
+  "subjectCivics": "شہریت"
 }

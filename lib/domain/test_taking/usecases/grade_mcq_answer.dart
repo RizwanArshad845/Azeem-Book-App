@@ -16,5 +16,6 @@ SubmissionAnswer gradeMcqAnswer({
     isCorrect: selectedOptionIndex != null &&
         selectedOptionIndex == question.correctOptionIndex,
     gradedByAi: false,
+    solutionExplanation: question.solutionExplanation,
   );
 }

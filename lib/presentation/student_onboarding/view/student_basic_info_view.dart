@@ -8,6 +8,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_dropdown.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/app_text_field.dart';
+import '../../../core/widgets/onboarding_icon_pattern_background.dart';
 import '../../../core/widgets/onboarding_scaffold.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
 import '../viewmodel/student_onboarding_viewmodel.dart';
@@ -54,6 +55,7 @@ class _StudentBasicInfoViewState extends ConsumerState<StudentBasicInfoView> {
     return OnboardingScaffold(
       currentStep: 1,
       totalSteps: 2,
+      role: OnboardingRole.student,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

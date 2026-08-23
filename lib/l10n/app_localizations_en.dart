@@ -87,16 +87,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneSubtitle => 'We\'ll send a verification code to this number';
 
   @override
-  String get phoneCountryCode => '+92';
-
-  @override
   String get phoneLabel => 'Phone number';
 
   @override
-  String get phoneHint => '3XX XXXXXXX';
+  String get phoneHint => '03001234567';
 
   @override
-  String get phoneInvalid => 'Enter a valid 10-digit phone number';
+  String get phoneInvalid =>
+      'Enter a valid 11-digit phone number starting with 03';
 
   @override
   String get phoneContinueButton => 'Send code';
@@ -304,6 +302,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get testExitDialogConfirm => 'Leave';
 
   @override
+  String get testQuestionTypeMcq => 'Multiple choice';
+
+  @override
+  String get testQuestionTypeShortAnswer => 'Short answer';
+
+  @override
+  String get testQuestionTypeLongAnswer => 'Long answer';
+
+  @override
+  String get testPreviewTitle => 'Test preview';
+
+  @override
+  String testPreviewQuestionCount(int count) {
+    return '$count questions';
+  }
+
+  @override
+  String get testPreviewChaptersCovered => 'Chapters covered';
+
+  @override
+  String get testPreviewChaptersUnknown =>
+      'Chapter details aren\'t available for this test yet.';
+
+  @override
+  String get testPreviewStartButton => 'Start test';
+
+  @override
+  String get testResultsBreakdownTitle => 'Answer breakdown';
+
+  @override
+  String get testResultsSolutionLabel => 'Solution';
+
+  @override
+  String get testResultsReattemptButton => 'Reattempt test';
+
+  @override
   String get resultsTitle => 'Your Results';
 
   @override
@@ -350,6 +384,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get progressTestsTaken => 'Tests Taken';
+
+  @override
+  String get progressViewOverall => 'Overall';
+
+  @override
+  String get progressViewPerSubject => 'Per Subject';
+
+  @override
+  String get progressMasteryTitle => 'Overall Mastery';
+
+  @override
+  String progressMasteryTestsCount(int count) {
+    return '$count tests attempted';
+  }
+
+  @override
+  String get progressSubjectEmpty =>
+      'No per-subject data yet. Attempt tests across different subjects to see a breakdown here.';
+
+  @override
+  String get progressSubjectAvgScore => 'Avg. score';
+
+  @override
+  String get progressSubjectWeakChapters => 'Weak';
+
+  @override
+  String get progressSubjectStrongChapters => 'Strong';
+
+  @override
+  String progressSubjectTestsCount(int count) {
+    return '$count tests';
+  }
 
   @override
   String get teacherOverviewTitle => 'Teacher Dashboard';
@@ -400,6 +466,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileLogout => 'Log Out';
 
   @override
+  String get profileLogoutConfirmTitle => 'Log out?';
+
+  @override
+  String get profileLogoutConfirmMessage =>
+      'You\'ll need to verify your phone number again to sign back in.';
+
+  @override
   String get profileDeleteAccount => 'Delete Account';
 
   @override
@@ -416,6 +489,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subjectSelectionTitle => 'Your subjects';
 
   @override
+  String studentHomeWelcomeName(String name) {
+    return 'Hi, $name! 👋';
+  }
+
+  @override
+  String get studentHomeWelcomeSubtitle => 'Ready to keep the streak going?';
+
+  @override
   String get progressEmpty =>
       'No attempted tests yet. Take a test from the Home tab to see your progress here.';
 
@@ -424,6 +505,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get teacherOverviewWelcome => 'Welcome back,';
+
+  @override
+  String teacherOverviewWelcomeName(String name) {
+    return 'Welcome back, $name! 👋';
+  }
+
+  @override
+  String get teacherOverviewWelcomeSubtitle =>
+      'Here\'s how your students are doing';
 
   @override
   String get teacherOverviewActualEarnings => 'Actual earnings';
@@ -674,6 +764,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get teacherEarningsBreakdownTitle => 'Commission breakdown';
+
+  @override
+  String get teacherEarningsTriggerPaidPackPurchase => 'Paid pack purchases';
+
+  @override
   String get liveTestsEmpty =>
       'No live tests are scheduled right now. Admin schedules these occasionally — check back later.';
 
@@ -706,6 +802,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subjectCardOwnedBadge => 'Owned';
+
+  @override
+  String get subjectCardInCartBadge => 'In Cart';
+
+  @override
+  String subjectCardAddToCart(String price) {
+    return 'Rs. $price';
+  }
+
+  @override
+  String get subjectCardExploreHint => 'Explore chapters';
 
   @override
   String get studentBasicInfoTitle => 'Basic Info';
@@ -744,4 +851,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get teacherSignupOptionalSection => 'Optional';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navCart => 'Cart';
+
+  @override
+  String get navProgress => 'Progress';
+
+  @override
+  String get navNotifications => 'Notifications';
+
+  @override
+  String get navOverview => 'Overview';
+
+  @override
+  String get navStudents => 'Students';
+
+  @override
+  String get navEarnings => 'Earnings';
+
+  @override
+  String get subjectComputerScience => 'Computer Science';
+
+  @override
+  String get subjectPhysics => 'Physics';
+
+  @override
+  String get subjectChemistry => 'Chemistry';
+
+  @override
+  String get subjectBiology => 'Biology';
+
+  @override
+  String get subjectMathematics => 'Mathematics';
+
+  @override
+  String get subjectMath => 'Math';
+
+  @override
+  String get subjectEnglish => 'English';
+
+  @override
+  String get subjectUrdu => 'Urdu';
+
+  @override
+  String get subjectScience => 'Science';
+
+  @override
+  String get subjectAccounting => 'Principles of Accounting';
+
+  @override
+  String get subjectBusinessMath => 'Business Mathematics';
+
+  @override
+  String get subjectEconomics => 'Economics';
+
+  @override
+  String get subjectEducation => 'Education';
+
+  @override
+  String get subjectCivics => 'Civics';
 }

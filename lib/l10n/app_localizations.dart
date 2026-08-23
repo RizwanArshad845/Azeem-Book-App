@@ -248,12 +248,6 @@ abstract class AppLocalizations {
   /// **'We\'ll send a verification code to this number'**
   String get phoneSubtitle;
 
-  /// No description provided for @phoneCountryCode.
-  ///
-  /// In en, this message translates to:
-  /// **'+92'**
-  String get phoneCountryCode;
-
   /// No description provided for @phoneLabel.
   ///
   /// In en, this message translates to:
@@ -263,13 +257,13 @@ abstract class AppLocalizations {
   /// No description provided for @phoneHint.
   ///
   /// In en, this message translates to:
-  /// **'3XX XXXXXXX'**
+  /// **'03001234567'**
   String get phoneHint;
 
   /// No description provided for @phoneInvalid.
   ///
   /// In en, this message translates to:
-  /// **'Enter a valid 10-digit phone number'**
+  /// **'Enter a valid 11-digit phone number starting with 03'**
   String get phoneInvalid;
 
   /// No description provided for @phoneContinueButton.
@@ -650,6 +644,72 @@ abstract class AppLocalizations {
   /// **'Leave'**
   String get testExitDialogConfirm;
 
+  /// No description provided for @testQuestionTypeMcq.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple choice'**
+  String get testQuestionTypeMcq;
+
+  /// No description provided for @testQuestionTypeShortAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Short answer'**
+  String get testQuestionTypeShortAnswer;
+
+  /// No description provided for @testQuestionTypeLongAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Long answer'**
+  String get testQuestionTypeLongAnswer;
+
+  /// No description provided for @testPreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Test preview'**
+  String get testPreviewTitle;
+
+  /// No description provided for @testPreviewQuestionCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} questions'**
+  String testPreviewQuestionCount(int count);
+
+  /// No description provided for @testPreviewChaptersCovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapters covered'**
+  String get testPreviewChaptersCovered;
+
+  /// No description provided for @testPreviewChaptersUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter details aren\'t available for this test yet.'**
+  String get testPreviewChaptersUnknown;
+
+  /// No description provided for @testPreviewStartButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start test'**
+  String get testPreviewStartButton;
+
+  /// No description provided for @testResultsBreakdownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer breakdown'**
+  String get testResultsBreakdownTitle;
+
+  /// No description provided for @testResultsSolutionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Solution'**
+  String get testResultsSolutionLabel;
+
+  /// No description provided for @testResultsReattemptButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reattempt test'**
+  String get testResultsReattemptButton;
+
   /// No description provided for @resultsTitle.
   ///
   /// In en, this message translates to:
@@ -745,6 +805,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tests Taken'**
   String get progressTestsTaken;
+
+  /// No description provided for @progressViewOverall.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall'**
+  String get progressViewOverall;
+
+  /// No description provided for @progressViewPerSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Per Subject'**
+  String get progressViewPerSubject;
+
+  /// No description provided for @progressMasteryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Mastery'**
+  String get progressMasteryTitle;
+
+  /// No description provided for @progressMasteryTestsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} tests attempted'**
+  String progressMasteryTestsCount(int count);
+
+  /// No description provided for @progressSubjectEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No per-subject data yet. Attempt tests across different subjects to see a breakdown here.'**
+  String get progressSubjectEmpty;
+
+  /// No description provided for @progressSubjectAvgScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg. score'**
+  String get progressSubjectAvgScore;
+
+  /// No description provided for @progressSubjectWeakChapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get progressSubjectWeakChapters;
+
+  /// No description provided for @progressSubjectStrongChapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get progressSubjectStrongChapters;
+
+  /// No description provided for @progressSubjectTestsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} tests'**
+  String progressSubjectTestsCount(int count);
 
   /// No description provided for @teacherOverviewTitle.
   ///
@@ -842,6 +956,18 @@ abstract class AppLocalizations {
   /// **'Log Out'**
   String get profileLogout;
 
+  /// No description provided for @profileLogoutConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out?'**
+  String get profileLogoutConfirmTitle;
+
+  /// No description provided for @profileLogoutConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll need to verify your phone number again to sign back in.'**
+  String get profileLogoutConfirmMessage;
+
   /// No description provided for @profileDeleteAccount.
   ///
   /// In en, this message translates to:
@@ -872,6 +998,18 @@ abstract class AppLocalizations {
   /// **'Your subjects'**
   String get subjectSelectionTitle;
 
+  /// No description provided for @studentHomeWelcomeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi, {name}! 👋'**
+  String studentHomeWelcomeName(String name);
+
+  /// No description provided for @studentHomeWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to keep the streak going?'**
+  String get studentHomeWelcomeSubtitle;
+
   /// No description provided for @progressEmpty.
   ///
   /// In en, this message translates to:
@@ -889,6 +1027,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Welcome back,'**
   String get teacherOverviewWelcome;
+
+  /// No description provided for @teacherOverviewWelcomeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back, {name}! 👋'**
+  String teacherOverviewWelcomeName(String name);
+
+  /// No description provided for @teacherOverviewWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Here\'s how your students are doing'**
+  String get teacherOverviewWelcomeSubtitle;
 
   /// No description provided for @teacherOverviewActualEarnings.
   ///
@@ -1328,6 +1478,18 @@ abstract class AppLocalizations {
   /// **'{count} transactions'**
   String teacherEarningsTransactionCount(int count);
 
+  /// No description provided for @teacherEarningsBreakdownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Commission breakdown'**
+  String get teacherEarningsBreakdownTitle;
+
+  /// No description provided for @teacherEarningsTriggerPaidPackPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid pack purchases'**
+  String get teacherEarningsTriggerPaidPackPurchase;
+
   /// No description provided for @liveTestsEmpty.
   ///
   /// In en, this message translates to:
@@ -1381,6 +1543,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Owned'**
   String get subjectCardOwnedBadge;
+
+  /// No description provided for @subjectCardInCartBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'In Cart'**
+  String get subjectCardInCartBadge;
+
+  /// No description provided for @subjectCardAddToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Rs. {price}'**
+  String subjectCardAddToCart(String price);
+
+  /// No description provided for @subjectCardExploreHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore chapters'**
+  String get subjectCardExploreHint;
 
   /// No description provided for @studentBasicInfoTitle.
   ///
@@ -1453,6 +1633,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Optional'**
   String get teacherSignupOptionalSection;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Cart'**
+  String get navCart;
+
+  /// No description provided for @navProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get navProgress;
+
+  /// No description provided for @navNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get navNotifications;
+
+  /// No description provided for @navOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get navOverview;
+
+  /// No description provided for @navStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get navStudents;
+
+  /// No description provided for @navEarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Earnings'**
+  String get navEarnings;
+
+  /// No description provided for @subjectComputerScience.
+  ///
+  /// In en, this message translates to:
+  /// **'Computer Science'**
+  String get subjectComputerScience;
+
+  /// No description provided for @subjectPhysics.
+  ///
+  /// In en, this message translates to:
+  /// **'Physics'**
+  String get subjectPhysics;
+
+  /// No description provided for @subjectChemistry.
+  ///
+  /// In en, this message translates to:
+  /// **'Chemistry'**
+  String get subjectChemistry;
+
+  /// No description provided for @subjectBiology.
+  ///
+  /// In en, this message translates to:
+  /// **'Biology'**
+  String get subjectBiology;
+
+  /// No description provided for @subjectMathematics.
+  ///
+  /// In en, this message translates to:
+  /// **'Mathematics'**
+  String get subjectMathematics;
+
+  /// No description provided for @subjectMath.
+  ///
+  /// In en, this message translates to:
+  /// **'Math'**
+  String get subjectMath;
+
+  /// No description provided for @subjectEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get subjectEnglish;
+
+  /// No description provided for @subjectUrdu.
+  ///
+  /// In en, this message translates to:
+  /// **'Urdu'**
+  String get subjectUrdu;
+
+  /// No description provided for @subjectScience.
+  ///
+  /// In en, this message translates to:
+  /// **'Science'**
+  String get subjectScience;
+
+  /// No description provided for @subjectAccounting.
+  ///
+  /// In en, this message translates to:
+  /// **'Principles of Accounting'**
+  String get subjectAccounting;
+
+  /// No description provided for @subjectBusinessMath.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Mathematics'**
+  String get subjectBusinessMath;
+
+  /// No description provided for @subjectEconomics.
+  ///
+  /// In en, this message translates to:
+  /// **'Economics'**
+  String get subjectEconomics;
+
+  /// No description provided for @subjectEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get subjectEducation;
+
+  /// No description provided for @subjectCivics.
+  ///
+  /// In en, this message translates to:
+  /// **'Civics'**
+  String get subjectCivics;
 }
 
 class _AppLocalizationsDelegate

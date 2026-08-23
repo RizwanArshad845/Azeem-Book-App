@@ -18,6 +18,7 @@ abstract class QuestionDto with _$QuestionDto {
     List<String>? options,
     int? correctOptionIndex,
     String? expectedAnswer,
+    String? solutionExplanation,
   }) = _QuestionDto;
 
   factory QuestionDto.fromJson(Map<String, dynamic> json) =>
@@ -32,6 +33,7 @@ abstract class QuestionDto with _$QuestionDto {
     options: options,
     correctOptionIndex: correctOptionIndex,
     expectedAnswer: expectedAnswer,
+    solutionExplanation: solutionExplanation,
   );
 
   factory QuestionDto.fromDomain(Question entity) => QuestionDto(
@@ -43,5 +45,6 @@ abstract class QuestionDto with _$QuestionDto {
     options: entity.options,
     correctOptionIndex: entity.correctOptionIndex,
     expectedAnswer: entity.expectedAnswer,
+    solutionExplanation: entity.solutionExplanation,
   );
 }

@@ -167,9 +167,9 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
     ],
   };
 
-  /// Minimal placeholder subject set for 9th/10th — no existing content for
-  /// these grades yet, so a short demo chapter list per subject is enough
-  /// to exercise the flow end-to-end.
+  /// Minimal placeholder subject set for 9th/10th/Matric — no existing
+  /// content for these grades yet, so a short demo chapter list per subject
+  /// is enough to exercise the flow end-to-end.
   static const _lowerGradeChapterTitles = <String, List<String>>{
     'Math': ['Real Numbers', 'Algebraic Expressions', 'Linear Equations', 'Geometry Basics'],
     'Science': ['Matter and its States', 'Force and Motion', 'Energy', 'The Living World'],
@@ -177,13 +177,77 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
     'Urdu': ['Grammar (Qawaid)', 'Nasr (Prose)', 'Nazm (Poetry)'],
   };
 
+  /// Minimal placeholder subject set for the new 11th/12th "I.Com" stream
+  /// (CLAUDE.md's strict stream list).
+  static const _icomChapterTitles = <String, List<String>>{
+    'Principles of Accounting': [
+      'Introduction to Accounting',
+      'Journal and Ledger',
+      'Trial Balance',
+      'Financial Statements',
+    ],
+    'Business Mathematics': [
+      'Ratio and Proportion',
+      'Interest and Annuities',
+      'Linear Equations',
+    ],
+    'Economics': [
+      'Basic Concepts of Economics',
+      'Demand and Supply',
+      'Money and Banking',
+    ],
+  };
+
+  /// Minimal placeholder subject set for the new 11th/12th "F.A" stream.
+  static const _faChapterTitles = <String, List<String>>{
+    'Education': [
+      'Introduction to Education',
+      'Aims of Education',
+      'Methods of Teaching',
+    ],
+    'Civics': [
+      'Citizenship',
+      'Fundamental Rights',
+      'Local Government',
+    ],
+    'English': [
+      'Grammar and Composition',
+      'Comprehension Passages',
+      'Essay Writing',
+    ],
+  };
+
+  /// Minimal placeholder subject set for the new 11th/12th "I.C.S" stream.
+  static const _icsChapterTitles = <String, List<String>>{
+    'Computer Science': [
+      'Introduction to Computer',
+      'Number Systems',
+      'Programming Fundamentals',
+      'Data Structures Basics',
+    ],
+    'Mathematics': [
+      'Number Systems',
+      'Sets, Functions and Groups',
+      'Matrices and Determinants',
+    ],
+    'Physics': [
+      'Measurements',
+      'Vectors and Equilibrium',
+      'Motion and Force',
+    ],
+  };
+
   void _seed() {
+    // CLAUDE.md's class list is strictly 9th, Matric, 1st year, 2nd year —
+    // 10th drops out of the selector (row kept, just hidden) and Matric
+    // becomes selectable. `cl-11`/`cl-12` ids are kept as-is to avoid churn
+    // elsewhere; only their display `name` changes to "1st year"/"2nd year".
     _classLevels.addAll(const [
       ClassLevelDto(id: 'cl-9', name: '9th', isEnabled: true),
-      ClassLevelDto(id: 'cl-10', name: '10th', isEnabled: true),
-      ClassLevelDto(id: 'cl-11', name: '11th', isEnabled: true),
-      ClassLevelDto(id: 'cl-12', name: '12th', isEnabled: true),
-      ClassLevelDto(id: 'cl-matric', name: 'Matric', isEnabled: false),
+      ClassLevelDto(id: 'cl-10', name: '10th', isEnabled: false),
+      ClassLevelDto(id: 'cl-11', name: '1st year', isEnabled: true),
+      ClassLevelDto(id: 'cl-12', name: '2nd year', isEnabled: true),
+      ClassLevelDto(id: 'cl-matric', name: 'Matric', isEnabled: true),
     ]);
 
     _boardClasses.addAll(const [
@@ -212,6 +276,24 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
         isEnabled: true,
       ),
       BoardClassDto(
+        id: 'bc-11-icom',
+        name: 'I.Com',
+        classLevelId: 'cl-11',
+        isEnabled: true,
+      ),
+      BoardClassDto(
+        id: 'bc-11-fa',
+        name: 'F.A',
+        classLevelId: 'cl-11',
+        isEnabled: true,
+      ),
+      BoardClassDto(
+        id: 'bc-11-ics',
+        name: 'I.C.S',
+        classLevelId: 'cl-11',
+        isEnabled: true,
+      ),
+      BoardClassDto(
         id: 'bc-12-premed',
         name: 'Pre-Medical',
         classLevelId: 'cl-12',
@@ -224,10 +306,28 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
         isEnabled: true,
       ),
       BoardClassDto(
+        id: 'bc-12-icom',
+        name: 'I.Com',
+        classLevelId: 'cl-12',
+        isEnabled: true,
+      ),
+      BoardClassDto(
+        id: 'bc-12-fa',
+        name: 'F.A',
+        classLevelId: 'cl-12',
+        isEnabled: true,
+      ),
+      BoardClassDto(
+        id: 'bc-12-ics',
+        name: 'I.C.S',
+        classLevelId: 'cl-12',
+        isEnabled: true,
+      ),
+      BoardClassDto(
         id: 'bc-matric',
         name: 'Matric',
         classLevelId: 'cl-matric',
-        isEnabled: false,
+        isEnabled: true,
       ),
     ]);
 
@@ -336,6 +436,126 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
       chapterTitles: _preengChapterTitles['Computer Science']!,
     );
 
+    // 11th/12th I.Com subjects — identical content duplicated per
+    // board-class leaf.
+    _buildSubject(
+      subjectId: 'subj-11icom-acc',
+      subjectName: 'Principles of Accounting',
+      boardClassId: 'bc-11-icom',
+      chapterTitles: _icomChapterTitles['Principles of Accounting']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-11icom-math',
+      subjectName: 'Business Mathematics',
+      boardClassId: 'bc-11-icom',
+      chapterTitles: _icomChapterTitles['Business Mathematics']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-11icom-eco',
+      subjectName: 'Economics',
+      boardClassId: 'bc-11-icom',
+      chapterTitles: _icomChapterTitles['Economics']!,
+    );
+
+    _buildSubject(
+      subjectId: 'subj-12icom-acc',
+      subjectName: 'Principles of Accounting',
+      boardClassId: 'bc-12-icom',
+      chapterTitles: _icomChapterTitles['Principles of Accounting']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-12icom-math',
+      subjectName: 'Business Mathematics',
+      boardClassId: 'bc-12-icom',
+      chapterTitles: _icomChapterTitles['Business Mathematics']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-12icom-eco',
+      subjectName: 'Economics',
+      boardClassId: 'bc-12-icom',
+      chapterTitles: _icomChapterTitles['Economics']!,
+    );
+
+    // 11th/12th F.A subjects — identical content duplicated per
+    // board-class leaf.
+    _buildSubject(
+      subjectId: 'subj-11fa-edu',
+      subjectName: 'Education',
+      boardClassId: 'bc-11-fa',
+      chapterTitles: _faChapterTitles['Education']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-11fa-civ',
+      subjectName: 'Civics',
+      boardClassId: 'bc-11-fa',
+      chapterTitles: _faChapterTitles['Civics']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-11fa-eng',
+      subjectName: 'English',
+      boardClassId: 'bc-11-fa',
+      chapterTitles: _faChapterTitles['English']!,
+    );
+
+    _buildSubject(
+      subjectId: 'subj-12fa-edu',
+      subjectName: 'Education',
+      boardClassId: 'bc-12-fa',
+      chapterTitles: _faChapterTitles['Education']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-12fa-civ',
+      subjectName: 'Civics',
+      boardClassId: 'bc-12-fa',
+      chapterTitles: _faChapterTitles['Civics']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-12fa-eng',
+      subjectName: 'English',
+      boardClassId: 'bc-12-fa',
+      chapterTitles: _faChapterTitles['English']!,
+    );
+
+    // 11th/12th I.C.S subjects — identical content duplicated per
+    // board-class leaf.
+    _buildSubject(
+      subjectId: 'subj-11ics-cs',
+      subjectName: 'Computer Science',
+      boardClassId: 'bc-11-ics',
+      chapterTitles: _icsChapterTitles['Computer Science']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-11ics-math',
+      subjectName: 'Mathematics',
+      boardClassId: 'bc-11-ics',
+      chapterTitles: _icsChapterTitles['Mathematics']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-11ics-phy',
+      subjectName: 'Physics',
+      boardClassId: 'bc-11-ics',
+      chapterTitles: _icsChapterTitles['Physics']!,
+    );
+
+    _buildSubject(
+      subjectId: 'subj-12ics-cs',
+      subjectName: 'Computer Science',
+      boardClassId: 'bc-12-ics',
+      chapterTitles: _icsChapterTitles['Computer Science']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-12ics-math',
+      subjectName: 'Mathematics',
+      boardClassId: 'bc-12-ics',
+      chapterTitles: _icsChapterTitles['Mathematics']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-12ics-phy',
+      subjectName: 'Physics',
+      boardClassId: 'bc-12-ics',
+      chapterTitles: _icsChapterTitles['Physics']!,
+    );
+
     // 9th/10th subjects — minimal placeholder content (no group split).
     _buildSubject(
       subjectId: 'subj-9-math',
@@ -384,6 +604,33 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
       subjectId: 'subj-10-urdu',
       subjectName: 'Urdu',
       boardClassId: 'bc-10',
+      chapterTitles: _lowerGradeChapterTitles['Urdu']!,
+    );
+
+    // Matric subjects — minimal placeholder content (no group split), same
+    // demo chapter list as 9th/10th.
+    _buildSubject(
+      subjectId: 'subj-matric-math',
+      subjectName: 'Math',
+      boardClassId: 'bc-matric',
+      chapterTitles: _lowerGradeChapterTitles['Math']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-matric-sci',
+      subjectName: 'Science',
+      boardClassId: 'bc-matric',
+      chapterTitles: _lowerGradeChapterTitles['Science']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-matric-eng',
+      subjectName: 'English',
+      boardClassId: 'bc-matric',
+      chapterTitles: _lowerGradeChapterTitles['English']!,
+    );
+    _buildSubject(
+      subjectId: 'subj-matric-urdu',
+      subjectName: 'Urdu',
+      boardClassId: 'bc-matric',
       chapterTitles: _lowerGradeChapterTitles['Urdu']!,
     );
 
@@ -509,6 +756,10 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
               '$chapterTitle - concept D',
             ],
             correctOptionIndex: correctIndex,
+            solutionExplanation:
+                'The correct answer relates to "$chapterTitle" because it '
+                'reflects the core definition covered in that chapter — '
+                'review the "$chapterTitle" notes for the full reasoning.',
           ),
         );
       } else if (slot == 3) {
@@ -523,6 +774,10 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
             expectedAnswer:
                 'A concise explanation covering the core definition and '
                 'one example from "$chapterTitle".',
+            solutionExplanation:
+                'A strong answer relates to "$chapterTitle" because it '
+                'names the core definition and gives one concrete example '
+                'from that chapter.',
           ),
         );
       } else {
@@ -539,6 +794,10 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
                 'A detailed answer covering definitions, '
                 'derivations/examples, and real-world applications '
                 'relevant to "$chapterTitle".',
+            solutionExplanation:
+                'A complete answer relates to "$chapterTitle" because it '
+                'walks through the definitions, derivations/examples, and '
+                'real-world applications expected for that chapter.',
           ),
         );
       }

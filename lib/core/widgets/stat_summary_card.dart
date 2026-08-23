@@ -19,6 +19,7 @@ class StatSummaryCard extends StatelessWidget {
     this.valueStyle,
     this.trailingValue = false,
     this.wrapInCard = true,
+    this.useGradientIconBadge = false,
   });
 
   final String label;
@@ -30,6 +31,14 @@ class StatSummaryCard extends StatelessWidget {
   final bool trailingValue;
   final bool wrapInCard;
 
+  /// When true (and [icon] is set), renders the icon inside a small
+  /// gradient-filled rounded badge (derived from [iconColor]/`primary` ->
+  /// `secondary`, never an arbitrary hex value) instead of a flat single
+  /// color icon — CLAUDE.md's "gradient accent badge" ask for dashboard
+  /// stat rows. Defaults to false so every existing call site (which just
+  /// wants the plain icon) is unaffected.
+  final bool useGradientIconBadge;
+
   @override
   Widget build(BuildContext context) {
     final content = trailingValue ? _trailingLayout(context) : _iconLayout(context);
@@ -40,7 +49,11 @@ class StatSummaryCard extends StatelessWidget {
     return Row(
       children: [
         if (icon != null) ...[
-          Icon(icon, color: iconColor ?? context.colors.primary),
+          _IconBadge(
+            icon: icon!,
+            iconColor: iconColor,
+            useGradient: useGradientIconBadge,
+          ),
           SizedBox(width: context.dimens.md),
         ],
         Expanded(
@@ -106,6 +119,39 @@ class StatSummaryCard extends StatelessWidget {
               ),
         ),
       ],
+    );
+  }
+}
+
+class _IconBadge extends StatelessWidget {
+  const _IconBadge({
+    required this.icon,
+    required this.iconColor,
+    required this.useGradient,
+  });
+
+  final IconData icon;
+  final Color? iconColor;
+  final bool useGradient;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!useGradient) {
+      return Icon(icon, color: iconColor ?? context.colors.primary);
+    }
+
+    final start = iconColor ?? context.colors.primary;
+    return Container(
+      padding: EdgeInsets.all(context.dimens.sm),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [start, context.colors.secondary],
+        ),
+        borderRadius: BorderRadius.circular(context.dimens.radiusMd),
+      ),
+      child: Icon(icon, color: context.colors.onPrimary, size: context.dimens.iconMd),
     );
   }
 }

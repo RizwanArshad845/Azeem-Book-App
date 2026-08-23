@@ -148,6 +148,7 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
   void nextQuestion() {
     final current = state.value;
     if (current == null) return;
+    if (!current.canGoNext) return;
     if (current.currentIndex >= current.questions.length - 1) return;
     state = AsyncData(current.copyWith(currentIndex: current.currentIndex + 1));
   }

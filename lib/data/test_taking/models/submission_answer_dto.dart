@@ -15,6 +15,7 @@ abstract class SubmissionAnswerDto with _$SubmissionAnswerDto {
     int? selectedOptionIndex,
     bool? isCorrect,
     @Default(false) bool gradedByAi,
+    String? solutionExplanation,
   }) = _SubmissionAnswerDto;
 
   factory SubmissionAnswerDto.fromJson(Map<String, dynamic> json) =>
@@ -26,6 +27,7 @@ abstract class SubmissionAnswerDto with _$SubmissionAnswerDto {
     selectedOptionIndex: selectedOptionIndex,
     isCorrect: isCorrect,
     gradedByAi: gradedByAi,
+    solutionExplanation: solutionExplanation,
   );
 
   factory SubmissionAnswerDto.fromDomain(SubmissionAnswer entity) =>
@@ -35,5 +37,6 @@ abstract class SubmissionAnswerDto with _$SubmissionAnswerDto {
         selectedOptionIndex: entity.selectedOptionIndex,
         isCorrect: entity.isCorrect,
         gradedByAi: entity.gradedByAi,
+        solutionExplanation: entity.solutionExplanation,
       );
 }

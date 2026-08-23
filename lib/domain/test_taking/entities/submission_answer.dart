@@ -16,5 +16,6 @@ abstract class SubmissionAnswer with _$SubmissionAnswer {
     int? selectedOptionIndex,
     bool? isCorrect,
     @Default(false) bool gradedByAi,
+    String? solutionExplanation,
   }) = _SubmissionAnswer;
 }

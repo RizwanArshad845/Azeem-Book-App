@@ -29,6 +29,7 @@ class QuestionBody extends ConsumerWidget {
           currentIndex: s.currentIndex,
           questions: s.questions,
           answers: s.answers,
+          canGoNext: s.canGoNext,
         );
       }),
     );
@@ -65,7 +66,9 @@ class QuestionBody extends ConsumerWidget {
             currentStep: snapshot.currentIndex,
             totalSteps: snapshot.questions.length,
           ),
-          SizedBox(height: context.dimens.lg),
+          SizedBox(height: context.dimens.sm),
+          _QuestionTypeBadge(type: question.type),
+          SizedBox(height: context.dimens.md),
           Expanded(
             child: SingleChildScrollView(
               child: question.type == QuestionType.mcq
@@ -86,9 +89,11 @@ class QuestionBody extends ConsumerWidget {
             showPrevious: snapshot.currentIndex > 0,
             isLastQuestion: isLast,
             isSubmitting: isSubmitting,
+            canGoNext: snapshot.canGoNext,
             onPrevious: vm.previousQuestion,
             onNext: vm.nextQuestion,
             onSubmit: () async {
+              if (!snapshot.canGoNext) return;
               final attempt = await vm.submitAttempt();
               if (attempt == null && context.mounted) {
                 AppSnackbar.show(context, context.l10n.testSubmitFailed);
@@ -97,6 +102,46 @@ class QuestionBody extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Small icon/badge near the question header identifying its type — mcq,
+/// short answer, or long answer (Workstream 6 icon vocabulary).
+class _QuestionTypeBadge extends StatelessWidget {
+  const _QuestionTypeBadge({required this.type});
+
+  final QuestionType type;
+
+  @override
+  Widget build(BuildContext context) {
+    final (icon, label) = switch (type) {
+      QuestionType.mcq => (
+        Icons.radio_button_checked,
+        context.l10n.testQuestionTypeMcq,
+      ),
+      QuestionType.shortAnswer => (
+        Icons.short_text,
+        context.l10n.testQuestionTypeShortAnswer,
+      ),
+      QuestionType.longAnswer => (
+        Icons.notes,
+        context.l10n.testQuestionTypeLongAnswer,
+      ),
+    };
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: context.dimens.iconSm, color: context.colors.primary),
+        SizedBox(width: context.dimens.xs),
+        Text(
+          label,
+          style: context.textStyles.labelMedium?.copyWith(
+            color: context.colors.textSecondary,
+          ),
+        ),
+      ],
     );
   }
 }

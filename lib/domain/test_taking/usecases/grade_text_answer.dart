@@ -31,6 +31,7 @@ SubmissionAnswer gradeTextAnswer({
     answerText: answerText,
     isCorrect: ratio >= 0.5,
     gradedByAi: true,
+    solutionExplanation: question.solutionExplanation,
   );
 }
 

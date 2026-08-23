@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/app_action_menu_sheet.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/stat_summary_card.dart';
+import '../../../domain/auth/entities/user_role.dart';
 import '../viewmodel/teacher_overview_viewmodel.dart';
 import '../widgets/teacher_earnings_card.dart';
 import '../widgets/welcome_header.dart';
@@ -25,7 +27,10 @@ class TeacherOverviewView extends ConsumerWidget {
       // before the shell is reachable. Guarded here so this view never
       // crashes if that invariant is ever violated.
       return Scaffold(
-        appBar: AppBar(title: Text(context.l10n.teacherOverviewTitle)),
+        appBar: AppBar(
+          title: Text(context.l10n.teacherOverviewTitle),
+          actions: [const ActionMenuButton(role: UserRole.teacher)],
+        ),
         body: EmptyStateView(
           message: context.l10n.teacherProfileUnavailable,
           icon: Icons.person_off_outlined,
@@ -34,7 +39,10 @@ class TeacherOverviewView extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.teacherOverviewTitle)),
+      appBar: AppBar(
+        title: Text(context.l10n.teacherOverviewTitle),
+        actions: [const ActionMenuButton(role: UserRole.teacher)],
+      ),
       body: SafeArea(
         child: ListView(
           padding: EdgeInsets.all(context.dimens.lg),
@@ -43,6 +51,7 @@ class TeacherOverviewView extends ConsumerWidget {
             SizedBox(height: context.dimens.xl),
             StatSummaryCard(
               icon: Icons.groups_outlined,
+              useGradientIconBadge: true,
               label: context.l10n.teacherOverviewStudents,
               value: teacher.declaredStudentCount != null
                   ? '${teacher.declaredStudentCount}'

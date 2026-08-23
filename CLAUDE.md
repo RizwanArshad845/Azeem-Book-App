@@ -1,6 +1,8 @@
 # Azeem Publications — Main App (Flutter) Project Guidelines
 
 > Full architecture, data schema, and screen breakdown live in `project_spec.md` — read the relevant section (`§9` for schema, `§10.2` for nav, etc.) only when the current task needs it, don't load the whole file by default.
+>
+> Backend/API contract (Django + DRF design doc, cross-referenced against actual Flutter entities/DTOs/endpoints) lives in `backend.md` — read it when working on `AppConfig.isMockMode` remote datasources, DTO shapes, or anything that needs to match a real backend contract.
 
 ## Core Rules & Architecture
 

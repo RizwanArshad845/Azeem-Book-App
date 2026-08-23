@@ -22,6 +22,8 @@ enum TestTakingStatus { loadingGate, notPurchased, inProgress, submitting, submi
 
 @freezed
 abstract class TestTakingState with _$TestTakingState {
+  const TestTakingState._();
+
   const factory TestTakingState({
     required TestTakingStatus status,
     Test? test,
@@ -31,4 +33,18 @@ abstract class TestTakingState with _$TestTakingState {
     @Default(0) int secondsRemaining,
     TestAttempt? result,
   }) = _TestTakingState;
+
+  /// True when the current question already has a recorded answer — mcq
+  /// needs a non-null `selectedOptionIndex`, short/long answer needs
+  /// non-empty `answerText`. Gates "Next"/"Submit" per CLAUDE.md's
+  /// question-lock rule ("Next question button disabled/greyed out if
+  /// answer is not selected/entered").
+  bool get canGoNext {
+    if (questions.isEmpty || currentIndex >= questions.length) return false;
+    final answer = answers[questions[currentIndex].id];
+    if (answer == null) return false;
+    if (answer.selectedOptionIndex != null) return true;
+    final text = answer.answerText;
+    return text != null && text.trim().isNotEmpty;
+  }
 }

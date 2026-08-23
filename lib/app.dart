@@ -22,6 +22,14 @@ class App extends ConsumerWidget {
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      // Tap anywhere outside a focused input to dismiss the keyboard —
+      // applied once here rather than per-screen so every form in the app
+      // gets it for free.
+      builder: (context, child) => GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.opaque,
+        child: child,
+      ),
     );
   }
 }
