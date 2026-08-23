@@ -1,25 +1,18 @@
-// The domain `Notification` entity collides with Flutter's own
-// `Notification` widget-tree class (e.g. `ScrollNotification`), so it's
-// hidden here — this view only ever needs the domain type.
 import 'package:flutter/material.dart' hide Notification;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/extensions/context_extensions.dart';
-import '../../../core/widgets/app_list_row.dart';
+import '../../../core/widgets/app_frosted_card.dart';
 import '../../../core/widgets/async_value_widget.dart';
+import '../../../core/widgets/blurred_logo_backdrop.dart';
+import '../../../core/widgets/confirm_dialog.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../domain/notifications/entities/notification.dart';
 import '../viewmodel/notifications_viewmodel.dart';
 
-/// Shared Notifications tab root for both the Student and Teacher shells
-/// (§10.2: Student — "Live-test reminders, new test uploads, discount
-/// announcements"; Teacher — "'Student Y registered at time X', new
-/// signups"). One view serves both roles since the viewmodel already
-/// filters by the logged-in user's `recipientId` (`currentUserProvider`).
-/// Read-only list, no primary action button (§10.1's "one primary action"
-/// rule doesn't force a button where the tab's whole purpose is browsing —
-/// tapping a card is the only interaction, marking it read).
+/// Redesigned Notifications tab with color-coded notification badges,
+/// bulk "Mark all as read" and "Clear all" actions, and frosted glass cards.
 class NotificationsView extends ConsumerWidget {
   const NotificationsView({super.key});
 
@@ -28,39 +21,86 @@ class NotificationsView extends ConsumerWidget {
     final notificationsAsync = ref.watch(notificationsViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.notificationsTitle)),
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () async => ref.invalidate(notificationsViewModelProvider),
-          child: AsyncValueWidget<List<Notification>>(
-            value: notificationsAsync,
-            onRetry: () => ref.invalidate(notificationsViewModelProvider),
-            data: (notifications) {
-              if (notifications.isEmpty) {
-                return LayoutBuilder(
-                  builder: (context, constraints) => SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: SizedBox(
-                      height: constraints.maxHeight,
-                      child: const EmptyStateView(
-                        message: 'No notifications yet',
-                        icon: Icons.notifications_none_outlined,
-                      ),
-                    ),
-                  ),
-                );
-              }
-              return ListView.separated(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.all(context.dimens.lg),
-                itemCount: notifications.length,
-                separatorBuilder: (_, _) => SizedBox(height: context.dimens.md),
-                itemBuilder: (context, index) {
-                  final notification = notifications[index];
-                  return _NotificationCard(notification: notification);
-                },
-              );
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: Text(
+          context.l10n.notificationsTitle,
+          style: context.textStyles.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        actions: [
+          // "Mark all as read" action
+          IconButton(
+            tooltip: context.l10n.notificationsMarkAllRead,
+            icon: const Icon(Icons.done_all_rounded),
+            onPressed: () {
+              ref
+                  .read(notificationsViewModelProvider.notifier)
+                  .markAllAsRead();
             },
+          ),
+          // "Clear all" action
+          IconButton(
+            tooltip: context.l10n.notificationsClearAll,
+            icon: const Icon(Icons.delete_sweep_outlined),
+            onPressed: () async {
+              final confirmed = await confirmDialog(
+                context,
+                title: context.l10n.notificationsClearConfirmTitle,
+                message: context.l10n.notificationsClearConfirmMessage,
+                confirmLabel: context.l10n.notificationsClearAll,
+                isDestructive: true,
+              );
+              if (confirmed == true) {
+                ref.read(notificationsViewModelProvider.notifier).clearAll();
+              }
+            },
+          ),
+        ],
+      ),
+      body: BlurredLogoBackdrop(
+        child: SafeArea(
+          child: RefreshIndicator(
+            onRefresh:
+                () async => ref.invalidate(notificationsViewModelProvider),
+            child: AsyncValueWidget<List<Notification>>(
+              value: notificationsAsync,
+              onRetry: () => ref.invalidate(notificationsViewModelProvider),
+              data: (notifications) {
+                if (notifications.isEmpty) {
+                  return LayoutBuilder(
+                    builder:
+                        (context, constraints) => SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: SizedBox(
+                            height: constraints.maxHeight,
+                            child: const EmptyStateView(
+                              message: 'No notifications yet',
+                              icon: Icons.notifications_none_outlined,
+                            ),
+                          ),
+                        ),
+                  );
+                }
+                return ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.dimens.lg,
+                    vertical: context.dimens.md,
+                  ),
+                  itemCount: notifications.length,
+                  separatorBuilder:
+                      (_, _) => SizedBox(height: context.dimens.sm),
+                  itemBuilder: (context, index) {
+                    final notification = notifications[index];
+                    return _NotificationCard(notification: notification);
+                  },
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -73,53 +113,108 @@ class _NotificationCard extends ConsumerWidget {
 
   final Notification notification;
 
-  IconData get _icon => switch (notification.type) {
-    NotificationType.studentRegistered => Icons.person_add_alt_outlined,
-    NotificationType.profileUpdatePending => Icons.pending_actions_outlined,
-    NotificationType.teacherAwaitingApproval =>
-      Icons.hourglass_top_outlined,
-    NotificationType.newTestUploaded => Icons.assignment_outlined,
-    NotificationType.discountAnnouncement => Icons.local_offer_outlined,
-    NotificationType.liveTestReminder => Icons.podcasts_outlined,
+  (IconData, Color) get _style => switch (notification.type) {
+    NotificationType.studentRegistered => (
+      Icons.person_add_rounded,
+      const Color(0xFF2563EB), // Royal Blue
+    ),
+    NotificationType.discountAnnouncement => (
+      Icons.local_offer_rounded,
+      const Color(0xFF059669), // Emerald Green
+    ),
+    NotificationType.newTestUploaded => (
+      Icons.assignment_rounded,
+      const Color(0xFF7C3AED), // Purple
+    ),
+    NotificationType.liveTestReminder => (
+      Icons.podcasts_rounded,
+      const Color(0xFFD97706), // Amber
+    ),
+    NotificationType.profileUpdatePending => (
+      Icons.pending_actions_rounded,
+      const Color(0xFFEA580C), // Orange
+    ),
+    NotificationType.teacherAwaitingApproval => (
+      Icons.hourglass_top_rounded,
+      const Color(0xFFD97706), // Amber
+    ),
   };
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isUnread = !notification.isRead;
+    final (icon, badgeColor) = _style;
 
-    return AppListRow(
-      onTap: isUnread
-          ? () => ref
-                .read(notificationsViewModelProvider.notifier)
-                .markAsRead(notification.id)
-          : null,
-      leading: Icon(
-        _icon,
-        color: isUnread ? context.colors.primary : context.colors.textSecondary,
-      ),
-      title: notification.message,
-      titleStyle: isUnread
-          ? context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w600)
-          : context.textStyles.bodyMedium?.copyWith(
-              color: context.colors.textSecondary,
+    return AppFrostedCard(
+      onTap:
+          isUnread
+              ? () => ref
+                  .read(notificationsViewModelProvider.notifier)
+                  .markAsRead(notification.id)
+              : null,
+      padding: EdgeInsets.all(context.dimens.md),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Color-Coded Icon Badge
+          Container(
+            padding: EdgeInsets.all(context.dimens.sm),
+            decoration: BoxDecoration(
+              color: badgeColor.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: badgeColor.withValues(alpha: 0.3),
+                width: 1,
+              ),
             ),
-      subtitle: Text(
-        DateFormat('MMM d, h:mm a').format(notification.createdAt),
-        style: context.textStyles.bodySmall?.copyWith(
-          color: context.colors.textSecondary,
-        ),
-      ),
-      trailing: isUnread
-          ? Container(
-              width: context.dimens.sm,
-              height: context.dimens.sm,
-              margin: EdgeInsets.only(top: context.dimens.xs / 2),
+            child: Icon(icon, color: badgeColor, size: 20),
+          ),
+          SizedBox(width: context.dimens.md),
+
+          // Message & Timestamp
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  notification.message,
+                  style: context.textStyles.bodyMedium?.copyWith(
+                    fontWeight: isUnread ? FontWeight.bold : FontWeight.normal,
+                    color:
+                        isUnread
+                            ? context.colors.textPrimary
+                            : context.colors.textSecondary,
+                  ),
+                ),
+                SizedBox(height: context.dimens.xs / 2),
+                Text(
+                  DateFormat('MMM d, yyyy • h:mm a').format(
+                    notification.createdAt,
+                  ),
+                  style: context.textStyles.bodySmall?.copyWith(
+                    color: context.colors.textSecondary,
+                    fontSize: 11.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Unread Indicator Dot
+          if (isUnread) ...[
+            SizedBox(width: context.dimens.xs),
+            Container(
+              width: 8,
+              height: 8,
+              margin: EdgeInsets.only(top: context.dimens.xs),
               decoration: BoxDecoration(
-                color: context.colors.primary,
+                color: badgeColor,
                 shape: BoxShape.circle,
               ),
-            )
-          : null,
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
