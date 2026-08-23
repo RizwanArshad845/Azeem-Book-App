@@ -13,6 +13,12 @@ class AppLocalizationsUr extends AppLocalizations {
   String get appTitle => 'عظیم پبلیکیشنز';
 
   @override
+  String get splashBrandName => 'عظیم';
+
+  @override
+  String get splashTagline => 'پبلیکیشنز';
+
+  @override
   String get commonNext => 'آگے';
 
   @override
@@ -412,6 +418,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get progressSubjectWeakChapters => 'کمزور';
 
   @override
+  String get progressSubjectAverageChapters => 'اوسط';
+
+  @override
   String get progressSubjectStrongChapters => 'مضبوط';
 
   @override
@@ -483,6 +492,9 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get profileDeleteDialogBody =>
       'یہ عمل واپس نہیں ہو سکتا۔ آپ کا تمام ڈیٹا مستقل طور پر ختم ہو جائے گا۔';
+
+  @override
+  String get profileDeleteConfirmField => 'تصدیق کے لیے اپنا فون نمبر درج کریں';
 
   @override
   String get campusLabel => 'کیمپس';
@@ -822,6 +834,164 @@ class AppLocalizationsUr extends AppLocalizations {
   String get subjectCardExploreHint => 'ابواب دیکھیں';
 
   @override
+  String get metaQuestions => 'سوالات';
+
+  @override
+  String get metaMinutes => 'منٹ';
+
+  @override
+  String get testUnlock => 'کھولیں';
+
+  @override
+  String get buyNow => 'ابھی خریدیں';
+
+  @override
+  String subjectBundleTitle(String subjectName) {
+    return '$subjectName مکمل بنڈل';
+  }
+
+  @override
+  String subjectBundleDiscount(int percent) {
+    return '$percent فیصد رعایت';
+  }
+
+  @override
+  String buyNowWithPrice(String price) {
+    return 'ابھی خریدیں • $price روپے';
+  }
+
+  @override
+  String get personalizedPracticeTitle => 'ذاتی مشق';
+
+  @override
+  String get practiceBankCardTitle => 'پریکٹس سوالات بینک';
+
+  @override
+  String get practiceBankCardSubtitle =>
+      'اس موضوع کے تمام سوالات بغیر ٹائمر اپنی رفتار سے حل کریں';
+
+  @override
+  String attemptsRemaining(int remaining, int total) {
+    return '$total میں سے $remaining مفت کوششیں باقی';
+  }
+
+  @override
+  String get attemptsUpgrade => 'اپ گریڈ';
+
+  @override
+  String get practiceHowTitle => 'پریکٹس سوالات بینک کیسے کام کرتا ہے؟';
+
+  @override
+  String get practiceBullet1 =>
+      'اس موضوع کے تمام ٹیسٹوں کے سوالات کی مشق و دہرائی کریں۔';
+
+  @override
+  String get practiceBullet2 =>
+      'بغیر کسی ٹائمر یا ٹیسٹ جمع کرائے اپنی رفتار سے سیکھیں۔';
+
+  @override
+  String get practiceBullet3 =>
+      'کچھ سوالات پہلے دیے گئے ٹیسٹوں سے دہرائے جا سکتے ہیں۔';
+
+  @override
+  String get practiceOkayGotIt => 'ٹھیک ہے، سمجھ گیا!';
+
+  @override
+  String get attemptsExhaustedTitle => 'آپ کی تمام مفت کوششیں ختم ہو گئیں';
+
+  @override
+  String get attemptsExhaustedBody =>
+      'مشق جاری رکھنے کے لیے اپ گریڈ کریں۔ ادائیگی کی تصدیق تک ابواب مقفل رہیں گے۔';
+
+  @override
+  String get attemptsBlockedMessage =>
+      'آپ کی تمام مفت کوششیں ختم ہو گئیں۔ جاری رکھنے کے لیے اپ گریڈ کریں۔';
+
+  @override
+  String get scoreCorrect => 'درست';
+
+  @override
+  String get scoreWrong => 'غلط';
+
+  @override
+  String get scoreTimeTaken => 'لیا گیا وقت';
+
+  @override
+  String scoreTimeValue(int minutes) {
+    return '$minutes منٹ';
+  }
+
+  @override
+  String get sectionBreakdownTitle => 'سیکشن کی تفصیل';
+
+  @override
+  String get reviewAnswersButton => 'جوابات دیکھیں';
+
+  @override
+  String get sectionTypeMcq => 'کثیر انتخابی سوالات';
+
+  @override
+  String get sectionTypeShort => 'مختصر سوالات';
+
+  @override
+  String get sectionTypeLong => 'تفصیلی سوالات';
+
+  @override
+  String get reviewAnswersTitle => 'جوابات کا جائزہ';
+
+  @override
+  String reviewQuestionNumber(int number) {
+    return 'سوال $number';
+  }
+
+  @override
+  String reviewQuestionOverline(int number, String status) {
+    return 'سوال $number • $status';
+  }
+
+  @override
+  String get statusCorrect => 'درست';
+
+  @override
+  String get statusNeedsPractice => 'مزید مشق درکار';
+
+  @override
+  String get reviewCorrectAnswerLabel => 'درست جواب';
+
+  @override
+  String get commonClose => 'بند کریں';
+
+  @override
+  String get coursesFilterAll => 'تمام کورسز';
+
+  @override
+  String get progressAllSubjects => 'تمام مضامین';
+
+  @override
+  String get progressSubjectFilterLabel => 'مضمون';
+
+  @override
+  String get progressAttemptFilterLabel => 'کوشش';
+
+  @override
+  String get progressChapterProgressTitle => 'اسباق کی پیشرفت';
+
+  @override
+  String attemptNumberLabel(int n) {
+    return 'کوشش $n';
+  }
+
+  @override
+  String get submitTestDialogTitle => 'ٹیسٹ جمع کرائیں؟';
+
+  @override
+  String get submitTestDialogBody =>
+      'جمع کرانے کے بعد آپ اپنے جوابات تبدیل نہیں کر سکیں گے۔';
+
+  @override
+  String get submitTestConfirm => 'جمع کرائیں';
+
+  @override
   String get studentBasicInfoTitle => 'بنیادی معلومات';
 
   @override
@@ -921,4 +1091,53 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get subjectCivics => 'شہریت';
+
+  @override
+  String get promoTeacherDiscountTitle => 'استاد کی رعایتی پیشکش';
+
+  @override
+  String get promoTeacherDiscountSubtitle =>
+      'تمام مضامین پر 15 فیصد رعایت حاصل کرنے کے لیے اپنے استاد کا کوڈ استعمال کریں';
+
+  @override
+  String get promoPracticeBankTitle => 'ذاتی مشق';
+
+  @override
+  String get promoPracticeBankSubtitle =>
+      'مخصوص اسباق کے سوالیہ بینکوں سے امتحانات کی بہتر تیاری کریں';
+
+  @override
+  String get filterCoursesLabel => 'کورسز فلٹر کریں';
+
+  @override
+  String get filterAllCourses => 'تمام کورسز';
+
+  @override
+  String get filterScienceStream => 'سائنس گروپ';
+
+  @override
+  String get filterGeneralStream => 'جنرل گروپ';
+
+  @override
+  String get progressAllAttempts => 'تمام کوششیں';
+
+  @override
+  String get progressLatestAttempt => 'حالیہ کوشش';
+
+  @override
+  String get progressNoChaptersFound => 'اس انتخاب کے لیے کوئی نتائج نہیں ملے۔';
+
+  @override
+  String get progressViewResult => 'نتیجہ دیکھیں';
+
+  @override
+  String get progressLoadingResult => 'نتائج لوڈ ہو رہے ہیں...';
+
+  @override
+  String get progressAttemptSingular => '1 کوشش';
+
+  @override
+  String progressAttemptPlural(int count) {
+    return '$count کوششیں';
+  }
 }

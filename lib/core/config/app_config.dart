@@ -14,6 +14,10 @@ class AppConfig {
   static const bool enableLiveTests = true;
   static const bool enableGeminiOcr = false;
 
+  /// Free test attempts a student gets across the whole app (any test, any
+  /// chapter) before the upgrade/payment gate locks further attempts.
+  static const int freeAttemptsPerStudent = 5;
+
   static const int otpLength = 4;
   static const String otpCode = '1234';
   static const int otpMaxAttempts = 3;

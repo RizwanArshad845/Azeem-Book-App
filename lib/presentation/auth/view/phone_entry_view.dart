@@ -54,10 +54,12 @@ class _PhoneEntryViewState extends ConsumerState<PhoneEntryView> {
         );
       } else {
         final failure = ref.read(authViewModelProvider).error;
-        AppSnackbar.show(
-          context,
-          failure is Failure ? failure.message : context.l10n.commonErrorGeneric,
-        );
+        if (failure is! ValidationFailure) {
+          AppSnackbar.show(
+            context,
+            failure is Failure ? failure.message : context.l10n.commonErrorGeneric,
+          );
+        }
       }
     });
   }

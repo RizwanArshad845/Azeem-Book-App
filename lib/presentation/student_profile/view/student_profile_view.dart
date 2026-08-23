@@ -10,8 +10,10 @@ import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/confirm_dialog.dart';
 import '../../../core/widgets/loading_indicator.dart';
+import '../../../core/widgets/typed_confirm.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/student_onboarding/entities/student.dart';
+import '../../auth/viewmodel/auth_viewmodel.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 import '../viewmodel/student_profile_viewmodel.dart';
 import '../widgets/language_card.dart';
@@ -69,13 +71,31 @@ class _StudentProfileViewState extends ConsumerState<StudentProfileView> {
     });
   }
 
-  void _handleDeleteAccount() {
+  void _handleLogout() {
     confirmDialog(
+      context,
+      title: context.l10n.profileLogoutConfirmTitle,
+      message: context.l10n.profileLogoutConfirmMessage,
+      confirmLabel: context.l10n.profileLogout,
+      isDestructive: true,
+    ).then((confirmed) {
+      if (confirmed != true || !mounted) return;
+      // Fire-and-forget: setting the session to null drives the router
+      // redirect to the auth flow (no manual navigation from here).
+      ref.read(authViewModelProvider.notifier).logout();
+    });
+  }
+
+  void _handleDeleteAccount(Student student) {
+    // GitHub-style friction: require typing the phone number to confirm.
+    showTypedConfirmDialog(
       context,
       title: context.l10n.profileDeleteDialogTitle,
       message: context.l10n.profileDeleteDialogBody,
+      confirmationText: student.phoneNumber,
+      fieldLabel: context.l10n.profileDeleteConfirmField,
       confirmLabel: context.l10n.profileDeleteAccount,
-      isDestructive: true,
+      cancelLabel: context.l10n.commonCancel,
     ).then((confirmed) {
       if (confirmed != true || !mounted) return;
       ref
@@ -149,12 +169,18 @@ class _StudentProfileViewState extends ConsumerState<StudentProfileView> {
                     ),
                     SizedBox(height: context.dimens.xxl),
                     StudentLanguageCard(isEnglish: isEnglish),
+                    SizedBox(height: context.dimens.lg),
+                    AppOutlinedButton(
+                      label: context.l10n.profileLogout,
+                      icon: Icons.logout,
+                      onPressed: isSaving ? null : _handleLogout,
+                    ),
                     SizedBox(height: context.dimens.xxl),
                     Center(
                       child: AppDangerButton(
                         label: context.l10n.profileDeleteAccount,
                         icon: Icons.delete_outline,
-                        onPressed: isSaving ? null : _handleDeleteAccount,
+                        onPressed: isSaving ? null : () => _handleDeleteAccount(student),
                       ),
                     ),
                   ],

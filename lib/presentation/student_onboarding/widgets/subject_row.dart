@@ -9,8 +9,8 @@ class SubjectRow extends StatelessWidget {
     required this.subjectName,
     required this.isSelected,
     required this.onSelectedChanged,
-    required this.teacherPicker,
-    required this.discountApplied,
+    this.teacherPicker,
+    this.discountApplied = false,
   });
 
   final String subjectName;

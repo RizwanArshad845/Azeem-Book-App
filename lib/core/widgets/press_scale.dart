@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// Subtle tactile-feedback wrapper: scales [child] down slightly while
 /// pressed. A cheap GPU transform (no repaint of [child] itself), used to
-/// make buttons and tappable cards feel more responsive.
+/// make buttons and tappable cards feel more responsive. When [haptic] is set
+/// it also fires a light haptic on press-down for a native feel.
 class PressScale extends StatefulWidget {
-  const PressScale({super.key, required this.child, this.scale = 0.97, this.enabled = true});
+  const PressScale({
+    super.key,
+    required this.child,
+    this.scale = 0.97,
+    this.enabled = true,
+    this.haptic = false,
+  });
 
   final Widget child;
   final double scale;
   final bool enabled;
+  final bool haptic;
 
   @override
   State<PressScale> createState() => _PressScaleState();
@@ -19,6 +28,7 @@ class _PressScaleState extends State<PressScale> {
 
   void _setPressed(bool value) {
     if (!widget.enabled || _pressed == value) return;
+    if (value && widget.haptic) HapticFeedback.lightImpact();
     setState(() => _pressed = value);
   }
 

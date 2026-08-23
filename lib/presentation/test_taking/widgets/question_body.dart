@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_snackbar.dart';
+import '../../../core/widgets/confirm_dialog.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/section_progress_indicator.dart';
 import '../../../domain/catalog/entities/question.dart';
@@ -94,6 +96,15 @@ class QuestionBody extends ConsumerWidget {
             onNext: vm.nextQuestion,
             onSubmit: () async {
               if (!snapshot.canGoNext) return;
+              final confirmed = await confirmDialog(
+                context,
+                title: context.l10n.submitTestDialogTitle,
+                message: context.l10n.submitTestDialogBody,
+                confirmLabel: context.l10n.submitTestConfirm,
+                cancelLabel: context.l10n.commonCancel,
+              );
+              if (confirmed != true || !context.mounted) return;
+              HapticFeedback.lightImpact();
               final attempt = await vm.submitAttempt();
               if (attempt == null && context.mounted) {
                 AppSnackbar.show(context, context.l10n.testSubmitFailed);

@@ -6,15 +6,21 @@ import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/app_snackbar.dart';
+import '../../../core/widgets/section_breakdown_card.dart';
+import '../../../core/widgets/stat_tile.dart';
 import '../../../domain/catalog/entities/question.dart';
-import '../../../domain/test_taking/entities/submission_answer.dart';
 import '../../../domain/test_taking/entities/test_attempt.dart';
+import '../../../domain/test_taking/usecases/compute_section_breakdown.dart';
+import '../viewmodel/free_attempts_provider.dart';
 import '../viewmodel/test_taking_viewmodel.dart';
+import '../widgets/review_answers_sheet.dart';
 
-/// Rendered by `TestTakingView` once `TestTakingState.status ==
-/// TestTakingStatus.submitted` (no separate route — the submission result
-/// is only ever reachable from having just finished this test, so it's
-/// rendered in place rather than adding a new `AppRoutes` entry).
+/// Rendered by `TestTakingView` once the attempt is submitted. Redesigned to
+/// the test_result reference: a score hero (X/total + %), a 3-up stats row
+/// (Correct / Wrong / Time), a per-section marks breakdown, and Review /
+/// Reattempt / Back actions. Reattempt is gated by the global free-attempts
+/// limit.
 class TestResultsView extends ConsumerWidget {
   const TestResultsView({
     super.key,
@@ -25,23 +31,34 @@ class TestResultsView extends ConsumerWidget {
 
   final String testId;
   final TestAttempt attempt;
-
-  /// The test's questions, kept alive in `TestTakingState` from before
-  /// submission — used here to resolve question text for the per-question
-  /// breakdown (`TestAttempt.answers` only carries `questionId`).
   final List<Question> questions;
+
+  String _sectionTitle(BuildContext context, int number, QuestionType type) {
+    final label = switch (type) {
+      QuestionType.mcq => context.l10n.sectionTypeMcq,
+      QuestionType.shortAnswer => context.l10n.sectionTypeShort,
+      QuestionType.longAnswer => context.l10n.sectionTypeLong,
+    };
+    return 'Q$number $label';
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final scoreColor = attempt.scorePercent >= 75
-        ? context.colors.success
-        : attempt.scorePercent >= 50
-        ? context.colors.warning
-        : context.colors.error;
+    final sections = computeSectionBreakdown(questions, attempt.answers);
+    final earned = sections.fold<int>(0, (s, x) => s + x.earnedMarks);
+    final total = sections.fold<int>(0, (s, x) => s + x.totalMarks);
+    final correct = sections.fold<int>(0, (s, x) => s + x.correct);
+    final wrong = sections.fold<int>(0, (s, x) => s + x.wrong);
+    final percent = total == 0 ? 0 : (earned / total * 100).round();
+    final minutes = ((attempt.durationSeconds ?? 0) / 60).round();
 
-    final answersByQuestionId = {
-      for (final answer in attempt.answers) answer.questionId: answer,
-    };
+    final scoreColor = percent >= 75
+        ? context.colors.success
+        : percent >= 50
+            ? context.colors.warning
+            : context.colors.error;
+
+    final exhausted = ref.watch(attemptsExhaustedProvider);
 
     return SafeArea(
       child: Padding(
@@ -52,128 +69,100 @@ class TestResultsView extends ConsumerWidget {
             Expanded(
               child: ListView(
                 children: [
-                  AppCard(
-                    child: Column(
-                      children: [
-                        Text(
-                          context.l10n.testResultsScore,
-                          style: context.textStyles.bodyMedium?.copyWith(
-                            color: context.colors.textSecondary,
-                          ),
-                        ),
-                        SizedBox(height: context.dimens.sm),
-                        Text(
-                          '${attempt.scorePercent.toStringAsFixed(0)}%',
-                          style: context.textStyles.headlineMedium?.copyWith(
-                            color: scoreColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+                  _ScoreHero(
+                    earned: earned,
+                    total: total,
+                    percent: percent,
+                    color: scoreColor,
                   ),
-                  SizedBox(height: context.dimens.lg),
-                  if ((attempt.strongChapterIds ?? const []).isNotEmpty) ...[
+                  SizedBox(height: context.dimens.md),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: StatTile(
+                          icon: Icons.check_circle_outline,
+                          value: '$correct',
+                          label: context.l10n.scoreCorrect,
+                          color: context.colors.success,
+                        ),
+                      ),
+                      SizedBox(width: context.dimens.sm),
+                      Expanded(
+                        child: StatTile(
+                          icon: Icons.cancel_outlined,
+                          value: '$wrong',
+                          label: context.l10n.scoreWrong,
+                          color: context.colors.error,
+                        ),
+                      ),
+                      SizedBox(width: context.dimens.sm),
+                      Expanded(
+                        child: StatTile(
+                          icon: Icons.timer_outlined,
+                          value: context.l10n.scoreTimeValue(minutes),
+                          label: context.l10n.scoreTimeTaken,
+                          color: context.colors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (sections.isNotEmpty) ...[
+                    SizedBox(height: context.dimens.lg),
                     Text(
-                      context.l10n.testResultsStrongChapters,
-                      style: context.textStyles.titleMedium,
-                    ),
-                    SizedBox(height: context.dimens.sm),
-                    AppCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (final id in attempt.strongChapterIds!)
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: context.dimens.xs / 2,
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.trending_up,
-                                    color: context.colors.success,
-                                    size: context.dimens.iconSm,
-                                  ),
-                                  SizedBox(width: context.dimens.sm),
-                                  Expanded(child: Text(id)),
-                                ],
-                              ),
-                            ),
-                        ],
+                      context.l10n.sectionBreakdownTitle,
+                      style: context.textStyles.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
-                    SizedBox(height: context.dimens.lg),
-                  ],
-                  if ((attempt.weakChapterIds ?? const []).isNotEmpty) ...[
-                    Text(
-                      context.l10n.testResultsWeakChapters,
-                      style: context.textStyles.titleMedium,
-                    ),
                     SizedBox(height: context.dimens.sm),
-                    AppCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (final id in attempt.weakChapterIds!)
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: context.dimens.xs / 2,
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.trending_down,
-                                    color: context.colors.error,
-                                    size: context.dimens.iconSm,
-                                  ),
-                                  SizedBox(width: context.dimens.sm),
-                                  Expanded(child: Text(id)),
-                                ],
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: context.dimens.lg),
-                  ],
-                  if (questions.isNotEmpty) ...[
-                    Text(
-                      context.l10n.testResultsBreakdownTitle,
-                      style: context.textStyles.titleMedium,
-                    ),
-                    SizedBox(height: context.dimens.sm),
-                    for (var i = 0; i < questions.length; i++)
-                      _QuestionBreakdownCard(
-                        index: i,
-                        question: questions[i],
-                        answer: answersByQuestionId[questions[i].id],
+                    for (var i = 0; i < sections.length; i++)
+                      Padding(
+                        padding: EdgeInsets.only(bottom: context.dimens.sm),
+                        child: SectionBreakdownCard(
+                          title: _sectionTitle(context, i + 1, sections[i].type),
+                          correct: sections[i].correct,
+                          wrong: sections[i].wrong,
+                          earnedMarks: sections[i].earnedMarks,
+                          totalMarks: sections[i].totalMarks,
+                        ),
                       ),
                   ],
                 ],
               ),
             ),
-            SizedBox(height: context.dimens.md),
+            SizedBox(height: context.dimens.sm),
+            AppPrimaryButton(
+              label: context.l10n.reviewAnswersButton,
+              icon: Icons.fact_check_outlined,
+              onPressed: () => ReviewAnswersSheet.show(
+                context,
+                questions: questions,
+                answers: attempt.answers,
+              ),
+            ),
+            SizedBox(height: context.dimens.sm),
             Row(
               children: [
                 Expanded(
                   child: AppOutlinedButton(
-                    label: context.l10n.resultsReturnHome,
-                    onPressed: () => context.go(AppRoutes.studentHome),
+                    label: context.l10n.testResultsReattemptButton,
+                    onPressed: () {
+                      if (exhausted) {
+                        AppSnackbar.show(
+                          context,
+                          context.l10n.attemptsBlockedMessage,
+                        );
+                        return;
+                      }
+                      ref.invalidate(testTakingViewModelProvider(testId));
+                    },
                   ),
                 ),
                 SizedBox(width: context.dimens.md),
                 Expanded(
-                  child: AppPrimaryButton(
-                    label: context.l10n.testResultsReattemptButton,
-                    onPressed: () {
-                      // Re-triggers TestTakingViewModel.build(), which
-                      // starts a brand-new attempt for the same test — it
-                      // submits through the same SubmitTestAttemptUseCase
-                      // and gets its own fresh weak/strong chapters and
-                      // score, no special-casing needed here.
-                      ref.invalidate(testTakingViewModelProvider(testId));
-                    },
+                  child: AppOutlinedButton(
+                    label: context.l10n.resultsReturnHome,
+                    onPressed: () => context.go(AppRoutes.studentHome),
                   ),
                 ),
               ],
@@ -185,91 +174,66 @@ class TestResultsView extends ConsumerWidget {
   }
 }
 
-/// One question's row in the results breakdown: check/cancel icon per
-/// correctness (Workstream 6), and — for wrong answers only — a visually
-/// separated "solution" block rendering `Question.solutionExplanation`
-/// (carried onto the graded `SubmissionAnswer` by the grading use cases).
-class _QuestionBreakdownCard extends StatelessWidget {
-  const _QuestionBreakdownCard({
-    required this.index,
-    required this.question,
-    required this.answer,
+class _ScoreHero extends StatelessWidget {
+  const _ScoreHero({
+    required this.earned,
+    required this.total,
+    required this.percent,
+    required this.color,
   });
 
-  final int index;
-  final Question question;
-  final SubmissionAnswer? answer;
+  final int earned;
+  final int total;
+  final int percent;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    final isCorrect = answer?.isCorrect == true;
-    final String? explanation = answer?.solutionExplanation;
-
-    return Padding(
-      padding: EdgeInsets.only(bottom: context.dimens.sm),
-      child: AppCard(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return AppCard(
+      padding: EdgeInsets.all(context.dimens.lg),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  isCorrect ? Icons.check_circle : Icons.cancel,
-                  color: isCorrect
-                      ? context.colors.success
-                      : context.colors.error,
-                  size: context.dimens.iconSm,
+                Text(
+                  context.l10n.testResultsScore,
+                  style: context.textStyles.bodyMedium?.copyWith(
+                    color: context.colors.textSecondary,
+                  ),
                 ),
-                SizedBox(width: context.dimens.sm),
-                Expanded(
-                  child: Text(
-                    'Q${index + 1}. ${question.questionText}',
-                    style: context.textStyles.bodyMedium,
+                SizedBox(height: context.dimens.xs),
+                Text(
+                  '$earned/$total',
+                  style: context.textStyles.displaySmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                Text(
+                  '$percent%',
+                  style: context.textStyles.titleMedium?.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
             ),
-            if (!isCorrect && explanation != null && explanation.isNotEmpty) ...[
-              SizedBox(height: context.dimens.sm),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(context.dimens.sm),
-                decoration: BoxDecoration(
-                  color: context.colors.surfaceVariant,
-                  borderRadius: BorderRadius.circular(context.dimens.radiusMd),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.lightbulb_outline,
-                      color: context.colors.secondary,
-                      size: context.dimens.iconSm,
-                    ),
-                    SizedBox(width: context.dimens.sm),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            context.l10n.testResultsSolutionLabel,
-                            style: context.textStyles.labelMedium?.copyWith(
-                              color: context.colors.textSecondary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: context.dimens.xs / 2),
-                          Text(explanation, style: context.textStyles.bodySmall),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ],
-        ),
+          ),
+          Container(
+            padding: EdgeInsets.all(context.dimens.md),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(context.dimens.radiusLg),
+            ),
+            child: Icon(
+              Icons.emoji_events,
+              color: color,
+              size: context.dimens.iconLg,
+            ),
+          ),
+        ],
       ),
     );
   }

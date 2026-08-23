@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_button.dart';
-import '../../../core/widgets/app_dropdown.dart';
+import '../../../core/widgets/app_dropdown_card.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/onboarding_icon_pattern_background.dart';
@@ -80,10 +80,12 @@ class _StudentBasicInfoViewState extends ConsumerState<StudentBasicInfoView> {
           AsyncValueWidget<List<Campus>>(
             value: campusesAsync,
             onRetry: () => ref.invalidate(campusesProvider),
-            data: (campuses) => AppDropdown<Campus>(
+            data: (campuses) => AppDropdownCard<Campus>(
               label: context.l10n.campusLabel,
               items: campuses,
               selectedItem: selectedCampus,
+              isRequired: true,
+              icon: Icons.location_city_outlined,
               itemAsString: (c) => '${c.name} (${c.city})',
               onChanged: (campus) => ref
                   .read(selectedCampusViewModelProvider.notifier)

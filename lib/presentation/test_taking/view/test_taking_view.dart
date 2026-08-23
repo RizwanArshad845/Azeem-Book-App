@@ -38,20 +38,22 @@ class TestTakingView extends ConsumerWidget {
       },
       child: Scaffold(
         appBar: AppBar(title: Text(context.l10n.testTakingTitle)),
-        body: AsyncValueWidget<TestTakingState>(
-          value: asyncState,
-          onRetry: () => ref.invalidate(testTakingViewModelProvider(testId)),
-          data: (state) => switch (state.status) {
-            TestTakingStatus.loadingGate => const LoadingGate(),
-            TestTakingStatus.notPurchased => const NotPurchasedView(),
-            TestTakingStatus.inProgress ||
-            TestTakingStatus.submitting => QuestionBody(testId: testId),
-            TestTakingStatus.submitted => TestResultsView(
-              testId: testId,
-              attempt: state.result!,
-              questions: state.questions,
-            ),
-          },
+        body: SafeArea(
+          child: AsyncValueWidget<TestTakingState>(
+            value: asyncState,
+            onRetry: () => ref.invalidate(testTakingViewModelProvider(testId)),
+            data: (state) => switch (state.status) {
+              TestTakingStatus.loadingGate => const LoadingGate(),
+              TestTakingStatus.notPurchased => const NotPurchasedView(),
+              TestTakingStatus.inProgress ||
+              TestTakingStatus.submitting => QuestionBody(testId: testId),
+              TestTakingStatus.submitted => TestResultsView(
+                testId: testId,
+                attempt: state.result!,
+                questions: state.questions,
+              ),
+            },
+          ),
         ),
       ),
     );

@@ -23,5 +23,8 @@ abstract class Question with _$Question {
     int? correctOptionIndex,
     String? expectedAnswer,
     String? solutionExplanation,
+    // Marks this question is worth; feeds the per-section marks breakdown on
+    // the results screen. MCQs default to 1; short/long carry more.
+    @Default(1) int marks,
   }) = _Question;
 }

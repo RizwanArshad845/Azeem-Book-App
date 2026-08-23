@@ -2,6 +2,8 @@
   "@@locale": "en",
 
   "appTitle": "Azeem Publications",
+  "splashBrandName": "AZEEM",
+  "splashTagline": "PUBLICATIONS",
 
   "commonNext": "Next",
   "commonBack": "Back",
@@ -157,6 +159,7 @@
   "progressSubjectEmpty": "No per-subject data yet. Attempt tests across different subjects to see a breakdown here.",
   "progressSubjectAvgScore": "Avg. score",
   "progressSubjectWeakChapters": "Weak",
+  "progressSubjectAverageChapters": "Average",
   "progressSubjectStrongChapters": "Strong",
   "progressSubjectTestsCount": "{count} tests",
   "@progressSubjectTestsCount": {
@@ -187,6 +190,7 @@
   "profileDeleteAccount": "Delete Account",
   "profileDeleteDialogTitle": "Delete Account?",
   "profileDeleteDialogBody": "This action cannot be undone. All your data will be permanently removed.",
+  "profileDeleteConfirmField": "Enter your phone number to confirm",
 
   "campusLabel": "Campus",
   "subjectSelectionTitle": "Your subjects",
@@ -322,6 +326,95 @@
   },
   "subjectCardExploreHint": "Explore chapters",
 
+  "metaQuestions": "ques",
+  "metaMinutes": "min",
+  "testUnlock": "Unlock",
+  "buyNow": "Buy Now",
+  "subjectBundleTitle": "{subjectName} Full Bundle",
+  "@subjectBundleTitle": {
+    "placeholders": {
+      "subjectName": { "type": "String" }
+    }
+  },
+  "subjectBundleDiscount": "{percent}% OFF",
+  "@subjectBundleDiscount": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "buyNowWithPrice": "Buy Now • Rs. {price}",
+  "@buyNowWithPrice": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "personalizedPracticeTitle": "Personalized Practice",
+  "practiceBankCardTitle": "Practice Question Bank",
+  "practiceBankCardSubtitle": "Practice all questions of this topic at your own pace, no timer",
+  "attemptsRemaining": "{remaining} of {total} free attempts left",
+  "@attemptsRemaining": {
+    "placeholders": {
+      "remaining": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "attemptsUpgrade": "Upgrade",
+  "practiceHowTitle": "How Practice Question Bank works?",
+  "practiceBullet1": "Practice & revise questions from all tests of this topic.",
+  "practiceBullet2": "Learn at your pace without any timer or test submission.",
+  "practiceBullet3": "Some questions might repeat from tests you've already taken.",
+  "practiceOkayGotIt": "Okay, Got it!",
+  "attemptsExhaustedTitle": "You've used all free attempts",
+  "attemptsExhaustedBody": "Upgrade to keep practicing. Chapters stay locked until your payment is confirmed.",
+  "attemptsBlockedMessage": "You've used all your free attempts. Upgrade to continue.",
+
+  "scoreCorrect": "Correct",
+  "scoreWrong": "Wrong",
+  "scoreTimeTaken": "Time Taken",
+  "scoreTimeValue": "{minutes}m",
+  "@scoreTimeValue": {
+    "placeholders": { "minutes": { "type": "int" } }
+  },
+  "sectionBreakdownTitle": "Section Breakdown",
+  "reviewAnswersButton": "Review Answers",
+  "sectionTypeMcq": "MCQs",
+  "sectionTypeShort": "Short Questions",
+  "sectionTypeLong": "Long Questions",
+
+  "reviewAnswersTitle": "Review Answers",
+  "reviewQuestionNumber": "QUESTION {number}",
+  "@reviewQuestionNumber": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "reviewQuestionOverline": "QUESTION {number} • {status}",
+  "@reviewQuestionOverline": {
+    "placeholders": {
+      "number": { "type": "int" },
+      "status": { "type": "String" }
+    }
+  },
+  "statusCorrect": "Correct",
+  "statusNeedsPractice": "Needs Practice",
+  "reviewCorrectAnswerLabel": "Correct answer",
+  "commonClose": "Close",
+
+  "coursesFilterAll": "All Courses",
+
+  "progressAllSubjects": "All subjects",
+  "progressSubjectFilterLabel": "Subject",
+  "progressAttemptFilterLabel": "Attempt",
+  "progressChapterProgressTitle": "Chapter progress",
+  "attemptNumberLabel": "Attempt {n}",
+  "@attemptNumberLabel": {
+    "placeholders": { "n": { "type": "int" } }
+  },
+
+  "submitTestDialogTitle": "Submit test?",
+  "submitTestDialogBody": "You won't be able to change your answers after submitting.",
+  "submitTestConfirm": "Submit",
+
   "studentBasicInfoTitle": "Basic Info",
   "studentBasicInfoHeadline": "Let's get you set up",
   "studentBasicInfoSubtitle": "Tell us your name and the campus you're enrolled in so we can personalize your test prep.",
@@ -357,5 +450,24 @@
   "subjectBusinessMath": "Business Mathematics",
   "subjectEconomics": "Economics",
   "subjectEducation": "Education",
-  "subjectCivics": "Civics"
+  "subjectCivics": "Civics",
+
+  "promoTeacherDiscountTitle": "Teacher Referral Offer",
+  "promoTeacherDiscountSubtitle": "Use your teacher code to get 15% discount on all subjects",
+  "promoPracticeBankTitle": "Personalized Practice",
+  "promoPracticeBankSubtitle": "Sharpen exam prep with targeted chapter question banks",
+  "filterCoursesLabel": "Filter Courses",
+  "filterAllCourses": "All Courses",
+  "filterScienceStream": "Science Stream",
+  "filterGeneralStream": "General Stream",
+  "progressAllAttempts": "All Attempts",
+  "progressLatestAttempt": "Latest Attempt",
+  "progressNoChaptersFound": "No chapter attempts found for this selection.",
+  "progressViewResult": "View Result",
+  "progressLoadingResult": "Loading results...",
+  "progressAttemptSingular": "1 attempt",
+  "progressAttemptPlural": "{count} attempts",
+  "@progressAttemptPlural": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

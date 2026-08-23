@@ -48,6 +48,15 @@ class AppColors extends ThemeExtension<AppColors> {
     divider: Color(0xFFE0E4E1),
   );
 
+  /// The app's signature primary→secondary gradient (top-left → bottom-right).
+  /// Single source of truth — replaces the inline gradients that were
+  /// duplicated across buttons, cards and badges.
+  LinearGradient get brandGradient => LinearGradient(
+    colors: [primary, Color.lerp(primary, secondary, 0.45) ?? secondary],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
   @override
   AppColors copyWith({
     Color? primary,

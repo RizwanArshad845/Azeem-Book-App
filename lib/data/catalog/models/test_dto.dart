@@ -21,6 +21,9 @@ abstract class TestDto with _$TestDto {
     @Default(false) bool isFreeSample,
     required String createdByAdminId,
     required DateTime createdAt,
+    @Default(0) int questionCount,
+    @Default(0) int durationMinutes,
+    @Default(0) int totalMarks,
   }) = _TestDto;
 
   factory TestDto.fromJson(Map<String, dynamic> json) =>
@@ -38,6 +41,9 @@ abstract class TestDto with _$TestDto {
     isFreeSample: isFreeSample,
     createdByAdminId: createdByAdminId,
     createdAt: createdAt,
+    questionCount: questionCount,
+    durationMinutes: durationMinutes,
+    totalMarks: totalMarks,
   );
 
   factory TestDto.fromDomain(Test entity) => TestDto(
@@ -52,5 +58,8 @@ abstract class TestDto with _$TestDto {
     isFreeSample: entity.isFreeSample,
     createdByAdminId: entity.createdByAdminId,
     createdAt: entity.createdAt,
+    questionCount: entity.questionCount,
+    durationMinutes: entity.durationMinutes,
+    totalMarks: entity.totalMarks,
   );
 }

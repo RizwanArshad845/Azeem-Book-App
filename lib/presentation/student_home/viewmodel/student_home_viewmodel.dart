@@ -1,11 +1,40 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/riverpod_providers.dart';
+import '../../../core/widgets/subject_view_toggle.dart';
 import '../../../domain/catalog/entities/chapter.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
 import '../../../domain/student_onboarding/entities/student.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
+
+/// Subjects screen layout preference (list vs grid), toggled by the header
+/// control. A UI-only preference held in Riverpod (not `setState`) per the
+/// project's state rules.
+class SubjectViewModeNotifier extends Notifier<SubjectViewMode> {
+  @override
+  SubjectViewMode build() => SubjectViewMode.list;
+  void set(SubjectViewMode mode) => state = mode;
+}
+
+final subjectViewModeProvider =
+    NotifierProvider<SubjectViewModeNotifier, SubjectViewMode>(
+  SubjectViewModeNotifier.new,
+);
+
+/// "All Courses" filter for the subjects list.
+enum SubjectFilter { all, owned, available }
+
+class SubjectFilterNotifier extends Notifier<SubjectFilter> {
+  @override
+  SubjectFilter build() => SubjectFilter.all;
+  void set(SubjectFilter filter) => state = filter;
+}
+
+final subjectFilterProvider =
+    NotifierProvider<SubjectFilterNotifier, SubjectFilter>(
+  SubjectFilterNotifier.new,
+);
 
 // Student Home tab (§10.2 "Selected subjects grid, live-test banner,
 // subject -> chapter -> test drill-down"). This feature owns no domain/data
@@ -127,3 +156,31 @@ final liveTestsProvider = FutureProvider<List<Test>>((ref) async {
   });
   return liveTests;
 });
+
+/// Riverpod state for course filtering on Home.
+class StudentHomeCourseFilterNotifier extends Notifier<String> {
+  @override
+  String build() => 'All Courses';
+
+  void setFilter(String filter) => state = filter;
+}
+
+final studentHomeCourseFilterProvider =
+    NotifierProvider<StudentHomeCourseFilterNotifier, String>(
+  StudentHomeCourseFilterNotifier.new,
+);
+
+/// Riverpod state for dismissed promo banner IDs.
+class DismissedPromoBannersNotifier extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => const <String>{};
+
+  void dismiss(String id) => state = {...state, id};
+}
+
+final dismissedPromoBannersProvider =
+    NotifierProvider<DismissedPromoBannersNotifier, Set<String>>(
+  DismissedPromoBannersNotifier.new,
+);
+
+

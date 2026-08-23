@@ -104,6 +104,18 @@ abstract class AppLocalizations {
   /// **'Azeem Publications'**
   String get appTitle;
 
+  /// No description provided for @splashBrandName.
+  ///
+  /// In en, this message translates to:
+  /// **'AZEEM'**
+  String get splashBrandName;
+
+  /// No description provided for @splashTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'PUBLICATIONS'**
+  String get splashTagline;
+
   /// No description provided for @commonNext.
   ///
   /// In en, this message translates to:
@@ -848,6 +860,12 @@ abstract class AppLocalizations {
   /// **'Weak'**
   String get progressSubjectWeakChapters;
 
+  /// No description provided for @progressSubjectAverageChapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Average'**
+  String get progressSubjectAverageChapters;
+
   /// No description provided for @progressSubjectStrongChapters.
   ///
   /// In en, this message translates to:
@@ -985,6 +1003,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This action cannot be undone. All your data will be permanently removed.'**
   String get profileDeleteDialogBody;
+
+  /// No description provided for @profileDeleteConfirmField.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your phone number to confirm'**
+  String get profileDeleteConfirmField;
 
   /// No description provided for @campusLabel.
   ///
@@ -1562,6 +1586,276 @@ abstract class AppLocalizations {
   /// **'Explore chapters'**
   String get subjectCardExploreHint;
 
+  /// No description provided for @metaQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'ques'**
+  String get metaQuestions;
+
+  /// No description provided for @metaMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get metaMinutes;
+
+  /// No description provided for @testUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get testUnlock;
+
+  /// No description provided for @buyNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Now'**
+  String get buyNow;
+
+  /// No description provided for @subjectBundleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{subjectName} Full Bundle'**
+  String subjectBundleTitle(String subjectName);
+
+  /// No description provided for @subjectBundleDiscount.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% OFF'**
+  String subjectBundleDiscount(int percent);
+
+  /// No description provided for @buyNowWithPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Now • Rs. {price}'**
+  String buyNowWithPrice(String price);
+
+  /// No description provided for @personalizedPracticeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalized Practice'**
+  String get personalizedPracticeTitle;
+
+  /// No description provided for @practiceBankCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice Question Bank'**
+  String get practiceBankCardTitle;
+
+  /// No description provided for @practiceBankCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice all questions of this topic at your own pace, no timer'**
+  String get practiceBankCardSubtitle;
+
+  /// No description provided for @attemptsRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{remaining} of {total} free attempts left'**
+  String attemptsRemaining(int remaining, int total);
+
+  /// No description provided for @attemptsUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get attemptsUpgrade;
+
+  /// No description provided for @practiceHowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How Practice Question Bank works?'**
+  String get practiceHowTitle;
+
+  /// No description provided for @practiceBullet1.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice & revise questions from all tests of this topic.'**
+  String get practiceBullet1;
+
+  /// No description provided for @practiceBullet2.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn at your pace without any timer or test submission.'**
+  String get practiceBullet2;
+
+  /// No description provided for @practiceBullet3.
+  ///
+  /// In en, this message translates to:
+  /// **'Some questions might repeat from tests you\'ve already taken.'**
+  String get practiceBullet3;
+
+  /// No description provided for @practiceOkayGotIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Okay, Got it!'**
+  String get practiceOkayGotIt;
+
+  /// No description provided for @attemptsExhaustedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used all free attempts'**
+  String get attemptsExhaustedTitle;
+
+  /// No description provided for @attemptsExhaustedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to keep practicing. Chapters stay locked until your payment is confirmed.'**
+  String get attemptsExhaustedBody;
+
+  /// No description provided for @attemptsBlockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used all your free attempts. Upgrade to continue.'**
+  String get attemptsBlockedMessage;
+
+  /// No description provided for @scoreCorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct'**
+  String get scoreCorrect;
+
+  /// No description provided for @scoreWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong'**
+  String get scoreWrong;
+
+  /// No description provided for @scoreTimeTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Taken'**
+  String get scoreTimeTaken;
+
+  /// No description provided for @scoreTimeValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes}m'**
+  String scoreTimeValue(int minutes);
+
+  /// No description provided for @sectionBreakdownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Section Breakdown'**
+  String get sectionBreakdownTitle;
+
+  /// No description provided for @reviewAnswersButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Answers'**
+  String get reviewAnswersButton;
+
+  /// No description provided for @sectionTypeMcq.
+  ///
+  /// In en, this message translates to:
+  /// **'MCQs'**
+  String get sectionTypeMcq;
+
+  /// No description provided for @sectionTypeShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Short Questions'**
+  String get sectionTypeShort;
+
+  /// No description provided for @sectionTypeLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Long Questions'**
+  String get sectionTypeLong;
+
+  /// No description provided for @reviewAnswersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Answers'**
+  String get reviewAnswersTitle;
+
+  /// No description provided for @reviewQuestionNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'QUESTION {number}'**
+  String reviewQuestionNumber(int number);
+
+  /// No description provided for @reviewQuestionOverline.
+  ///
+  /// In en, this message translates to:
+  /// **'QUESTION {number} • {status}'**
+  String reviewQuestionOverline(int number, String status);
+
+  /// No description provided for @statusCorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct'**
+  String get statusCorrect;
+
+  /// No description provided for @statusNeedsPractice.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Practice'**
+  String get statusNeedsPractice;
+
+  /// No description provided for @reviewCorrectAnswerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct answer'**
+  String get reviewCorrectAnswerLabel;
+
+  /// No description provided for @commonClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get commonClose;
+
+  /// No description provided for @coursesFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All Courses'**
+  String get coursesFilterAll;
+
+  /// No description provided for @progressAllSubjects.
+  ///
+  /// In en, this message translates to:
+  /// **'All subjects'**
+  String get progressAllSubjects;
+
+  /// No description provided for @progressSubjectFilterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get progressSubjectFilterLabel;
+
+  /// No description provided for @progressAttemptFilterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt'**
+  String get progressAttemptFilterLabel;
+
+  /// No description provided for @progressChapterProgressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter progress'**
+  String get progressChapterProgressTitle;
+
+  /// No description provided for @attemptNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt {n}'**
+  String attemptNumberLabel(int n);
+
+  /// No description provided for @submitTestDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit test?'**
+  String get submitTestDialogTitle;
+
+  /// No description provided for @submitTestDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You won\'t be able to change your answers after submitting.'**
+  String get submitTestDialogBody;
+
+  /// No description provided for @submitTestConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submitTestConfirm;
+
   /// No description provided for @studentBasicInfoTitle.
   ///
   /// In en, this message translates to:
@@ -1759,6 +2053,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Civics'**
   String get subjectCivics;
+
+  /// No description provided for @promoTeacherDiscountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Teacher Referral Offer'**
+  String get promoTeacherDiscountTitle;
+
+  /// No description provided for @promoTeacherDiscountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your teacher code to get 15% discount on all subjects'**
+  String get promoTeacherDiscountSubtitle;
+
+  /// No description provided for @promoPracticeBankTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalized Practice'**
+  String get promoPracticeBankTitle;
+
+  /// No description provided for @promoPracticeBankSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharpen exam prep with targeted chapter question banks'**
+  String get promoPracticeBankSubtitle;
+
+  /// No description provided for @filterCoursesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter Courses'**
+  String get filterCoursesLabel;
+
+  /// No description provided for @filterAllCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'All Courses'**
+  String get filterAllCourses;
+
+  /// No description provided for @filterScienceStream.
+  ///
+  /// In en, this message translates to:
+  /// **'Science Stream'**
+  String get filterScienceStream;
+
+  /// No description provided for @filterGeneralStream.
+  ///
+  /// In en, this message translates to:
+  /// **'General Stream'**
+  String get filterGeneralStream;
+
+  /// No description provided for @progressAllAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'All Attempts'**
+  String get progressAllAttempts;
+
+  /// No description provided for @progressLatestAttempt.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest Attempt'**
+  String get progressLatestAttempt;
+
+  /// No description provided for @progressNoChaptersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No chapter attempts found for this selection.'**
+  String get progressNoChaptersFound;
+
+  /// No description provided for @progressViewResult.
+  ///
+  /// In en, this message translates to:
+  /// **'View Result'**
+  String get progressViewResult;
+
+  /// No description provided for @progressLoadingResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading results...'**
+  String get progressLoadingResult;
+
+  /// No description provided for @progressAttemptSingular.
+  ///
+  /// In en, this message translates to:
+  /// **'1 attempt'**
+  String get progressAttemptSingular;
+
+  /// No description provided for @progressAttemptPlural.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} attempts'**
+  String progressAttemptPlural(int count);
 }
 
 class _AppLocalizationsDelegate

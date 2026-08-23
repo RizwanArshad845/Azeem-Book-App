@@ -13,6 +13,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Azeem Publications';
 
   @override
+  String get splashBrandName => 'AZEEM';
+
+  @override
+  String get splashTagline => 'PUBLICATIONS';
+
+  @override
   String get commonNext => 'Next';
 
   @override
@@ -410,6 +416,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get progressSubjectWeakChapters => 'Weak';
 
   @override
+  String get progressSubjectAverageChapters => 'Average';
+
+  @override
   String get progressSubjectStrongChapters => 'Strong';
 
   @override
@@ -481,6 +490,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get profileDeleteDialogBody =>
       'This action cannot be undone. All your data will be permanently removed.';
+
+  @override
+  String get profileDeleteConfirmField => 'Enter your phone number to confirm';
 
   @override
   String get campusLabel => 'Campus';
@@ -815,6 +827,164 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subjectCardExploreHint => 'Explore chapters';
 
   @override
+  String get metaQuestions => 'ques';
+
+  @override
+  String get metaMinutes => 'min';
+
+  @override
+  String get testUnlock => 'Unlock';
+
+  @override
+  String get buyNow => 'Buy Now';
+
+  @override
+  String subjectBundleTitle(String subjectName) {
+    return '$subjectName Full Bundle';
+  }
+
+  @override
+  String subjectBundleDiscount(int percent) {
+    return '$percent% OFF';
+  }
+
+  @override
+  String buyNowWithPrice(String price) {
+    return 'Buy Now • Rs. $price';
+  }
+
+  @override
+  String get personalizedPracticeTitle => 'Personalized Practice';
+
+  @override
+  String get practiceBankCardTitle => 'Practice Question Bank';
+
+  @override
+  String get practiceBankCardSubtitle =>
+      'Practice all questions of this topic at your own pace, no timer';
+
+  @override
+  String attemptsRemaining(int remaining, int total) {
+    return '$remaining of $total free attempts left';
+  }
+
+  @override
+  String get attemptsUpgrade => 'Upgrade';
+
+  @override
+  String get practiceHowTitle => 'How Practice Question Bank works?';
+
+  @override
+  String get practiceBullet1 =>
+      'Practice & revise questions from all tests of this topic.';
+
+  @override
+  String get practiceBullet2 =>
+      'Learn at your pace without any timer or test submission.';
+
+  @override
+  String get practiceBullet3 =>
+      'Some questions might repeat from tests you\'ve already taken.';
+
+  @override
+  String get practiceOkayGotIt => 'Okay, Got it!';
+
+  @override
+  String get attemptsExhaustedTitle => 'You\'ve used all free attempts';
+
+  @override
+  String get attemptsExhaustedBody =>
+      'Upgrade to keep practicing. Chapters stay locked until your payment is confirmed.';
+
+  @override
+  String get attemptsBlockedMessage =>
+      'You\'ve used all your free attempts. Upgrade to continue.';
+
+  @override
+  String get scoreCorrect => 'Correct';
+
+  @override
+  String get scoreWrong => 'Wrong';
+
+  @override
+  String get scoreTimeTaken => 'Time Taken';
+
+  @override
+  String scoreTimeValue(int minutes) {
+    return '${minutes}m';
+  }
+
+  @override
+  String get sectionBreakdownTitle => 'Section Breakdown';
+
+  @override
+  String get reviewAnswersButton => 'Review Answers';
+
+  @override
+  String get sectionTypeMcq => 'MCQs';
+
+  @override
+  String get sectionTypeShort => 'Short Questions';
+
+  @override
+  String get sectionTypeLong => 'Long Questions';
+
+  @override
+  String get reviewAnswersTitle => 'Review Answers';
+
+  @override
+  String reviewQuestionNumber(int number) {
+    return 'QUESTION $number';
+  }
+
+  @override
+  String reviewQuestionOverline(int number, String status) {
+    return 'QUESTION $number • $status';
+  }
+
+  @override
+  String get statusCorrect => 'Correct';
+
+  @override
+  String get statusNeedsPractice => 'Needs Practice';
+
+  @override
+  String get reviewCorrectAnswerLabel => 'Correct answer';
+
+  @override
+  String get commonClose => 'Close';
+
+  @override
+  String get coursesFilterAll => 'All Courses';
+
+  @override
+  String get progressAllSubjects => 'All subjects';
+
+  @override
+  String get progressSubjectFilterLabel => 'Subject';
+
+  @override
+  String get progressAttemptFilterLabel => 'Attempt';
+
+  @override
+  String get progressChapterProgressTitle => 'Chapter progress';
+
+  @override
+  String attemptNumberLabel(int n) {
+    return 'Attempt $n';
+  }
+
+  @override
+  String get submitTestDialogTitle => 'Submit test?';
+
+  @override
+  String get submitTestDialogBody =>
+      'You won\'t be able to change your answers after submitting.';
+
+  @override
+  String get submitTestConfirm => 'Submit';
+
+  @override
   String get studentBasicInfoTitle => 'Basic Info';
 
   @override
@@ -914,4 +1084,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subjectCivics => 'Civics';
+
+  @override
+  String get promoTeacherDiscountTitle => 'Teacher Referral Offer';
+
+  @override
+  String get promoTeacherDiscountSubtitle =>
+      'Use your teacher code to get 15% discount on all subjects';
+
+  @override
+  String get promoPracticeBankTitle => 'Personalized Practice';
+
+  @override
+  String get promoPracticeBankSubtitle =>
+      'Sharpen exam prep with targeted chapter question banks';
+
+  @override
+  String get filterCoursesLabel => 'Filter Courses';
+
+  @override
+  String get filterAllCourses => 'All Courses';
+
+  @override
+  String get filterScienceStream => 'Science Stream';
+
+  @override
+  String get filterGeneralStream => 'General Stream';
+
+  @override
+  String get progressAllAttempts => 'All Attempts';
+
+  @override
+  String get progressLatestAttempt => 'Latest Attempt';
+
+  @override
+  String get progressNoChaptersFound =>
+      'No chapter attempts found for this selection.';
+
+  @override
+  String get progressViewResult => 'View Result';
+
+  @override
+  String get progressLoadingResult => 'Loading results...';
+
+  @override
+  String get progressAttemptSingular => '1 attempt';
+
+  @override
+  String progressAttemptPlural(int count) {
+    return '$count attempts';
+  }
 }

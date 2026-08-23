@@ -238,16 +238,16 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
   };
 
   void _seed() {
-    // CLAUDE.md's class list is strictly 9th, Matric, 1st year, 2nd year —
-    // 10th drops out of the selector (row kept, just hidden) and Matric
-    // becomes selectable. `cl-11`/`cl-12` ids are kept as-is to avoid churn
-    // elsewhere; only their display `name` changes to "1st year"/"2nd year".
+    // Class list is strictly 9th, Matric, 1st year, 2nd year (all selectable,
+    // no "Coming soon"). "10th" is removed entirely as a class level; its
+    // `bc-10` board class + subjects remain seeded but are unreachable from
+    // the selector. `cl-11`/`cl-12` ids kept as-is to avoid churn elsewhere;
+    // only their display `name` is "1st year"/"2nd year".
     _classLevels.addAll(const [
       ClassLevelDto(id: 'cl-9', name: '9th', isEnabled: true),
-      ClassLevelDto(id: 'cl-10', name: '10th', isEnabled: false),
+      ClassLevelDto(id: 'cl-matric', name: 'Matric', isEnabled: true),
       ClassLevelDto(id: 'cl-11', name: '1st year', isEnabled: true),
       ClassLevelDto(id: 'cl-12', name: '2nd year', isEnabled: true),
-      ClassLevelDto(id: 'cl-matric', name: 'Matric', isEnabled: true),
     ]);
 
     _boardClasses.addAll(const [
@@ -699,6 +699,19 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
         _testCounter++;
         _tests.add(test);
         _buildQuestions(test, chapterId, chapterTitle);
+
+        // Denormalize stats from the questions just seeded for this test so
+        // list cards / result screen can render count, duration and marks
+        // without loading every question.
+        final testQuestions = _questions.where((q) => q.testId == testId);
+        final totalMarks = testQuestions.fold<int>(0, (sum, q) => sum + q.marks);
+        final index = _tests.indexWhere((t) => t.id == testId);
+        _tests[index] = _tests[index].copyWith(
+          questionCount: testQuestions.length,
+          totalMarks: totalMarks,
+          // ~2 minutes per mark, rounded up to a tidy multiple of 5, min 10.
+          durationMinutes: ((totalMarks * 2 / 5).ceil() * 5).clamp(10, 240).toInt(),
+        );
       }
     }
   }
@@ -756,6 +769,7 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
               '$chapterTitle - concept D',
             ],
             correctOptionIndex: correctIndex,
+            marks: 1,
             solutionExplanation:
                 'The correct answer relates to "$chapterTitle" because it '
                 'reflects the core definition covered in that chapter — '
@@ -769,6 +783,7 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
             testId: test.id,
             chapterId: chapterId,
             type: QuestionType.shortAnswer,
+            marks: 2,
             questionText:
                 'Q${i + 1}. Briefly explain a key idea from "$chapterTitle".',
             expectedAnswer:
@@ -787,6 +802,7 @@ class CatalogDummyDataSourceImpl implements CatalogDummyDataSource {
             testId: test.id,
             chapterId: chapterId,
             type: QuestionType.longAnswer,
+            marks: 5,
             questionText:
                 'Q${i + 1}. Describe in detail the concepts covered in '
                 '"$chapterTitle" with relevant examples.',

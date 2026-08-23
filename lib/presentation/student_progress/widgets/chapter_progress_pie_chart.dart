@@ -21,7 +21,10 @@ class ChapterProgressPieChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Chapter breakdown', style: context.textStyles.titleMedium),
+          Text(
+            context.l10n.progressChapterProgressTitle,
+            style: context.textStyles.titleMedium,
+          ),
           SizedBox(height: context.dimens.md),
           SizedBox(
             height: 180,
@@ -63,19 +66,19 @@ class ChapterProgressPieChart extends StatelessWidget {
                     children: [
                       _Legend(
                         color: context.colors.error,
-                        label: 'Weak',
+                        label: context.l10n.progressSubjectWeakChapters,
                         count: summary.weakCount,
                       ),
                       SizedBox(height: context.dimens.sm),
                       _Legend(
                         color: context.colors.warning,
-                        label: 'Average',
+                        label: context.l10n.progressSubjectAverageChapters,
                         count: summary.averageCount,
                       ),
                       SizedBox(height: context.dimens.sm),
                       _Legend(
                         color: context.colors.success,
-                        label: 'Strong',
+                        label: context.l10n.progressSubjectStrongChapters,
                         count: summary.strongCount,
                       ),
                     ],

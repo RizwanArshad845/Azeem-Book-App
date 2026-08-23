@@ -58,6 +58,7 @@ class AppButton extends StatelessWidget {
 
       return PressScale(
         enabled: !isDisabled,
+        haptic: true,
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 200),
           opacity: isDisabled ? 0.55 : 1.0,
@@ -117,7 +118,7 @@ class AppButton extends StatelessWidget {
       AppButtonVariant.text => TextButton(onPressed: effectiveOnPressed, child: child),
     };
 
-    return PressScale(enabled: !isDisabled, child: button);
+    return PressScale(enabled: !isDisabled, haptic: true, child: button);
   }
 }
 
@@ -214,6 +215,7 @@ class AppDangerButton extends StatelessWidget {
 
     return PressScale(
       enabled: !isDisabled,
+      haptic: true,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           foregroundColor: context.colors.error,

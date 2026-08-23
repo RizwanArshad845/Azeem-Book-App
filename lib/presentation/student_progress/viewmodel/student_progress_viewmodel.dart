@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
 import '../../../core/di/riverpod_providers.dart';
+import '../../../domain/catalog/entities/chapter.dart';
+import '../../../domain/catalog/entities/question.dart';
 import '../../../domain/catalog/entities/test.dart';
 import '../../../domain/test_taking/entities/test_attempt.dart';
 import '../../../domain/test_taking/usecases/get_student_test_attempts_usecase.dart';
@@ -255,3 +257,273 @@ SubjectProgressSummary _summarizeSubject({
     strongChapterCount: strongChapterIds.length,
   );
 }
+
+/// Per-chapter aggregated progress for the chapter cards on the Progress screen.
+class ChapterProgressData {
+  const ChapterProgressData({
+    required this.chapterId,
+    required this.chapterTitle,
+    required this.subjectId,
+    required this.testId,
+    required this.averagePercent,
+    required this.attemptsCount,
+    required this.attempts,
+    this.latestAttempt,
+  });
+
+  final String chapterId;
+  final String chapterTitle;
+  final String subjectId;
+  final String testId;
+  final double averagePercent;
+  final int attemptsCount;
+  final List<TestAttempt> attempts;
+  final TestAttempt? latestAttempt;
+}
+
+final chapterProgressListProvider =
+    FutureProvider<List<ChapterProgressData>>((ref) async {
+  return ref.watch(filteredChapterProgressListProvider.future);
+});
+
+/// Riverpod state for selected subject on Progress tab ('all' or subjectId).
+class SelectedProgressSubjectNotifier extends Notifier<String> {
+  @override
+  String build() => 'all';
+
+  void setSubjectId(String subjectId) => state = subjectId;
+}
+
+final selectedProgressSubjectProvider =
+    NotifierProvider<SelectedProgressSubjectNotifier, String>(
+  SelectedProgressSubjectNotifier.new,
+);
+
+/// Riverpod state for selected attempt filter on Progress tab ('all', 'latest', '1', '2', etc.).
+class SelectedProgressAttemptFilterNotifier extends Notifier<String> {
+  @override
+  String build() => 'all';
+
+  void setFilter(String filter) => state = filter;
+}
+
+final selectedProgressAttemptFilterProvider =
+    NotifierProvider<SelectedProgressAttemptFilterNotifier, String>(
+  SelectedProgressAttemptFilterNotifier.new,
+);
+
+/// Computes all available attempt filter options based on the student's actual attempt counts.
+final availableAttemptFiltersProvider = FutureProvider<List<String>>((ref) async {
+  final attempts = await ref.watch(studentTestAttemptsProvider.future);
+  if (attempts.isEmpty) return const ['all'];
+
+  final attemptsByTest = <String, int>{};
+  for (final a in attempts) {
+    attemptsByTest[a.testId] = (attemptsByTest[a.testId] ?? 0) + 1;
+  }
+  final maxAttempts = attemptsByTest.values.fold<int>(
+    0,
+    (max, count) => count > max ? count : max,
+  );
+
+  final filters = <String>['all'];
+  if (maxAttempts > 1) {
+    filters.add('latest');
+  }
+  for (var i = 1; i <= maxAttempts; i++) {
+    filters.add('$i');
+  }
+  return filters;
+});
+
+/// Returns attempts filtered by both selected subject and selected attempt filter.
+final filteredAttemptsProvider = FutureProvider<List<TestAttempt>>((ref) async {
+  final attempts = await ref.watch(studentTestAttemptsProvider.future);
+  if (attempts.isEmpty) return const <TestAttempt>[];
+
+  final testsById = await ref.watch(progressTestsByIdProvider.future);
+  final selectedSubjectId = ref.watch(selectedProgressSubjectProvider);
+  final selectedAttemptFilter = ref.watch(selectedProgressAttemptFilterProvider);
+
+  // 1. Subject filter
+  var subjectFiltered = attempts;
+  if (selectedSubjectId != 'all') {
+    subjectFiltered = attempts.where((a) {
+      final test = testsById[a.testId];
+      return test != null && test.subjectId == selectedSubjectId;
+    }).toList();
+  }
+
+  if (selectedAttemptFilter == 'all' || subjectFiltered.isEmpty) {
+    return subjectFiltered;
+  }
+
+  // 2. Attempt filter: group attempts by testId sorted chronologically (oldest to newest)
+  final attemptsByTest = <String, List<TestAttempt>>{};
+  for (final a in subjectFiltered) {
+    attemptsByTest.putIfAbsent(a.testId, () => []).add(a);
+  }
+  for (final list in attemptsByTest.values) {
+    list.sort((a, b) => a.attemptedAt.compareTo(b.attemptedAt));
+  }
+
+  final result = <TestAttempt>[];
+  if (selectedAttemptFilter == 'latest') {
+    for (final list in attemptsByTest.values) {
+      if (list.isNotEmpty) result.add(list.last);
+    }
+  } else {
+    final attemptNumber = int.tryParse(selectedAttemptFilter);
+    if (attemptNumber != null && attemptNumber >= 1) {
+      for (final list in attemptsByTest.values) {
+        if (list.length >= attemptNumber) {
+          result.add(list[attemptNumber - 1]);
+        }
+      }
+    } else {
+      return subjectFiltered;
+    }
+  }
+
+  return result;
+});
+
+/// Aggregate overall mastery data (average score % and total tests attempted)
+/// computed dynamically against active subject and attempt filters.
+class OverallMasteryData {
+  const OverallMasteryData({
+    required this.masteryPercent,
+    required this.testsAttempted,
+  });
+
+  final double masteryPercent;
+  final int testsAttempted;
+}
+
+final filteredOverallMasteryProvider = FutureProvider<OverallMasteryData>((ref) async {
+  final attempts = await ref.watch(filteredAttemptsProvider.future);
+  if (attempts.isEmpty) {
+    return const OverallMasteryData(masteryPercent: 0.0, testsAttempted: 0);
+  }
+
+  final averageScorePercent =
+      attempts.map((a) => a.scorePercent).reduce((a, b) => a + b) /
+      attempts.length;
+
+  return OverallMasteryData(
+    masteryPercent: averageScorePercent,
+    testsAttempted: attempts.length,
+  );
+});
+
+/// Dynamic chapter breakdown cards computed dynamically from active filters.
+final filteredChapterProgressListProvider =
+    FutureProvider<List<ChapterProgressData>>((ref) async {
+  final filteredAttempts = await ref.watch(filteredAttemptsProvider.future);
+  if (filteredAttempts.isEmpty) return const <ChapterProgressData>[];
+
+  final testsById = await ref.watch(progressTestsByIdProvider.future);
+  final getChapters = ref.read(getChaptersUseCaseProvider);
+
+  // Group attempts by testId
+  final attemptsByTest = <String, List<TestAttempt>>{};
+  for (final attempt in filteredAttempts) {
+    attemptsByTest.putIfAbsent(attempt.testId, () => []).add(attempt);
+  }
+
+  final chaptersCache = <String, List<Chapter>>{};
+  final chapterProgressList = <ChapterProgressData>[];
+
+  for (final entry in attemptsByTest.entries) {
+    final test = testsById[entry.key];
+    if (test == null) continue;
+
+    List<Chapter> chapters;
+    if (chaptersCache.containsKey(test.subjectId)) {
+      chapters = chaptersCache[test.subjectId]!;
+    } else {
+      final chaptersRes = await getChapters(test.subjectId);
+      chapters = chaptersRes.when(
+        success: (c) => c,
+        failure: (_) => const <Chapter>[],
+      );
+      chaptersCache[test.subjectId] = chapters;
+    }
+
+    final chapter = test.chapterId != null
+        ? chapters.where((c) => c.id == test.chapterId).firstOrNull
+        : null;
+    final chapterTitle = chapter?.title ?? test.title;
+
+    final testAttempts = entry.value;
+    final avgScore =
+        testAttempts.map((a) => a.scorePercent).reduce((a, b) => a + b) /
+        testAttempts.length;
+
+    final sortedAttempts = List<TestAttempt>.from(testAttempts)
+      ..sort((a, b) => b.attemptedAt.compareTo(a.attemptedAt));
+
+    chapterProgressList.add(
+      ChapterProgressData(
+        chapterId: test.chapterId ?? '',
+        chapterTitle: chapterTitle,
+        subjectId: test.subjectId,
+        testId: test.id,
+        averagePercent: avgScore,
+        attemptsCount: sortedAttempts.length,
+        attempts: sortedAttempts,
+        latestAttempt: sortedAttempts.firstOrNull,
+      ),
+    );
+  }
+
+  return chapterProgressList;
+});
+
+/// Dynamic chapter progress pie chart summary computed dynamically from active filters.
+final filteredChapterProgressSummaryProvider =
+    FutureProvider<ChapterProgressSummary>((ref) async {
+  final attempts = await ref.watch(filteredAttemptsProvider.future);
+  if (attempts.isEmpty) return ChapterProgressSummary.empty;
+
+  final weakChapterIds = <String>{};
+  final strongChapterIds = <String>{};
+  for (final attempt in attempts) {
+    weakChapterIds.addAll(attempt.weakChapterIds ?? const []);
+    strongChapterIds.addAll(attempt.strongChapterIds ?? const []);
+  }
+
+  final getQuestions = ref.read(getQuestionsUseCaseProvider);
+  final allChapterIds = <String>{};
+  final uniqueTestIds = attempts.map((a) => a.testId).toSet();
+  for (final testId in uniqueTestIds) {
+    final result = await getQuestions(testId);
+    result.when(
+      success: (questions) =>
+          allChapterIds.addAll(questions.map((q) => q.chapterId)),
+      failure: (failure) => throw failure,
+    );
+  }
+
+  final averageChapterIds = allChapterIds
+      .difference(weakChapterIds)
+      .difference(strongChapterIds);
+
+  return ChapterProgressSummary(
+    weakCount: weakChapterIds.length,
+    strongCount: strongChapterIds.length,
+    averageCount: averageChapterIds.length,
+  );
+});
+
+/// Fetches the questions for a specific test/chapter attempt when opening result details.
+final chapterQuestionsProvider =
+    FutureProvider.family<List<Question>, String>((ref, testId) async {
+  final getQuestions = ref.read(getQuestionsUseCaseProvider);
+  final result = await getQuestions(testId);
+  return result.when(
+    success: (questions) => questions,
+    failure: (failure) => throw failure,
+  );
+});
+

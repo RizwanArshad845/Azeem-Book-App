@@ -2,6 +2,8 @@
   "@@locale": "ur",
 
   "appTitle": "عظیم پبلیکیشنز",
+  "splashBrandName": "عظیم",
+  "splashTagline": "پبلیکیشنز",
 
   "commonNext": "آگے",
   "commonBack": "پیچھے",
@@ -149,6 +151,7 @@
   "progressSubjectEmpty": "ابھی تک مضمون کے لحاظ سے کوئی ڈیٹا موجود نہیں۔ مختلف مضامین میں ٹیسٹ دیں تاکہ یہاں تفصیل نظر آئے۔",
   "progressSubjectAvgScore": "اوسط سکور",
   "progressSubjectWeakChapters": "کمزور",
+  "progressSubjectAverageChapters": "اوسط",
   "progressSubjectStrongChapters": "مضبوط",
   "progressSubjectTestsCount": "{count} ٹیسٹ",
   "@progressSubjectTestsCount": {
@@ -179,6 +182,7 @@
   "profileLogoutConfirmMessage": "دوبارہ سائن ان کرنے کے لیے آپ کو اپنا فون نمبر دوبارہ تصدیق کرنا ہوگا۔",
   "profileDeleteDialogTitle": "اکاؤنٹ حذف کریں؟",
   "profileDeleteDialogBody": "یہ عمل واپس نہیں ہو سکتا۔ آپ کا تمام ڈیٹا مستقل طور پر ختم ہو جائے گا۔",
+  "profileDeleteConfirmField": "تصدیق کے لیے اپنا فون نمبر درج کریں",
 
   "campusLabel": "کیمپس",
   "subjectSelectionTitle": "آپ کے مضامین",
@@ -290,6 +294,69 @@
   },
   "subjectCardExploreHint": "ابواب دیکھیں",
 
+  "metaQuestions": "سوالات",
+  "metaMinutes": "منٹ",
+  "testUnlock": "کھولیں",
+  "buyNow": "ابھی خریدیں",
+  "subjectBundleTitle": "{subjectName} مکمل بنڈل",
+  "subjectBundleDiscount": "{percent} فیصد رعایت",
+  "buyNowWithPrice": "ابھی خریدیں • {price} روپے",
+  "personalizedPracticeTitle": "ذاتی مشق",
+  "practiceBankCardTitle": "پریکٹس سوالات بینک",
+  "practiceBankCardSubtitle": "اس موضوع کے تمام سوالات بغیر ٹائمر اپنی رفتار سے حل کریں",
+  "attemptsRemaining": "{total} میں سے {remaining} مفت کوششیں باقی",
+  "@attemptsRemaining": {
+    "placeholders": {
+      "remaining": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "attemptsUpgrade": "اپ گریڈ",
+  "practiceHowTitle": "پریکٹس سوالات بینک کیسے کام کرتا ہے؟",
+  "practiceBullet1": "اس موضوع کے تمام ٹیسٹوں کے سوالات کی مشق و دہرائی کریں۔",
+  "practiceBullet2": "بغیر کسی ٹائمر یا ٹیسٹ جمع کرائے اپنی رفتار سے سیکھیں۔",
+  "practiceBullet3": "کچھ سوالات پہلے دیے گئے ٹیسٹوں سے دہرائے جا سکتے ہیں۔",
+  "practiceOkayGotIt": "ٹھیک ہے، سمجھ گیا!",
+  "attemptsExhaustedTitle": "آپ کی تمام مفت کوششیں ختم ہو گئیں",
+  "attemptsExhaustedBody": "مشق جاری رکھنے کے لیے اپ گریڈ کریں۔ ادائیگی کی تصدیق تک ابواب مقفل رہیں گے۔",
+  "attemptsBlockedMessage": "آپ کی تمام مفت کوششیں ختم ہو گئیں۔ جاری رکھنے کے لیے اپ گریڈ کریں۔",
+
+  "scoreCorrect": "درست",
+  "scoreWrong": "غلط",
+  "scoreTimeTaken": "لیا گیا وقت",
+  "scoreTimeValue": "{minutes} منٹ",
+  "@scoreTimeValue": {
+    "placeholders": { "minutes": { "type": "int" } }
+  },
+  "sectionBreakdownTitle": "سیکشن کی تفصیل",
+  "reviewAnswersButton": "جوابات دیکھیں",
+  "sectionTypeMcq": "کثیر انتخابی سوالات",
+  "sectionTypeShort": "مختصر سوالات",
+  "sectionTypeLong": "تفصیلی سوالات",
+
+  "reviewAnswersTitle": "جوابات کا جائزہ",
+  "reviewQuestionNumber": "سوال {number}",
+  "reviewQuestionOverline": "سوال {number} • {status}",
+  "statusCorrect": "درست",
+  "statusNeedsPractice": "مزید مشق درکار",
+  "reviewCorrectAnswerLabel": "درست جواب",
+  "commonClose": "بند کریں",
+
+  "coursesFilterAll": "تمام کورسز",
+
+  "progressAllSubjects": "تمام مضامین",
+  "progressSubjectFilterLabel": "مضمون",
+  "progressAttemptFilterLabel": "کوشش",
+  "progressChapterProgressTitle": "ابواب کی پیش رفت",
+  "attemptNumberLabel": "کوشش {n}",
+  "@attemptNumberLabel": {
+    "placeholders": { "n": { "type": "int" } }
+  },
+
+  "submitTestDialogTitle": "ٹیسٹ جمع کرائیں؟",
+  "submitTestDialogBody": "جمع کرانے کے بعد آپ اپنے جوابات تبدیل نہیں کر سکیں گے۔",
+  "submitTestConfirm": "جمع کرائیں",
+
   "studentBasicInfoTitle": "بنیادی معلومات",
   "studentBasicInfoHeadline": "چلیں آپ کو رجسٹر کرتے ہیں",
   "studentBasicInfoSubtitle": "اپنا نام اور وہ کیمپس بتائیں جس میں آپ داخل ہیں تاکہ ہم آپ کی تیاری کو بہتر بنا سکیں۔",
@@ -325,5 +392,26 @@
   "subjectBusinessMath": "کاروباری ریاضی",
   "subjectEconomics": "معاشیات",
   "subjectEducation": "علمِ تعلیم",
-  "subjectCivics": "شہریت"
+  "subjectCivics": "شہریت",
+
+  "promoTeacherDiscountTitle": "استاد کی رعایتی پیشکش",
+  "promoTeacherDiscountSubtitle": "تمام مضامین پر 15 فیصد رعایت حاصل کرنے کے لیے اپنے استاد کا کوڈ استعمال کریں",
+  "promoPracticeBankTitle": "ذاتی مشق",
+  "promoPracticeBankSubtitle": "مخصوص اسباق کے سوالیہ بینکوں سے امتحانات کی بہتر تیاری کریں",
+  "filterCoursesLabel": "کورسز فلٹر کریں",
+  "filterAllCourses": "تمام کورسز",
+  "filterScienceStream": "سائنس گروپ",
+  "filterGeneralStream": "جنرل گروپ",
+  "progressAllSubjects": "تمام مضامین",
+  "progressSubjectFilterLabel": "مضمون",
+  "progressAttemptFilterLabel": "کوشش",
+  "progressChapterProgressTitle": "اسباق کی پیشرفت",
+  "attemptNumberLabel": "کوشش {n}",
+  "progressAllAttempts": "تمام کوششیں",
+  "progressLatestAttempt": "حالیہ کوشش",
+  "progressNoChaptersFound": "اس انتخاب کے لیے کوئی نتائج نہیں ملے۔",
+  "progressViewResult": "نتیجہ دیکھیں",
+  "progressLoadingResult": "نتائج لوڈ ہو رہے ہیں...",
+  "progressAttemptSingular": "1 کوشش",
+  "progressAttemptPlural": "{count} کوششیں"
 }

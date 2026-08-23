@@ -20,6 +20,9 @@ _TestDto _$TestDtoFromJson(Map<String, dynamic> json) => _TestDto(
   isFreeSample: json['isFreeSample'] as bool? ?? false,
   createdByAdminId: json['createdByAdminId'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
+  questionCount: (json['questionCount'] as num?)?.toInt() ?? 0,
+  durationMinutes: (json['durationMinutes'] as num?)?.toInt() ?? 0,
+  totalMarks: (json['totalMarks'] as num?)?.toInt() ?? 0,
 );
 
 Map<String, dynamic> _$TestDtoToJson(_TestDto instance) => <String, dynamic>{
@@ -34,6 +37,9 @@ Map<String, dynamic> _$TestDtoToJson(_TestDto instance) => <String, dynamic>{
   'isFreeSample': instance.isFreeSample,
   'createdByAdminId': instance.createdByAdminId,
   'createdAt': instance.createdAt.toIso8601String(),
+  'questionCount': instance.questionCount,
+  'durationMinutes': instance.durationMinutes,
+  'totalMarks': instance.totalMarks,
 };
 
 const _$TestKindEnumMap = {

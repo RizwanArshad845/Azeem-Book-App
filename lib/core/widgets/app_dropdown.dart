@@ -11,6 +11,7 @@ class AppDropdown<T> extends StatelessWidget {
     this.selectedItem,
     this.itemAsString,
     this.compareFn,
+    this.hideLabel = false,
   });
 
   final String label;
@@ -18,6 +19,10 @@ class AppDropdown<T> extends StatelessWidget {
   final ValueChanged<T?> onChanged;
   final T? selectedItem;
   final String Function(T)? itemAsString;
+
+  /// When true the floating [label] is dropped (used as hint instead) so a
+  /// parent like [AppDropdownCard] can own the labelled header.
+  final bool hideLabel;
 
   /// `dropdown_search` requires this for any `T` that isn't `String`/`int`/
   /// `double` (it can't otherwise tell which item is "selected"). Defaults
@@ -34,7 +39,17 @@ class AppDropdown<T> extends StatelessWidget {
       compareFn: compareFn ?? (a, b) => a == b,
       onSelected: onChanged,
       decoratorProps: DropDownDecoratorProps(
-        decoration: InputDecoration(labelText: label),
+        decoration: hideLabel
+            ? InputDecoration(
+                hintText: label,
+                isDense: true,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                filled: false,
+                contentPadding: EdgeInsets.zero,
+              )
+            : InputDecoration(labelText: label),
       ),
       popupProps: PopupProps.menu(
         showSearchBox: items.length > 5,

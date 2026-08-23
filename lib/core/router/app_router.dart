@@ -106,10 +106,6 @@ List<BottomNavDestinationSpec> _buildStudentDestinations(
       icon: Icons.insights_outlined,
       label: context.l10n.navProgress,
     ),
-    BottomNavDestinationSpec(
-      icon: Icons.notifications_outlined,
-      label: context.l10n.navNotifications,
-    ),
   ];
 }
 
@@ -126,10 +122,6 @@ List<BottomNavDestinationSpec> _buildTeacherDestinations(BuildContext context) {
     BottomNavDestinationSpec(
       icon: Icons.account_balance_wallet_outlined,
       label: context.l10n.navEarnings,
-    ),
-    BottomNavDestinationSpec(
-      icon: Icons.notifications_outlined,
-      label: context.l10n.navNotifications,
     ),
   ];
 }
@@ -149,14 +141,12 @@ const _studentShellRoutes = {
   AppRoutes.studentHome,
   AppRoutes.studentCart,
   AppRoutes.studentProgress,
-  AppRoutes.studentNotifications,
 };
 
 const _teacherShellRoutes = {
   AppRoutes.teacherOverview,
   AppRoutes.teacherStudents,
   AppRoutes.teacherEarnings,
-  AppRoutes.teacherNotifications,
 };
 
 // Pushed on top of either shell (or before it) once a role/onboarding stage
@@ -167,6 +157,11 @@ const _teacherShellRoutes = {
 const _outsideShellRoutes = {
   AppRoutes.cartCheckout,
   AppRoutes.studentProfile,
+  // Round-2: Profile + Notifications moved off the bottom nav to dedicated
+  // app-bar icons; they now push full-screen on top of either shell.
+  AppRoutes.teacherProfile,
+  AppRoutes.studentNotifications,
+  AppRoutes.teacherNotifications,
 };
 
 bool _isOutsideShellRoute(String location) =>
@@ -367,15 +362,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoutes.studentNotifications,
-                pageBuilder: (context, state) =>
-                    _appPage(state, const NotificationsView()),
-              ),
-            ],
-          ),
         ],
       ),
 
@@ -414,15 +400,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoutes.teacherNotifications,
-                pageBuilder: (context, state) =>
-                    _appPage(state, const NotificationsView()),
-              ),
-            ],
-          ),
         ],
       ),
 
@@ -436,6 +413,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.teacherProfile,
         pageBuilder: (context, state) =>
             _appPage(state, const TeacherProfileView()),
+      ),
+      // Notifications — pushed full-screen via the app-bar bell icon (no
+      // longer a bottom-nav tab). Same view serves both roles.
+      GoRoute(
+        path: AppRoutes.studentNotifications,
+        pageBuilder: (context, state) =>
+            _appPage(state, const NotificationsView()),
+      ),
+      GoRoute(
+        path: AppRoutes.teacherNotifications,
+        pageBuilder: (context, state) =>
+            _appPage(state, const NotificationsView()),
       ),
       GoRoute(
         path: AppRoutes.testTaking,

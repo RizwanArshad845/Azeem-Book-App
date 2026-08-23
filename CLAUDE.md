@@ -51,7 +51,7 @@
 2. **Student Class & Subject Rules**:
    - Class options are strictly: `9th`, `Matric`, `1st year`, `2nd year`.
    - If `1st year` or `2nd year` is selected, dynamically present stream selection: `Pre-Engineering`, `Pre-Medical`, `I.Com`, `F.A`, `I.C.S`.
-   - Native Flutter icons must be used for subject representation.
+   - Subject representation uses **illustrations with a native-icon fallback**: per-subject illustration assets (dropped into `assets/illustrations/`, resolved by `subjectIllustration(name)`) render on subject/course cards, falling back to the native Flutter icon (`subjectIcon(name)`) when an asset is missing. (Round-2 change: illustrations supersede icon-only cards; icons remain the guaranteed fallback.)
    - Post-onboarding subject additions: Subject cards permit direct subject addition/purchase with animated badge updates on the navigation bar Cart icon.
 
 3. **Teacher Onboarding & Validation Rules**:
@@ -62,10 +62,11 @@
    - Student count widget: Integer counter input with explicit `+` / `-` increment & decrement buttons.
    - Submit buttons: Greyed out / disabled until all mandatory fields pass validation.
 
-4. **App Header, Navigation & Action Menu**:
+4. **App Header, Navigation & Profile**:
    - AppBar titles must be centered with highlighted background separation.
-   - Unified **App Action Menu** (bottom sheet/popup): Contains Profile link, Language Selector (English & Urdu bottom sheet), and Logout button.
-   - Remove redundant/raw logout buttons from Navbar/Profile; preserve functional logout for testing student/teacher role switching & profile sync.
+   - App bar actions: Dedicated IconButtons for Notifications and Profile (replacing the old kebab action menu).
+   - Bottom navigation: 3 tabs each (Student: Home, Cart, Progress; Teacher: Overview, Students, Earnings).
+   - Logout & Delete Account: Accessible from within the Student and Teacher Profile screens (with confirm dialog and GitHub-style typed confirmation for destructive deletion).
 
 5. **Test-Taking, Scoring & Analytics**:
    - Question lock: Next question button disabled/greyed out if answer is not selected/entered.

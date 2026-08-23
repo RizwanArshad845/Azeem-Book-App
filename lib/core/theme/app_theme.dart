@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -33,6 +34,20 @@ class AppTheme {
       // Shader-based ripple (GPU) instead of the default circular ink — a
       // small, cheap touch that reads as more premium on taps.
       splashFactory: InkSparkle.splashFactory,
+      // Platform-native page transitions from one config: iOS/macOS get the
+      // Cupertino slide-from-right (with swipe-back-to-pop), Android gets
+      // Material's zoom. go_router's custom CustomTransitionPages still
+      // override this where used (onboarding steps).
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          TargetPlatform.fuchsia: ZoomPageTransitionsBuilder(),
+          TargetPlatform.linux: ZoomPageTransitionsBuilder(),
+          TargetPlatform.windows: ZoomPageTransitionsBuilder(),
+        },
+      ),
       appBarTheme: AppBarTheme(
         // Distinct from `scaffoldBackgroundColor` (colors.background) so the
         // app bar reads as visually separated from body content app-wide

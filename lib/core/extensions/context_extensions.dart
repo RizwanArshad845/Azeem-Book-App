@@ -41,6 +41,11 @@ class AppDimensType {
   double get dragHandleHeight => AppDimens.dragHandleHeight;
   double get buttonHeight => AppDimens.buttonHeight;
   double get logoWatermarkSize => AppDimens.logoWatermarkSize;
+
+  double get fontSm => AppDimens.fontSm;
+  double get fontMd => AppDimens.fontMd;
+  double get fontLg => AppDimens.fontLg;
+  double get fontXl => AppDimens.fontXl;
 }
 
 extension LocalizedSubjectName on AppLocalizations {

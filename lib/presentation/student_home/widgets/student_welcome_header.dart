@@ -18,20 +18,16 @@ class StudentWelcomeHeader extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: context.dimens.avatarLg,
-          height: context.dimens.avatarLg,
+          width: 44,
+          height: 44,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [context.colors.primary, context.colors.secondary],
-            ),
+            gradient: context.colors.brandGradient,
             shape: BoxShape.circle,
           ),
           child: Text(
             nameInitials(student.name),
-            style: context.textStyles.titleLarge?.copyWith(
+            style: context.textStyles.titleMedium?.copyWith(
               color: context.colors.onPrimary,
               fontWeight: FontWeight.bold,
             ),
@@ -44,12 +40,14 @@ class StudentWelcomeHeader extends StatelessWidget {
             children: [
               Text(
                 context.l10n.studentHomeWelcomeName(student.name),
-                style: context.textStyles.headlineSmall,
+                style: context.textStyles.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: context.dimens.xs / 2),
               Text(
                 context.l10n.studentHomeWelcomeSubtitle,
-                style: context.textStyles.bodyMedium?.copyWith(
+                style: context.textStyles.bodySmall?.copyWith(
                   color: context.colors.textSecondary,
                 ),
               ),

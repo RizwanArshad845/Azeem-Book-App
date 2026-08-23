@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_card.dart';
@@ -65,7 +66,10 @@ class _OptionRow extends StatelessWidget {
       borderRadius: radius,
       child: InkWell(
         borderRadius: radius,
-        onTap: onTap,
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
         child: Container(
           padding: EdgeInsets.all(context.dimens.sm),
           decoration: BoxDecoration(

@@ -7,6 +7,7 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/utils/subject_icons.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_snackbar.dart';
+import '../../../core/widgets/press_scale.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
@@ -157,7 +158,7 @@ class SubjectCard extends ConsumerWidget {
   }
 }
 
-class _SubjectCardButton extends StatelessWidget {
+class _SubjectCardButton extends StatefulWidget {
   const _SubjectCardButton({
     required this.label,
     required this.icon,
@@ -171,58 +172,132 @@ class _SubjectCardButton extends StatelessWidget {
   final bool isOutlined;
 
   @override
+  State<_SubjectCardButton> createState() => _SubjectCardButtonState();
+}
+
+class _SubjectCardButtonState extends State<_SubjectCardButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulseController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 260),
+  );
+  late final Animation<double> _scaleAnimation = TweenSequence<double>([
+    TweenSequenceItem(
+      tween: Tween<double>(begin: 1.0, end: 0.92)
+          .chain(CurveTween(curve: Curves.easeOut)),
+      weight: 40,
+    ),
+    TweenSequenceItem(
+      tween: Tween<double>(begin: 0.92, end: 1.08)
+          .chain(CurveTween(curve: Curves.easeOutBack)),
+      weight: 35,
+    ),
+    TweenSequenceItem(
+      tween: Tween<double>(begin: 1.08, end: 1.0)
+          .chain(CurveTween(curve: Curves.easeInOut)),
+      weight: 25,
+    ),
+  ]).animate(_pulseController);
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    _pulseController.forward(from: 0.0);
+    widget.onPressed();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(context.dimens.radiusSm + 2),
-        child: Ink(
-          padding: EdgeInsets.symmetric(
-            vertical: context.dimens.xs + 1,
-            horizontal: context.dimens.sm,
-          ),
+    return PressScale(
+      haptic: true,
+      scale: 0.96,
+      child: AnimatedBuilder(
+        animation: _scaleAnimation,
+        builder: (context, child) => Transform.scale(
+          scale: _scaleAnimation.value,
+          child: child,
+        ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
           decoration: BoxDecoration(
-            gradient: isOutlined
+            gradient: widget.isOutlined
                 ? null
                 : LinearGradient(
                     colors: [context.colors.primary, context.colors.secondary],
                   ),
-            color: isOutlined
+            color: widget.isOutlined
                 ? context.colors.primary.withValues(alpha: 0.12)
                 : null,
             borderRadius: BorderRadius.circular(context.dimens.radiusSm + 2),
-            border: isOutlined
+            border: widget.isOutlined
                 ? Border.all(
                     color: context.colors.primary.withValues(alpha: 0.3),
                   )
                 : null,
+            boxShadow: widget.isOutlined
+                ? null
+                : [
+                    BoxShadow(
+                      color: context.colors.primary.withValues(alpha: 0.22),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: context.dimens.iconSm,
-                color: isOutlined
-                    ? context.colors.primary
-                    : context.colors.onPrimary,
-              ),
-              SizedBox(width: context.dimens.xs),
-              Flexible(
-                child: Text(
-                  label,
-                  style: context.textStyles.labelSmall?.copyWith(
-                    color: isOutlined
-                        ? context.colors.primary
-                        : context.colors.onPrimary,
-                    fontWeight: FontWeight.bold,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: _handleTap,
+              borderRadius: BorderRadius.circular(context.dimens.radiusSm + 2),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: context.dimens.xs + 1,
+                  horizontal: context.dimens.sm,
+                ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 220),
+                  transitionBuilder: (child, animation) => ScaleTransition(
+                    scale: CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutBack,
+                    ),
+                    child: FadeTransition(opacity: animation, child: child),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  child: Row(
+                    key: ValueKey<String>('${widget.label}_${widget.isOutlined}'),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        widget.icon,
+                        size: context.dimens.iconSm,
+                        color: widget.isOutlined
+                            ? context.colors.primary
+                            : context.colors.onPrimary,
+                      ),
+                      SizedBox(width: context.dimens.xs),
+                      Flexible(
+                        child: Text(
+                          widget.label,
+                          style: context.textStyles.labelSmall?.copyWith(
+                            color: widget.isOutlined
+                                ? context.colors.primary
+                                : context.colors.onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),
