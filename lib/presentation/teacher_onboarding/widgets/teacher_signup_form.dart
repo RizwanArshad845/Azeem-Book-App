@@ -18,7 +18,7 @@ import 'student_count_counter.dart';
 import 'teacher_onboarding_summary_card.dart';
 
 /// Multi-step Teacher Signup Form wizard broken down into:
-/// - Step 1: Personal & Campus Information (Name + Campus)
+/// - Step 1: Personal & Campus Information (Name + City filter + Multi-Campus)
 /// - Step 2: Teaching Scope (Class >= 1, Subject >= 1, deduplicated)
 /// - Step 3: Student Reach (Optional student counter)
 /// - Step 4: Review Registration & Final Submit
@@ -38,13 +38,15 @@ class TeacherSignupForm extends ConsumerStatefulWidget {
 
 class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
   final _nameController = TextEditingController();
-  Campus? _campus;
+  String? _selectedCity;
+  final Set<String> _selectedCampusIds = {};
   final Set<String> _selectedClassIds = {};
   final Set<String> _selectedSubjectNames = {};
   int? _declaredStudentCount;
 
   String? _nameError;
-  String? _campusError;
+  String? _cityError;
+  String? _campusesError;
   String? _classesError;
   String? _subjectsError;
 
@@ -90,10 +92,14 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
       _nameError = Validators.isRequired(name)
           ? null
           : context.l10n.teacherSignupNameError;
-      _campusError =
-          _campus == null ? context.l10n.teacherSignupCampusError : null;
+      _cityError = _selectedCity == null
+          ? context.l10n.teacherSignupCityError
+          : null;
+      _campusesError = _selectedCampusIds.isEmpty
+          ? context.l10n.teacherSignupCampusesError
+          : null;
     });
-    return _nameError == null && _campusError == null;
+    return _nameError == null && _cityError == null && _campusesError == null;
   }
 
   bool _validateStep2() {
@@ -142,11 +148,14 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
       }
     }
 
+    final primaryCampusId =
+        _selectedCampusIds.isNotEmpty ? _selectedCampusIds.first : '';
+
     ref
         .read(teacherOnboardingViewModelProvider.notifier)
         .submitSignUp(
           name: _nameController.text.trim(),
-          campusId: _campus!.id,
+          campusId: primaryCampusId,
           subjectIds: allSelectedSubjectIds.toList(),
           classIds: _selectedClassIds.isEmpty ? null : _selectedClassIds.toList(),
           declaredStudentCount: _declaredStudentCount,
@@ -236,10 +245,10 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
   }
 
   // ---------------------------------------------------------------------------
-  // STEP 1: Personal & Campus Information
+  // STEP 1: Personal & Campus Information (City Filter + Multi-Campus)
   // ---------------------------------------------------------------------------
   Widget _buildStep1() {
-    final campusesAsync = ref.watch(teacherSignupCampusesProvider);
+    final citiesAsync = ref.watch(teacherSignupCitiesProvider);
 
     return Column(
       key: const ValueKey(1),
@@ -252,43 +261,7 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
         ),
         SizedBox(height: context.dimens.lg),
 
-        /*
-        // [ORIGINAL CODE WITH APPCARD - PRESERVED FOR EASY REVERT]:
-        AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppTextField(
-                label: '${context.l10n.nameLabel} *',
-                hint: context.l10n.nameHint,
-                controller: _nameController,
-                textCapitalization: TextCapitalization.words,
-                errorText: _nameError,
-                onChanged: (_) {
-                  if (_nameError != null) setState(() => _nameError = null);
-                },
-              ),
-              SizedBox(height: context.dimens.lg),
-              AsyncValueWidget<List<Campus>>(
-                value: campusesAsync,
-                onRetry: () => ref.invalidate(teacherSignupCampusesProvider),
-                data: (campuses) => AppDropdown<Campus>(
-                  label: '${context.l10n.campusLabel} *',
-                  items: campuses,
-                  selectedItem: _campus,
-                  itemAsString: (c) => '${c.name} — ${c.city}',
-                  onChanged: (campus) => setState(() {
-                    _campus = campus;
-                    _campusError = null;
-                  }),
-                ),
-              ),
-            ],
-          ),
-        ),
-        */
-
-        // [NEW OPEN CANVAS LAYOUT - WITHOUT APPCARD]:
+        // Full Name
         AppTextField(
           label: '${context.l10n.nameLabel} *',
           hint: context.l10n.nameHint,
@@ -302,26 +275,30 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
           },
         ),
         SizedBox(height: context.dimens.lg),
-        AsyncValueWidget<List<Campus>>(
-          value: campusesAsync,
-          onRetry: () => ref.invalidate(teacherSignupCampusesProvider),
-          data: (campuses) => Column(
+
+        // City Dropdown
+        AsyncValueWidget<List<String>>(
+          value: citiesAsync,
+          onRetry: () => ref.invalidate(teacherSignupCitiesProvider),
+          data: (cities) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppDropdown<Campus>(
-                label: '${context.l10n.campusLabel} *',
-                items: campuses,
-                selectedItem: _campus,
-                itemAsString: (c) => '${c.name} — ${c.city}',
-                onChanged: (campus) => setState(() {
-                  _campus = campus;
-                  _campusError = null;
+              AppDropdown<String>(
+                label: context.l10n.teacherSignupCityLabel,
+                items: cities,
+                selectedItem: _selectedCity,
+                itemAsString: (city) => city,
+                onChanged: (city) => setState(() {
+                  _selectedCity = city;
+                  _selectedCampusIds.clear();
+                  _cityError = null;
+                  _campusesError = null;
                 }),
               ),
-              if (_campusError != null) ...[
+              if (_cityError != null) ...[
                 SizedBox(height: context.dimens.xs),
                 Text(
-                  _campusError!,
+                  _cityError!,
                   style: context.textStyles.bodySmall?.copyWith(
                     color: context.colors.error,
                   ),
@@ -330,6 +307,75 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
             ],
           ),
         ),
+        SizedBox(height: context.dimens.lg),
+
+        // Filtered Campuses Selection
+        if (_selectedCity == null)
+          Container(
+            padding: EdgeInsets.all(context.dimens.md),
+            decoration: BoxDecoration(
+              color: context.colors.primary.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(context.dimens.radiusMd),
+              border: Border.all(
+                color: context.colors.primary.withValues(alpha: 0.15),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline_rounded,
+                  color: context.colors.primary,
+                  size: context.dimens.iconSm,
+                ),
+                SizedBox(width: context.dimens.sm),
+                Expanded(
+                  child: Text(
+                    context.l10n.teacherSignupSelectCityFirst,
+                    style: context.textStyles.bodySmall?.copyWith(
+                      color: context.colors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          Consumer(
+            builder: (context, ref, _) {
+              final campusesAsync = ref.watch(
+                teacherSignupCampusesByCityProvider(_selectedCity!),
+              );
+
+              return AsyncValueWidget<List<Campus>>(
+                value: campusesAsync,
+                onRetry: () => ref.invalidate(
+                  teacherSignupCampusesByCityProvider(_selectedCity!),
+                ),
+                data: (campuses) {
+                  return InteractiveSelectionGrid<Campus>(
+                    label: context.l10n.teacherSignupCampusesLabel,
+                    items: campuses,
+                    selectedIds: _selectedCampusIds,
+                    idExtractor: (c) => c.id,
+                    labelExtractor: (c) => c.name,
+                    iconExtractor: (_) => Icons.account_balance_outlined,
+                    onSelectionChanged: (next) {
+                      setState(() {
+                        _selectedCampusIds
+                          ..clear()
+                          ..addAll(next);
+                        if (_selectedCampusIds.isNotEmpty) {
+                          _campusesError = null;
+                        }
+                      });
+                    },
+                    errorText: _campusesError,
+                  );
+                },
+              );
+            },
+          ),
+
         SizedBox(height: context.dimens.xl),
         AppPrimaryButton(
           label: context.l10n.commonContinue,
@@ -360,100 +406,48 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
         ),
         SizedBox(height: context.dimens.lg),
 
-        // Classes Section
-        _RequiredFieldLabel(
-          label: context.l10n.teacherSignupClassesRequiredLabel,
-        ),
-        SizedBox(height: context.dimens.sm),
-
-        /*
-        // [ORIGINAL CODE WITH APPCARD - PRESERVED FOR EASY REVERT]:
-        AppCard(
-          child: AsyncValueWidget<List<TeacherClassOption>>(
-            value: boardClassesAsync,
-            onRetry: () => ref.invalidate(teacherSignupClassOptionsProvider),
-            data: (boardClasses) => InteractiveSelectionGrid<TeacherClassOption>(
-              options: boardClasses,
-              optionLabel: (b) => b.displayName,
-              optionId: (b) => b.id,
-              optionIcon: (b) => _iconForClass(b.rawName),
-              selectedIds: _selectedClassIds,
-              onChanged: _onClassesChanged,
-              emptyMessage: context.l10n.teacherSignupClassesEmpty,
-            ),
-          ),
-        ),
-        */
-
-        // [NEW OPEN CANVAS LAYOUT - WITHOUT APPCARD]:
+        // Classes Multi-select
         AsyncValueWidget<List<TeacherClassOption>>(
           value: boardClassesAsync,
           onRetry: () => ref.invalidate(teacherSignupClassOptionsProvider),
-          data: (boardClasses) => InteractiveSelectionGrid<TeacherClassOption>(
-            options: boardClasses,
-            optionLabel: (b) => b.displayName,
-            optionId: (b) => b.id,
-            optionIcon: (b) => _iconForClass(b.rawName),
-            selectedIds: _selectedClassIds,
-            onChanged: _onClassesChanged,
-            emptyMessage: context.l10n.teacherSignupClassesEmpty,
-          ),
+          data: (options) {
+            return InteractiveSelectionGrid<TeacherClassOption>(
+              label: context.l10n.teacherSignupClassesRequiredLabel,
+              items: options,
+              selectedIds: _selectedClassIds,
+              idExtractor: (opt) => opt.id,
+              labelExtractor: (opt) => opt.displayName,
+              iconExtractor: (opt) => _iconForClass(opt.displayName),
+              onSelectionChanged: _onClassesChanged,
+              errorText: _classesError,
+            );
+          },
         ),
-        if (_classesError != null) ...[
-          SizedBox(height: context.dimens.xs),
-          Text(
-            _classesError!,
-            style: context.textStyles.bodySmall?.copyWith(
-              color: context.colors.error,
-            ),
-          ),
-        ],
+        SizedBox(height: context.dimens.xl),
 
-        SizedBox(height: context.dimens.lg),
-
-        // Subjects Section (Deduplicated across selected classes)
-        _RequiredFieldLabel(
-          label: context.l10n.teacherSignupSubjectsRequiredLabel,
-        ),
-        SizedBox(height: context.dimens.sm),
-
-        /*
-        // [ORIGINAL CODE WITH APPCARD - PRESERVED FOR EASY REVERT]:
-        AppCard(
-          child: _selectedClassIds.isEmpty
-              ? Text(context.l10n.teacherSignupSelectClassFirst)
-              : AsyncValueWidget<List<UniqueTeacherSubject>>(...),
-        ),
-        */
-
-        // [NEW OPEN CANVAS LAYOUT - WITHOUT APPCARD]:
+        // Subjects Multi-select
         if (_selectedClassIds.isEmpty)
           Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              vertical: context.dimens.md,
-              horizontal: context.dimens.md,
-            ),
+            padding: EdgeInsets.all(context.dimens.md),
             decoration: BoxDecoration(
-              color: context.colors.surface,
+              color: context.colors.surfaceVariant.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(context.dimens.radiusMd),
               border: Border.all(
-                color: context.colors.divider,
-                width: 1,
+                color: context.colors.divider.withValues(alpha: 0.5),
               ),
             ),
             child: Row(
               children: [
                 Icon(
-                  Icons.touch_app_outlined,
-                  color: context.colors.primary,
-                  size: context.dimens.iconMd,
+                  Icons.info_outline_rounded,
+                  color: context.colors.textSecondary,
+                  size: context.dimens.iconSm,
                 ),
                 SizedBox(width: context.dimens.sm),
                 Expanded(
                   child: Text(
-                    context.l10n.teacherSignupSelectClassFirst,
-                    style: context.textStyles.bodyMedium?.copyWith(
+                    'Select at least one class above to choose your subjects.',
+                    style: context.textStyles.bodySmall?.copyWith(
                       color: context.colors.textSecondary,
                     ),
                   ),
@@ -467,26 +461,19 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
             onRetry: () => ref.invalidate(
               teacherSignupSubjectsForClassesProvider(_classIdsKey),
             ),
-            data: (subjects) =>
-                InteractiveSelectionGrid<UniqueTeacherSubject>(
-              options: subjects,
-              optionLabel: (s) => s.name,
-              optionId: (s) => s.name,
-              optionIcon: (s) => _iconForSubject(s.name),
-              selectedIds: _selectedSubjectNames,
-              onChanged: _onSubjectsChanged,
-              emptyMessage: context.l10n.teacherSignupNoSubjectsFound,
-            ),
+            data: (uniqueSubjects) {
+              return InteractiveSelectionGrid<UniqueTeacherSubject>(
+                label: context.l10n.teacherSignupSubjectsRequiredLabel,
+                items: uniqueSubjects,
+                selectedIds: _selectedSubjectNames,
+                idExtractor: (s) => s.name,
+                labelExtractor: (s) => s.name,
+                iconExtractor: (s) => _iconForSubject(s.name),
+                onSelectionChanged: _onSubjectsChanged,
+                errorText: _subjectsError,
+              );
+            },
           ),
-        if (_subjectsError != null) ...[
-          SizedBox(height: context.dimens.xs),
-          Text(
-            _subjectsError!,
-            style: context.textStyles.bodySmall?.copyWith(
-              color: context.colors.error,
-            ),
-          ),
-        ],
 
         SizedBox(height: context.dimens.xl),
         AppPrimaryButton(
@@ -543,6 +530,12 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
   // STEP 4: Review Registration & Submit
   // ---------------------------------------------------------------------------
   Widget _buildStep4(bool isSubmitting) {
+    final allCampuses =
+        ref.watch(teacherSignupCampusesProvider).value ?? <Campus>[];
+    final selectedCampuses =
+        allCampuses.where((c) => _selectedCampusIds.contains(c.id)).toList();
+    final campusNames = selectedCampuses.map((c) => c.name).toList();
+
     final boardClasses =
         ref.watch(teacherSignupClassOptionsProvider).value ?? [];
 
@@ -567,8 +560,8 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
         // Review Summary Card
         TeacherOnboardingSummaryCard(
           name: _nameController.text.trim(),
-          campusName:
-              _campus != null ? '${_campus!.name} (${_campus!.city})' : '—',
+          cityName: _selectedCity ?? '—',
+          campusNames: campusNames,
           classNames: classNames,
           subjectNames: subjectNames,
           studentCount: _declaredStudentCount,
@@ -582,23 +575,6 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
           onPressed: isSubmitting ? null : _handleSubmit,
         ),
       ],
-    );
-  }
-}
-
-class _RequiredFieldLabel extends StatelessWidget {
-  const _RequiredFieldLabel({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      label,
-      style: context.textStyles.labelMedium?.copyWith(
-        color: context.colors.textPrimary,
-        fontWeight: FontWeight.w600,
-      ),
     );
   }
 }

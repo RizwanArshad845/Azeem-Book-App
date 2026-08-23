@@ -7,14 +7,16 @@ class TeacherOnboardingSummaryCard extends StatelessWidget {
   const TeacherOnboardingSummaryCard({
     super.key,
     required this.name,
-    required this.campusName,
+    required this.cityName,
+    required this.campusNames,
     required this.classNames,
     required this.subjectNames,
     this.studentCount,
   });
 
   final String name;
-  final String campusName;
+  final String cityName;
+  final List<String> campusNames;
   final List<String> classNames;
   final List<String> subjectNames;
   final int? studentCount;
@@ -24,57 +26,67 @@ class TeacherOnboardingSummaryCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-            // Name
-            _SummaryItem(
-              icon: Icons.person_rounded,
-              label: context.l10n.teacherSignupSummaryName,
-              value: name,
-            ),
-            SizedBox(height: context.dimens.md),
-            Divider(color: context.colors.divider.withValues(alpha: 0.6), height: 1),
-            SizedBox(height: context.dimens.md),
+        // Name
+        _SummaryItem(
+          icon: Icons.person_rounded,
+          label: context.l10n.teacherSignupSummaryName,
+          value: name,
+        ),
+        SizedBox(height: context.dimens.md),
+        Divider(color: context.colors.divider.withValues(alpha: 0.6), height: 1),
+        SizedBox(height: context.dimens.md),
 
-            // Campus
-            _SummaryItem(
-              icon: Icons.account_balance_rounded,
-              label: context.l10n.teacherSignupSummaryCampus,
-              value: campusName,
-            ),
-            SizedBox(height: context.dimens.md),
-            Divider(color: context.colors.divider.withValues(alpha: 0.6), height: 1),
-            SizedBox(height: context.dimens.md),
+        // City
+        _SummaryItem(
+          icon: Icons.location_city_rounded,
+          label: context.l10n.teacherSignupSummaryCity,
+          value: cityName,
+        ),
+        SizedBox(height: context.dimens.md),
+        Divider(color: context.colors.divider.withValues(alpha: 0.6), height: 1),
+        SizedBox(height: context.dimens.md),
 
-            // Classes
-            _SummaryChipSection(
-              icon: Icons.class_rounded,
-              label: context.l10n.teacherSignupSummaryClasses,
-              items: classNames,
-            ),
-            SizedBox(height: context.dimens.md),
-            Divider(color: context.colors.divider.withValues(alpha: 0.6), height: 1),
-            SizedBox(height: context.dimens.md),
+        // Campuses
+        _SummaryChipSection(
+          icon: Icons.account_balance_rounded,
+          label: context.l10n.teacherSignupSummaryCampuses,
+          items: campusNames,
+        ),
+        SizedBox(height: context.dimens.md),
+        Divider(color: context.colors.divider.withValues(alpha: 0.6), height: 1),
+        SizedBox(height: context.dimens.md),
 
-            // Subjects
-            _SummaryChipSection(
-              icon: Icons.menu_book_rounded,
-              label: context.l10n.teacherSignupSummarySubjects,
-              items: subjectNames,
-            ),
-            SizedBox(height: context.dimens.md),
-            Divider(color: context.colors.divider.withValues(alpha: 0.6), height: 1),
-            SizedBox(height: context.dimens.md),
+        // Classes
+        _SummaryChipSection(
+          icon: Icons.class_rounded,
+          label: context.l10n.teacherSignupSummaryClasses,
+          items: classNames,
+        ),
+        SizedBox(height: context.dimens.md),
+        Divider(color: context.colors.divider.withValues(alpha: 0.6), height: 1),
+        SizedBox(height: context.dimens.md),
 
-            // Students Count
-            _SummaryItem(
-              icon: Icons.groups_rounded,
-              label: context.l10n.teacherSignupSummaryStudents,
-              value: studentCount != null
-                  ? '$studentCount students'
-                  : 'Not specified (Optional)',
-              isMuted: studentCount == null,
-            ),
-          ],
-        );
+        // Subjects
+        _SummaryChipSection(
+          icon: Icons.menu_book_rounded,
+          label: context.l10n.teacherSignupSummarySubjects,
+          items: subjectNames,
+        ),
+        SizedBox(height: context.dimens.md),
+        Divider(color: context.colors.divider.withValues(alpha: 0.6), height: 1),
+        SizedBox(height: context.dimens.md),
+
+        // Students Count
+        _SummaryItem(
+          icon: Icons.groups_rounded,
+          label: context.l10n.teacherSignupSummaryStudents,
+          value: studentCount != null
+              ? '$studentCount students'
+              : 'Not specified (Optional)',
+          isMuted: studentCount == null,
+        ),
+      ],
+    );
   }
 }
 
@@ -99,8 +111,8 @@ class _SummaryItem extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(context.dimens.xs * 1.5),
           decoration: BoxDecoration(
-            color: context.colors.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(context.dimens.radiusSm),
+            color: context.colors.primary.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(context.dimens.radiusMd),
           ),
           child: Icon(
             icon,
@@ -124,10 +136,10 @@ class _SummaryItem extends StatelessWidget {
               Text(
                 value,
                 style: context.textStyles.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
                   color: isMuted
                       ? context.colors.textSecondary
                       : context.colors.textPrimary,
-                  fontWeight: isMuted ? FontWeight.normal : FontWeight.bold,
                 ),
               ),
             ],
@@ -157,8 +169,8 @@ class _SummaryChipSection extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(context.dimens.xs * 1.5),
           decoration: BoxDecoration(
-            color: context.colors.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(context.dimens.radiusSm),
+            color: context.colors.primary.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(context.dimens.radiusMd),
           ),
           child: Icon(
             icon,
@@ -172,41 +184,48 @@ class _SummaryChipSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '$label (${items.length})',
+                label,
                 style: context.textStyles.labelMedium?.copyWith(
                   color: context.colors.textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               SizedBox(height: context.dimens.xs),
-              Wrap(
-                spacing: context.dimens.xs,
-                runSpacing: context.dimens.xs,
-                children: [
-                  for (final item in items)
-                    Container(
+              if (items.isEmpty)
+                Text(
+                  'None selected',
+                  style: context.textStyles.bodyMedium?.copyWith(
+                    color: context.colors.textSecondary,
+                    fontStyle: FontStyle.italic,
+                  ),
+                )
+              else
+                Wrap(
+                  spacing: context.dimens.xs,
+                  runSpacing: context.dimens.xs,
+                  children: items.map((item) {
+                    return Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: context.dimens.md,
-                        vertical: context.dimens.xs,
+                        horizontal: context.dimens.sm,
+                        vertical: context.dimens.xs / 1.5,
                       ),
                       decoration: BoxDecoration(
                         color: context.colors.primary.withValues(alpha: 0.1),
-                        borderRadius:
-                            BorderRadius.circular(context.dimens.radiusMd),
+                        borderRadius: BorderRadius.circular(context.dimens.radiusSm),
                         border: Border.all(
-                          color: context.colors.primary.withValues(alpha: 0.25),
+                          color: context.colors.primary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
                         item,
-                        style: context.textStyles.bodyMedium?.copyWith(
-                          color: context.colors.primary,
+                        style: context.textStyles.bodySmall?.copyWith(
                           fontWeight: FontWeight.w600,
+                          color: context.colors.primary,
                         ),
                       ),
-                    ),
-                ],
-              ),
+                    );
+                  }).toList(),
+                ),
             ],
           ),
         ),

@@ -37,8 +37,18 @@ class AppDropdown<T> extends StatelessWidget {
         decoration: InputDecoration(labelText: label),
       ),
       popupProps: PopupProps.menu(
-        showSearchBox: items.length > 5,
-        constraints: const BoxConstraints(maxHeight: 320),
+        fit: FlexFit.loose,
+        showSearchBox: items.length > 6,
+        constraints: BoxConstraints(
+          maxHeight: (items.length * 52.0 + (items.length > 6 ? 64.0 : 8.0))
+              .clamp(56.0, 260.0),
+        ),
+        menuProps: MenuProps(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(context.dimens.radiusMd),
+          ),
+          elevation: 6,
+        ),
         searchFieldProps: TextFieldProps(
           decoration: InputDecoration(
             hintText: 'Search',

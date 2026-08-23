@@ -3,79 +3,107 @@ import 'package:flutter/material.dart';
 import '../../../core/extensions/context_extensions.dart';
 
 /// Reusable multi-select grid with modern interactive selectable chips/tiles.
-/// Features icons, checkmark indicators, and animated highlight backgrounds.
+/// Features icons, checkmark indicators, labels, validation errors, and animated highlight backgrounds.
 class InteractiveSelectionGrid<T> extends StatelessWidget {
   const InteractiveSelectionGrid({
     super.key,
-    required this.options,
-    required this.optionId,
-    required this.optionLabel,
-    this.optionIcon,
+    this.label,
+    this.errorText,
+    required this.items,
+    required this.idExtractor,
+    required this.labelExtractor,
+    this.iconExtractor,
     required this.selectedIds,
-    required this.onChanged,
+    required this.onSelectionChanged,
     this.emptyMessage,
   });
 
-  final List<T> options;
-  final String Function(T option) optionId;
-  final String Function(T option) optionLabel;
-  final IconData Function(T option)? optionIcon;
+  final String? label;
+  final String? errorText;
+  final List<T> items;
+  final String Function(T item) idExtractor;
+  final String Function(T item) labelExtractor;
+  final IconData Function(T item)? iconExtractor;
   final Set<String> selectedIds;
-  final ValueChanged<Set<String>> onChanged;
+  final ValueChanged<Set<String>> onSelectionChanged;
   final String? emptyMessage;
 
   @override
   Widget build(BuildContext context) {
-    if (options.isEmpty) {
-      return Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(context.dimens.lg),
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.circular(context.dimens.radiusMd),
-          border: Border.all(color: context.colors.divider),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.info_outline_rounded,
-              color: context.colors.textSecondary,
-              size: context.dimens.iconLg,
-            ),
-            SizedBox(height: context.dimens.xs),
-            Text(
-              emptyMessage ?? 'No options available.',
-              style: context.textStyles.bodySmall?.copyWith(
-                color: context.colors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Wrap(
-      spacing: context.dimens.sm,
-      runSpacing: context.dimens.sm,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        for (final option in options)
-          _SelectionTile(
-            label: optionLabel(option),
-            icon: optionIcon != null ? optionIcon!(option) : null,
-            isSelected: selectedIds.contains(optionId(option)),
-            onTap: () {
-              final next = Set<String>.of(selectedIds);
-              final id = optionId(option);
-              if (next.contains(id)) {
-                next.remove(id);
-              } else {
-                next.add(id);
-              }
-              onChanged(next);
-            },
+        if (label != null) ...[
+          Text(
+            label!,
+            style: context.textStyles.labelMedium?.copyWith(
+              color: context.colors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
+          SizedBox(height: context.dimens.xs),
+        ],
+        if (items.isEmpty)
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(context.dimens.lg),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: BorderRadius.circular(context.dimens.radiusMd),
+              border: Border.all(color: context.colors.divider),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.info_outline_rounded,
+                  color: context.colors.textSecondary,
+                  size: context.dimens.iconLg,
+                ),
+                SizedBox(height: context.dimens.xs),
+                Text(
+                  emptyMessage ?? 'No options available.',
+                  style: context.textStyles.bodySmall?.copyWith(
+                    color: context.colors.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          )
+        else
+          Wrap(
+            spacing: context.dimens.sm,
+            runSpacing: context.dimens.sm,
+            children: [
+              for (final item in items)
+                _SelectionTile(
+                  label: labelExtractor(item),
+                  icon: iconExtractor != null ? iconExtractor!(item) : null,
+                  isSelected: selectedIds.contains(idExtractor(item)),
+                  onTap: () {
+                    final next = Set<String>.of(selectedIds);
+                    final id = idExtractor(item);
+                    if (next.contains(id)) {
+                      next.remove(id);
+                    } else {
+                      next.add(id);
+                    }
+                    onSelectionChanged(next);
+                  },
+                ),
+            ],
+          ),
+        if (errorText != null) ...[
+          SizedBox(height: context.dimens.xs),
+          Text(
+            errorText!,
+            style: context.textStyles.bodySmall?.copyWith(
+              color: context.colors.error,
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -143,13 +171,17 @@ class _SelectionTile extends StatelessWidget {
                   ),
                   SizedBox(width: context.dimens.xs),
                 ],
-                Text(
-                  label,
-                  style: context.textStyles.bodyMedium?.copyWith(
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                    color: isSelected
-                        ? primaryColor
-                        : context.colors.textPrimary,
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textStyles.bodyMedium?.copyWith(
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                      color: isSelected
+                          ? primaryColor
+                          : context.colors.textPrimary,
+                    ),
                   ),
                 ),
                 SizedBox(width: context.dimens.xs),
@@ -166,7 +198,9 @@ class _SelectionTile extends StatelessWidget {
                           Icons.add_circle_outline_rounded,
                           key: const ValueKey('unchecked'),
                           size: context.dimens.iconSm * 0.9,
-                          color: context.colors.textSecondary.withValues(alpha: 0.4),
+                          color: context.colors.textSecondary.withValues(
+                            alpha: 0.4,
+                          ),
                         ),
                 ),
               ],

@@ -13,6 +13,31 @@ final teacherSignupCampusesProvider = FutureProvider.autoDispose<List<Campus>>(
   },
 );
 
+/// Distinct sorted cities derived from the campus directory.
+final teacherSignupCitiesProvider = FutureProvider.autoDispose<List<String>>((
+  ref,
+) async {
+  final campuses = await ref.watch(teacherSignupCampusesProvider.future);
+  final cities =
+      campuses
+          .map((c) => c.city.trim())
+          .where((c) => c.isNotEmpty)
+          .toSet()
+          .toList()
+        ..sort();
+  return cities;
+});
+
+/// Campuses filtered by the selected city.
+final teacherSignupCampusesByCityProvider =
+    FutureProvider.autoDispose.family<List<Campus>, String>((ref, city) async {
+      if (city.isEmpty) return const <Campus>[];
+      final campuses = await ref.watch(teacherSignupCampusesProvider.future);
+      return campuses
+          .where((c) => c.city.trim().toLowerCase() == city.trim().toLowerCase())
+          .toList();
+    });
+
 /// Option model pairing a BoardClass with an unambiguous display title
 /// (e.g. "11th (Pre-Medical)" vs "12th (Pre-Medical)").
 class TeacherClassOption {
