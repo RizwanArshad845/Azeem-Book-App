@@ -111,13 +111,13 @@ Base path assumed: `/api/v1` (not yet declared anywhere in the Flutter `AppConfi
 | Endpoint | Method | Notes |
 |---|---|---|
 | `/teachers/{id}` | GET / PUT / DELETE | GET = profile read; PUT = `teacher-profile`'s edit (name/phone only — reject attempts to change `campusId`/`subjects`/`approvalStatus`/earnings fields server-side even if present in the body); DELETE = soft-delete (`is_deleted=True`), **not** a real row deletion |
-| `/teachers/{id}/overview` | GET | Stat-card summary (`teacher-overview`) |
-| `/teachers/{id}/students` | GET | Every `Student` with a `SubjectEnrollment.teacherId == id` (`teacher-students`) |
-| `/teachers/{id}/earnings` | GET | `EarningsRecord[]` for this teacher — **see §4.6, this must be GET-only in production; the client-facing POST variant the current Flutter code calls must not be trusted** |
+| `/teachers/{id}/overview` | GET | Stat-card summary (`teacher-overview`): `totalStudents`, `activePaidStudents`, `freeStudents`, `actualEarnings`, `declaredStudents`, `remainingStudents`, `projectedPotential` |
+| `/teachers/{id}/students` | GET | Paginated, filterable students roster (`teacher-students`). Query parameters: `?query={name/phone}&campus_id={id}&status={all\|active\|free}&sort_by={recently_joined\|top_performers\|alphabetical}&page={n}&page_size={n}` |
+| `/teachers/{id}/earnings` | GET | `EarningsRecord[]` for this teacher with optional `?timeframe={all_time\|this_month\|last_month}` — **see §4.6, this must be GET-only in production; the client-facing POST variant the current Flutter code calls must not be trusted** |
 
 **Gap found**: `ApiEndpoints` has no constant for "look up teacher by phone" (used during teacher OTP login to distinguish salesman-seeded vs. self-signup) or "teacher signup." The actual `TeacherRemoteDataSourceImpl` hardcodes `GET /teachers?phoneNumber=` and `POST /teachers/signup` inline, with an explicit code comment flagging these should be promoted to real `ApiEndpoints` constants once that file is available to edit. Backend should implement both paths:
 - `GET /teachers?phoneNumber={phone}` → `Teacher | null` (used to skip signup for salesman-seeded teachers)
-- `POST /teachers/signup` → creates a `Teacher` with `approvalStatus: pendingAdminApproval`, `onboardingSource: selfSignup`
+- `POST /teachers/signup` → creates a `Teacher` with `approvalStatus: pendingAdminApproval`, `onboardingSource: selfSignup`, `declaredStudentCount` integer
 
 ### 4.4 Student
 
@@ -154,8 +154,17 @@ Base path assumed: `/api/v1` (not yet declared anywhere in the Flutter `AppConfi
 |---|---|
 | `/notifications/{recipientId}` | GET → `Notification[]` |
 | `/notifications/{notificationId}/read` | POST → marks `isRead: true`, no body |
+| `/notifications/{recipientId}/read-all` | POST → marks all unread notifications for this recipient as read |
+| `/notifications/{recipientId}/clear-all` | DELETE → removes or archives all notifications for this recipient |
 
-### 4.8 Error shape → `Failure` taxonomy mapping
+### 4.8 Auth & Phone Verification
+
+| Endpoint | Method | Notes |
+|---|---|---|
+| `/auth/phone-change/request` | POST | Request: `{"currentPhone": string, "newPhone": string}` → sends OTP to new phone number |
+| `/auth/phone-change/verify` | POST | Request: `{"newPhone": string, "otp": string}` → verifies OTP before allowing `PUT /teachers/{id}` phone update |
+
+### 4.9 Error shape → `Failure` taxonomy mapping
 
 The Flutter `Failure` sealed class (`lib/domain/common/failure.dart`) has exactly 8 subtypes. DRF exceptions must map onto these consistently so `ErrorInterceptor` (`lib/core/network/interceptors/error_interceptor.dart`) can reconstruct the right one from the HTTP status + a JSON error body:
 
