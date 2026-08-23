@@ -2,15 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/riverpod_providers.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
-import '../../../domain/catalog/entities/board_class.dart';
-import '../../../domain/catalog/entities/subject.dart';
 
 /// Read-only providers feeding the teacher signup form's catalog pickers.
-/// Wraps the already-registered `getCampusesUseCaseProvider` /
-/// `getBoardClassesUseCaseProvider` / `getSubjectsUseCaseProvider` from
-/// `core/di/riverpod_providers.dart` (read, not edited — that file is a
-/// shared hotspot owned by the coordinating thread) in `FutureProvider`s so
-/// the view can render them with `AsyncValueWidget` like everything else.
 
 /// Full campus directory for the campus dropdown.
 final teacherSignupCampusesProvider = FutureProvider.autoDispose<List<Campus>>(
@@ -20,26 +13,78 @@ final teacherSignupCampusesProvider = FutureProvider.autoDispose<List<Campus>>(
   },
 );
 
-/// Only Admin-enabled board/classes are selectable (§9.2: disabled ones
-/// render as "coming soon" and shouldn't appear in this form at all).
-final teacherSignupBoardClassesProvider =
-    FutureProvider.autoDispose<List<BoardClass>>((ref) async {
-      final result = await ref.read(getBoardClassesUseCaseProvider)();
-      return result.when(
+/// Option model pairing a BoardClass with an unambiguous display title
+/// (e.g. "11th (Pre-Medical)" vs "12th (Pre-Medical)").
+class TeacherClassOption {
+  const TeacherClassOption({
+    required this.id,
+    required this.displayName,
+    required this.rawName,
+    required this.classLevelName,
+  });
+
+  final String id;
+  final String displayName;
+  final String rawName;
+  final String classLevelName;
+}
+
+/// Only Admin-enabled board/classes with clear unambiguous grade-level labels.
+final teacherSignupClassOptionsProvider =
+    FutureProvider.autoDispose<List<TeacherClassOption>>((ref) async {
+      final boardClassesResult =
+          await ref.read(getBoardClassesUseCaseProvider)();
+      final classLevelsResult =
+          await ref.read(getClassLevelsUseCaseProvider)();
+
+      final boardClasses = boardClassesResult.when(
         success: (v) => v.where((b) => b.isEnabled).toList(),
         failure: (f) => throw f,
       );
+
+      final classLevels = classLevelsResult.when(
+        success: (v) => {for (final cl in v) cl.id: cl.name},
+        failure: (_) => <String, String>{},
+      );
+
+      return boardClasses.map((bc) {
+        final levelName = classLevels[bc.classLevelId] ?? '';
+        final String displayName;
+        if (levelName.isNotEmpty &&
+            !bc.name.toLowerCase().contains(levelName.toLowerCase())) {
+          displayName = '$levelName (${bc.name})';
+        } else {
+          displayName = bc.name;
+        }
+
+        return TeacherClassOption(
+          id: bc.id,
+          displayName: displayName,
+          rawName: bc.name,
+          classLevelName: levelName,
+        );
+      }).toList();
     });
 
-/// Subjects available for the currently-selected `classes` (BoardClass ids).
-/// `classIdsKey` is the selected ids sorted and comma-joined so the
-/// `family` cache key is stable regardless of selection order.
-/// `GetSubjectsUseCase` takes a single `boardClassId`, so each selected
-/// class is queried individually and the results de-duplicated/merged —
-/// `classes` (Teacher's own field, FK BoardClass.id) and `Subject.boardClassId`
-/// both reference the same `BoardClass.id`, so no extra lookup is needed.
+/// Model for a unique subject name displayed to the teacher.
+/// Maps 1 unique display subject name (e.g. "Physics") to all underlying
+/// subject IDs across the selected classes (e.g. `['subj-11pm-phy', 'subj-12pm-phy']`).
+class UniqueTeacherSubject {
+  const UniqueTeacherSubject({
+    required this.name,
+    required this.subjectIds,
+  });
+
+  final String name;
+  final List<String> subjectIds;
+
+  String get id => name;
+}
+
+/// Subjects available for the currently-selected `classes`, deduplicated by name
+/// so common subjects (e.g. "Physics", "Chemistry") only appear once.
 final teacherSignupSubjectsForClassesProvider = FutureProvider.autoDispose
-    .family<List<Subject>, String>((ref, classIdsKey) async {
+    .family<List<UniqueTeacherSubject>, String>((ref, classIdsKey) async {
       if (classIdsKey.isEmpty) return const [];
       final classIds = classIdsKey.split(',');
       final getSubjects = ref.read(getSubjectsUseCaseProvider);
@@ -51,10 +96,19 @@ final teacherSignupSubjectsForClassesProvider = FutureProvider.autoDispose
         }),
       );
 
-      final seenIds = <String>{};
-      final merged = <Subject>[];
+      final groupedByName = <String, List<String>>{};
+      final displayNames = <String, String>{};
+
       for (final subject in lists.expand((list) => list)) {
-        if (seenIds.add(subject.id)) merged.add(subject);
+        final key = subject.name.trim().toLowerCase();
+        groupedByName.putIfAbsent(key, () => []).add(subject.id);
+        displayNames.putIfAbsent(key, () => subject.name.trim());
       }
-      return merged;
+
+      return groupedByName.entries.map((entry) {
+        return UniqueTeacherSubject(
+          name: displayNames[entry.key] ?? entry.key,
+          subjectIds: entry.value,
+        );
+      }).toList();
     });

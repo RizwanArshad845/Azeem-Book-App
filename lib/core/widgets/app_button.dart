@@ -5,6 +5,8 @@ import 'press_scale.dart';
 
 enum AppButtonVariant { primary, outlined, text }
 
+enum AppButtonIconPosition { leading, trailing }
+
 class AppButton extends StatelessWidget {
   const AppButton({
     super.key,
@@ -13,6 +15,7 @@ class AppButton extends StatelessWidget {
     this.variant = AppButtonVariant.primary,
     this.loading = false,
     this.icon,
+    this.iconPosition = AppButtonIconPosition.trailing,
   });
 
   final String label;
@@ -20,11 +23,23 @@ class AppButton extends StatelessWidget {
   final AppButtonVariant variant;
   final bool loading;
   final IconData? icon;
+  final AppButtonIconPosition iconPosition;
 
   @override
   Widget build(BuildContext context) {
     final isDisabled = onPressed == null || loading;
     final effectiveOnPressed = isDisabled ? null : onPressed;
+
+    final labelWidget = Flexible(
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+
+    final iconWidget =
+        icon != null ? Icon(icon, size: context.dimens.iconMd) : null;
 
     final child = loading
         ? SizedBox(
@@ -40,20 +55,30 @@ class AppButton extends StatelessWidget {
             ),
           )
         : icon == null
-        ? Text(label)
-        : Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: context.dimens.iconMd),
-              SizedBox(width: context.dimens.sm),
-              Text(label),
-            ],
-          );
+            ? Text(label)
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: iconPosition == AppButtonIconPosition.trailing
+                    ? [
+                        labelWidget,
+                        SizedBox(width: context.dimens.sm),
+                        iconWidget!,
+                      ]
+                    : [
+                        iconWidget!,
+                        SizedBox(width: context.dimens.sm),
+                        labelWidget,
+                      ],
+              );
 
     final button = switch (variant) {
-      AppButtonVariant.primary => ElevatedButton(onPressed: effectiveOnPressed, child: child),
-      AppButtonVariant.outlined => OutlinedButton(onPressed: effectiveOnPressed, child: child),
-      AppButtonVariant.text => TextButton(onPressed: effectiveOnPressed, child: child),
+      AppButtonVariant.primary =>
+        ElevatedButton(onPressed: effectiveOnPressed, child: child),
+      AppButtonVariant.outlined =>
+        OutlinedButton(onPressed: effectiveOnPressed, child: child),
+      AppButtonVariant.text =>
+        TextButton(onPressed: effectiveOnPressed, child: child),
     };
 
     return PressScale(enabled: !isDisabled, child: button);
@@ -67,12 +92,14 @@ class AppPrimaryButton extends StatelessWidget {
     this.onPressed,
     this.loading = false,
     this.icon,
+    this.iconPosition = AppButtonIconPosition.trailing,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final bool loading;
   final IconData? icon;
+  final AppButtonIconPosition iconPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +109,7 @@ class AppPrimaryButton extends StatelessWidget {
       variant: AppButtonVariant.primary,
       loading: loading,
       icon: icon,
+      iconPosition: iconPosition,
     );
   }
 }
@@ -93,12 +121,14 @@ class AppOutlinedButton extends StatelessWidget {
     this.onPressed,
     this.loading = false,
     this.icon,
+    this.iconPosition = AppButtonIconPosition.trailing,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final bool loading;
   final IconData? icon;
+  final AppButtonIconPosition iconPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +138,7 @@ class AppOutlinedButton extends StatelessWidget {
       variant: AppButtonVariant.outlined,
       loading: loading,
       icon: icon,
+      iconPosition: iconPosition,
     );
   }
 }
@@ -119,17 +150,32 @@ class AppDangerButton extends StatelessWidget {
     this.onPressed,
     this.loading = false,
     this.icon,
+    this.iconPosition = AppButtonIconPosition.trailing,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final bool loading;
   final IconData? icon;
+  final AppButtonIconPosition iconPosition;
 
   @override
   Widget build(BuildContext context) {
     final isDisabled = onPressed == null || loading;
     final effectiveOnPressed = isDisabled ? null : onPressed;
+
+    final labelWidget = Flexible(
+      child: Text(
+        label,
+        style: TextStyle(color: context.colors.error),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+
+    final iconWidget = icon != null
+        ? Icon(icon, size: context.dimens.iconMd, color: context.colors.error)
+        : null;
 
     final child = loading
         ? SizedBox(
@@ -144,11 +190,18 @@ class AppDangerButton extends StatelessWidget {
             ? Text(label, style: TextStyle(color: context.colors.error))
             : Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(icon, size: context.dimens.iconMd, color: context.colors.error),
-                  SizedBox(width: context.dimens.sm),
-                  Text(label, style: TextStyle(color: context.colors.error)),
-                ],
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: iconPosition == AppButtonIconPosition.trailing
+                    ? [
+                        labelWidget,
+                        SizedBox(width: context.dimens.sm),
+                        iconWidget!,
+                      ]
+                    : [
+                        iconWidget!,
+                        SizedBox(width: context.dimens.sm),
+                        labelWidget,
+                      ],
               );
 
     return PressScale(

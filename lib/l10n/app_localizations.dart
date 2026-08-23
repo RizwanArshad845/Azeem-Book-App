@@ -1453,6 +1453,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Optional'**
   String get teacherSignupOptionalSection;
+
+  /// No description provided for @teacherSignupStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal & Campus Info'**
+  String get teacherSignupStep1Title;
+
+  /// No description provided for @teacherSignupStep1Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name and the campus you\'re associated with.'**
+  String get teacherSignupStep1Subtitle;
+
+  /// No description provided for @teacherSignupStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching Scope'**
+  String get teacherSignupStep2Title;
+
+  /// No description provided for @teacherSignupStep2Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your classes and the subjects you instruct.'**
+  String get teacherSignupStep2Subtitle;
+
+  /// No description provided for @teacherSignupStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Reach'**
+  String get teacherSignupStep3Title;
+
+  /// No description provided for @teacherSignupStep3Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Optionally let us know roughly how many students you teach.'**
+  String get teacherSignupStep3Subtitle;
+
+  /// No description provided for @teacherSignupClassesRequiredLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Classes you teach * (Select 1 or more)'**
+  String get teacherSignupClassesRequiredLabel;
+
+  /// No description provided for @teacherSignupSubjectsRequiredLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Subjects you teach * (Select 1 or more)'**
+  String get teacherSignupSubjectsRequiredLabel;
+
+  /// No description provided for @teacherSignupClassesRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one class.'**
+  String get teacherSignupClassesRequiredError;
+
+  /// No description provided for @teacherSignupSubjectsRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one subject.'**
+  String get teacherSignupSubjectsRequiredError;
+
+  /// No description provided for @teacherSignupSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Registration'**
+  String get teacherSignupSummaryTitle;
+
+  /// No description provided for @teacherSignupSummaryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get teacherSignupSummaryName;
+
+  /// No description provided for @teacherSignupSummaryCampus.
+  ///
+  /// In en, this message translates to:
+  /// **'Campus'**
+  String get teacherSignupSummaryCampus;
+
+  /// No description provided for @teacherSignupSummaryClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'Classes'**
+  String get teacherSignupSummaryClasses;
+
+  /// No description provided for @teacherSignupSummarySubjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Subjects'**
+  String get teacherSignupSummarySubjects;
+
+  /// No description provided for @teacherSignupSummaryStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Declared Students'**
+  String get teacherSignupSummaryStudents;
+
+  /// No description provided for @teacherSignupNextTeaching.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Teaching Info'**
+  String get teacherSignupNextTeaching;
+
+  /// No description provided for @teacherSignupNextStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to Student Info'**
+  String get teacherSignupNextStudents;
+
+  /// No description provided for @teacherSignupStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Registration'**
+  String get teacherSignupStep4Title;
+
+  /// No description provided for @teacherSignupStep4Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please verify your details before submitting for approval.'**
+  String get teacherSignupStep4Subtitle;
 }
 
 class _AppLocalizationsDelegate

@@ -750,4 +750,72 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get teacherSignupOptionalSection => 'اختیاری';
+
+  @override
+  String get teacherSignupStep1Title => 'ذاتی اور کیمپس کی معلومات';
+
+  @override
+  String get teacherSignupStep1Subtitle =>
+      'اپنا نام اور متعلقہ کیمپس درج کریں۔';
+
+  @override
+  String get teacherSignupStep2Title => 'تدریسی دائرہ کار';
+
+  @override
+  String get teacherSignupStep2Subtitle =>
+      'اپنی کلاسز اور مضامین کا انتخاب کریں۔';
+
+  @override
+  String get teacherSignupStep3Title => 'طلباء کی تعداد';
+
+  @override
+  String get teacherSignupStep3Subtitle =>
+      'اختیاری: بتائیں کہ آپ تقریباً کتنے طلباء کو پڑھاتے ہیں۔';
+
+  @override
+  String get teacherSignupClassesRequiredLabel =>
+      'کلاسیں جو آپ پڑھاتے ہیں * (1 یا زیادہ منتخب کریں)';
+
+  @override
+  String get teacherSignupSubjectsRequiredLabel =>
+      'مضامین جو آپ پڑھاتے ہیں * (1 یا زیادہ منتخب کریں)';
+
+  @override
+  String get teacherSignupClassesRequiredError =>
+      'براہ کرم کم از کم ایک کلاس منتخب کریں۔';
+
+  @override
+  String get teacherSignupSubjectsRequiredError =>
+      'براہ کرم کم از کم ایک مضمون منتخب کریں۔';
+
+  @override
+  String get teacherSignupSummaryTitle => 'رجسٹریشن کا جائزہ';
+
+  @override
+  String get teacherSignupSummaryName => 'پورا نام';
+
+  @override
+  String get teacherSignupSummaryCampus => 'کیمپس';
+
+  @override
+  String get teacherSignupSummaryClasses => 'کلاسیں';
+
+  @override
+  String get teacherSignupSummarySubjects => 'مضامین';
+
+  @override
+  String get teacherSignupSummaryStudents => 'طلباء کی تعداد';
+
+  @override
+  String get teacherSignupNextTeaching => 'تدریسی معلومات پر جائیں';
+
+  @override
+  String get teacherSignupNextStudents => 'طلباء کی معلومات پر جائیں';
+
+  @override
+  String get teacherSignupStep4Title => 'رجسٹریشن کا جائزہ';
+
+  @override
+  String get teacherSignupStep4Subtitle =>
+      'براہ کرم منظوری کے لیے جمع کروانے سے پہلے اپنی تفصیلات کی تصدیق کریں۔';
 }

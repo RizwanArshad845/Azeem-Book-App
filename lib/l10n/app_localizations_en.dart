@@ -744,4 +744,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get teacherSignupOptionalSection => 'Optional';
+
+  @override
+  String get teacherSignupStep1Title => 'Personal & Campus Info';
+
+  @override
+  String get teacherSignupStep1Subtitle =>
+      'Enter your name and the campus you\'re associated with.';
+
+  @override
+  String get teacherSignupStep2Title => 'Teaching Scope';
+
+  @override
+  String get teacherSignupStep2Subtitle =>
+      'Select your classes and the subjects you instruct.';
+
+  @override
+  String get teacherSignupStep3Title => 'Student Reach';
+
+  @override
+  String get teacherSignupStep3Subtitle =>
+      'Optionally let us know roughly how many students you teach.';
+
+  @override
+  String get teacherSignupClassesRequiredLabel =>
+      'Classes you teach * (Select 1 or more)';
+
+  @override
+  String get teacherSignupSubjectsRequiredLabel =>
+      'Subjects you teach * (Select 1 or more)';
+
+  @override
+  String get teacherSignupClassesRequiredError =>
+      'Please select at least one class.';
+
+  @override
+  String get teacherSignupSubjectsRequiredError =>
+      'Please select at least one subject.';
+
+  @override
+  String get teacherSignupSummaryTitle => 'Review Registration';
+
+  @override
+  String get teacherSignupSummaryName => 'Full Name';
+
+  @override
+  String get teacherSignupSummaryCampus => 'Campus';
+
+  @override
+  String get teacherSignupSummaryClasses => 'Classes';
+
+  @override
+  String get teacherSignupSummarySubjects => 'Subjects';
+
+  @override
+  String get teacherSignupSummaryStudents => 'Declared Students';
+
+  @override
+  String get teacherSignupNextTeaching => 'Continue to Teaching Info';
+
+  @override
+  String get teacherSignupNextStudents => 'Continue to Student Info';
+
+  @override
+  String get teacherSignupStep4Title => 'Review Registration';
+
+  @override
+  String get teacherSignupStep4Subtitle =>
+      'Please verify your details before submitting for approval.';
 }

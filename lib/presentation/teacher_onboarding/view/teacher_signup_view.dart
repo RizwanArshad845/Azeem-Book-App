@@ -9,16 +9,40 @@ import '../../../domain/teacher_onboarding/entities/teacher.dart';
 import '../viewmodel/teacher_onboarding_viewmodel.dart';
 import '../widgets/teacher_signup_form.dart';
 
-/// Self-signup form for teachers using standard OnboardingScaffold floating layout.
-class TeacherSignupView extends ConsumerWidget {
+/// Self-signup multi-step flow for teachers using standard OnboardingScaffold floating layout.
+class TeacherSignupView extends ConsumerStatefulWidget {
   const TeacherSignupView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TeacherSignupView> createState() => _TeacherSignupViewState();
+}
+
+class _TeacherSignupViewState extends ConsumerState<TeacherSignupView> {
+  int _currentStep = 1;
+
+  void _onStepChanged(int step) {
+    setState(() {
+      _currentStep = step;
+    });
+  }
+
+  void _onBack() {
+    if (_currentStep > 1) {
+      setState(() {
+        _currentStep -= 1;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final onboarding = ref.watch(teacherOnboardingViewModelProvider);
 
     return OnboardingScaffold(
       appBarTitle: context.l10n.teacherSignupTitle,
+      currentStep: _currentStep,
+      totalSteps: 4,
+      onBack: _currentStep > 1 ? _onBack : null,
       child: AsyncValueWidget<Teacher?>(
         value: onboarding,
         onRetry: () => ref.invalidate(teacherOnboardingViewModelProvider),
@@ -29,7 +53,10 @@ class TeacherSignupView extends ConsumerWidget {
               message: context.l10n.teacherAccountAlreadySetUp,
             );
           }
-          return const TeacherSignupForm();
+          return TeacherSignupForm(
+            currentStep: _currentStep,
+            onStepChanged: _onStepChanged,
+          );
         },
       ),
     );
