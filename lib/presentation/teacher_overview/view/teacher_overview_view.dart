@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
-import '../../../core/widgets/app_action_menu_sheet.dart';
+import '../../../core/widgets/app_bar_actions.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/stat_summary_card.dart';
 import '../../../domain/auth/entities/user_role.dart';
@@ -29,7 +29,7 @@ class TeacherOverviewView extends ConsumerWidget {
       return Scaffold(
         appBar: AppBar(
           title: Text(context.l10n.teacherOverviewTitle),
-          actions: [const ActionMenuButton(role: UserRole.teacher)],
+          actions: const [AppBarActions(role: UserRole.teacher)],
         ),
         body: EmptyStateView(
           message: context.l10n.teacherProfileUnavailable,
@@ -41,7 +41,7 @@ class TeacherOverviewView extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.teacherOverviewTitle),
-        actions: [const ActionMenuButton(role: UserRole.teacher)],
+        actions: const [AppBarActions(role: UserRole.teacher)],
       ),
       body: SafeArea(
         child: ListView(
