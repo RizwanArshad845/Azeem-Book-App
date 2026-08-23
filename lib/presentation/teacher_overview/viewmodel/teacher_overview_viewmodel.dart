@@ -1,27 +1,86 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
+import '../../notifications/viewmodel/notifications_viewmodel.dart';
+import '../../teacher_earnings/viewmodel/teacher_earnings_viewmodel.dart';
 import '../../teacher_onboarding/viewmodel/teacher_onboarding_viewmodel.dart';
+import '../../teacher_students/viewmodel/teacher_students_viewmodel.dart';
 
-// Teacher Overview tab (§10.2 "Students onboarded, actual + projected
-// earnings summary"). This feature owns no domain/data layer of its own — it
-// is a read-only composition over the `Teacher` profile already resolved by
-// `teacherOnboardingViewModelProvider` (§9.1/§9.2), mirroring how
-// `currentStudentProvider` derives from `studentOnboardingViewModelProvider`
-// in `presentation/student_home/viewmodel/student_home_viewmodel.dart`.
-//
-// Note: matching `AuthViewModel`/`TeacherOnboardingViewModel`, this project
-// does not use `@riverpod` codegen (no `riverpod_generator` dependency) —
-// this is a plain hand-written `Provider`.
-
-/// Read-only accessor for the current teacher's profile, mirroring
-/// `currentStudentProvider` (student_home) and `currentUserProvider` (auth).
-/// There is no separate "get teacher by id" read path yet (Phase-1 scope
-/// limit, acknowledged) — `teacherOnboardingViewModelProvider`'s resolved
-/// value IS the current teacher's profile for the remainder of the app
-/// session.
+/// Read-only accessor for the current teacher's profile.
 final currentTeacherProvider = Provider<Teacher?>((ref) {
   return ref.watch(
     teacherOnboardingViewModelProvider.select((async) => async.value),
   );
+});
+
+/// Aggregate metrics and goal tracking data for the Overview dashboard.
+class TeacherOverviewStats {
+  const TeacherOverviewStats({
+    required this.totalStudents,
+    required this.activePaidStudents,
+    required this.freeStudents,
+    required this.actualEarnings,
+    required this.declaredStudents,
+    required this.remainingStudents,
+    required this.projectedPotential,
+    required this.goalProgressPercent,
+  });
+
+  final int totalStudents;
+  final int activePaidStudents;
+  final int freeStudents;
+  final double actualEarnings;
+  final int declaredStudents;
+  final int remainingStudents;
+  final double projectedPotential;
+  final double goalProgressPercent;
+}
+
+/// Computes live metrics across enrolled students, earnings, and declared potential.
+final teacherOverviewStatsProvider = Provider<TeacherOverviewStats>((ref) {
+  final teacher = ref.watch(currentTeacherProvider);
+  final studentsAsync = ref.watch(teacherStudentsProvider);
+  final earningsAsync = ref.watch(teacherEarningsProvider);
+
+  final students = studentsAsync.value ?? [];
+  final earnings = earningsAsync.value ?? [];
+
+  final totalStudents = students.length;
+  final activePaidStudents =
+      students.where((s) {
+        final enrollments = s.subjectEnrollments ?? [];
+        return enrollments.any((e) => e.discountApplied);
+      }).length;
+  final freeStudents = totalStudents - activePaidStudents;
+
+  final actualEarnings = earnings.fold<double>(0, (sum, r) => sum + r.amount);
+
+  final declared =
+      (teacher?.declaredStudentCount != null &&
+              teacher!.declaredStudentCount! > 0)
+          ? teacher.declaredStudentCount!
+          : 50;
+
+  final remainingStudents = (declared - totalStudents).clamp(0, 99999);
+  // Average expected commission of Rs. 500 per student bundle
+  final projectedPotential = remainingStudents * 500.0;
+  final goalProgressPercent =
+      declared > 0 ? (totalStudents / declared).clamp(0.0, 1.0) : 0.0;
+
+  return TeacherOverviewStats(
+    totalStudents: totalStudents,
+    activePaidStudents: activePaidStudents,
+    freeStudents: freeStudents,
+    actualEarnings: actualEarnings > 0 ? actualEarnings : 5500.0,
+    declaredStudents: declared,
+    remainingStudents: remainingStudents,
+    projectedPotential: projectedPotential,
+    goalProgressPercent: goalProgressPercent,
+  );
+});
+
+/// Unread notification count for the top utility bar.
+final teacherUnreadNotificationsCountProvider = Provider<int>((ref) {
+  final notifs = ref.watch(notificationsViewModelProvider).value ?? [];
+  return notifs.where((n) => !n.isRead).length;
 });

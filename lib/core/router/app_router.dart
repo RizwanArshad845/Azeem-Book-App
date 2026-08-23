@@ -64,15 +64,11 @@ const _studentDestinations = [
 ];
 
 const _teacherDestinations = [
-  BottomNavDestinationSpec(icon: Icons.home_outlined, label: 'Overview'),
-  BottomNavDestinationSpec(icon: Icons.people_outline, label: 'Students'),
+  BottomNavDestinationSpec(icon: Icons.grid_view_rounded, label: 'Overview'),
+  BottomNavDestinationSpec(icon: Icons.groups_outlined, label: 'Students'),
   BottomNavDestinationSpec(
     icon: Icons.account_balance_wallet_outlined,
     label: 'Earnings',
-  ),
-  BottomNavDestinationSpec(
-    icon: Icons.notifications_outlined,
-    label: 'Notifications',
   ),
   BottomNavDestinationSpec(icon: Icons.person_outline, label: 'Profile'),
 ];
@@ -357,15 +353,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.teacherNotifications,
-                pageBuilder: (context, state) =>
-                    _appPage(state, const NotificationsView()),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
                 path: AppRoutes.teacherProfile,
                 pageBuilder: (context, state) =>
                     _appPage(state, const TeacherProfileView()),
@@ -376,6 +363,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // Outside-shell, pushed on top (bottom nav disappears mid-task)
+      GoRoute(
+        path: AppRoutes.teacherNotifications,
+        pageBuilder: (context, state) =>
+            _appPage(state, const NotificationsView()),
+      ),
       GoRoute(
         path: AppRoutes.testTaking,
         pageBuilder: (context, state) => _appPage(
