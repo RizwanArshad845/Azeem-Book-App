@@ -2,14 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/extensions/context_extensions.dart';
-import '../../teacher_overview/viewmodel/teacher_overview_viewmodel.dart';
 
 /// Interactive Projected Earnings card highlighting current commission vs.
 /// potential earnings as more declared students purchase test packs.
+///
+/// Takes the two primitives it actually uses rather than the whole
+/// `TeacherOverviewStats` object, so callers can `.select` just these fields
+/// from Riverpod instead of watching the entire stats provider.
 class EarningsProjectedCalculatorCard extends StatefulWidget {
-  const EarningsProjectedCalculatorCard({super.key, required this.stats});
+  const EarningsProjectedCalculatorCard({
+    super.key,
+    required this.actualEarnings,
+    required this.remainingStudents,
+  });
 
-  final TeacherOverviewStats stats;
+  final double actualEarnings;
+  final int remainingStudents;
 
   @override
   State<EarningsProjectedCalculatorCard> createState() =>
@@ -18,20 +26,34 @@ class EarningsProjectedCalculatorCard extends StatefulWidget {
 
 class _EarningsProjectedCalculatorCardState
     extends State<EarningsProjectedCalculatorCard> {
+  static final NumberFormat _currency = NumberFormat.currency(
+    symbol: 'Rs. ',
+    decimalDigits: 0,
+  );
+
   late double _simulatedAdditionalStudents;
 
   @override
   void initState() {
     super.initState();
     _simulatedAdditionalStudents =
-        widget.stats.remainingStudents.toDouble().clamp(0.0, 100.0);
+        widget.remainingStudents.toDouble().clamp(0.0, 100.0);
+  }
+
+  @override
+  void didUpdateWidget(covariant EarningsProjectedCalculatorCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.remainingStudents != widget.remainingStudents) {
+      _simulatedAdditionalStudents =
+          widget.remainingStudents.toDouble().clamp(0.0, 100.0);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final currency = NumberFormat.currency(symbol: 'Rs. ', decimalDigits: 0);
+    final currency = _currency;
     final simulatedCommission = _simulatedAdditionalStudents * 500.0;
-    final totalSimulated = widget.stats.actualEarnings + simulatedCommission;
+    final totalSimulated = widget.actualEarnings + simulatedCommission;
 
     return Container(
       decoration: BoxDecoration(
@@ -81,9 +103,9 @@ class _EarningsProjectedCalculatorCardState
                       size: 15,
                     ),
                     SizedBox(width: context.dimens.xs / 2),
-                    const Text(
-                      'Projected Earnings Simulator',
-                      style: TextStyle(
+                    Text(
+                      context.l10n.teacherProjectedSimulatorTitle,
+                      style: const TextStyle(
                         color: Colors.amberAccent,
                         fontSize: 11.5,
                         fontWeight: FontWeight.bold,
@@ -92,9 +114,9 @@ class _EarningsProjectedCalculatorCardState
                   ],
                 ),
               ),
-              const Text(
-                'Rs. 500/pack',
-                style: TextStyle(color: Colors.white70, fontSize: 11),
+              Text(
+                context.l10n.teacherPerPackRate,
+                style: const TextStyle(color: Colors.white70, fontSize: 11),
               ),
             ],
           ),
@@ -102,7 +124,7 @@ class _EarningsProjectedCalculatorCardState
 
           // Total Potential Number
           Text(
-            'Total Projected Earnings',
+            context.l10n.teacherTotalProjectedEarnings,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.8),
               fontSize: 12.5,
@@ -134,7 +156,9 @@ class _EarningsProjectedCalculatorCardState
           ),
           SizedBox(height: context.dimens.sm),
           Text(
-            'If ${_simulatedAdditionalStudents.toInt()} more of your remaining declared students buy a test pack:',
+            context.l10n.teacherSimulatorPrompt(
+              _simulatedAdditionalStudents.toInt(),
+            ),
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.8),
               fontSize: 12,
@@ -143,7 +167,7 @@ class _EarningsProjectedCalculatorCardState
           SizedBox(height: context.dimens.xs),
 
           // Interactive Simulation Slider
-          if (widget.stats.remainingStudents > 0) ...[
+          if (widget.remainingStudents > 0) ...[
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
                 activeTrackColor: Colors.amberAccent,
@@ -155,12 +179,12 @@ class _EarningsProjectedCalculatorCardState
               child: Slider(
                 value: _simulatedAdditionalStudents,
                 min: 0,
-                max: (widget.stats.remainingStudents > 0
-                        ? widget.stats.remainingStudents
+                max: (widget.remainingStudents > 0
+                        ? widget.remainingStudents
                         : 50)
                     .toDouble(),
-                divisions: (widget.stats.remainingStudents > 0
-                        ? widget.stats.remainingStudents
+                divisions: (widget.remainingStudents > 0
+                        ? widget.remainingStudents
                         : 50)
                     .clamp(1, 100),
                 onChanged: (val) {
@@ -173,12 +197,14 @@ class _EarningsProjectedCalculatorCardState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  '0 Students',
-                  style: TextStyle(color: Colors.white54, fontSize: 10.5),
+                Text(
+                  context.l10n.teacherZeroStudentsLabel,
+                  style: const TextStyle(color: Colors.white54, fontSize: 10.5),
                 ),
                 Text(
-                  'All ${widget.stats.remainingStudents} Remaining Students',
+                  context.l10n.teacherAllRemainingStudents(
+                    widget.remainingStudents,
+                  ),
                   style: const TextStyle(
                     color: Colors.amberAccent,
                     fontSize: 10.5,
@@ -194,9 +220,9 @@ class _EarningsProjectedCalculatorCardState
                 color: Colors.white.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(context.dimens.radiusSm),
               ),
-              child: const Text(
-                '🎉 Goal reached! All declared students are currently onboarded.',
-                style: TextStyle(color: Colors.amberAccent, fontSize: 12),
+              child: Text(
+                context.l10n.teacherGoalReachedMessage,
+                style: const TextStyle(color: Colors.amberAccent, fontSize: 12),
               ),
             ),
           ],
