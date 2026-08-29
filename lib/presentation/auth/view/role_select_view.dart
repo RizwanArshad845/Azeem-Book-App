@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/onboarding_scaffold.dart';
+import '../../../core/widgets/onboarding_step_header.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import '../widgets/role_option_card.dart';
@@ -22,11 +23,12 @@ class RoleSelectView extends ConsumerWidget {
     return OnboardingScaffold(
       appBarTitle: context.l10n.roleSelectionTitle,
       role: OnboardingRole.student,
-      speechBubbleMessage: context.l10n.roleSelectionSubtitle,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          OnboardingStepHeader(title: context.l10n.roleSelectionSubtitle),
+          SizedBox(height: context.dimens.lg),
           RoleOptionCard(
             icon: Icons.school_outlined,
             title: context.l10n.roleTeacher,

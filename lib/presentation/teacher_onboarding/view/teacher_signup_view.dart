@@ -25,9 +25,6 @@ class TeacherSignupView extends ConsumerWidget {
       role: OnboardingRole.teacher,
       currentStep: formState.currentStep,
       totalSteps: 3,
-      speechBubbleMessage: formState.currentStep == 1
-          ? context.l10n.personalInfoSubtitle
-          : context.l10n.boardClassSelectSubtitle,
       onBack: formState.currentStep == 2
           ? () => notifier.setStep(1)
           : null,

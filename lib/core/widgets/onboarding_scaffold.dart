@@ -4,12 +4,9 @@ import '../constants/app_assets.dart';
 import '../extensions/context_extensions.dart';
 import 'app_logo.dart';
 import 'onboarding_card.dart';
-import 'onboarding_speech_bubble.dart';
 import 'section_progress_indicator.dart';
 
-/// Which onboarding flow is currently rendering — switches the speech
-/// bubble's default copy/icon so student vs teacher onboarding don't feel
-/// like palette swaps of each other.
+/// Which onboarding flow is currently rendering.
 enum OnboardingRole { student, teacher }
 
 /// Standardized onboarding screen scaffold featuring rameel-branch's
@@ -25,7 +22,6 @@ class OnboardingScaffold extends StatelessWidget {
     this.appBarTitle = 'Onboarding',
     this.onBack,
     this.role = OnboardingRole.student,
-    this.speechBubbleMessage,
   });
 
   final Widget child;
@@ -38,16 +34,6 @@ class OnboardingScaffold extends StatelessWidget {
   /// vocabulary so student vs teacher onboarding don't feel like palette
   /// swaps of each other.
   final OnboardingRole role;
-
-  /// Optional decorative "speech bubble" line shown near the card. Falls
-  /// back to a friendly role-specific default when not supplied.
-  final String? speechBubbleMessage;
-
-  String _defaultSpeechBubble(BuildContext context) {
-    return role == OnboardingRole.student
-        ? "Let's get you started!"
-        : "Let's set up your classroom!";
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -151,15 +137,6 @@ class OnboardingScaffold extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const _LogoHeader(),
-                            SizedBox(height: context.dimens.sm),
-                            OnboardingSpeechBubble(
-                              message: speechBubbleMessage ??
-                                  _defaultSpeechBubble(context),
-                              icon: role == OnboardingRole.student
-                                  ? Icons.menu_book_outlined
-                                  : Icons.workspace_premium_outlined,
-                              alignment: Alignment.center,
-                            ),
                             SizedBox(height: context.dimens.md),
                             child,
                           ],

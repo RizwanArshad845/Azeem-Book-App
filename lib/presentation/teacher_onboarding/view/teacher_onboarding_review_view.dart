@@ -101,7 +101,9 @@ class _TeacherOnboardingReviewViewState
             .toList() ??
         const <String>[];
     final subjectNames = subjectsAsync.value
-            ?.where((s) => formState.selectedSubjectIds.contains(s.id))
+            ?.where(
+              (s) => s.subjectIds.any(formState.selectedSubjectIds.contains),
+            )
             .map((s) => s.name)
             .toList() ??
         const <String>[];

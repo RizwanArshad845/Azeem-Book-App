@@ -31,15 +31,31 @@ final teacherSignupBoardClassesProvider =
       );
     });
 
-/// Subjects available for the currently-selected `classes` (BoardClass ids).
-/// `classIdsKey` is the selected ids sorted and comma-joined so the
-/// `family` cache key is stable regardless of selection order.
-/// `GetSubjectsUseCase` takes a single `boardClassId`, so each selected
-/// class is queried individually and the results de-duplicated/merged —
-/// `classes` (Teacher's own field, FK BoardClass.id) and `Subject.boardClassId`
-/// both reference the same `BoardClass.id`, so no extra lookup is needed.
+/// A subject name shared by one or more of the currently-selected classes,
+/// carrying every underlying [Subject.id] it maps to (e.g. "Physics" taught
+/// in both Pre-Medical and Pre-Engineering merges into one row here with
+/// both classes' subject ids) — `classes` are catalogued per-`BoardClass`,
+/// so the same subject *name* legitimately exists as multiple distinct
+/// [Subject] rows (different ids, different `boardClassId`) across streams;
+/// deduplicating by [Subject.id] alone (the previous approach) let "Physics"
+/// appear once per class it's taught in instead of once overall.
+class UniqueTeacherSubject {
+  const UniqueTeacherSubject({required this.name, required this.subjectIds});
+
+  final String name;
+  final List<String> subjectIds;
+
+  String get id => name;
+}
+
+/// Subjects available for the currently-selected `classes` (BoardClass ids),
+/// deduplicated by name so a subject taught across multiple selected
+/// classes only appears once. `classIdsKey` is the selected ids sorted and
+/// comma-joined so the `family` cache key is stable regardless of selection
+/// order. `GetSubjectsUseCase` takes a single `boardClassId`, so each
+/// selected class is queried individually and the results merged by name.
 final teacherSignupSubjectsForClassesProvider = FutureProvider.autoDispose
-    .family<List<Subject>, String>((ref, classIdsKey) async {
+    .family<List<UniqueTeacherSubject>, String>((ref, classIdsKey) async {
       if (classIdsKey.isEmpty) return const [];
       final classIds = classIdsKey.split(',');
       final getSubjects = ref.read(getSubjectsUseCaseProvider);
@@ -51,10 +67,20 @@ final teacherSignupSubjectsForClassesProvider = FutureProvider.autoDispose
         }),
       );
 
-      final seenIds = <String>{};
-      final merged = <Subject>[];
+      final idsByName = <String, List<String>>{};
+      final displayNames = <String, String>{};
       for (final subject in lists.expand((list) => list)) {
-        if (seenIds.add(subject.id)) merged.add(subject);
+        final key = subject.name.trim().toLowerCase();
+        idsByName.putIfAbsent(key, () => []).add(subject.id);
+        displayNames.putIfAbsent(key, () => subject.name.trim());
       }
-      return merged;
+
+      return idsByName.entries
+          .map(
+            (entry) => UniqueTeacherSubject(
+              name: displayNames[entry.key] ?? entry.key,
+              subjectIds: entry.value,
+            ),
+          )
+          .toList();
     });

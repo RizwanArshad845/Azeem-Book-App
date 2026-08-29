@@ -7,6 +7,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/onboarding_scaffold.dart';
+import '../../../core/widgets/onboarding_step_header.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/common/failure.dart';
 import '../viewmodel/auth_viewmodel.dart';
@@ -76,7 +77,6 @@ class _PhoneEntryViewState extends ConsumerState<PhoneEntryView> {
       role: role == UserRole.teacher
           ? OnboardingRole.teacher
           : OnboardingRole.student,
-      speechBubbleMessage: context.l10n.phoneSubtitle,
       onBack: Navigator.of(context).canPop()
           ? () => Navigator.of(context).pop()
           : null,
@@ -84,6 +84,11 @@ class _PhoneEntryViewState extends ConsumerState<PhoneEntryView> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          OnboardingStepHeader(
+            title: context.l10n.phoneWelcomeTitle,
+            subtitle: context.l10n.phoneSubtitle,
+          ),
+          SizedBox(height: context.dimens.lg),
           AppTextField(
             label: context.l10n.phoneLabel,
             hint: context.l10n.phoneHint,

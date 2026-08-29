@@ -8,7 +8,7 @@ import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/multi_select_option_row.dart';
 import '../../../core/widgets/onboarding_step_header.dart';
 import '../../../domain/catalog/entities/board_class.dart';
-import '../../../domain/catalog/entities/subject.dart';
+import '../viewmodel/teacher_signup_form_providers.dart';
 
 /// Step 2 Card stateless component for Teacher Onboarding (Classes & Subjects Selection).
 class TeacherSignupStep2Card extends StatelessWidget {
@@ -32,7 +32,7 @@ class TeacherSignupStep2Card extends StatelessWidget {
   final Set<String> selectedClassIds;
   final Set<String> selectedSubjectIds;
   final AsyncValue<List<BoardClass>> boardClassesAsync;
-  final AsyncValue<List<Subject>> subjectsAsync;
+  final AsyncValue<List<UniqueTeacherSubject>> subjectsAsync;
   final String? classesError;
   final String? subjectsError;
   final bool isSubmitting;
@@ -96,7 +96,7 @@ class TeacherSignupStep2Card extends StatelessWidget {
           ),
         ),
         SizedBox(height: context.dimens.lg),
-        AsyncValueWidget<List<Subject>>(
+        AsyncValueWidget<List<UniqueTeacherSubject>>(
           value: subjectsAsync,
           onRetry: onRetrySubjects,
           data: (subjects) => Column(
@@ -114,13 +114,15 @@ class TeacherSignupStep2Card extends StatelessWidget {
                 for (final subject in subjects) ...[
                   MultiSelectOptionRow(
                     label: subject.name,
-                    isSelected: selectedSubjectIds.contains(subject.id),
+                    isSelected: subject.subjectIds.any(
+                      selectedSubjectIds.contains,
+                    ),
                     onSelectedChanged: (isSelected) {
                       final next = Set<String>.of(selectedSubjectIds);
                       if (isSelected) {
-                        next.add(subject.id);
+                        next.addAll(subject.subjectIds);
                       } else {
-                        next.remove(subject.id);
+                        next.removeAll(subject.subjectIds);
                       }
                       onSubjectsChanged(next);
                     },
