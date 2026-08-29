@@ -63,7 +63,7 @@ class InteractiveSelectionGrid<T> extends StatelessWidget {
                 ),
                 SizedBox(height: context.dimens.xs),
                 Text(
-                  emptyMessage ?? 'No options available.',
+                  emptyMessage ?? context.l10n.commonNoOptionsAvailable,
                   style: context.textStyles.bodySmall?.copyWith(
                     color: context.colors.textSecondary,
                   ),

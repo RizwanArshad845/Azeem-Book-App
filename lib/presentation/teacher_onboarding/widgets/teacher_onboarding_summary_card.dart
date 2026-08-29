@@ -81,8 +81,8 @@ class TeacherOnboardingSummaryCard extends StatelessWidget {
           icon: Icons.groups_rounded,
           label: context.l10n.teacherSignupSummaryStudents,
           value: studentCount != null
-              ? '$studentCount students'
-              : 'Not specified (Optional)',
+              ? context.l10n.teacherSignupSummaryStudentsCount(studentCount!)
+              : context.l10n.teacherSignupSummaryNotSpecified,
           isMuted: studentCount == null,
         ),
       ],
@@ -193,7 +193,7 @@ class _SummaryChipSection extends StatelessWidget {
               SizedBox(height: context.dimens.xs),
               if (items.isEmpty)
                 Text(
-                  'None selected',
+                  context.l10n.commonNoneSelected,
                   style: context.textStyles.bodyMedium?.copyWith(
                     color: context.colors.textSecondary,
                     fontStyle: FontStyle.italic,

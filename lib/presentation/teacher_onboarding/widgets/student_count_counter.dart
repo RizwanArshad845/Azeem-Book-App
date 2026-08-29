@@ -132,7 +132,7 @@ class _StudentCountCounterState extends State<StudentCountCounter> {
         ),
         SizedBox(height: context.dimens.md),
         Text(
-          'Quick Presets',
+          context.l10n.teacherSignupQuickPresets,
           style: context.textStyles.labelSmall?.copyWith(
             color: context.colors.textSecondary,
             fontWeight: FontWeight.w600,
@@ -172,7 +172,7 @@ class _StudentCountCounterState extends State<StudentCountCounter> {
                   size: context.dimens.iconSm,
                   color: context.colors.textSecondary,
                 ),
-                label: const Text('Clear'),
+                label: Text(context.l10n.commonClear),
                 labelStyle: context.textStyles.bodySmall?.copyWith(
                   color: context.colors.textSecondary,
                 ),
