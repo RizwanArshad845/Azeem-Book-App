@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
-import '../../../core/widgets/app_dropdown.dart';
+import '../../../core/widgets/app_dropdown_card.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/counter_input_field.dart';
@@ -71,8 +71,10 @@ class TeacherSignupStep1Card extends StatelessWidget {
                 data: (campuses) => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AppDropdown<Campus>(
+                    AppDropdownCard<Campus>(
                       label: context.l10n.campusLabel,
+                      icon: Icons.location_city_rounded,
+                      isRequired: true,
                       items: campuses,
                       selectedItem: campus,
                       itemAsString: (c) => '${c.name} — ${c.city}',
