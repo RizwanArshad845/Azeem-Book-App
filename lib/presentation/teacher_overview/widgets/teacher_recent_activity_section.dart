@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_frosted_card.dart';
 import '../../../core/widgets/async_value_widget.dart';
+import '../../../core/widgets/empty_state_view.dart';
 import '../../../domain/notifications/entities/notification.dart' as entity;
 import '../../notifications/viewmodel/notifications_viewmodel.dart';
 
@@ -30,9 +32,10 @@ class TeacherRecentActivitySection extends ConsumerWidget {
                 color: context.colors.textPrimary,
               ),
             ),
-            TextButton(
+            AppButton(
+              variant: AppButtonVariant.text,
+              label: context.l10n.commonViewAll,
               onPressed: () => context.push(AppRoutes.teacherNotifications),
-              child: Text(context.l10n.commonViewAll),
             ),
           ],
         ),
@@ -42,24 +45,9 @@ class TeacherRecentActivitySection extends ConsumerWidget {
           onRetry: () => ref.invalidate(notificationsViewModelProvider),
           data: (notifications) {
             if (notifications.isEmpty) {
-              return Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(context.dimens.md),
-                decoration: BoxDecoration(
-                  color: context.colors.surface,
-                  borderRadius: BorderRadius.circular(context.dimens.radiusMd),
-                  border: Border.all(
-                    color: context.colors.divider.withValues(alpha: 0.6),
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    context.l10n.teacherRecentActivityEmpty,
-                    style: context.textStyles.bodySmall?.copyWith(
-                      color: context.colors.textSecondary,
-                    ),
-                  ),
-                ),
+              return EmptyStateView(
+                icon: Icons.history_outlined,
+                message: context.l10n.teacherRecentActivityEmpty,
               );
             }
 
