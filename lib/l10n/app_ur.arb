@@ -319,5 +319,66 @@
   "notificationsMarkAllRead": "سب کو پڑھا ہوا نشان زد کریں",
   "notificationsClearAll": "سب صاف کریں",
   "notificationsClearConfirmTitle": "کیا تمام نوٹیفکیشنز صاف کرنا چاہتے ہیں؟",
-  "notificationsClearConfirmMessage": "کیا آپ واقعی اپنی فیڈ سے تمام نوٹیفکیشنز ختم کرنا چاہتے ہیں؟"
+  "notificationsClearConfirmMessage": "کیا آپ واقعی اپنی فیڈ سے تمام نوٹیفکیشنز ختم کرنا چاہتے ہیں؟",
+
+  "langToggleLabel": "اردو",
+  "onboardingDefaultTitle": "آن بورڈنگ",
+  "onboardingStepOfTotal": "مرحلہ {current} از {total}",
+
+  "teacherNavOverview": "جائزہ",
+  "teacherNavStudents": "طلباء",
+  "teacherNavEarnings": "آمدنی",
+  "homeNavNotifications": "اطلاعات",
+
+  "teacherOtpCodeLabel": "4 ہندسوں کا کوڈ",
+  "teacherOtpTestHint": "ٹیسٹنگ کے لیے 1234 درج کریں",
+  "teacherOtpEnterCodeError": "براہ کرم تصدیقی کوڈ درج کریں۔",
+  "teacherVerifiedBadge": "عظیم تصدیق شدہ فیکلٹی",
+  "teacherDefaultCampusFallback": "بہاولپور کیمپس",
+  "teacherStudentsEnrolledCount": "~{count} طلباء داخل شدہ",
+
+  "teacherPurchasesCount": "{count} خریداریاں",
+  "teacherCommissionHistory": "کمیشن کی تاریخ",
+  "teacherEarningsShowingRange": "{total} ریکارڈز میں سے {start}–{end} دکھائے جا رہے ہیں",
+
+  "teacherProjectedSimulatorTitle": "متوقع آمدنی کا سیمولیٹر",
+  "teacherPerPackRate": "500 روپے / پیک",
+  "teacherTotalProjectedEarnings": "کل متوقع آمدنی",
+  "teacherSimulatorPrompt": "اگر آپ کے باقی طلباء میں سے مزید {count} طلباء ٹیسٹ پیک خریدیں:",
+  "teacherZeroStudentsLabel": "0 طلباء",
+  "teacherAllRemainingStudents": "تمام باقی {count} طلباء",
+  "teacherGoalReachedMessage": "🎉 ہدف مکمل! آپ کے بتائے گئے تمام طلباء شامل ہو چکے ہیں۔",
+
+  "teacherEarningsRecordSubtitle": "{name} • ٹیسٹ بنڈل",
+  "teacherStudentPackPurchaseFallback": "طالب علم پیک خریداری",
+
+  "commonNoOptionsAvailable": "کوئی آپشن دستیاب نہیں۔",
+  "teacherSignupQuickPresets": "فوری پریسیٹس",
+  "commonClear": "صاف کریں",
+  "teacherSignupSummaryStudentsCount": "{count} طلباء",
+  "teacherSignupSummaryNotSpecified": "متعین نہیں (اختیاری)",
+  "commonNoneSelected": "کوئی منتخب نہیں",
+  "teacherSignupCompleteFieldsError": "براہ کرم تمام ضروری خانے مکمل کریں۔",
+  "teacherSignupSelectClassForSubjects": "اپنے مضامین منتخب کرنے کے لیے پہلے اوپر کم از کم ایک کلاس منتخب کریں۔",
+  "teacherSignupNameRequiredLabel": "مکمل نام *",
+
+  "commonPhase2Badge": "فیز 2",
+  "teacherCustomTestPhase2Message": "کسٹم ٹیسٹ بنانا اور اپلوڈ کرنا فیز 2 میں دستیاب ہوگا!",
+  "teacherReferralShareText": "عظیم پبلیکیشنز ایپ میں شامل ہوں اور تصدیق شدہ بورڈ ٹیسٹ پیکس تک رسائی کے لیے مجھے اپنا ٹیچر منتخب کریں!",
+  "teacherReferralLinkCopied": "ٹیچر دعوتی لنک کلپ بورڈ میں کاپی ہو گیا!",
+
+  "teacherRecentActivityEmpty": "ابھی تک کوئی حالیہ سرگرمی نہیں۔",
+  "timeAgoMinutes": "{count} منٹ پہلے",
+  "timeAgoHours": "{count} گھنٹے پہلے",
+  "timeAgoDays": "{count} دن پہلے",
+
+  "studentProgressNoAttemptsTitle": "ابھی تک کوئی ٹیسٹ نہیں دیا گیا",
+  "studentProgressNoAttemptsBody": "اس طالب علم نے ابھی تک کوئی باب کا ٹیسٹ جمع نہیں کروایا۔",
+  "studentEnrolledWithYouLabel": "آپ کے ساتھ داخلہ لیا: {subjects}",
+  "studentGeneralEnrolledFallback": "عمومی داخلہ",
+
+  "commonSort": "ترتیب دیں",
+
+  "teacherStudentsShowingRange": "{total} طلباء میں سے {start}–{end} دکھائے جا رہے ہیں",
+  "commonPageOfTotal": "صفحہ {page} / {total}"
 }

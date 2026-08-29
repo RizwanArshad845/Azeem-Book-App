@@ -382,5 +382,116 @@
   "notificationsMarkAllRead": "Mark all as read",
   "notificationsClearAll": "Clear all",
   "notificationsClearConfirmTitle": "Clear All Notifications?",
-  "notificationsClearConfirmMessage": "Are you sure you want to remove all notifications from your feed?"
+  "notificationsClearConfirmMessage": "Are you sure you want to remove all notifications from your feed?",
+
+  "langToggleLabel": "EN",
+  "onboardingDefaultTitle": "Onboarding",
+  "onboardingStepOfTotal": "Step {current} of {total}",
+  "@onboardingStepOfTotal": {
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+
+  "teacherNavOverview": "Overview",
+  "teacherNavStudents": "Students",
+  "teacherNavEarnings": "Earnings",
+  "homeNavNotifications": "Notifications",
+
+  "teacherOtpCodeLabel": "4-Digit OTP Code",
+  "teacherOtpTestHint": "Enter 1234 for testing",
+  "teacherOtpEnterCodeError": "Please enter the verification code.",
+  "teacherVerifiedBadge": "Azeem Verified Faculty",
+  "teacherDefaultCampusFallback": "Bahawalpur Campus",
+  "teacherStudentsEnrolledCount": "~{count} Students Enrolled",
+  "@teacherStudentsEnrolledCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "teacherPurchasesCount": "{count} Purchases",
+  "@teacherPurchasesCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "teacherCommissionHistory": "Commission History",
+  "teacherEarningsShowingRange": "Showing {start}–{end} of {total} records",
+  "@teacherEarningsShowingRange": {
+    "placeholders": {
+      "start": { "type": "int" },
+      "end": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "teacherProjectedSimulatorTitle": "Projected Earnings Simulator",
+  "teacherPerPackRate": "Rs. 500/pack",
+  "teacherTotalProjectedEarnings": "Total Projected Earnings",
+  "teacherSimulatorPrompt": "If {count} more of your remaining declared students buy a test pack:",
+  "@teacherSimulatorPrompt": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "teacherZeroStudentsLabel": "0 Students",
+  "teacherAllRemainingStudents": "All {count} Remaining Students",
+  "@teacherAllRemainingStudents": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "teacherGoalReachedMessage": "🎉 Goal reached! All declared students are currently onboarded.",
+
+  "teacherEarningsRecordSubtitle": "{name} • Test Bundle",
+  "@teacherEarningsRecordSubtitle": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "teacherStudentPackPurchaseFallback": "Student Pack Purchase",
+
+  "commonNoOptionsAvailable": "No options available.",
+  "teacherSignupQuickPresets": "Quick Presets",
+  "commonClear": "Clear",
+  "teacherSignupSummaryStudentsCount": "{count} students",
+  "@teacherSignupSummaryStudentsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "teacherSignupSummaryNotSpecified": "Not specified (Optional)",
+  "commonNoneSelected": "None selected",
+  "teacherSignupCompleteFieldsError": "Please complete all required fields.",
+  "teacherSignupSelectClassForSubjects": "Select at least one class above to choose your subjects.",
+  "teacherSignupNameRequiredLabel": "Full name *",
+
+  "commonPhase2Badge": "Phase 2",
+  "teacherCustomTestPhase2Message": "Custom Test Creation & Upload will unlock in Phase 2!",
+  "teacherReferralShareText": "Join Azeem Publications App and choose me as your teacher to access verified board test packs!",
+  "teacherReferralLinkCopied": "Teacher invite link copied to clipboard!",
+
+  "teacherRecentActivityEmpty": "No recent activity yet.",
+  "timeAgoMinutes": "{count}m ago",
+  "@timeAgoMinutes": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "timeAgoHours": "{count}h ago",
+  "@timeAgoHours": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "timeAgoDays": "{count}d ago",
+  "@timeAgoDays": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "studentProgressNoAttemptsTitle": "No Test Attempts Yet",
+  "studentProgressNoAttemptsBody": "This student has not submitted any chapter tests yet.",
+  "studentEnrolledWithYouLabel": "Enrolled with you in: {subjects}",
+  "@studentEnrolledWithYouLabel": {
+    "placeholders": { "subjects": { "type": "String" } }
+  },
+  "studentGeneralEnrolledFallback": "General Enrolled",
+
+  "commonSort": "Sort",
+
+  "teacherStudentsShowingRange": "Showing {start}–{end} of {total} students",
+  "@teacherStudentsShowingRange": {
+    "placeholders": {
+      "start": { "type": "int" },
+      "end": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "commonPageOfTotal": "Page {page} / {total}",
+  "@commonPageOfTotal": {
+    "placeholders": { "page": { "type": "int" }, "total": { "type": "int" } }
+  }
 }

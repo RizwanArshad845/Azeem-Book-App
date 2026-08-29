@@ -1859,6 +1859,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to remove all notifications from your feed?'**
   String get notificationsClearConfirmMessage;
+
+  /// No description provided for @langToggleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'EN'**
+  String get langToggleLabel;
+
+  /// No description provided for @onboardingDefaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Onboarding'**
+  String get onboardingDefaultTitle;
+
+  /// No description provided for @onboardingStepOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String onboardingStepOfTotal(int current, int total);
+
+  /// No description provided for @teacherNavOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get teacherNavOverview;
+
+  /// No description provided for @teacherNavStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get teacherNavStudents;
+
+  /// No description provided for @teacherNavEarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Earnings'**
+  String get teacherNavEarnings;
+
+  /// No description provided for @homeNavNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get homeNavNotifications;
+
+  /// No description provided for @teacherOtpCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'4-Digit OTP Code'**
+  String get teacherOtpCodeLabel;
+
+  /// No description provided for @teacherOtpTestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter 1234 for testing'**
+  String get teacherOtpTestHint;
+
+  /// No description provided for @teacherOtpEnterCodeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the verification code.'**
+  String get teacherOtpEnterCodeError;
+
+  /// No description provided for @teacherVerifiedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Azeem Verified Faculty'**
+  String get teacherVerifiedBadge;
+
+  /// No description provided for @teacherDefaultCampusFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Bahawalpur Campus'**
+  String get teacherDefaultCampusFallback;
+
+  /// No description provided for @teacherStudentsEnrolledCount.
+  ///
+  /// In en, this message translates to:
+  /// **'~{count} Students Enrolled'**
+  String teacherStudentsEnrolledCount(int count);
+
+  /// No description provided for @teacherPurchasesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Purchases'**
+  String teacherPurchasesCount(int count);
+
+  /// No description provided for @teacherCommissionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Commission History'**
+  String get teacherCommissionHistory;
+
+  /// No description provided for @teacherEarningsShowingRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing {start}–{end} of {total} records'**
+  String teacherEarningsShowingRange(int start, int end, int total);
+
+  /// No description provided for @teacherProjectedSimulatorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Projected Earnings Simulator'**
+  String get teacherProjectedSimulatorTitle;
+
+  /// No description provided for @teacherPerPackRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Rs. 500/pack'**
+  String get teacherPerPackRate;
+
+  /// No description provided for @teacherTotalProjectedEarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Projected Earnings'**
+  String get teacherTotalProjectedEarnings;
+
+  /// No description provided for @teacherSimulatorPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'If {count} more of your remaining declared students buy a test pack:'**
+  String teacherSimulatorPrompt(int count);
+
+  /// No description provided for @teacherZeroStudentsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'0 Students'**
+  String get teacherZeroStudentsLabel;
+
+  /// No description provided for @teacherAllRemainingStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'All {count} Remaining Students'**
+  String teacherAllRemainingStudents(int count);
+
+  /// No description provided for @teacherGoalReachedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'🎉 Goal reached! All declared students are currently onboarded.'**
+  String get teacherGoalReachedMessage;
+
+  /// No description provided for @teacherEarningsRecordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} • Test Bundle'**
+  String teacherEarningsRecordSubtitle(String name);
+
+  /// No description provided for @teacherStudentPackPurchaseFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Pack Purchase'**
+  String get teacherStudentPackPurchaseFallback;
+
+  /// No description provided for @commonNoOptionsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No options available.'**
+  String get commonNoOptionsAvailable;
+
+  /// No description provided for @teacherSignupQuickPresets.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Presets'**
+  String get teacherSignupQuickPresets;
+
+  /// No description provided for @commonClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get commonClear;
+
+  /// No description provided for @teacherSignupSummaryStudentsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} students'**
+  String teacherSignupSummaryStudentsCount(int count);
+
+  /// No description provided for @teacherSignupSummaryNotSpecified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified (Optional)'**
+  String get teacherSignupSummaryNotSpecified;
+
+  /// No description provided for @commonNoneSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'None selected'**
+  String get commonNoneSelected;
+
+  /// No description provided for @teacherSignupCompleteFieldsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please complete all required fields.'**
+  String get teacherSignupCompleteFieldsError;
+
+  /// No description provided for @teacherSignupSelectClassForSubjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one class above to choose your subjects.'**
+  String get teacherSignupSelectClassForSubjects;
+
+  /// No description provided for @teacherSignupNameRequiredLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name *'**
+  String get teacherSignupNameRequiredLabel;
+
+  /// No description provided for @commonPhase2Badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Phase 2'**
+  String get commonPhase2Badge;
+
+  /// No description provided for @teacherCustomTestPhase2Message.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Test Creation & Upload will unlock in Phase 2!'**
+  String get teacherCustomTestPhase2Message;
+
+  /// No description provided for @teacherReferralShareText.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Azeem Publications App and choose me as your teacher to access verified board test packs!'**
+  String get teacherReferralShareText;
+
+  /// No description provided for @teacherReferralLinkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Teacher invite link copied to clipboard!'**
+  String get teacherReferralLinkCopied;
+
+  /// No description provided for @teacherRecentActivityEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent activity yet.'**
+  String get teacherRecentActivityEmpty;
+
+  /// No description provided for @timeAgoMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}m ago'**
+  String timeAgoMinutes(int count);
+
+  /// No description provided for @timeAgoHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}h ago'**
+  String timeAgoHours(int count);
+
+  /// No description provided for @timeAgoDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}d ago'**
+  String timeAgoDays(int count);
+
+  /// No description provided for @studentProgressNoAttemptsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Test Attempts Yet'**
+  String get studentProgressNoAttemptsTitle;
+
+  /// No description provided for @studentProgressNoAttemptsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This student has not submitted any chapter tests yet.'**
+  String get studentProgressNoAttemptsBody;
+
+  /// No description provided for @studentEnrolledWithYouLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Enrolled with you in: {subjects}'**
+  String studentEnrolledWithYouLabel(String subjects);
+
+  /// No description provided for @studentGeneralEnrolledFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'General Enrolled'**
+  String get studentGeneralEnrolledFallback;
+
+  /// No description provided for @commonSort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort'**
+  String get commonSort;
+
+  /// No description provided for @teacherStudentsShowingRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing {start}–{end} of {total} students'**
+  String teacherStudentsShowingRange(int start, int end, int total);
+
+  /// No description provided for @commonPageOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {page} / {total}'**
+  String commonPageOfTotal(int page, int total);
 }
 
 class _AppLocalizationsDelegate

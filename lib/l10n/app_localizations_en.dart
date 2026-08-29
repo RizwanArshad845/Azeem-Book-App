@@ -974,4 +974,186 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notificationsClearConfirmMessage =>
       'Are you sure you want to remove all notifications from your feed?';
+
+  @override
+  String get langToggleLabel => 'EN';
+
+  @override
+  String get onboardingDefaultTitle => 'Onboarding';
+
+  @override
+  String onboardingStepOfTotal(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get teacherNavOverview => 'Overview';
+
+  @override
+  String get teacherNavStudents => 'Students';
+
+  @override
+  String get teacherNavEarnings => 'Earnings';
+
+  @override
+  String get homeNavNotifications => 'Notifications';
+
+  @override
+  String get teacherOtpCodeLabel => '4-Digit OTP Code';
+
+  @override
+  String get teacherOtpTestHint => 'Enter 1234 for testing';
+
+  @override
+  String get teacherOtpEnterCodeError => 'Please enter the verification code.';
+
+  @override
+  String get teacherVerifiedBadge => 'Azeem Verified Faculty';
+
+  @override
+  String get teacherDefaultCampusFallback => 'Bahawalpur Campus';
+
+  @override
+  String teacherStudentsEnrolledCount(int count) {
+    return '~$count Students Enrolled';
+  }
+
+  @override
+  String teacherPurchasesCount(int count) {
+    return '$count Purchases';
+  }
+
+  @override
+  String get teacherCommissionHistory => 'Commission History';
+
+  @override
+  String teacherEarningsShowingRange(int start, int end, int total) {
+    return 'Showing $start–$end of $total records';
+  }
+
+  @override
+  String get teacherProjectedSimulatorTitle => 'Projected Earnings Simulator';
+
+  @override
+  String get teacherPerPackRate => 'Rs. 500/pack';
+
+  @override
+  String get teacherTotalProjectedEarnings => 'Total Projected Earnings';
+
+  @override
+  String teacherSimulatorPrompt(int count) {
+    return 'If $count more of your remaining declared students buy a test pack:';
+  }
+
+  @override
+  String get teacherZeroStudentsLabel => '0 Students';
+
+  @override
+  String teacherAllRemainingStudents(int count) {
+    return 'All $count Remaining Students';
+  }
+
+  @override
+  String get teacherGoalReachedMessage =>
+      '🎉 Goal reached! All declared students are currently onboarded.';
+
+  @override
+  String teacherEarningsRecordSubtitle(String name) {
+    return '$name • Test Bundle';
+  }
+
+  @override
+  String get teacherStudentPackPurchaseFallback => 'Student Pack Purchase';
+
+  @override
+  String get commonNoOptionsAvailable => 'No options available.';
+
+  @override
+  String get teacherSignupQuickPresets => 'Quick Presets';
+
+  @override
+  String get commonClear => 'Clear';
+
+  @override
+  String teacherSignupSummaryStudentsCount(int count) {
+    return '$count students';
+  }
+
+  @override
+  String get teacherSignupSummaryNotSpecified => 'Not specified (Optional)';
+
+  @override
+  String get commonNoneSelected => 'None selected';
+
+  @override
+  String get teacherSignupCompleteFieldsError =>
+      'Please complete all required fields.';
+
+  @override
+  String get teacherSignupSelectClassForSubjects =>
+      'Select at least one class above to choose your subjects.';
+
+  @override
+  String get teacherSignupNameRequiredLabel => 'Full name *';
+
+  @override
+  String get commonPhase2Badge => 'Phase 2';
+
+  @override
+  String get teacherCustomTestPhase2Message =>
+      'Custom Test Creation & Upload will unlock in Phase 2!';
+
+  @override
+  String get teacherReferralShareText =>
+      'Join Azeem Publications App and choose me as your teacher to access verified board test packs!';
+
+  @override
+  String get teacherReferralLinkCopied =>
+      'Teacher invite link copied to clipboard!';
+
+  @override
+  String get teacherRecentActivityEmpty => 'No recent activity yet.';
+
+  @override
+  String timeAgoMinutes(int count) {
+    return '${count}m ago';
+  }
+
+  @override
+  String timeAgoHours(int count) {
+    return '${count}h ago';
+  }
+
+  @override
+  String timeAgoDays(int count) {
+    return '${count}d ago';
+  }
+
+  @override
+  String get studentProgressNoAttemptsTitle => 'No Test Attempts Yet';
+
+  @override
+  String get studentProgressNoAttemptsBody =>
+      'This student has not submitted any chapter tests yet.';
+
+  @override
+  String studentEnrolledWithYouLabel(String subjects) {
+    return 'Enrolled with you in: $subjects';
+  }
+
+  @override
+  String get studentGeneralEnrolledFallback => 'General Enrolled';
+
+  @override
+  String get commonSort => 'Sort';
+
+  @override
+  String teacherStudentsShowingRange(int start, int end, int total) {
+    return 'Showing $start–$end of $total students';
+  }
+
+  @override
+  String commonPageOfTotal(int page, int total) {
+    return 'Page $page / $total';
+  }
 }
