@@ -77,8 +77,8 @@ class NotificationsView extends ConsumerWidget {
                           physics: const AlwaysScrollableScrollPhysics(),
                           child: SizedBox(
                             height: constraints.maxHeight,
-                            child: const EmptyStateView(
-                              message: 'No notifications yet',
+                            child: EmptyStateView(
+                              message: context.l10n.notificationsEmpty,
                               icon: Icons.notifications_none_outlined,
                             ),
                           ),
