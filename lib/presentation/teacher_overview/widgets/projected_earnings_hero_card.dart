@@ -11,12 +11,14 @@ class ProjectedEarningsHeroCard extends StatelessWidget {
 
   final TeacherOverviewStats stats;
 
+  static final NumberFormat _currencyFormatter = NumberFormat.currency(
+    symbol: 'Rs. ',
+    decimalDigits: 0,
+  );
+
   @override
   Widget build(BuildContext context) {
-    final currencyFormatter = NumberFormat.currency(
-      symbol: 'Rs. ',
-      decimalDigits: 0,
-    );
+    final currencyFormatter = _currencyFormatter;
 
     return Container(
       decoration: BoxDecoration(
