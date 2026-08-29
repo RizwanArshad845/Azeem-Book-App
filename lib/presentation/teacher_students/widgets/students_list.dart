@@ -95,7 +95,11 @@ class _StudentsListState extends ConsumerState<StudentsList> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Showing ${startIndex + 1}–$endIndex of $totalStudents students',
+                context.l10n.teacherStudentsShowingRange(
+                  startIndex + 1,
+                  endIndex,
+                  totalStudents,
+                ),
                 style: context.textStyles.bodySmall?.copyWith(
                   color: context.colors.textSecondary,
                   fontSize: 11.5,
@@ -103,7 +107,7 @@ class _StudentsListState extends ConsumerState<StudentsList> {
               ),
               if (totalPages > 1)
                 Text(
-                  'Page $effectivePage / $totalPages',
+                  context.l10n.commonPageOfTotal(effectivePage, totalPages),
                   style: context.textStyles.bodySmall?.copyWith(
                     color: context.colors.primary,
                     fontWeight: FontWeight.w600,

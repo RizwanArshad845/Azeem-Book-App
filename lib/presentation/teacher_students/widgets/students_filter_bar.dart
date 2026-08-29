@@ -58,7 +58,7 @@ class StudentsFilterBar extends ConsumerWidget {
             // Sort Dropdown Button
             PopupMenuButton<TeacherStudentsSort>(
               initialValue: currentSort,
-              tooltip: 'Sort',
+              tooltip: context.l10n.commonSort,
               onSelected: (sort) {
                 ref.read(teacherStudentsSortProvider.notifier).setSort(sort);
               },
@@ -159,7 +159,7 @@ class StudentsFilterBar extends ConsumerWidget {
             );
           },
           loading: () => const SizedBox.shrink(),
-          error: (_, __) => const SizedBox.shrink(),
+          error: (_, _) => const SizedBox.shrink(),
         ),
       ],
     );
