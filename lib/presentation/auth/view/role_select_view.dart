@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
-import '../../../core/widgets/onboarding_icon_pattern_background.dart';
 import '../../../core/widgets/onboarding_scaffold.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../viewmodel/auth_viewmodel.dart';

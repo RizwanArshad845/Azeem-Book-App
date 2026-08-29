@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 
+import '../constants/app_assets.dart';
 import '../extensions/context_extensions.dart';
 import 'app_logo.dart';
 import 'onboarding_card.dart';
-import 'onboarding_icon_pattern_background.dart';
 import 'onboarding_speech_bubble.dart';
 import 'section_progress_indicator.dart';
 
-/// Standardized onboarding screen scaffold featuring a generated branded
-/// icon-pattern background, persistent logo header, clean "Onboarding" app
-/// bar with step progress, and a floating glassmorphic card body (§10.1's
-/// "Kiraya card" spec).
+/// Which onboarding flow is currently rendering — switches the speech
+/// bubble's default copy/icon so student vs teacher onboarding don't feel
+/// like palette swaps of each other.
+enum OnboardingRole { student, teacher }
+
+/// Standardized onboarding screen scaffold featuring rameel-branch's
+/// branded doodle-pattern background image, persistent logo header, clean
+/// "Onboarding" app bar with step progress, and a floating glassmorphic
+/// card body (§10.1's "Kiraya card" spec).
 class OnboardingScaffold extends StatelessWidget {
   const OnboardingScaffold({
     super.key,
@@ -96,9 +101,29 @@ class OnboardingScaffold extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Generated branded background pattern (native icons, tiled and
-          // rotated at low opacity) — replaces the old flat study_bg image.
-          OnboardingIconPatternBackground(role: role),
+          // Soft ambient background tint + rameel-branch's doodle study
+          // pattern image (books, grad caps, pencils, math/science symbols),
+          // shared identically by both roles.
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  context.colors.background,
+                  context.colors.surfaceVariant.withValues(alpha: 0.25),
+                ],
+              ),
+            ),
+          ),
+          Image.asset(
+            AppAssets.studyBg,
+            fit: BoxFit.cover,
+            color: Colors.white.withValues(alpha: 0.20),
+            colorBlendMode: BlendMode.modulate,
+            errorBuilder: (context, error, stackTrace) =>
+                const SizedBox.shrink(),
+          ),
 
           // Persistent logo header + floating glassmorphic content card.
           SafeArea(

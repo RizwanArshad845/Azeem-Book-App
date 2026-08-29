@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
-import '../../../core/widgets/onboarding_icon_pattern_background.dart';
 import '../../../core/widgets/onboarding_scaffold.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
 import '../viewmodel/teacher_onboarding_viewmodel.dart';

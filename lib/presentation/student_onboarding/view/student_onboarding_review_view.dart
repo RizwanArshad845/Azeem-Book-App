@@ -8,7 +8,6 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_dropdown_card.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
-import '../../../core/widgets/onboarding_icon_pattern_background.dart';
 import '../../../core/widgets/onboarding_scaffold.dart';
 import '../../../core/widgets/onboarding_step_header.dart';
 import '../../../core/widgets/onboarding_summary_item.dart';
