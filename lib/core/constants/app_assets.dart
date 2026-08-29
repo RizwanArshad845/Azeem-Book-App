@@ -2,7 +2,6 @@ class AppAssets {
   const AppAssets._();
 
   static const String logo = 'assets/images/azeem_academy_logo.png';
-  static const String studyBg = 'assets/images/azeem_study_bg.png';
 
   /// Illustration assets (see `assets/illustrations/README.md`). These are
   /// optional — widgets fall back to native icons when a file is absent — so
