@@ -58,7 +58,7 @@ class RoleSelectView extends ConsumerWidget {
                       ),
                       SizedBox(width: context.dimens.xs / 2),
                       Text(
-                        isUrdu ? 'اردو' : 'EN',
+                        context.l10n.langToggleLabel,
                         style: context.textStyles.labelSmall?.copyWith(
                           color: context.colors.primary,
                           fontWeight: FontWeight.bold,

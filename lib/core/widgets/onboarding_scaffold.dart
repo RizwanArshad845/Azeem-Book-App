@@ -14,7 +14,7 @@ class OnboardingScaffold extends ConsumerWidget {
     required this.child,
     this.currentStep,
     this.totalSteps,
-    this.appBarTitle = 'Onboarding',
+    this.appBarTitle,
     this.onBack,
     this.useCardContainer = true,
     this.cardStyle,
@@ -23,7 +23,7 @@ class OnboardingScaffold extends ConsumerWidget {
   final Widget child;
   final int? currentStep;
   final int? totalSteps;
-  final String appBarTitle;
+  final String? appBarTitle;
   final VoidCallback? onBack;
 
   /// When false, allows the content to float on an open canvas without the outer OnboardingCard box.
@@ -44,7 +44,7 @@ class OnboardingScaffold extends ConsumerWidget {
           fit: BoxFit.scaleDown,
           alignment: Alignment.centerLeft,
           child: Text(
-            appBarTitle,
+            appBarTitle ?? context.l10n.onboardingDefaultTitle,
             style: context.textStyles.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -95,7 +95,7 @@ class OnboardingScaffold extends ConsumerWidget {
                     ),
                     SizedBox(width: context.dimens.xs / 2),
                     Text(
-                      isUrdu ? 'اردو' : 'EN',
+                      context.l10n.langToggleLabel,
                       style: context.textStyles.labelSmall?.copyWith(
                         color: context.colors.primary,
                         fontWeight: FontWeight.bold,
@@ -122,7 +122,10 @@ class OnboardingScaffold extends ConsumerWidget {
                         BorderRadius.circular(context.dimens.pillRadius),
                   ),
                   child: Text(
-                    'Step $currentStep of $totalSteps',
+                    context.l10n.onboardingStepOfTotal(
+                      currentStep!,
+                      totalSteps!,
+                    ),
                     style: context.textStyles.labelSmall?.copyWith(
                       color: context.colors.primary,
                       fontWeight: FontWeight.bold,

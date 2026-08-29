@@ -18,8 +18,6 @@ class TeacherTopBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final unreadCount = ref.watch(teacherUnreadNotificationsCountProvider);
-    final currentLocale = ref.watch(localeProvider);
-    final isUrdu = currentLocale?.languageCode == 'ur';
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -87,7 +85,7 @@ class TeacherTopBar extends ConsumerWidget {
                     ),
                     SizedBox(width: context.dimens.xs / 2),
                     Text(
-                      isUrdu ? 'اردو' : 'EN',
+                      context.l10n.langToggleLabel,
                       style: context.textStyles.labelSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: context.colors.primary,

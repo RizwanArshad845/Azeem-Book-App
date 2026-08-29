@@ -51,7 +51,7 @@ class AppDropdown<T> extends StatelessWidget {
         ),
         searchFieldProps: TextFieldProps(
           decoration: InputDecoration(
-            hintText: 'Search',
+            hintText: context.l10n.commonSearch,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(context.dimens.radiusMd),
             ),
