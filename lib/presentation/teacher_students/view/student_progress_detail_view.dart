@@ -41,7 +41,7 @@ class StudentProgressDetailView extends ConsumerWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Student Progress Report'),
+        title: Text(context.l10n.studentProgressDetailTitle),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
@@ -132,13 +132,13 @@ class StudentProgressDetailView extends ConsumerWidget {
                                 ),
                                 SizedBox(height: context.dimens.sm),
                                 Text(
-                                  'No Test Attempts Yet',
+                                  context.l10n.studentProgressNoAttemptsTitle,
                                   style: context.textStyles.titleSmall
                                       ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(height: context.dimens.xs),
                                 Text(
-                                  'This student has not submitted any chapter tests yet.',
+                                  context.l10n.studentProgressNoAttemptsBody,
                                   textAlign: TextAlign.center,
                                   style: context.textStyles.bodySmall?.copyWith(
                                     color: context.colors.textSecondary,
@@ -183,7 +183,8 @@ class _StudentHeaderCard extends StatelessWidget {
         isPaid
             ? const Color(0xFF059669).withValues(alpha: 0.1)
             : const Color(0xFF64748B).withValues(alpha: 0.1);
-    final statusLabel = isPaid ? 'Active (Paid Bundle)' : 'Free (Unpaid)';
+    final statusLabel =
+        isPaid ? context.l10n.teacherActivePaid : context.l10n.teacherFreeUnpaid;
 
     return AppFrostedCard(
       padding: EdgeInsets.all(context.dimens.lg),
@@ -292,7 +293,11 @@ class _StudentHeaderCard extends StatelessWidget {
               SizedBox(width: context.dimens.xs),
               Expanded(
                 child: Text(
-                  'Enrolled with you in: ${teacherScopedSubjects.isNotEmpty ? teacherScopedSubjects.join(", ") : "General Enrolled"}',
+                  context.l10n.studentEnrolledWithYouLabel(
+                    teacherScopedSubjects.isNotEmpty
+                        ? teacherScopedSubjects.join(", ")
+                        : context.l10n.studentGeneralEnrolledFallback,
+                  ),
                   style: context.textStyles.bodySmall?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: context.colors.primary,
