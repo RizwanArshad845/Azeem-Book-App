@@ -3,20 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_button.dart';
-import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_dropdown_card.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/onboarding_icon_pattern_background.dart';
 import '../../../core/widgets/onboarding_scaffold.dart';
 import '../../../core/widgets/onboarding_step_header.dart';
+import '../../../core/widgets/onboarding_summary_item.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
 import '../../../domain/common/failure.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
 import '../viewmodel/teacher_onboarding_viewmodel.dart';
 import '../viewmodel/teacher_signup_form_providers.dart';
 import '../viewmodel/teacher_signup_form_state.dart';
-import '../widgets/teacher_info_row.dart';
 
 /// Final teacher onboarding step — shows everything collected across the
 /// self-signup form's two steps for the teacher to double-check (and fix a
@@ -100,13 +99,13 @@ class _TeacherOnboardingReviewViewState
     final classNames = boardClassesAsync.value
             ?.where((c) => formState.selectedClassIds.contains(c.id))
             .map((c) => c.name)
-            .join(', ') ??
-        '';
+            .toList() ??
+        const <String>[];
     final subjectNames = subjectsAsync.value
             ?.where((s) => formState.selectedSubjectIds.contains(s.id))
             .map((s) => s.name)
-            .join(', ') ??
-        '';
+            .toList() ??
+        const <String>[];
 
     return OnboardingScaffold(
       appBarTitle: context.l10n.onboardingReviewTitle,
@@ -139,26 +138,34 @@ class _TeacherOnboardingReviewViewState
             onChanged: notifier.updateCampus,
           ),
           SizedBox(height: context.dimens.lg),
-          AppCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TeacherInfoRow(label: context.l10n.phoneLabel, value: phoneNumber),
-                TeacherInfoRow(
-                  label: context.l10n.teacherSignupApproxStudentsLabel,
-                  value: formState.studentCount.toString(),
-                ),
-                if (classNames.isNotEmpty)
-                  TeacherInfoRow(
-                    label: context.l10n.teacherSignupClassesLabel,
-                    value: classNames,
-                  ),
-                TeacherInfoRow(
-                  label: context.l10n.teacherSignupSubjectsLabel,
-                  value: subjectNames,
-                ),
-              ],
-            ),
+          OnboardingSummaryList(
+            children: [
+              OnboardingSummaryItem(
+                icon: Icons.phone_rounded,
+                label: context.l10n.phoneLabel,
+                value: phoneNumber,
+              ),
+              OnboardingSummaryItem(
+                icon: Icons.groups_rounded,
+                label: context.l10n.teacherSignupApproxStudentsLabel,
+                value: formState.studentCount > 0
+                    ? context.l10n.teacherSignupSummaryStudentsCount(
+                        formState.studentCount,
+                      )
+                    : context.l10n.teacherSignupSummaryNotSpecified,
+                isMuted: formState.studentCount <= 0,
+              ),
+              OnboardingSummaryChipSection(
+                icon: Icons.class_rounded,
+                label: context.l10n.teacherSignupClassesLabel,
+                items: classNames,
+              ),
+              OnboardingSummaryChipSection(
+                icon: Icons.menu_book_rounded,
+                label: context.l10n.teacherSignupSubjectsLabel,
+                items: subjectNames,
+              ),
+            ],
           ),
           SizedBox(height: context.dimens.xl),
           AppPrimaryButton(

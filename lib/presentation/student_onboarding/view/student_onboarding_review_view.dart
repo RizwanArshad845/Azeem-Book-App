@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/utils/subject_icons.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_dropdown_card.dart';
 import '../../../core/widgets/app_snackbar.dart';
@@ -10,6 +11,7 @@ import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/onboarding_icon_pattern_background.dart';
 import '../../../core/widgets/onboarding_scaffold.dart';
 import '../../../core/widgets/onboarding_step_header.dart';
+import '../../../core/widgets/onboarding_summary_item.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/common/failure.dart';
@@ -113,16 +115,17 @@ class _StudentOnboardingReviewViewState
             SizedBox(height: context.dimens.lg),
             _SectionLabel(context.l10n.subjectSelectionTitle),
             SizedBox(height: context.dimens.sm),
-            for (final subjectId in selectedSubjectIds)
-              Padding(
-                padding: EdgeInsets.only(bottom: context.dimens.sm),
-                child: _SubjectSummaryRow(
-                  subjectId: subjectId,
-                  teacherId: teacherIdBySubjectId[subjectId],
-                  subjects: subjectsAsync?.value,
-                  teachers: teachersAsync?.value,
-                ),
-              ),
+            OnboardingSummaryList(
+              children: [
+                for (final subjectId in selectedSubjectIds)
+                  _SubjectSummaryItem(
+                    subjectId: subjectId,
+                    teacherId: teacherIdBySubjectId[subjectId],
+                    subjects: subjectsAsync?.value,
+                    teachers: teachersAsync?.value,
+                  ),
+              ],
+            ),
           ],
           SizedBox(height: context.dimens.xl),
           AppPrimaryButton(
@@ -153,8 +156,8 @@ class _SectionLabel extends StatelessWidget {
   }
 }
 
-class _SubjectSummaryRow extends StatelessWidget {
-  const _SubjectSummaryRow({
+class _SubjectSummaryItem extends StatelessWidget {
+  const _SubjectSummaryItem({
     required this.subjectId,
     required this.teacherId,
     required this.subjects,
@@ -175,32 +178,11 @@ class _SubjectSummaryRow extends StatelessWidget {
         : teachers?.where((t) => t.id == teacherId).firstOrNull?.name ??
             context.l10n.onboardingReviewNoTeacher;
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.dimens.md,
-        vertical: context.dimens.sm + 4,
-      ),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(context.dimens.radiusMd),
-        border: Border.all(color: context.colors.divider),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              context.l10n.localizedSubjectName(subjectName),
-              style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-            ),
-          ),
-          Text(
-            teacherName,
-            style: context.textStyles.bodySmall?.copyWith(
-              color: context.colors.textSecondary,
-            ),
-          ),
-        ],
-      ),
+    return OnboardingSummaryItem(
+      icon: subjectIcon(subjectName),
+      label: context.l10n.localizedSubjectName(subjectName),
+      value: teacherName,
+      isMuted: teacherId == null,
     );
   }
 }
