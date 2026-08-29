@@ -22,6 +22,12 @@ import 'teacher_onboarding_summary_card.dart';
 /// - Step 2: Teaching Scope (Class >= 1, Subject >= 1, deduplicated)
 /// - Step 3: Student Reach (Optional student counter)
 /// - Step 4: Review Registration & Final Submit
+///
+/// Business state (city/campuses/classes/subjects/student count + field
+/// errors) lives in `teacher_signup_form_providers.dart` as small dedicated
+/// Riverpod Notifiers — this is the actual `submitSignUp(...)` payload, so it
+/// must not live in raw `setState` fields (CLAUDE.md §2). Only `_nameController`
+/// stays local: it's a `TextEditingController`, legitimately ephemeral UI state.
 class TeacherSignupForm extends ConsumerStatefulWidget {
   const TeacherSignupForm({
     super.key,
@@ -38,17 +44,16 @@ class TeacherSignupForm extends ConsumerStatefulWidget {
 
 class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
   final _nameController = TextEditingController();
-  String? _selectedCity;
-  final Set<String> _selectedCampusIds = {};
-  final Set<String> _selectedClassIds = {};
-  final Set<String> _selectedSubjectNames = {};
-  int? _declaredStudentCount;
 
-  String? _nameError;
-  String? _cityError;
-  String? _campusesError;
-  String? _classesError;
-  String? _subjectsError;
+  @override
+  void initState() {
+    super.initState();
+    // Fresh business state every time the wizard is (re)shown, so a previous
+    // attempt never leaks into a new one.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) resetTeacherSignupFormState(ref);
+    });
+  }
 
   @override
   void dispose() {
@@ -56,62 +61,67 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
     super.dispose();
   }
 
-  String get _classIdsKey {
-    final sorted = _selectedClassIds.toList()..sort();
+  String _classIdsKey(Set<String> classIds) {
+    final sorted = classIds.toList()..sort();
     return sorted.join(',');
   }
 
   void _onClassesChanged(Set<String> next) {
-    setState(() {
-      _selectedClassIds
-        ..clear()
-        ..addAll(next);
-      _classesError = _selectedClassIds.isEmpty
-          ? context.l10n.teacherSignupClassesRequiredError
-          : null;
-      // Clear out selected subjects that no longer exist for the selected classes
-      _selectedSubjectNames.clear();
-      _subjectsError = null;
-    });
+    ref.read(teacherSignupSelectedClassIdsProvider.notifier).setClassIds(next);
+    ref
+        .read(teacherSignupClassesErrorProvider.notifier)
+        .set(next.isEmpty ? context.l10n.teacherSignupClassesRequiredError : null);
+    // Clear out selected subjects that no longer exist for the selected classes
+    ref.read(teacherSignupSelectedSubjectNamesProvider.notifier).clear();
+    ref.read(teacherSignupSubjectsErrorProvider.notifier).set(null);
   }
 
   void _onSubjectsChanged(Set<String> next) {
-    setState(() {
-      _selectedSubjectNames
-        ..clear()
-        ..addAll(next);
-      _subjectsError = _selectedSubjectNames.isEmpty
-          ? context.l10n.teacherSignupSubjectsRequiredError
-          : null;
-    });
+    ref
+        .read(teacherSignupSelectedSubjectNamesProvider.notifier)
+        .setSubjectNames(next);
+    ref
+        .read(teacherSignupSubjectsErrorProvider.notifier)
+        .set(next.isEmpty ? context.l10n.teacherSignupSubjectsRequiredError : null);
   }
 
   bool _validateStep1() {
     final name = _nameController.text.trim();
-    setState(() {
-      _nameError = Validators.isRequired(name)
-          ? null
-          : context.l10n.teacherSignupNameError;
-      _cityError = _selectedCity == null
-          ? context.l10n.teacherSignupCityError
-          : null;
-      _campusesError = _selectedCampusIds.isEmpty
-          ? context.l10n.teacherSignupCampusesError
-          : null;
-    });
-    return _nameError == null && _cityError == null && _campusesError == null;
+    final selectedCity = ref.read(teacherSignupSelectedCityProvider);
+    final selectedCampusIds = ref.read(teacherSignupSelectedCampusIdsProvider);
+
+    final nameError = Validators.isRequired(name)
+        ? null
+        : context.l10n.teacherSignupNameError;
+    final cityError =
+        selectedCity == null ? context.l10n.teacherSignupCityError : null;
+    final campusesError = selectedCampusIds.isEmpty
+        ? context.l10n.teacherSignupCampusesError
+        : null;
+
+    ref.read(teacherSignupNameErrorProvider.notifier).set(nameError);
+    ref.read(teacherSignupCityErrorProvider.notifier).set(cityError);
+    ref.read(teacherSignupCampusesErrorProvider.notifier).set(campusesError);
+
+    return nameError == null && cityError == null && campusesError == null;
   }
 
   bool _validateStep2() {
-    setState(() {
-      _classesError = _selectedClassIds.isEmpty
-          ? context.l10n.teacherSignupClassesRequiredError
-          : null;
-      _subjectsError = _selectedSubjectNames.isEmpty
-          ? context.l10n.teacherSignupSubjectsRequiredError
-          : null;
-    });
-    return _classesError == null && _subjectsError == null;
+    final selectedClassIds = ref.read(teacherSignupSelectedClassIdsProvider);
+    final selectedSubjectNames =
+        ref.read(teacherSignupSelectedSubjectNamesProvider);
+
+    final classesError = selectedClassIds.isEmpty
+        ? context.l10n.teacherSignupClassesRequiredError
+        : null;
+    final subjectsError = selectedSubjectNames.isEmpty
+        ? context.l10n.teacherSignupSubjectsRequiredError
+        : null;
+
+    ref.read(teacherSignupClassesErrorProvider.notifier).set(classesError);
+    ref.read(teacherSignupSubjectsErrorProvider.notifier).set(subjectsError);
+
+    return classesError == null && subjectsError == null;
   }
 
   void _handleNextFromStep1() {
@@ -132,24 +142,32 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
 
   void _handleSubmit() {
     if (!_validateStep1() || !_validateStep2()) {
-      AppSnackbar.show(context, 'Please complete all required fields.');
+      AppSnackbar.show(context, context.l10n.teacherSignupCompleteFieldsError);
       return;
     }
 
+    final selectedClassIds = ref.read(teacherSignupSelectedClassIdsProvider);
+    final selectedSubjectNames =
+        ref.read(teacherSignupSelectedSubjectNamesProvider);
+    final selectedCampusIds = ref.read(teacherSignupSelectedCampusIdsProvider);
+    final declaredStudentCount =
+        ref.read(teacherSignupDeclaredStudentCountProvider);
+
     // Collect all actual subject IDs for the selected unique subjects
-    final subjectsAsync =
-        ref.read(teacherSignupSubjectsForClassesProvider(_classIdsKey));
+    final subjectsAsync = ref.read(
+      teacherSignupSubjectsForClassesProvider(_classIdsKey(selectedClassIds)),
+    );
     final availableSubjects = subjectsAsync.value ?? [];
     final allSelectedSubjectIds = <String>{};
 
     for (final opt in availableSubjects) {
-      if (_selectedSubjectNames.contains(opt.name)) {
+      if (selectedSubjectNames.contains(opt.name)) {
         allSelectedSubjectIds.addAll(opt.subjectIds);
       }
     }
 
     final primaryCampusId =
-        _selectedCampusIds.isNotEmpty ? _selectedCampusIds.first : '';
+        selectedCampusIds.isNotEmpty ? selectedCampusIds.first : '';
 
     ref
         .read(teacherOnboardingViewModelProvider.notifier)
@@ -157,8 +175,8 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
           name: _nameController.text.trim(),
           campusId: primaryCampusId,
           subjectIds: allSelectedSubjectIds.toList(),
-          classIds: _selectedClassIds.isEmpty ? null : _selectedClassIds.toList(),
-          declaredStudentCount: _declaredStudentCount,
+          classIds: selectedClassIds.isEmpty ? null : selectedClassIds.toList(),
+          declaredStudentCount: declaredStudentCount,
         )
         .then((success) {
       if (!mounted || success) return;
@@ -249,6 +267,11 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
   // ---------------------------------------------------------------------------
   Widget _buildStep1() {
     final citiesAsync = ref.watch(teacherSignupCitiesProvider);
+    final selectedCity = ref.watch(teacherSignupSelectedCityProvider);
+    final selectedCampusIds = ref.watch(teacherSignupSelectedCampusIdsProvider);
+    final nameError = ref.watch(teacherSignupNameErrorProvider);
+    final cityError = ref.watch(teacherSignupCityErrorProvider);
+    final campusesError = ref.watch(teacherSignupCampusesErrorProvider);
 
     return Column(
       key: const ValueKey(1),
@@ -263,14 +286,14 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
 
         // Full Name
         AppTextField(
-          label: '${context.l10n.nameLabel} *',
+          label: context.l10n.teacherSignupNameRequiredLabel,
           hint: context.l10n.nameHint,
           controller: _nameController,
           textCapitalization: TextCapitalization.words,
-          errorText: _nameError,
+          errorText: nameError,
           onChanged: (_) {
-            if (_nameError != null) {
-              setState(() => _nameError = null);
+            if (nameError != null) {
+              ref.read(teacherSignupNameErrorProvider.notifier).set(null);
             }
           },
         ),
@@ -286,19 +309,23 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
               AppDropdown<String>(
                 label: context.l10n.teacherSignupCityLabel,
                 items: cities,
-                selectedItem: _selectedCity,
+                selectedItem: selectedCity,
                 itemAsString: (city) => city,
-                onChanged: (city) => setState(() {
-                  _selectedCity = city;
-                  _selectedCampusIds.clear();
-                  _cityError = null;
-                  _campusesError = null;
-                }),
+                onChanged: (city) {
+                  ref
+                      .read(teacherSignupSelectedCityProvider.notifier)
+                      .setCity(city);
+                  ref.read(teacherSignupSelectedCampusIdsProvider.notifier).clear();
+                  ref.read(teacherSignupCityErrorProvider.notifier).set(null);
+                  ref
+                      .read(teacherSignupCampusesErrorProvider.notifier)
+                      .set(null);
+                },
               ),
-              if (_cityError != null) ...[
+              if (cityError != null) ...[
                 SizedBox(height: context.dimens.xs),
                 Text(
-                  _cityError!,
+                  cityError,
                   style: context.textStyles.bodySmall?.copyWith(
                     color: context.colors.error,
                   ),
@@ -310,7 +337,7 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
         SizedBox(height: context.dimens.lg),
 
         // Filtered Campuses Selection
-        if (_selectedCity == null)
+        if (selectedCity == null)
           Container(
             padding: EdgeInsets.all(context.dimens.md),
             decoration: BoxDecoration(
@@ -343,33 +370,33 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
           Consumer(
             builder: (context, ref, _) {
               final campusesAsync = ref.watch(
-                teacherSignupCampusesByCityProvider(_selectedCity!),
+                teacherSignupCampusesByCityProvider(selectedCity),
               );
 
               return AsyncValueWidget<List<Campus>>(
                 value: campusesAsync,
                 onRetry: () => ref.invalidate(
-                  teacherSignupCampusesByCityProvider(_selectedCity!),
+                  teacherSignupCampusesByCityProvider(selectedCity),
                 ),
                 data: (campuses) {
                   return InteractiveSelectionGrid<Campus>(
                     label: context.l10n.teacherSignupCampusesLabel,
                     items: campuses,
-                    selectedIds: _selectedCampusIds,
+                    selectedIds: selectedCampusIds,
                     idExtractor: (c) => c.id,
                     labelExtractor: (c) => c.name,
                     iconExtractor: (_) => Icons.account_balance_outlined,
                     onSelectionChanged: (next) {
-                      setState(() {
-                        _selectedCampusIds
-                          ..clear()
-                          ..addAll(next);
-                        if (_selectedCampusIds.isNotEmpty) {
-                          _campusesError = null;
-                        }
-                      });
+                      ref
+                          .read(teacherSignupSelectedCampusIdsProvider.notifier)
+                          .setCampusIds(next);
+                      if (next.isNotEmpty) {
+                        ref
+                            .read(teacherSignupCampusesErrorProvider.notifier)
+                            .set(null);
+                      }
                     },
-                    errorText: _campusesError,
+                    errorText: campusesError,
                   );
                 },
               );
@@ -390,9 +417,16 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
   // STEP 2: Teaching Scope (Classes & Subjects)
   // ---------------------------------------------------------------------------
   Widget _buildStep2() {
+    final selectedClassIds = ref.watch(teacherSignupSelectedClassIdsProvider);
+    final selectedSubjectNames =
+        ref.watch(teacherSignupSelectedSubjectNamesProvider);
+    final classesError = ref.watch(teacherSignupClassesErrorProvider);
+    final subjectsError = ref.watch(teacherSignupSubjectsErrorProvider);
+
+    final classIdsKey = _classIdsKey(selectedClassIds);
     final boardClassesAsync = ref.watch(teacherSignupClassOptionsProvider);
     final subjectsAsync = ref.watch(
-      teacherSignupSubjectsForClassesProvider(_classIdsKey),
+      teacherSignupSubjectsForClassesProvider(classIdsKey),
     );
 
     return Column(
@@ -414,19 +448,19 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
             return InteractiveSelectionGrid<TeacherClassOption>(
               label: context.l10n.teacherSignupClassesRequiredLabel,
               items: options,
-              selectedIds: _selectedClassIds,
+              selectedIds: selectedClassIds,
               idExtractor: (opt) => opt.id,
               labelExtractor: (opt) => opt.displayName,
               iconExtractor: (opt) => _iconForClass(opt.displayName),
               onSelectionChanged: _onClassesChanged,
-              errorText: _classesError,
+              errorText: classesError,
             );
           },
         ),
         SizedBox(height: context.dimens.xl),
 
         // Subjects Multi-select
-        if (_selectedClassIds.isEmpty)
+        if (selectedClassIds.isEmpty)
           Container(
             padding: EdgeInsets.all(context.dimens.md),
             decoration: BoxDecoration(
@@ -446,7 +480,7 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
                 SizedBox(width: context.dimens.sm),
                 Expanded(
                   child: Text(
-                    'Select at least one class above to choose your subjects.',
+                    context.l10n.teacherSignupSelectClassForSubjects,
                     style: context.textStyles.bodySmall?.copyWith(
                       color: context.colors.textSecondary,
                     ),
@@ -459,18 +493,18 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
           AsyncValueWidget<List<UniqueTeacherSubject>>(
             value: subjectsAsync,
             onRetry: () => ref.invalidate(
-              teacherSignupSubjectsForClassesProvider(_classIdsKey),
+              teacherSignupSubjectsForClassesProvider(classIdsKey),
             ),
             data: (uniqueSubjects) {
               return InteractiveSelectionGrid<UniqueTeacherSubject>(
                 label: context.l10n.teacherSignupSubjectsRequiredLabel,
                 items: uniqueSubjects,
-                selectedIds: _selectedSubjectNames,
+                selectedIds: selectedSubjectNames,
                 idExtractor: (s) => s.name,
                 labelExtractor: (s) => s.name,
                 iconExtractor: (s) => _iconForSubject(s.name),
                 onSelectionChanged: _onSubjectsChanged,
-                errorText: _subjectsError,
+                errorText: subjectsError,
               );
             },
           ),
@@ -489,6 +523,9 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
   // STEP 3: Student Reach (Optional Counter)
   // ---------------------------------------------------------------------------
   Widget _buildStep3() {
+    final declaredStudentCount =
+        ref.watch(teacherSignupDeclaredStudentCountProvider);
+
     return Column(
       key: const ValueKey(3),
       mainAxisSize: MainAxisSize.min,
@@ -513,8 +550,10 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
         ),
         SizedBox(height: context.dimens.xs),
         StudentCountCounter(
-          count: _declaredStudentCount,
-          onChanged: (count) => setState(() => _declaredStudentCount = count),
+          count: declaredStudentCount,
+          onChanged: (count) => ref
+              .read(teacherSignupDeclaredStudentCountProvider.notifier)
+              .setCount(count),
         ),
         SizedBox(height: context.dimens.xl),
         AppPrimaryButton(
@@ -530,21 +569,29 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
   // STEP 4: Review Registration & Submit
   // ---------------------------------------------------------------------------
   Widget _buildStep4(bool isSubmitting) {
+    final selectedCity = ref.watch(teacherSignupSelectedCityProvider);
+    final selectedCampusIds = ref.watch(teacherSignupSelectedCampusIdsProvider);
+    final selectedClassIds = ref.watch(teacherSignupSelectedClassIdsProvider);
+    final selectedSubjectNames =
+        ref.watch(teacherSignupSelectedSubjectNamesProvider);
+    final declaredStudentCount =
+        ref.watch(teacherSignupDeclaredStudentCountProvider);
+
     final allCampuses =
         ref.watch(teacherSignupCampusesProvider).value ?? <Campus>[];
     final selectedCampuses =
-        allCampuses.where((c) => _selectedCampusIds.contains(c.id)).toList();
+        allCampuses.where((c) => selectedCampusIds.contains(c.id)).toList();
     final campusNames = selectedCampuses.map((c) => c.name).toList();
 
     final boardClasses =
         ref.watch(teacherSignupClassOptionsProvider).value ?? [];
 
     final classNames = boardClasses
-        .where((b) => _selectedClassIds.contains(b.id))
+        .where((b) => selectedClassIds.contains(b.id))
         .map((b) => b.displayName)
         .toList();
 
-    final subjectNames = _selectedSubjectNames.toList()..sort();
+    final subjectNames = selectedSubjectNames.toList()..sort();
 
     return Column(
       key: const ValueKey(4),
@@ -560,11 +607,11 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
         // Review Summary Card
         TeacherOnboardingSummaryCard(
           name: _nameController.text.trim(),
-          cityName: _selectedCity ?? '—',
+          cityName: selectedCity ?? '—',
           campusNames: campusNames,
           classNames: classNames,
           subjectNames: subjectNames,
-          studentCount: _declaredStudentCount,
+          studentCount: declaredStudentCount,
         ),
 
         SizedBox(height: context.dimens.xl),

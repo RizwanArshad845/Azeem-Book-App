@@ -137,3 +137,118 @@ final teacherSignupSubjectsForClassesProvider = FutureProvider.autoDispose
         );
       }).toList();
     });
+
+/// Business state for the multi-step teacher signup wizard (§2 state-management
+/// rule: this is the actual `submitSignUp(...)` payload, so it belongs in
+/// Riverpod, not raw `StatefulWidget` fields). Mirrors the small-dedicated-Notifier
+/// pattern used by `teacher_students_viewmodel.dart`.
+class TeacherSignupSelectedCityNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void setCity(String? city) => state = city;
+}
+
+final teacherSignupSelectedCityProvider =
+    NotifierProvider<TeacherSignupSelectedCityNotifier, String?>(
+      TeacherSignupSelectedCityNotifier.new,
+    );
+
+class TeacherSignupSelectedCampusIdsNotifier extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => <String>{};
+
+  void setCampusIds(Set<String> ids) => state = ids;
+  void clear() => state = <String>{};
+}
+
+final teacherSignupSelectedCampusIdsProvider = NotifierProvider<
+  TeacherSignupSelectedCampusIdsNotifier,
+  Set<String>
+>(TeacherSignupSelectedCampusIdsNotifier.new);
+
+class TeacherSignupSelectedClassIdsNotifier extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => <String>{};
+
+  void setClassIds(Set<String> ids) => state = ids;
+}
+
+final teacherSignupSelectedClassIdsProvider = NotifierProvider<
+  TeacherSignupSelectedClassIdsNotifier,
+  Set<String>
+>(TeacherSignupSelectedClassIdsNotifier.new);
+
+class TeacherSignupSelectedSubjectNamesNotifier extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => <String>{};
+
+  void setSubjectNames(Set<String> names) => state = names;
+  void clear() => state = <String>{};
+}
+
+final teacherSignupSelectedSubjectNamesProvider = NotifierProvider<
+  TeacherSignupSelectedSubjectNamesNotifier,
+  Set<String>
+>(TeacherSignupSelectedSubjectNamesNotifier.new);
+
+class TeacherSignupDeclaredStudentCountNotifier extends Notifier<int?> {
+  @override
+  int? build() => null;
+
+  void setCount(int? count) => state = count;
+}
+
+final teacherSignupDeclaredStudentCountProvider =
+    NotifierProvider<TeacherSignupDeclaredStudentCountNotifier, int?>(
+      TeacherSignupDeclaredStudentCountNotifier.new,
+    );
+
+/// One small `Notifier<String?>` per field-level validation error, holding the
+/// already-localized message (or null) — mirrors the original per-field error
+/// strings, just Riverpod-backed instead of `setState`.
+class TeacherSignupFieldErrorNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void set(String? message) => state = message;
+}
+
+final teacherSignupNameErrorProvider =
+    NotifierProvider<TeacherSignupFieldErrorNotifier, String?>(
+      TeacherSignupFieldErrorNotifier.new,
+    );
+final teacherSignupCityErrorProvider =
+    NotifierProvider<TeacherSignupFieldErrorNotifier, String?>(
+      TeacherSignupFieldErrorNotifier.new,
+    );
+final teacherSignupCampusesErrorProvider =
+    NotifierProvider<TeacherSignupFieldErrorNotifier, String?>(
+      TeacherSignupFieldErrorNotifier.new,
+    );
+final teacherSignupClassesErrorProvider =
+    NotifierProvider<TeacherSignupFieldErrorNotifier, String?>(
+      TeacherSignupFieldErrorNotifier.new,
+    );
+final teacherSignupSubjectsErrorProvider =
+    NotifierProvider<TeacherSignupFieldErrorNotifier, String?>(
+      TeacherSignupFieldErrorNotifier.new,
+    );
+
+/// Resets every piece of signup-form business state back to its initial value.
+/// Call when the signup form is first shown so a previous attempt's state
+/// (e.g. after navigating away and back) never leaks into a fresh one.
+void resetTeacherSignupFormState(WidgetRef ref) {
+  ref.read(teacherSignupSelectedCityProvider.notifier).setCity(null);
+  ref.read(teacherSignupSelectedCampusIdsProvider.notifier).clear();
+  ref.read(teacherSignupSelectedClassIdsProvider.notifier).setClassIds({});
+  ref.read(teacherSignupSelectedSubjectNamesProvider.notifier).clear();
+  ref
+      .read(teacherSignupDeclaredStudentCountProvider.notifier)
+      .setCount(null);
+  ref.read(teacherSignupNameErrorProvider.notifier).set(null);
+  ref.read(teacherSignupCityErrorProvider.notifier).set(null);
+  ref.read(teacherSignupCampusesErrorProvider.notifier).set(null);
+  ref.read(teacherSignupClassesErrorProvider.notifier).set(null);
+  ref.read(teacherSignupSubjectsErrorProvider.notifier).set(null);
+}
