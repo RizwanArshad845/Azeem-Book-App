@@ -59,47 +59,23 @@ class TeacherQuickActionsGrid extends StatelessWidget {
           ],
         ),
         SizedBox(height: context.dimens.sm),
-        Row(
-          children: [
-            // Action 3: Create Custom Test (Phase 2 preview)
-            Expanded(
-              child: _ActionTile(
-                icon: Icons.note_add_rounded,
-                iconColor: const Color(0xFF7C3AED), // Purple
-                bgColor: const Color(0xFF7C3AED).withValues(alpha: 0.1),
-                title: context.l10n.teacherCustomTest,
-                subtitle: context.l10n.teacherCustomTestSub,
-                badgeText: context.l10n.commonPhase2Badge,
-                onTap: () {
-                  AppSnackbar.show(
-                    context,
-                    context.l10n.teacherCustomTestPhase2Message,
-                  );
-                },
-              ),
-            ),
-            SizedBox(width: context.dimens.sm),
-
-            // Action 4: Share Teacher Code / Link
-            Expanded(
-              child: _ActionTile(
-                icon: Icons.share_rounded,
-                iconColor: const Color(0xFFD97706), // Amber
-                bgColor: const Color(0xFFD97706).withValues(alpha: 0.1),
-                title: context.l10n.teacherShareReferral,
-                subtitle: context.l10n.teacherShareReferralSub,
-                onTap: () {
-                  Clipboard.setData(
-                    ClipboardData(text: context.l10n.teacherReferralShareText),
-                  );
-                  AppSnackbar.show(
-                    context,
-                    context.l10n.teacherReferralLinkCopied,
-                  );
-                },
-              ),
-            ),
-          ],
+        // Action 3: Share Teacher Code / Link — full width, "Custom Test"
+        // (Phase 2 preview) tile intentionally dropped, not shipped yet.
+        _ActionTile(
+          icon: Icons.share_rounded,
+          iconColor: const Color(0xFFD97706), // Amber
+          bgColor: const Color(0xFFD97706).withValues(alpha: 0.1),
+          title: context.l10n.teacherShareReferral,
+          subtitle: context.l10n.teacherShareReferralSub,
+          onTap: () {
+            Clipboard.setData(
+              ClipboardData(text: context.l10n.teacherReferralShareText),
+            );
+            AppSnackbar.show(
+              context,
+              context.l10n.teacherReferralLinkCopied,
+            );
+          },
         ),
       ],
     );
@@ -113,7 +89,6 @@ class _ActionTile extends StatelessWidget {
     required this.bgColor,
     required this.title,
     required this.subtitle,
-    this.badgeText,
     required this.onTap,
   });
 
@@ -122,7 +97,6 @@ class _ActionTile extends StatelessWidget {
   final Color bgColor;
   final String title;
   final String subtitle;
-  final String? badgeText;
   final VoidCallback onTap;
 
   @override
@@ -146,35 +120,11 @@ class _ActionTile extends StatelessWidget {
                 ),
                 child: Icon(icon, color: iconColor, size: 20),
               ),
-              if (badgeText != null)
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.dimens.xs,
-                    vertical: context.dimens.xs / 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: iconColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(
-                      context.dimens.radiusSm,
-                    ),
-                  ),
-                  child: Text(
-                    badgeText!,
-                    style: TextStyle(
-                      color: iconColor,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                )
-              else
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: context.colors.textSecondary.withValues(
-                    alpha: 0.5,
-                  ),
-                  size: 20,
-                ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: context.colors.textSecondary.withValues(alpha: 0.5),
+                size: 20,
+              ),
             ],
           ),
           SizedBox(height: context.dimens.sm),

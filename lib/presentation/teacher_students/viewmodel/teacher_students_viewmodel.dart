@@ -162,7 +162,7 @@ final teacherStudentsFilteredListProvider = Provider<List<Student>>((ref) {
       list.sort((a, b) => a.name.compareTo(b.name));
       break;
     case TeacherStudentsSort.recentlyJoined:
-      list.sort((a, b) => (b.createdAt ?? DateTime.now()).compareTo(a.createdAt ?? DateTime.now()));
+      list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       break;
     case TeacherStudentsSort.topPerformers:
       // Active paid students first, then alphabetical
