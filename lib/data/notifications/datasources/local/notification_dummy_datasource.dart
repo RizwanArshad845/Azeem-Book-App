@@ -11,12 +11,7 @@ abstract class NotificationDummyDataSource {
   Future<Result<void>> markAsRead(String notificationId);
 }
 
-/// In-memory dummy notifications, structurally identical to what the real
-/// API will eventually return (project_spec.md §6.1). Simulates network
-/// latency via [Future.delayed] so the viewmodel exercises the same
-/// `AsyncValue` loading states it will against the real API. Seeded across
-/// three sample recipients — two students, one teacher — with a mix of
-/// read/unread and every `NotificationType` (§10.2).
+/// In-memory dummy notifications seeded with realistic teacher and student events.
 class NotificationDummyDataSourceImpl implements NotificationDummyDataSource {
   NotificationDummyDataSourceImpl() {
     _seed();
@@ -24,10 +19,6 @@ class NotificationDummyDataSourceImpl implements NotificationDummyDataSource {
 
   static const _latency = Duration(milliseconds: 400);
 
-  // Sample recipient ids, following the `${role.name}-$phoneNumber` pattern
-  // synthesized by AuthDummyDataSourceImpl — any string works here since
-  // this store is standalone, but reusing that shape keeps dummy data
-  // plausible end-to-end.
   static const studentIdA = 'student-03001234567';
   static const studentIdB = 'student-03007654321';
   static const teacherIdA = 'teacher-03009876543';
@@ -37,6 +28,54 @@ class NotificationDummyDataSourceImpl implements NotificationDummyDataSource {
   void _seed() {
     final now = DateTime.now();
     _notifications.addAll([
+      // Teacher activity stream
+      NotificationDto(
+        id: 'notif-t1',
+        recipientId: teacherIdA,
+        recipientRole: NotificationRecipientRole.teacher,
+        type: NotificationType.studentRegistered,
+        message: 'Ali Ahmed registered and added you as their teacher.',
+        isRead: false,
+        createdAt: now.subtract(const Duration(minutes: 30)),
+      ),
+      NotificationDto(
+        id: 'notif-t2',
+        recipientId: teacherIdA,
+        recipientRole: NotificationRecipientRole.teacher,
+        type: NotificationType.studentRegistered,
+        message: 'Fatima Zahra purchased Physics Chapter-wise Bundle (+Rs. 500 commission).',
+        isRead: false,
+        createdAt: now.subtract(const Duration(hours: 2)),
+      ),
+      NotificationDto(
+        id: 'notif-t3',
+        recipientId: teacherIdA,
+        recipientRole: NotificationRecipientRole.teacher,
+        type: NotificationType.studentRegistered,
+        message: 'Hamza Tariq purchased Chemistry Test Bundle (+Rs. 500 commission).',
+        isRead: true,
+        createdAt: now.subtract(const Duration(hours: 5)),
+      ),
+      NotificationDto(
+        id: 'notif-t4',
+        recipientId: teacherIdA,
+        recipientRole: NotificationRecipientRole.teacher,
+        type: NotificationType.studentRegistered,
+        message: 'Usman Khalid registered at 10:15 AM.',
+        isRead: true,
+        createdAt: now.subtract(const Duration(days: 1)),
+      ),
+      NotificationDto(
+        id: 'notif-t5',
+        recipientId: teacherIdA,
+        recipientRole: NotificationRecipientRole.teacher,
+        type: NotificationType.teacherAwaitingApproval,
+        message: 'Your teacher account is approved and active.',
+        isRead: true,
+        createdAt: now.subtract(const Duration(days: 3)),
+      ),
+
+      // Student activity stream
       NotificationDto(
         id: 'notif-1',
         recipientId: studentIdA,
@@ -64,69 +103,6 @@ class NotificationDummyDataSourceImpl implements NotificationDummyDataSource {
         isRead: true,
         createdAt: now.subtract(const Duration(days: 1, hours: 3)),
       ),
-      NotificationDto(
-        id: 'notif-4',
-        recipientId: studentIdB,
-        recipientRole: NotificationRecipientRole.student,
-        type: NotificationType.newTestUploaded,
-        message: 'New Maths chapter-wise test uploaded for Chapter 7.',
-        isRead: false,
-        createdAt: now.subtract(const Duration(hours: 5)),
-      ),
-      NotificationDto(
-        id: 'notif-5',
-        recipientId: studentIdB,
-        recipientRole: NotificationRecipientRole.student,
-        type: NotificationType.discountAnnouncement,
-        message: 'Eid sale: flat 15% off on English test bundles.',
-        isRead: true,
-        createdAt: now.subtract(const Duration(days: 2)),
-      ),
-      NotificationDto(
-        id: 'notif-6',
-        recipientId: teacherIdA,
-        recipientRole: NotificationRecipientRole.teacher,
-        type: NotificationType.studentRegistered,
-        message: 'Ali Raza registered at 2:45 PM.',
-        isRead: false,
-        createdAt: now.subtract(const Duration(minutes: 45)),
-      ),
-      NotificationDto(
-        id: 'notif-7',
-        recipientId: teacherIdA,
-        recipientRole: NotificationRecipientRole.teacher,
-        type: NotificationType.studentRegistered,
-        message: 'Sana Malik registered at 11:10 AM.',
-        isRead: true,
-        createdAt: now.subtract(const Duration(hours: 6)),
-      ),
-      NotificationDto(
-        id: 'notif-8',
-        recipientId: teacherIdA,
-        recipientRole: NotificationRecipientRole.teacher,
-        type: NotificationType.profileUpdatePending,
-        message: 'Your profile update is pending Admin approval.',
-        isRead: false,
-        createdAt: now.subtract(const Duration(days: 1)),
-      ),
-      NotificationDto(
-        id: 'notif-9',
-        recipientId: teacherIdA,
-        recipientRole: NotificationRecipientRole.teacher,
-        type: NotificationType.teacherAwaitingApproval,
-        message: 'Your teacher account is awaiting Admin approval.',
-        isRead: true,
-        createdAt: now.subtract(const Duration(days: 3)),
-      ),
-      NotificationDto(
-        id: 'notif-10',
-        recipientId: studentIdA,
-        recipientRole: NotificationRecipientRole.student,
-        type: NotificationType.liveTestReminder,
-        message: 'Chemistry guess paper live test starts tomorrow at 5 PM.',
-        isRead: false,
-        createdAt: now.subtract(const Duration(days: 1, hours: 1)),
-      ),
     ]);
   }
 
@@ -135,9 +111,19 @@ class NotificationDummyDataSourceImpl implements NotificationDummyDataSource {
     String recipientId,
   ) async {
     await Future.delayed(_latency);
-    final items =
-        _notifications.where((n) => n.recipientId == recipientId).toList()
-          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final isTeacherQuery = recipientId.toLowerCase().contains('teacher') ||
+        recipientId.startsWith('t-') ||
+        recipientId.startsWith('usr-teacher');
+
+    final items = _notifications.where((n) {
+      if (n.recipientId == recipientId) return true;
+      if (isTeacherQuery && n.recipientRole == NotificationRecipientRole.teacher) {
+        return true;
+      }
+      return false;
+    }).toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
     return Success(items);
   }
 

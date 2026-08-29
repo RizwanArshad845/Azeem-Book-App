@@ -1143,4 +1143,294 @@ class AppLocalizationsEn extends AppLocalizations {
   String progressAttemptPlural(int count) {
     return '$count attempts';
   }
+
+  @override
+  String get teacherSignupSummaryTitle => 'Review Registration';
+
+  @override
+  String get teacherSignupSummaryName => 'Full Name';
+
+  @override
+  String get teacherSignupSummaryCampus => 'Campus';
+
+  @override
+  String get teacherSignupSummaryClasses => 'Classes';
+
+  @override
+  String get teacherSignupSummarySubjects => 'Subjects';
+
+  @override
+  String get teacherSignupSummaryStudents => 'Declared Students';
+
+  @override
+  String teacherWelcomeBack(String name) {
+    return 'Welcome back, $name 👋';
+  }
+
+  @override
+  String get teacherActualEarnings => 'Actual Earnings';
+
+  @override
+  String get teacherProjectedEarnings => 'Projected Earnings';
+
+  @override
+  String get teacherCommissionAndEarnings => 'Commission & Earnings';
+
+  @override
+  String get teacherPerStudentRate => 'Rs. 500 / Student';
+
+  @override
+  String teacherUnlockUpTo(String amount) {
+    return 'Unlock up to $amount more!';
+  }
+
+  @override
+  String teacherDeclaredStudentsDesc(
+    int declared,
+    int onboarded,
+    int remaining,
+  ) {
+    return 'Based on your ~$declared declared students ($onboarded joined, $remaining remaining).';
+  }
+
+  @override
+  String teacherGoalOnboarded(int onboarded, int declared) {
+    return '$onboarded of $declared onboarded';
+  }
+
+  @override
+  String get teacherQuickActions => 'Quick Actions';
+
+  @override
+  String teacherStudentsRoster(int count) {
+    return 'Students ($count)';
+  }
+
+  @override
+  String teacherStudentsRosterSub(int paid, int free) {
+    return '$paid Paid • $free Free';
+  }
+
+  @override
+  String get teacherEarningsLedger => 'Earnings Ledger';
+
+  @override
+  String get teacherEarningsLedgerSub => 'View transactions';
+
+  @override
+  String get teacherShareReferral => 'Share Referral';
+
+  @override
+  String get teacherShareReferralSub => 'Invite students';
+
+  @override
+  String get teacherRecentActivity => 'Recent Activity';
+
+  @override
+  String get teacherAllStudents => 'All Students';
+
+  @override
+  String get teacherActivePaid => 'Active (Paid)';
+
+  @override
+  String get teacherFreeUnpaid => 'Free (Unpaid)';
+
+  @override
+  String get teacherCommissionEarned => '+Rs. 500 Commission Earned';
+
+  @override
+  String get teacherBundleNotPurchased => 'Bundle not purchased yet';
+
+  @override
+  String get teacherViewProgress => 'View Progress';
+
+  @override
+  String get teacherSortRecentlyJoined => 'Recently Joined';
+
+  @override
+  String get teacherSortTopPerformers => 'Top Test Performers';
+
+  @override
+  String get teacherSortAlphabetical => 'Alphabetical (A-Z)';
+
+  @override
+  String get teacherAllCampuses => 'All Campuses';
+
+  @override
+  String get teacherSearchHint => 'Search by student name or phone...';
+
+  @override
+  String get teacherProfileCampusesTaught => 'Campuses & Institutions';
+
+  @override
+  String get teacherProfileClassesTaught => 'Classes Taught';
+
+  @override
+  String get teacherProfileSubjectsTaught => 'Subjects Taught';
+
+  @override
+  String get teacherProfileDeclaredReach => 'Declared Student Reach';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all as read';
+
+  @override
+  String get notificationsClearAll => 'Clear all';
+
+  @override
+  String get notificationsClearConfirmTitle => 'Clear All Notifications?';
+
+  @override
+  String get notificationsClearConfirmMessage =>
+      'Are you sure you want to remove all notifications from your feed?';
+
+  @override
+  String get teacherNavOverview => 'Overview';
+
+  @override
+  String get teacherNavStudents => 'Students';
+
+  @override
+  String get teacherNavEarnings => 'Earnings';
+
+  @override
+  String get homeNavNotifications => 'Notifications';
+
+  @override
+  String get teacherOtpCodeLabel => '4-Digit OTP Code';
+
+  @override
+  String get teacherOtpTestHint => 'Enter 1234 for testing';
+
+  @override
+  String get teacherOtpEnterCodeError => 'Please enter the verification code.';
+
+  @override
+  String get teacherVerifiedBadge => 'Azeem Verified Faculty';
+
+  @override
+  String get teacherDefaultCampusFallback => 'Bahawalpur Campus';
+
+  @override
+  String teacherStudentsEnrolledCount(int count) {
+    return '~$count Students Enrolled';
+  }
+
+  @override
+  String teacherPurchasesCount(int count) {
+    return '$count Purchases';
+  }
+
+  @override
+  String get teacherCommissionHistory => 'Commission History';
+
+  @override
+  String teacherEarningsShowingRange(int start, int end, int total) {
+    return 'Showing $start–$end of $total records';
+  }
+
+  @override
+  String get teacherProjectedSimulatorTitle => 'Projected Earnings Simulator';
+
+  @override
+  String get teacherPerPackRate => 'Rs. 500/pack';
+
+  @override
+  String get teacherTotalProjectedEarnings => 'Total Projected Earnings';
+
+  @override
+  String teacherSimulatorPrompt(int count) {
+    return 'If $count more of your remaining declared students buy a test pack:';
+  }
+
+  @override
+  String get teacherZeroStudentsLabel => '0 Students';
+
+  @override
+  String teacherAllRemainingStudents(int count) {
+    return 'All $count Remaining Students';
+  }
+
+  @override
+  String get teacherGoalReachedMessage =>
+      '🎉 Goal reached! All declared students are currently onboarded.';
+
+  @override
+  String teacherEarningsRecordSubtitle(String name) {
+    return '$name • Test Bundle';
+  }
+
+  @override
+  String get teacherStudentPackPurchaseFallback => 'Student Pack Purchase';
+
+  @override
+  String get commonNoOptionsAvailable => 'No options available.';
+
+  @override
+  String get commonClear => 'Clear';
+
+  @override
+  String teacherSignupSummaryStudentsCount(int count) {
+    return '$count students';
+  }
+
+  @override
+  String get teacherSignupSummaryNotSpecified => 'Not specified (Optional)';
+
+  @override
+  String get commonNoneSelected => 'None selected';
+
+  @override
+  String get teacherReferralShareText =>
+      'Join Azeem Publications App and choose me as your teacher to access verified board test packs!';
+
+  @override
+  String get teacherReferralLinkCopied =>
+      'Teacher invite link copied to clipboard!';
+
+  @override
+  String get teacherRecentActivityEmpty => 'No recent activity yet.';
+
+  @override
+  String timeAgoMinutes(int count) {
+    return '${count}m ago';
+  }
+
+  @override
+  String timeAgoHours(int count) {
+    return '${count}h ago';
+  }
+
+  @override
+  String timeAgoDays(int count) {
+    return '${count}d ago';
+  }
+
+  @override
+  String get studentProgressNoAttemptsTitle => 'No Test Attempts Yet';
+
+  @override
+  String get studentProgressNoAttemptsBody =>
+      'This student has not submitted any chapter tests yet.';
+
+  @override
+  String studentEnrolledWithYouLabel(String subjects) {
+    return 'Enrolled with you in: $subjects';
+  }
+
+  @override
+  String get studentGeneralEnrolledFallback => 'General Enrolled';
+
+  @override
+  String get commonSort => 'Sort';
+
+  @override
+  String teacherStudentsShowingRange(int start, int end, int total) {
+    return 'Showing $start–$end of $total students';
+  }
+
+  @override
+  String commonPageOfTotal(int page, int total) {
+    return 'Page $page / $total';
+  }
 }

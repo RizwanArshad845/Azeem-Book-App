@@ -2,15 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// Persists the language-toggle choice from the Profile screens
-/// (project_spec.md §10.2 Profile "language toggle"; §11: "English
-/// populated now, Urdu addable later without code changes"). `null` means
-/// "follow the system locale" — `MaterialApp.router(locale: null)`'s
-/// default — and is only overridden once a student/teacher explicitly picks
-/// a language.
-///
-/// Hand-written `Notifier` + manually declared provider per CLAUDE.md §2
-/// (no `riverpod_generator` in this project).
+/// Persists the language-toggle choice from the Profile screens.
 class LocaleController extends Notifier<Locale?> {
   static const _localeKey = 'app_locale_code';
 
@@ -29,8 +21,7 @@ class LocaleController extends Notifier<Locale?> {
     }
   }
 
-  /// Sets the active locale (persisted) or `null` to follow the system
-  /// locale again.
+  /// Sets the active locale (persisted) or `null` to follow the system locale again.
   Future<void> setLocale(Locale? locale) async {
     state = locale;
     if (locale == null) {
@@ -38,6 +29,12 @@ class LocaleController extends Notifier<Locale?> {
     } else {
       await _storage.write(key: _localeKey, value: locale.languageCode);
     }
+  }
+
+  /// Toggles between English and Urdu.
+  Future<void> toggleLocale() async {
+    final nextCode = state?.languageCode == 'ur' ? 'en' : 'ur';
+    await setLocale(Locale(nextCode));
   }
 }
 

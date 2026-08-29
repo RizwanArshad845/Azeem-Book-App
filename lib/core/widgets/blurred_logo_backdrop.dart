@@ -32,17 +32,16 @@ class BlurredLogoBackdrop extends StatelessWidget {
         Positioned(
           top: -40,
           right: -40,
-          child: Opacity(
-            opacity: 0.13,
-            child: ImageFiltered(
-              imageFilter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-              child: Image.asset(
-                AppAssets.logo,
-                width: context.dimens.logoWatermarkSize,
-                height: context.dimens.logoWatermarkSize,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
-              ),
+          child: ImageFiltered(
+            imageFilter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+            child: Image.asset(
+              AppAssets.logo,
+              width: context.dimens.logoWatermarkSize,
+              height: context.dimens.logoWatermarkSize,
+              color: Colors.white.withValues(alpha: 0.13),
+              colorBlendMode: BlendMode.modulate,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
             ),
           ),
         ),

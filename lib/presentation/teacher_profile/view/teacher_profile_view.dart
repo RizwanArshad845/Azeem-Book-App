@@ -8,10 +8,12 @@ import '../../../core/providers/locale_provider.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
+import '../../../core/widgets/confirm_dialog.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../core/widgets/typed_confirm.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
+import '../../auth/viewmodel/auth_viewmodel.dart';
 import '../../teacher_onboarding/viewmodel/teacher_onboarding_viewmodel.dart';
 import '../viewmodel/teacher_profile_viewmodel.dart';
 import '../widgets/language_card.dart';
@@ -67,6 +69,21 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
         final msg = error is Failure ? error.message : context.l10n.profileUpdateFailed;
         AppSnackbar.show(context, msg);
       }
+    });
+  }
+
+  void _handleLogout() {
+    confirmDialog(
+      context,
+      title: context.l10n.profileLogoutConfirmTitle,
+      message: context.l10n.profileLogoutConfirmMessage,
+      confirmLabel: context.l10n.profileLogout,
+      isDestructive: true,
+    ).then((confirmed) {
+      if (confirmed != true || !mounted) return;
+      // Fire-and-forget: setting the session to null drives the router
+      // redirect to the auth flow (no manual navigation from here).
+      ref.read(authViewModelProvider.notifier).logout();
     });
   }
 
@@ -152,6 +169,12 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                     ),
                     SizedBox(height: context.dimens.xxl),
                     TeacherLanguageCard(isEnglish: isEnglish),
+                    SizedBox(height: context.dimens.lg),
+                    AppOutlinedButton(
+                      label: context.l10n.profileLogout,
+                      icon: Icons.logout,
+                      onPressed: isSaving ? null : _handleLogout,
+                    ),
                     SizedBox(height: context.dimens.xxl),
                     Center(
                       child: AppDangerButton(

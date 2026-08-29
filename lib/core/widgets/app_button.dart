@@ -5,6 +5,8 @@ import 'press_scale.dart';
 
 enum AppButtonVariant { primary, outlined, text }
 
+enum AppButtonIconPosition { leading, trailing }
+
 class AppButton extends StatelessWidget {
   const AppButton({
     super.key,
@@ -13,6 +15,7 @@ class AppButton extends StatelessWidget {
     this.variant = AppButtonVariant.primary,
     this.loading = false,
     this.icon,
+    this.iconPosition = AppButtonIconPosition.trailing,
   });
 
   final String label;
@@ -20,11 +23,23 @@ class AppButton extends StatelessWidget {
   final AppButtonVariant variant;
   final bool loading;
   final IconData? icon;
+  final AppButtonIconPosition iconPosition;
 
   @override
   Widget build(BuildContext context) {
     final isDisabled = onPressed == null || loading;
     final effectiveOnPressed = isDisabled ? null : onPressed;
+
+    final labelWidget = Flexible(
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+
+    final iconWidget =
+        icon != null ? Icon(icon, size: context.dimens.iconMd) : null;
 
     final child = loading
         ? SizedBox(
@@ -34,98 +49,39 @@ class AppButton extends StatelessWidget {
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(
                 variant == AppButtonVariant.primary
-                    ? context.colors.onAccent
+                    ? context.colors.onPrimary
                     : context.colors.primary,
               ),
             ),
           )
         : icon == null
-        ? Text(label)
-        : Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: context.dimens.iconMd),
-              SizedBox(width: context.dimens.sm),
-              Text(label),
-            ],
-          );
-
-    if (variant == AppButtonVariant.primary) {
-      final primaryColor = context.colors.primary;
-      final gradientEnd = Color.lerp(primaryColor, const Color(0xFF1E6B52), 0.4) ?? primaryColor;
-
-      return PressScale(
-        enabled: !isDisabled,
-        haptic: true,
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 200),
-          opacity: isDisabled ? 0.55 : 1.0,
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [primaryColor, gradientEnd],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(context.dimens.pillRadius),
-              boxShadow: isDisabled
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: primaryColor.withValues(alpha: 0.32),
-                        blurRadius: 14,
-                        spreadRadius: 1,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: effectiveOnPressed,
-                borderRadius: BorderRadius.circular(context.dimens.pillRadius),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.dimens.lg,
-                    vertical: context.dimens.md - 2,
-                  ),
-                  child: Center(
-                    child: DefaultTextStyle.merge(
-                      style: context.textStyles.labelLarge?.copyWith(
-                        color: context.colors.onAccent,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.4,
-                      ),
-                      child: IconTheme.merge(
-                        data: IconThemeData(color: context.colors.onAccent),
-                        child: child,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
+            ? Text(label)
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: iconPosition == AppButtonIconPosition.trailing
+                    ? [
+                        labelWidget,
+                        SizedBox(width: context.dimens.sm),
+                        iconWidget!,
+                      ]
+                    : [
+                        iconWidget!,
+                        SizedBox(width: context.dimens.sm),
+                        labelWidget,
+                      ],
+              );
 
     final button = switch (variant) {
-      AppButtonVariant.primary => const SizedBox.shrink(),
-      AppButtonVariant.outlined => OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(context.dimens.pillRadius),
-            ),
-          ),
-          onPressed: effectiveOnPressed,
-          child: child,
-        ),
-      AppButtonVariant.text => TextButton(onPressed: effectiveOnPressed, child: child),
+      AppButtonVariant.primary =>
+        ElevatedButton(onPressed: effectiveOnPressed, child: child),
+      AppButtonVariant.outlined =>
+        OutlinedButton(onPressed: effectiveOnPressed, child: child),
+      AppButtonVariant.text =>
+        TextButton(onPressed: effectiveOnPressed, child: child),
     };
 
-    return PressScale(enabled: !isDisabled, haptic: true, child: button);
+    return PressScale(enabled: !isDisabled, child: button);
   }
 }
 
@@ -136,12 +92,14 @@ class AppPrimaryButton extends StatelessWidget {
     this.onPressed,
     this.loading = false,
     this.icon,
+    this.iconPosition = AppButtonIconPosition.trailing,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final bool loading;
   final IconData? icon;
+  final AppButtonIconPosition iconPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -151,6 +109,7 @@ class AppPrimaryButton extends StatelessWidget {
       variant: AppButtonVariant.primary,
       loading: loading,
       icon: icon,
+      iconPosition: iconPosition,
     );
   }
 }
@@ -162,12 +121,14 @@ class AppOutlinedButton extends StatelessWidget {
     this.onPressed,
     this.loading = false,
     this.icon,
+    this.iconPosition = AppButtonIconPosition.trailing,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final bool loading;
   final IconData? icon;
+  final AppButtonIconPosition iconPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -177,6 +138,7 @@ class AppOutlinedButton extends StatelessWidget {
       variant: AppButtonVariant.outlined,
       loading: loading,
       icon: icon,
+      iconPosition: iconPosition,
     );
   }
 }
@@ -188,17 +150,32 @@ class AppDangerButton extends StatelessWidget {
     this.onPressed,
     this.loading = false,
     this.icon,
+    this.iconPosition = AppButtonIconPosition.trailing,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final bool loading;
   final IconData? icon;
+  final AppButtonIconPosition iconPosition;
 
   @override
   Widget build(BuildContext context) {
     final isDisabled = onPressed == null || loading;
     final effectiveOnPressed = isDisabled ? null : onPressed;
+
+    final labelWidget = Flexible(
+      child: Text(
+        label,
+        style: TextStyle(color: context.colors.error),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+
+    final iconWidget = icon != null
+        ? Icon(icon, size: context.dimens.iconMd, color: context.colors.error)
+        : null;
 
     final child = loading
         ? SizedBox(
@@ -213,16 +190,22 @@ class AppDangerButton extends StatelessWidget {
             ? Text(label, style: TextStyle(color: context.colors.error))
             : Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(icon, size: context.dimens.iconMd, color: context.colors.error),
-                  SizedBox(width: context.dimens.sm),
-                  Text(label, style: TextStyle(color: context.colors.error)),
-                ],
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: iconPosition == AppButtonIconPosition.trailing
+                    ? [
+                        labelWidget,
+                        SizedBox(width: context.dimens.sm),
+                        iconWidget!,
+                      ]
+                    : [
+                        iconWidget!,
+                        SizedBox(width: context.dimens.sm),
+                        labelWidget,
+                      ],
               );
 
     return PressScale(
       enabled: !isDisabled,
-      haptic: true,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           foregroundColor: context.colors.error,

@@ -439,7 +439,6 @@
   "teacherSignupAboutYouSection": "About you",
   "teacherSignupWhatYouTeachSection": "What you teach",
   "teacherSignupOptionalSection": "Optional",
-
   "navHome": "Home",
   "navCart": "Cart",
   "navProgress": "Progress",
@@ -476,5 +475,173 @@
   "progressAttemptPlural": "{count} attempts",
   "@progressAttemptPlural": {
     "placeholders": { "count": { "type": "int" } }
+  },
+
+  "teacherSignupSummaryTitle": "Review Registration",
+  "teacherSignupSummaryName": "Full Name",
+  "teacherSignupSummaryCampus": "Campus",
+  "teacherSignupSummaryClasses": "Classes",
+  "teacherSignupSummarySubjects": "Subjects",
+  "teacherSignupSummaryStudents": "Declared Students",
+  "teacherWelcomeBack": "Welcome back, {name} 👋",
+  "@teacherWelcomeBack": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "teacherActualEarnings": "Actual Earnings",
+  "teacherProjectedEarnings": "Projected Earnings",
+  "teacherCommissionAndEarnings": "Commission & Earnings",
+  "teacherPerStudentRate": "Rs. 500 / Student",
+  "teacherUnlockUpTo": "Unlock up to {amount} more!",
+  "@teacherUnlockUpTo": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "teacherDeclaredStudentsDesc": "Based on your ~{declared} declared students ({onboarded} joined, {remaining} remaining).",
+  "@teacherDeclaredStudentsDesc": {
+    "placeholders": {
+      "declared": { "type": "int" },
+      "onboarded": { "type": "int" },
+      "remaining": { "type": "int" }
+    }
+  },
+  "teacherGoalOnboarded": "{onboarded} of {declared} onboarded",
+  "@teacherGoalOnboarded": {
+    "placeholders": {
+      "onboarded": { "type": "int" },
+      "declared": { "type": "int" }
+    }
+  },
+  "teacherQuickActions": "Quick Actions",
+  "teacherStudentsRoster": "Students ({count})",
+  "@teacherStudentsRoster": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "teacherStudentsRosterSub": "{paid} Paid • {free} Free",
+  "@teacherStudentsRosterSub": {
+    "placeholders": {
+      "paid": { "type": "int" },
+      "free": { "type": "int" }
+    }
+  },
+  "teacherEarningsLedger": "Earnings Ledger",
+  "teacherEarningsLedgerSub": "View transactions",
+  "teacherShareReferral": "Share Referral",
+  "teacherShareReferralSub": "Invite students",
+  "teacherRecentActivity": "Recent Activity",
+  "teacherAllStudents": "All Students",
+  "teacherActivePaid": "Active (Paid)",
+  "teacherFreeUnpaid": "Free (Unpaid)",
+  "teacherCommissionEarned": "+Rs. 500 Commission Earned",
+  "teacherBundleNotPurchased": "Bundle not purchased yet",
+  "teacherViewProgress": "View Progress",
+  "teacherSortRecentlyJoined": "Recently Joined",
+  "teacherSortTopPerformers": "Top Test Performers",
+  "teacherSortAlphabetical": "Alphabetical (A-Z)",
+  "teacherAllCampuses": "All Campuses",
+  "teacherSearchHint": "Search by student name or phone...",
+  "teacherProfileCampusesTaught": "Campuses & Institutions",
+  "teacherProfileClassesTaught": "Classes Taught",
+  "teacherProfileSubjectsTaught": "Subjects Taught",
+  "teacherProfileDeclaredReach": "Declared Student Reach",
+  "notificationsMarkAllRead": "Mark all as read",
+  "notificationsClearAll": "Clear all",
+  "notificationsClearConfirmTitle": "Clear All Notifications?",
+  "notificationsClearConfirmMessage": "Are you sure you want to remove all notifications from your feed?",
+
+  "teacherNavOverview": "Overview",
+  "teacherNavStudents": "Students",
+  "teacherNavEarnings": "Earnings",
+  "homeNavNotifications": "Notifications",
+
+  "teacherOtpCodeLabel": "4-Digit OTP Code",
+  "teacherOtpTestHint": "Enter 1234 for testing",
+  "teacherOtpEnterCodeError": "Please enter the verification code.",
+  "teacherVerifiedBadge": "Azeem Verified Faculty",
+  "teacherDefaultCampusFallback": "Bahawalpur Campus",
+  "teacherStudentsEnrolledCount": "~{count} Students Enrolled",
+  "@teacherStudentsEnrolledCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "teacherPurchasesCount": "{count} Purchases",
+  "@teacherPurchasesCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "teacherCommissionHistory": "Commission History",
+  "teacherEarningsShowingRange": "Showing {start}–{end} of {total} records",
+  "@teacherEarningsShowingRange": {
+    "placeholders": {
+      "start": { "type": "int" },
+      "end": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "teacherProjectedSimulatorTitle": "Projected Earnings Simulator",
+  "teacherPerPackRate": "Rs. 500/pack",
+  "teacherTotalProjectedEarnings": "Total Projected Earnings",
+  "teacherSimulatorPrompt": "If {count} more of your remaining declared students buy a test pack:",
+  "@teacherSimulatorPrompt": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "teacherZeroStudentsLabel": "0 Students",
+  "teacherAllRemainingStudents": "All {count} Remaining Students",
+  "@teacherAllRemainingStudents": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "teacherGoalReachedMessage": "🎉 Goal reached! All declared students are currently onboarded.",
+
+  "teacherEarningsRecordSubtitle": "{name} • Test Bundle",
+  "@teacherEarningsRecordSubtitle": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "teacherStudentPackPurchaseFallback": "Student Pack Purchase",
+
+  "commonNoOptionsAvailable": "No options available.",
+  "commonClear": "Clear",
+  "teacherSignupSummaryStudentsCount": "{count} students",
+  "@teacherSignupSummaryStudentsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "teacherSignupSummaryNotSpecified": "Not specified (Optional)",
+  "commonNoneSelected": "None selected",
+
+  "teacherReferralShareText": "Join Azeem Publications App and choose me as your teacher to access verified board test packs!",
+  "teacherReferralLinkCopied": "Teacher invite link copied to clipboard!",
+
+  "teacherRecentActivityEmpty": "No recent activity yet.",
+  "timeAgoMinutes": "{count}m ago",
+  "@timeAgoMinutes": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "timeAgoHours": "{count}h ago",
+  "@timeAgoHours": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "timeAgoDays": "{count}d ago",
+  "@timeAgoDays": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "studentProgressNoAttemptsTitle": "No Test Attempts Yet",
+  "studentProgressNoAttemptsBody": "This student has not submitted any chapter tests yet.",
+  "studentEnrolledWithYouLabel": "Enrolled with you in: {subjects}",
+  "@studentEnrolledWithYouLabel": {
+    "placeholders": { "subjects": { "type": "String" } }
+  },
+  "studentGeneralEnrolledFallback": "General Enrolled",
+
+  "commonSort": "Sort",
+
+  "teacherStudentsShowingRange": "Showing {start}–{end} of {total} students",
+  "@teacherStudentsShowingRange": {
+    "placeholders": {
+      "start": { "type": "int" },
+      "end": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "commonPageOfTotal": "Page {page} / {total}",
+  "@commonPageOfTotal": {
+    "placeholders": { "page": { "type": "int" }, "total": { "type": "int" } }
   }
 }

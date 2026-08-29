@@ -7,7 +7,9 @@ import '../extensions/context_extensions.dart';
 /// Reusable floating glassmorphic card container holding onboarding form
 /// content — semi-transparent surface + backdrop blur + a subtle 1px light
 /// border, so the generated icon-pattern background shows through softly
-/// instead of a flat opaque card (CLAUDE.md's "Kiraya card" spec).
+/// instead of a flat opaque card (CLAUDE.md's "Kiraya card" spec). Frosted
+/// glass constants (76% surface alpha, 18px blur) match the design ported
+/// from the rameel-branch teacher onboarding redesign.
 class OnboardingCard extends StatelessWidget {
   const OnboardingCard({
     super.key,
@@ -45,10 +47,10 @@ class OnboardingCard extends StatelessWidget {
         child: ClipRRect(
           borderRadius: radius,
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
             child: Container(
               decoration: BoxDecoration(
-                color: context.colors.surface.withValues(alpha: 0.88),
+                color: context.colors.surface.withValues(alpha: 0.76),
                 borderRadius: radius,
                 border: Border.all(
                   color: Colors.white.withValues(alpha: 0.45),

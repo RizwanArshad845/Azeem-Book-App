@@ -1149,4 +1149,295 @@ class AppLocalizationsUr extends AppLocalizations {
   String progressAttemptPlural(int count) {
     return '$count کوششیں';
   }
+
+  @override
+  String get teacherSignupSummaryTitle => 'رجسٹریشن کا جائزہ';
+
+  @override
+  String get teacherSignupSummaryName => 'پورا نام';
+
+  @override
+  String get teacherSignupSummaryCampus => 'کیمپس';
+
+  @override
+  String get teacherSignupSummaryClasses => 'کلاسیں';
+
+  @override
+  String get teacherSignupSummarySubjects => 'مضامین';
+
+  @override
+  String get teacherSignupSummaryStudents => 'طلباء کی تعداد';
+
+  @override
+  String teacherWelcomeBack(String name) {
+    return 'خوش آمدید، $name 👋';
+  }
+
+  @override
+  String get teacherActualEarnings => 'اصل آمدن';
+
+  @override
+  String get teacherProjectedEarnings => 'تخمینی آمدن';
+
+  @override
+  String get teacherCommissionAndEarnings => 'کمیشن اور آمدن';
+
+  @override
+  String get teacherPerStudentRate => '500 روپے / طالب علم';
+
+  @override
+  String teacherUnlockUpTo(String amount) {
+    return 'مزید $amount تک حاصل کریں!';
+  }
+
+  @override
+  String teacherDeclaredStudentsDesc(
+    int declared,
+    int onboarded,
+    int remaining,
+  ) {
+    return 'آپ کے بتائے گئے ~$declared طلباء کی بنیاد پر ($onboarded شامل ہوئے، $remaining باقی)۔';
+  }
+
+  @override
+  String teacherGoalOnboarded(int onboarded, int declared) {
+    return '$declared میں سے $onboarded شامل ہوئے';
+  }
+
+  @override
+  String get teacherQuickActions => 'فوری کارروائیاں';
+
+  @override
+  String teacherStudentsRoster(int count) {
+    return 'طلباء ($count)';
+  }
+
+  @override
+  String teacherStudentsRosterSub(int paid, int free) {
+    return '$paid ادا شدہ • $free مفت';
+  }
+
+  @override
+  String get teacherEarningsLedger => 'آمدن کا ریکارڈ';
+
+  @override
+  String get teacherEarningsLedgerSub => 'ٹرانزیکشنز دیکھیں';
+
+  @override
+  String get teacherShareReferral => 'ریفرل شیئر کریں';
+
+  @override
+  String get teacherShareReferralSub => 'طلباء کو مدعو کریں';
+
+  @override
+  String get teacherRecentActivity => 'حالیہ سرگرمی';
+
+  @override
+  String get teacherAllStudents => 'تمام طلباء';
+
+  @override
+  String get teacherActivePaid => 'فعال (ادا شدہ)';
+
+  @override
+  String get teacherFreeUnpaid => 'مفت (غیر ادا شدہ)';
+
+  @override
+  String get teacherCommissionEarned => '+500 روپے کمیشن حاصل کیا';
+
+  @override
+  String get teacherBundleNotPurchased => 'ابھی بنڈل نہیں خریدا گیا';
+
+  @override
+  String get teacherViewProgress => 'کارکردگی دیکھیں';
+
+  @override
+  String get teacherSortRecentlyJoined => 'حالیہ شامل شدہ';
+
+  @override
+  String get teacherSortTopPerformers => 'بہترین کارکردگی والے';
+
+  @override
+  String get teacherSortAlphabetical => 'حروف تہجی کے لحاظ سے';
+
+  @override
+  String get teacherAllCampuses => 'تمام کیمپسز';
+
+  @override
+  String get teacherSearchHint => 'طالب علم کے نام یا فون سے تلاش کریں...';
+
+  @override
+  String get teacherProfileCampusesTaught => 'کیمپس اور ادارے';
+
+  @override
+  String get teacherProfileClassesTaught => 'پڑھائی جانے والی کلاسیں';
+
+  @override
+  String get teacherProfileSubjectsTaught => 'پڑھائے جانے والے مضامین';
+
+  @override
+  String get teacherProfileDeclaredReach => 'بتائی گئی طلباء کی تعداد';
+
+  @override
+  String get notificationsMarkAllRead => 'سب کو پڑھا ہوا نشان زد کریں';
+
+  @override
+  String get notificationsClearAll => 'سب صاف کریں';
+
+  @override
+  String get notificationsClearConfirmTitle =>
+      'کیا تمام نوٹیفکیشنز صاف کرنا چاہتے ہیں؟';
+
+  @override
+  String get notificationsClearConfirmMessage =>
+      'کیا آپ واقعی اپنی فیڈ سے تمام نوٹیفکیشنز ختم کرنا چاہتے ہیں؟';
+
+  @override
+  String get teacherNavOverview => 'جائزہ';
+
+  @override
+  String get teacherNavStudents => 'طلباء';
+
+  @override
+  String get teacherNavEarnings => 'آمدنی';
+
+  @override
+  String get homeNavNotifications => 'اطلاعات';
+
+  @override
+  String get teacherOtpCodeLabel => '4 ہندسوں کا کوڈ';
+
+  @override
+  String get teacherOtpTestHint => 'ٹیسٹنگ کے لیے 1234 درج کریں';
+
+  @override
+  String get teacherOtpEnterCodeError => 'براہ کرم تصدیقی کوڈ درج کریں۔';
+
+  @override
+  String get teacherVerifiedBadge => 'عظیم تصدیق شدہ فیکلٹی';
+
+  @override
+  String get teacherDefaultCampusFallback => 'بہاولپور کیمپس';
+
+  @override
+  String teacherStudentsEnrolledCount(int count) {
+    return '~$count طلباء داخل شدہ';
+  }
+
+  @override
+  String teacherPurchasesCount(int count) {
+    return '$count خریداریاں';
+  }
+
+  @override
+  String get teacherCommissionHistory => 'کمیشن کی تاریخ';
+
+  @override
+  String teacherEarningsShowingRange(int start, int end, int total) {
+    return '$total ریکارڈز میں سے $start–$end دکھائے جا رہے ہیں';
+  }
+
+  @override
+  String get teacherProjectedSimulatorTitle => 'متوقع آمدنی کا سیمولیٹر';
+
+  @override
+  String get teacherPerPackRate => '500 روپے / پیک';
+
+  @override
+  String get teacherTotalProjectedEarnings => 'کل متوقع آمدنی';
+
+  @override
+  String teacherSimulatorPrompt(int count) {
+    return 'اگر آپ کے باقی طلباء میں سے مزید $count طلباء ٹیسٹ پیک خریدیں:';
+  }
+
+  @override
+  String get teacherZeroStudentsLabel => '0 طلباء';
+
+  @override
+  String teacherAllRemainingStudents(int count) {
+    return 'تمام باقی $count طلباء';
+  }
+
+  @override
+  String get teacherGoalReachedMessage =>
+      '🎉 ہدف مکمل! آپ کے بتائے گئے تمام طلباء شامل ہو چکے ہیں۔';
+
+  @override
+  String teacherEarningsRecordSubtitle(String name) {
+    return '$name • ٹیسٹ بنڈل';
+  }
+
+  @override
+  String get teacherStudentPackPurchaseFallback => 'طالب علم پیک خریداری';
+
+  @override
+  String get commonNoOptionsAvailable => 'کوئی آپشن دستیاب نہیں۔';
+
+  @override
+  String get commonClear => 'صاف کریں';
+
+  @override
+  String teacherSignupSummaryStudentsCount(int count) {
+    return '$count طلباء';
+  }
+
+  @override
+  String get teacherSignupSummaryNotSpecified => 'متعین نہیں (اختیاری)';
+
+  @override
+  String get commonNoneSelected => 'کوئی منتخب نہیں';
+
+  @override
+  String get teacherReferralShareText =>
+      'عظیم پبلیکیشنز ایپ میں شامل ہوں اور تصدیق شدہ بورڈ ٹیسٹ پیکس تک رسائی کے لیے مجھے اپنا ٹیچر منتخب کریں!';
+
+  @override
+  String get teacherReferralLinkCopied =>
+      'ٹیچر دعوتی لنک کلپ بورڈ میں کاپی ہو گیا!';
+
+  @override
+  String get teacherRecentActivityEmpty => 'ابھی تک کوئی حالیہ سرگرمی نہیں۔';
+
+  @override
+  String timeAgoMinutes(int count) {
+    return '$count منٹ پہلے';
+  }
+
+  @override
+  String timeAgoHours(int count) {
+    return '$count گھنٹے پہلے';
+  }
+
+  @override
+  String timeAgoDays(int count) {
+    return '$count دن پہلے';
+  }
+
+  @override
+  String get studentProgressNoAttemptsTitle => 'ابھی تک کوئی ٹیسٹ نہیں دیا گیا';
+
+  @override
+  String get studentProgressNoAttemptsBody =>
+      'اس طالب علم نے ابھی تک کوئی باب کا ٹیسٹ جمع نہیں کروایا۔';
+
+  @override
+  String studentEnrolledWithYouLabel(String subjects) {
+    return 'آپ کے ساتھ داخلہ لیا: $subjects';
+  }
+
+  @override
+  String get studentGeneralEnrolledFallback => 'عمومی داخلہ';
+
+  @override
+  String get commonSort => 'ترتیب دیں';
+
+  @override
+  String teacherStudentsShowingRange(int start, int end, int total) {
+    return '$total طلباء میں سے $start–$end دکھائے جا رہے ہیں';
+  }
+
+  @override
+  String commonPageOfTotal(int page, int total) {
+    return 'صفحہ $page / $total';
+  }
 }

@@ -24,7 +24,7 @@ class SectionProgressIndicator extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(context.dimens.radiusSm),
                 child: LinearProgressIndicator(
-                  value: i <= currentStep ? 1 : 0,
+                  value: i < currentStep ? 1 : 0,
                   minHeight: 4,
                   backgroundColor: context.colors.divider,
                   valueColor: AlwaysStoppedAnimation(context.colors.primary),
