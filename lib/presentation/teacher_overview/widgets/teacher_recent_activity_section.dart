@@ -54,7 +54,7 @@ class TeacherRecentActivitySection extends ConsumerWidget {
                 ),
                 child: Center(
                   child: Text(
-                    'No recent activity yet.',
+                    context.l10n.teacherRecentActivityEmpty,
                     style: context.textStyles.bodySmall?.copyWith(
                       color: context.colors.textSecondary,
                     ),
@@ -137,7 +137,7 @@ class _ActivityRow extends StatelessWidget {
                 ),
                 SizedBox(height: context.dimens.xs / 3),
                 Text(
-                  _timeAgo(notification.createdAt),
+                  _timeAgo(context, notification.createdAt),
                   style: context.textStyles.bodySmall?.copyWith(
                     color: context.colors.textSecondary,
                     fontSize: 11,
@@ -151,14 +151,14 @@ class _ActivityRow extends StatelessWidget {
     );
   }
 
-  String _timeAgo(DateTime dt) {
+  String _timeAgo(BuildContext context, DateTime dt) {
     final diff = DateTime.now().difference(dt);
     if (diff.inMinutes < 60) {
-      return '${diff.inMinutes}m ago';
+      return context.l10n.timeAgoMinutes(diff.inMinutes);
     } else if (diff.inHours < 24) {
-      return '${diff.inHours}h ago';
+      return context.l10n.timeAgoHours(diff.inHours);
     } else {
-      return '${diff.inDays}d ago';
+      return context.l10n.timeAgoDays(diff.inDays);
     }
   }
 }

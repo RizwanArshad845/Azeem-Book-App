@@ -69,11 +69,11 @@ class TeacherQuickActionsGrid extends StatelessWidget {
                 bgColor: const Color(0xFF7C3AED).withValues(alpha: 0.1),
                 title: context.l10n.teacherCustomTest,
                 subtitle: context.l10n.teacherCustomTestSub,
-                badgeText: 'Phase 2',
+                badgeText: context.l10n.commonPhase2Badge,
                 onTap: () {
                   AppSnackbar.show(
                     context,
-                    'Custom Test Creation & Upload will unlock in Phase 2!',
+                    context.l10n.teacherCustomTestPhase2Message,
                   );
                 },
               ),
@@ -90,14 +90,11 @@ class TeacherQuickActionsGrid extends StatelessWidget {
                 subtitle: context.l10n.teacherShareReferralSub,
                 onTap: () {
                   Clipboard.setData(
-                    const ClipboardData(
-                      text:
-                          'Join Azeem Publications App and choose me as your teacher to access verified board test packs!',
-                    ),
+                    ClipboardData(text: context.l10n.teacherReferralShareText),
                   );
                   AppSnackbar.show(
                     context,
-                    'Teacher invite link copied to clipboard!',
+                    context.l10n.teacherReferralLinkCopied,
                   );
                 },
               ),
