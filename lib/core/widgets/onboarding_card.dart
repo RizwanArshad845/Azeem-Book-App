@@ -45,28 +45,30 @@ class OnboardingCard extends StatelessWidget {
     switch (style) {
       case OnboardingCardStyle.frostedGlass:
         // Option 1: Frosted Glassmorphism (Translucent with visible background blur)
-        contentContainer = ClipRRect(
-          borderRadius: borderRadius,
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-            child: Container(
-              padding: cardPadding,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.76),
-                borderRadius: borderRadius,
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.90),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 24,
-                    offset: const Offset(0, 8),
+        contentContainer = RepaintBoundary(
+          child: ClipRRect(
+            borderRadius: borderRadius,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+              child: Container(
+                padding: cardPadding,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.76),
+                  borderRadius: borderRadius,
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.90),
+                    width: 1.5,
                   ),
-                ],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: child,
               ),
-              child: child,
             ),
           ),
         );

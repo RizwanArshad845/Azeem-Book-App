@@ -71,11 +71,13 @@ class AppFrostedCard extends StatelessWidget {
       );
     }
 
-    return ClipRRect(
-      borderRadius: effectiveRadius,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: content,
+    return RepaintBoundary(
+      child: ClipRRect(
+        borderRadius: effectiveRadius,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          child: content,
+        ),
       ),
     );
   }
