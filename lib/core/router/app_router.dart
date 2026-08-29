@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../extensions/context_extensions.dart';
 import '../../domain/auth/entities/user_role.dart';
 import '../../presentation/auth/view/otp_verify_view.dart';
 import '../../presentation/auth/view/phone_entry_view.dart';
@@ -52,25 +53,46 @@ CustomTransitionPage<void> _appPage(GoRouterState state, Widget child) {
   );
 }
 
-const _studentDestinations = [
-  BottomNavDestinationSpec(icon: Icons.home_outlined, label: 'Home'),
-  BottomNavDestinationSpec(icon: Icons.shopping_cart_outlined, label: 'Cart'),
-  BottomNavDestinationSpec(icon: Icons.insights_outlined, label: 'Progress'),
+List<BottomNavDestinationSpec> _studentDestinations(BuildContext context) => [
+  BottomNavDestinationSpec(
+    icon: Icons.home_outlined,
+    label: context.l10n.homeNavHome,
+  ),
+  BottomNavDestinationSpec(
+    icon: Icons.shopping_cart_outlined,
+    label: context.l10n.homeNavCart,
+  ),
+  BottomNavDestinationSpec(
+    icon: Icons.insights_outlined,
+    label: context.l10n.homeNavProgress,
+  ),
   BottomNavDestinationSpec(
     icon: Icons.notifications_outlined,
-    label: 'Notifications',
+    label: context.l10n.homeNavNotifications,
   ),
-  BottomNavDestinationSpec(icon: Icons.person_outline, label: 'Profile'),
+  BottomNavDestinationSpec(
+    icon: Icons.person_outline,
+    label: context.l10n.homeNavProfile,
+  ),
 ];
 
-const _teacherDestinations = [
-  BottomNavDestinationSpec(icon: Icons.grid_view_rounded, label: 'Overview'),
-  BottomNavDestinationSpec(icon: Icons.groups_outlined, label: 'Students'),
+List<BottomNavDestinationSpec> _teacherDestinations(BuildContext context) => [
+  BottomNavDestinationSpec(
+    icon: Icons.grid_view_rounded,
+    label: context.l10n.teacherNavOverview,
+  ),
+  BottomNavDestinationSpec(
+    icon: Icons.groups_outlined,
+    label: context.l10n.teacherNavStudents,
+  ),
   BottomNavDestinationSpec(
     icon: Icons.account_balance_wallet_outlined,
-    label: 'Earnings',
+    label: context.l10n.teacherNavEarnings,
   ),
-  BottomNavDestinationSpec(icon: Icons.person_outline, label: 'Profile'),
+  BottomNavDestinationSpec(
+    icon: Icons.person_outline,
+    label: context.l10n.homeNavProfile,
+  ),
 ];
 
 const _authRoutes = {
@@ -238,7 +260,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state, navigationShell) =>
             AppScaffoldWithBottomNav(
               navigationShell: navigationShell,
-              destinations: _studentDestinations,
+              destinations: _studentDestinations(context),
             ),
         branches: [
           StatefulShellBranch(
@@ -320,7 +342,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state, navigationShell) =>
             AppScaffoldWithBottomNav(
               navigationShell: navigationShell,
-              destinations: _teacherDestinations,
+              destinations: _teacherDestinations(context),
             ),
         branches: [
           StatefulShellBranch(
