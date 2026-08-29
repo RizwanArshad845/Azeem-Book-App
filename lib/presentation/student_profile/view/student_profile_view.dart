@@ -93,7 +93,7 @@ class _StudentProfileViewState extends ConsumerState<StudentProfileView> {
       title: context.l10n.profileDeleteDialogTitle,
       message: context.l10n.profileDeleteDialogBody,
       confirmationText: student.phoneNumber,
-      fieldLabel: context.l10n.profileDeleteConfirmField,
+      fieldLabel: context.l10n.profileDeleteConfirmField(student.phoneNumber),
       confirmLabel: context.l10n.profileDeleteAccount,
       cancelLabel: context.l10n.commonCancel,
     ).then((confirmed) {
@@ -132,7 +132,7 @@ class _StudentProfileViewState extends ConsumerState<StudentProfileView> {
       appBar: AppBar(
         title: Text(context.l10n.profileTitle),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.adaptive.arrow_back),
           onPressed: () {
             if (context.canPop()) {
               context.pop();

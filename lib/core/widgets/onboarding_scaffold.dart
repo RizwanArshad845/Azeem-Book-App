@@ -47,13 +47,14 @@ class OnboardingScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: context.colors.background,
       appBar: AppBar(
         title: Text(appBarTitle),
         centerTitle: true,
         leading: onBack != null
             ? IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: Icon(Icons.adaptive.arrow_back),
                 onPressed: onBack,
               )
             : null,
@@ -107,6 +108,7 @@ class OnboardingScaffold extends StatelessWidget {
                 final minHeight = constraints.maxHeight > verticalPadding
                     ? constraints.maxHeight - verticalPadding
                     : 0.0;
+
                 return SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   padding: EdgeInsets.symmetric(

@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart' show CupertinoPage;
+import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,10 +21,12 @@ import '../../presentation/student_home/view/student_home_view.dart';
 import '../../presentation/student_home/view/test_list_view.dart';
 import '../../presentation/student_onboarding/view/student_academic_info_view.dart';
 import '../../presentation/student_onboarding/view/student_basic_info_view.dart';
+import '../../presentation/student_onboarding/view/student_onboarding_review_view.dart';
 import '../../presentation/student_profile/view/student_profile_view.dart';
 import '../../presentation/teacher_profile/view/teacher_profile_view.dart';
 import '../../presentation/student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 import '../../presentation/test_taking/view/test_taking_view.dart';
+import '../../presentation/teacher_onboarding/view/teacher_onboarding_review_view.dart';
 import '../../presentation/teacher_onboarding/view/teacher_pending_approval_view.dart';
 import '../../presentation/teacher_onboarding/view/teacher_signup_view.dart';
 import '../../presentation/teacher_earnings/view/teacher_earnings_view.dart';
@@ -34,7 +38,20 @@ import '../constants/app_routes.dart';
 import '../extensions/context_extensions.dart';
 import '../widgets/app_scaffold_with_bottom_nav.dart';
 
-CustomTransitionPage<void> _appPage(GoRouterState state, Widget child) {
+/// iOS/macOS get the native `CupertinoPage` transition (and, critically, its
+/// built-in edge-swipe-to-pop gesture — `CustomTransitionPage`'s fully custom
+/// `buildTransitions` bypasses `PageTransitionsTheme`/
+/// `CupertinoPageTransitionsBuilder` entirely, so swipe-back doesn't work on
+/// any route using it). Android/other platforms keep the existing custom
+/// fade+slide transitions below, unchanged.
+bool get _useCupertinoTransition =>
+    defaultTargetPlatform == TargetPlatform.iOS ||
+    defaultTargetPlatform == TargetPlatform.macOS;
+
+Page<void> _appPage(GoRouterState state, Widget child) {
+  if (_useCupertinoTransition) {
+    return CupertinoPage<void>(key: state.pageKey, child: child);
+  }
   return CustomTransitionPage<void>(
     key: state.pageKey,
     child: child,
@@ -61,8 +78,12 @@ CustomTransitionPage<void> _appPage(GoRouterState state, Widget child) {
 /// (basic info -> academic info) — distinct from the generic cross-app
 /// `_appPage` fade+slide so advancing through onboarding reads as
 /// progress, not a context switch. Scoped to just these routes; the global
-/// `_appPage` transition is untouched.
-CustomTransitionPage<void> _onboardingStepPage(GoRouterState state, Widget child) {
+/// `_appPage` transition is untouched. iOS/macOS still get `CupertinoPage`
+/// (see `_appPage`) so swipe-back works on onboarding steps too.
+Page<void> _onboardingStepPage(GoRouterState state, Widget child) {
+  if (_useCupertinoTransition) {
+    return CupertinoPage<void>(key: state.pageKey, child: child);
+  }
   return CustomTransitionPage<void>(
     key: state.pageKey,
     child: child,
@@ -135,6 +156,7 @@ const _authRoutes = {
 const _studentOnboardingRoutes = {
   AppRoutes.studentOnboardingBasicInfo,
   AppRoutes.studentOnboardingAcademicInfo,
+  AppRoutes.studentOnboardingReview,
 };
 
 const _studentShellRoutes = {
@@ -199,7 +221,11 @@ String? _redirectFor(Ref ref, String location) {
 
     final teacher = teacherAsync.value;
     if (teacher == null) {
-      return location == AppRoutes.teacherOnboardingSignup
+      const teacherPreSubmitRoutes = {
+        AppRoutes.teacherOnboardingSignup,
+        AppRoutes.teacherOnboardingReview,
+      };
+      return teacherPreSubmitRoutes.contains(location)
           ? null
           : AppRoutes.teacherOnboardingSignup;
     }
@@ -271,6 +297,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             _appPage(state, const TeacherSignupView()),
       ),
       GoRoute(
+        path: AppRoutes.teacherOnboardingReview,
+        pageBuilder: (context, state) =>
+            _onboardingStepPage(state, const TeacherOnboardingReviewView()),
+      ),
+      GoRoute(
         path: AppRoutes.teacherOnboardingPending,
         pageBuilder: (context, state) =>
             _appPage(state, const TeacherPendingApprovalView()),
@@ -287,6 +318,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.studentOnboardingAcademicInfo,
         pageBuilder: (context, state) =>
             _onboardingStepPage(state, const StudentAcademicInfoView()),
+      ),
+      GoRoute(
+        path: AppRoutes.studentOnboardingReview,
+        pageBuilder: (context, state) =>
+            _onboardingStepPage(state, const StudentOnboardingReviewView()),
       ),
 
       // Student shell (§10.2 tab set)

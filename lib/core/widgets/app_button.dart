@@ -34,7 +34,7 @@ class AppButton extends StatelessWidget {
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(
                 variant == AppButtonVariant.primary
-                    ? context.colors.onPrimary
+                    ? context.colors.onAccent
                     : context.colors.primary,
               ),
             ),
@@ -53,8 +53,7 @@ class AppButton extends StatelessWidget {
 
     if (variant == AppButtonVariant.primary) {
       final primaryColor = context.colors.primary;
-      final secondaryColor = context.colors.secondary;
-      final gradientEnd = Color.lerp(primaryColor, secondaryColor, 0.45) ?? secondaryColor;
+      final gradientEnd = Color.lerp(primaryColor, const Color(0xFF1E6B52), 0.4) ?? primaryColor;
 
       return PressScale(
         enabled: !isDisabled,
@@ -94,12 +93,12 @@ class AppButton extends StatelessWidget {
                   child: Center(
                     child: DefaultTextStyle.merge(
                       style: context.textStyles.labelLarge?.copyWith(
-                        color: context.colors.onPrimary,
+                        color: context.colors.onAccent,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.4,
                       ),
                       child: IconTheme.merge(
-                        data: IconThemeData(color: context.colors.onPrimary),
+                        data: IconThemeData(color: context.colors.onAccent),
                         child: child,
                       ),
                     ),
@@ -114,7 +113,15 @@ class AppButton extends StatelessWidget {
 
     final button = switch (variant) {
       AppButtonVariant.primary => const SizedBox.shrink(),
-      AppButtonVariant.outlined => OutlinedButton(onPressed: effectiveOnPressed, child: child),
+      AppButtonVariant.outlined => OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(context.dimens.pillRadius),
+            ),
+          ),
+          onPressed: effectiveOnPressed,
+          child: child,
+        ),
       AppButtonVariant.text => TextButton(onPressed: effectiveOnPressed, child: child),
     };
 

@@ -47,6 +47,15 @@ final studentTestAttemptsProvider = FutureProvider<List<TestAttempt>>((
   );
 });
 
+/// True once the student has submitted at least one test attempt (any
+/// test). Drives the pricing-visibility rule: price stays hidden on
+/// discovery screens (Home subject cards, Chapters bundle header) until
+/// this flips true, then it's shown from the result screen onward.
+final hasCompletedAnyTestAttemptProvider = Provider<bool>((ref) {
+  final attempts = ref.watch(studentTestAttemptsProvider).value;
+  return attempts != null && attempts.isNotEmpty;
+});
+
 /// All catalog tests keyed by id, so attempt cards can show a human-readable
 /// `Test.title` instead of a raw `testId` (§10.1 — cards must show scannable
 /// info, not raw ids). Mirrors `cartTestsByIdProvider` in

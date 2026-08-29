@@ -135,7 +135,7 @@ class TeacherSignupStep2Card extends StatelessWidget {
             Expanded(
               flex: 2,
               child: AppPrimaryButton(
-                label: context.l10n.teacherSignupSubmitButton,
+                label: context.l10n.commonContinue,
                 loading: isSubmitting,
                 onPressed: isSubmitting ? null : onSubmit,
               ),

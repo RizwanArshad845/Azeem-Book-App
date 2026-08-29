@@ -10,8 +10,8 @@ import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../../domain/catalog/entities/chapter.dart';
-import '../../../domain/student_cart/usecases/price_for_subject_bundle.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
+import '../../student_progress/viewmodel/student_progress_viewmodel.dart';
 import '../viewmodel/student_home_viewmodel.dart';
 import '../widgets/subject_bundle_header.dart';
 
@@ -56,40 +56,20 @@ class ChapterListView extends ConsumerWidget {
     final purchasedIds = ref.watch(purchasedSubjectIdsProvider).value;
     final isOwned = purchasedIds?.contains(subjectId) ?? false;
     final tests = ref.watch(testsForSubjectProvider(subjectId)).value;
-    final cartCount =
-        ref.watch(studentCartViewModelProvider).value?.items?.length ?? 0;
+    final price = ref.watch(subjectBundlePriceProvider(subjectId));
+    final hasAttempted = ref.watch(hasCompletedAnyTestAttemptProvider);
 
     final title = subjectName != null
         ? context.l10n.localizedSubjectName(subjectName!)
         : context.l10n.chapterListTitle;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        actions: [
-          IconButton(
-            icon: Badge(
-              isLabelVisible: cartCount > 0,
-              label: Text('$cartCount'),
-              child: const Icon(Icons.shopping_cart_outlined),
-            ),
-            onPressed: () => context.push(AppRoutes.studentCart),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text(title)),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(context.dimens.lg),
           child: Column(
             children: [
-              if (!isOwned && tests != null && tests.isNotEmpty) ...[
-                SubjectBundleHeader(
-                  subjectName: title,
-                  price: priceForSubjectBundle(tests).toStringAsFixed(0),
-                  onBuyNow: () => _buyNow(context, ref),
-                ),
-                SizedBox(height: context.dimens.md),
-              ],
               Expanded(
                 child: AsyncValueWidget<List<Chapter>>(
                   value: chaptersAsync,
@@ -155,6 +135,14 @@ class ChapterListView extends ConsumerWidget {
                   },
                 ),
               ),
+              if (!isOwned && tests != null && tests.isNotEmpty) ...[
+                SizedBox(height: context.dimens.md),
+                SubjectBundleHeader(
+                  subjectName: title,
+                  price: hasAttempted ? price?.toStringAsFixed(0) : null,
+                  onBuyNow: () => _buyNow(context, ref),
+                ),
+              ],
             ],
           ),
         ),

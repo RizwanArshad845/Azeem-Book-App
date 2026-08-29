@@ -7,6 +7,8 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.onPrimary,
     required this.secondary,
     required this.onSecondary,
+    required this.accent,
+    required this.onAccent,
     required this.success,
     required this.warning,
     required this.error,
@@ -22,6 +24,13 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color onPrimary;
   final Color secondary;
   final Color onSecondary;
+
+  /// Brand turquoise sampled directly from the Azeem Publications logo icon
+  /// (assets/images/azeem_academy_logo.png, dominant non-white/non-navy
+  /// pixel color — #3BB89A). Distinct from [primary]/[secondary]; used for
+  /// primary CTA buttons.
+  final Color accent;
+  final Color onAccent;
   final Color success;
   final Color warning;
   final Color error;
@@ -37,6 +46,8 @@ class AppColors extends ThemeExtension<AppColors> {
     onPrimary: Color(0xFFFFFFFF),
     secondary: Color(0xFFEF9F27),
     onSecondary: Color(0xFF1A1A1A),
+    accent: Color(0xFF115740),
+    onAccent: Color(0xFFFFFFFF),
     success: Color(0xFF2E7D32),
     warning: Color(0xFFEF9F27),
     error: Color(0xFFC62828),
@@ -63,6 +74,8 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? onPrimary,
     Color? secondary,
     Color? onSecondary,
+    Color? accent,
+    Color? onAccent,
     Color? success,
     Color? warning,
     Color? error,
@@ -78,6 +91,8 @@ class AppColors extends ThemeExtension<AppColors> {
       onPrimary: onPrimary ?? this.onPrimary,
       secondary: secondary ?? this.secondary,
       onSecondary: onSecondary ?? this.onSecondary,
+      accent: accent ?? this.accent,
+      onAccent: onAccent ?? this.onAccent,
       success: success ?? this.success,
       warning: warning ?? this.warning,
       error: error ?? this.error,
@@ -98,6 +113,8 @@ class AppColors extends ThemeExtension<AppColors> {
       onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
       secondary: Color.lerp(secondary, other.secondary, t)!,
       onSecondary: Color.lerp(onSecondary, other.onSecondary, t)!,
+      accent: Color.lerp(accent, other.accent, t)!,
+      onAccent: Color.lerp(onAccent, other.onAccent, t)!,
       success: Color.lerp(success, other.success, t)!,
       warning: Color.lerp(warning, other.warning, t)!,
       error: Color.lerp(error, other.error, t)!,

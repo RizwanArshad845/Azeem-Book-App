@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
-import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/review_answer_card.dart';
 import '../../../domain/catalog/entities/question.dart';
 import '../../../domain/test_taking/entities/submission_answer.dart';
@@ -44,11 +43,6 @@ class ReviewAnswersSheet extends StatelessWidget {
             padding: EdgeInsets.only(bottom: context.dimens.sm),
             child: _card(context, i, questions[i], answersById[questions[i].id]),
           ),
-        SizedBox(height: context.dimens.sm),
-        AppOutlinedButton(
-          label: context.l10n.commonClose,
-          onPressed: () => Navigator.of(context).pop(),
-        ),
       ],
     );
   }

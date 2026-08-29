@@ -11,6 +11,7 @@
   "commonSkip": "Skip",
   "commonCancel": "Cancel",
   "commonConfirm": "Confirm",
+  "commonSubmit": "Submit",
   "commonRetry": "Retry",
   "commonComingSoon": "Coming soon",
   "commonRequiredField": "This field is required",
@@ -190,10 +191,19 @@
   "profileDeleteAccount": "Delete Account",
   "profileDeleteDialogTitle": "Delete Account?",
   "profileDeleteDialogBody": "This action cannot be undone. All your data will be permanently removed.",
-  "profileDeleteConfirmField": "Enter your phone number to confirm",
+  "profileDeleteConfirmField": "Type your phone number ({phone}) to delete your account",
+  "@profileDeleteConfirmField": {
+    "placeholders": {
+      "phone": { "type": "String" }
+    }
+  },
 
   "campusLabel": "Campus",
   "subjectSelectionTitle": "Your subjects",
+  "onboardingReviewTitle": "Review Details",
+  "onboardingReviewHeadline": "Review Your Details",
+  "onboardingReviewSubtitle": "Make sure everything looks right before you continue.",
+  "onboardingReviewNoTeacher": "No teacher assigned",
   "studentHomeWelcomeName": "Hi, {name}! 👋",
   "@studentHomeWelcomeName": {
     "placeholders": { "name": { "type": "String" } }
@@ -324,6 +334,7 @@
       "price": { "type": "String" }
     }
   },
+  "subjectCardAddToCartGeneric": "Add to Cart",
   "subjectCardExploreHint": "Explore chapters",
 
   "metaQuestions": "ques",
@@ -456,10 +467,6 @@
   "promoTeacherDiscountSubtitle": "Use your teacher code to get 15% discount on all subjects",
   "promoPracticeBankTitle": "Personalized Practice",
   "promoPracticeBankSubtitle": "Sharpen exam prep with targeted chapter question banks",
-  "filterCoursesLabel": "Filter Courses",
-  "filterAllCourses": "All Courses",
-  "filterScienceStream": "Science Stream",
-  "filterGeneralStream": "General Stream",
   "progressAllAttempts": "All Attempts",
   "progressLatestAttempt": "Latest Attempt",
   "progressNoChaptersFound": "No chapter attempts found for this selection.",

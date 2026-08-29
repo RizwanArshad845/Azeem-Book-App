@@ -8,8 +8,8 @@ import '../../../core/providers/locale_provider.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
-import '../../../core/widgets/confirm_dialog.dart';
 import '../../../core/widgets/loading_indicator.dart';
+import '../../../core/widgets/typed_confirm.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
 import '../../teacher_onboarding/viewmodel/teacher_onboarding_viewmodel.dart';
@@ -70,13 +70,15 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
     });
   }
 
-  void _handleDeleteAccount() {
-    confirmDialog(
+  void _handleDeleteAccount(Teacher teacher) {
+    showTypedConfirmDialog(
       context,
       title: context.l10n.profileDeleteDialogTitle,
       message: context.l10n.profileDeleteDialogBody,
+      confirmationText: teacher.phoneNumber,
+      fieldLabel: context.l10n.profileDeleteConfirmField(teacher.phoneNumber),
       confirmLabel: context.l10n.profileDeleteAccount,
-      isDestructive: true,
+      cancelLabel: context.l10n.commonCancel,
     ).then((confirmed) {
       if (confirmed != true || !mounted) return;
       ref
@@ -113,7 +115,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
       appBar: AppBar(
         title: Text(context.l10n.profileTitle),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.adaptive.arrow_back),
           onPressed: () {
             if (context.canPop()) {
               context.pop();
@@ -155,7 +157,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                       child: AppDangerButton(
                         label: context.l10n.profileDeleteAccount,
                         icon: Icons.delete_outline,
-                        onPressed: isSaving ? null : _handleDeleteAccount,
+                        onPressed: isSaving ? null : () => _handleDeleteAccount(teacher),
                       ),
                     ),
                   ],

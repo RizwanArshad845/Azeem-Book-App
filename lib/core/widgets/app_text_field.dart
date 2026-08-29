@@ -46,8 +46,8 @@ class AppTextField extends StatelessWidget {
       textCapitalization: textCapitalization,
       decoration: InputDecoration(
         label: isRequired
-            ? RichText(
-                text: TextSpan(
+            ? Text.rich(
+                TextSpan(
                   style: DefaultTextStyle.of(context).style,
                   children: [
                     TextSpan(text: label),

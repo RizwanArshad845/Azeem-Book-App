@@ -81,13 +81,30 @@ class _OtpDigitBoxState extends State<OtpDigitBox> {
 
   @override
   Widget build(BuildContext context) {
+    final solidBlackBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(context.dimens.radiusMd),
+      borderSide: const BorderSide(
+        color: Colors.black,
+        width: 2.0,
+      ),
+    );
+
+    final focusedBlackBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(context.dimens.radiusMd),
+      borderSide: const BorderSide(
+        color: Colors.black,
+        width: 2.5,
+      ),
+    );
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         for (var i = 0; i < widget.length; i++) ...[
-          if (i != 0) SizedBox(width: context.dimens.sm),
+          if (i != 0) SizedBox(width: context.dimens.sm + 4),
           SizedBox(
-            width: context.dimens.iconLg + context.dimens.md,
+            width: context.dimens.iconLg + context.dimens.lg,
+            height: 60,
             child: TextField(
               controller: _controllers[i],
               focusNode: _focusNodes[i],
@@ -95,14 +112,28 @@ class _OtpDigitBoxState extends State<OtpDigitBox> {
               textAlign: TextAlign.center,
               keyboardType: TextInputType.number,
               maxLength: 1,
-              style: context.textStyles.headlineSmall,
+              style: context.textStyles.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: InputDecoration(
                 counterText: '',
                 isDense: true,
+                filled: true,
+                fillColor: context.colors.surface,
                 contentPadding: EdgeInsets.symmetric(
-                  vertical: context.dimens.sm,
+                  vertical: context.dimens.md - 2,
                   horizontal: context.dimens.xs,
+                ),
+                border: solidBlackBorder,
+                enabledBorder: solidBlackBorder,
+                focusedBorder: focusedBlackBorder,
+                disabledBorder: solidBlackBorder.copyWith(
+                  borderSide: BorderSide(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
                 ),
               ),
               onChanged: (value) => _onChanged(i, value),

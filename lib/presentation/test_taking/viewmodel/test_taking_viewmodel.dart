@@ -10,6 +10,7 @@ import '../../../domain/test_taking/entities/submission_answer.dart';
 import '../../../domain/test_taking/entities/test_attempt.dart';
 import '../../../domain/test_taking/usecases/submit_test_attempt_usecase.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
+import '../../student_progress/viewmodel/student_progress_viewmodel.dart';
 import 'test_taking_state.dart';
 
 /// Test-taking session for a single `testId` (§10.2 outside-shell,
@@ -212,6 +213,10 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
         state = AsyncData(
           current.copyWith(status: TestTakingStatus.submitted, result: attempt),
         );
+        // So the Progress tab reflects this attempt immediately without a
+        // manual pull-to-refresh — the other progress-derived providers
+        // transitively watch this one and cascade-recompute on their own.
+        ref.invalidate(studentTestAttemptsProvider);
         return attempt;
       },
       failure: (_) {

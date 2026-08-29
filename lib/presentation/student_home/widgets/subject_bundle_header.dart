@@ -18,7 +18,10 @@ class SubjectBundleHeader extends StatelessWidget {
   });
 
   final String subjectName;
-  final String price;
+
+  /// Null hides the price/discount row and falls back to a plain "Buy Now"
+  /// button label — used pre-first-attempt per the pricing-visibility rule.
+  final String? price;
   final VoidCallback onBuyNow;
   final int discountPercent;
 
@@ -27,8 +30,9 @@ class SubjectBundleHeader extends StatelessWidget {
     final localizedName = context.l10n.localizedSubjectName(subjectName);
     final bundleTitle = context.l10n.subjectBundleTitle(localizedName);
     final discountLabel = context.l10n.subjectBundleDiscount(discountPercent);
-    final priceLabel = context.l10n.subjectCardAddToCart(price);
-    final buttonLabel = context.l10n.buyNowWithPrice(price);
+    final priceLabel = price != null ? context.l10n.subjectCardAddToCart(price!) : null;
+    final buttonLabel =
+        price != null ? context.l10n.buyNowWithPrice(price!) : context.l10n.buyNow;
 
     return AppCard(
       child: Column(
@@ -59,23 +63,25 @@ class SubjectBundleHeader extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: context.dimens.xs / 2),
-                    Row(
-                      children: [
-                        Text(
-                          priceLabel,
-                          style: context.textStyles.titleSmall?.copyWith(
-                            color: context.colors.primary,
-                            fontWeight: FontWeight.w800,
+                    if (priceLabel != null) ...[
+                      SizedBox(height: context.dimens.xs / 2),
+                      Row(
+                        children: [
+                          Text(
+                            priceLabel,
+                            style: context.textStyles.titleSmall?.copyWith(
+                              color: context.colors.primary,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
-                        ),
-                        SizedBox(width: context.dimens.sm),
-                        StatusBadge(
-                          label: discountLabel,
-                          color: context.colors.secondary,
-                        ),
-                      ],
-                    ),
+                          SizedBox(width: context.dimens.sm),
+                          StatusBadge(
+                            label: discountLabel,
+                            color: context.colors.secondary,
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),

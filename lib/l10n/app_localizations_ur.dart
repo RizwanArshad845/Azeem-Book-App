@@ -37,6 +37,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get commonConfirm => 'تائید کریں';
 
   @override
+  String get commonSubmit => 'جمع کروائیں';
+
+  @override
   String get commonRetry => 'دوبارہ کوشش کریں';
 
   @override
@@ -494,13 +497,28 @@ class AppLocalizationsUr extends AppLocalizations {
       'یہ عمل واپس نہیں ہو سکتا۔ آپ کا تمام ڈیٹا مستقل طور پر ختم ہو جائے گا۔';
 
   @override
-  String get profileDeleteConfirmField => 'تصدیق کے لیے اپنا فون نمبر درج کریں';
+  String profileDeleteConfirmField(String phone) {
+    return 'اکاؤنٹ حذف کرنے کے لیے اپنا فون نمبر ($phone) درج کریں';
+  }
 
   @override
   String get campusLabel => 'کیمپس';
 
   @override
   String get subjectSelectionTitle => 'آپ کے مضامین';
+
+  @override
+  String get onboardingReviewTitle => 'تفصیلات کا جائزہ';
+
+  @override
+  String get onboardingReviewHeadline => 'اپنی تفصیلات کا جائزہ لیں';
+
+  @override
+  String get onboardingReviewSubtitle =>
+      'آگے بڑھنے سے پہلے یقینی بنائیں کہ سب کچھ درست ہے۔';
+
+  @override
+  String get onboardingReviewNoTeacher => 'کوئی استاد تفویض نہیں';
 
   @override
   String studentHomeWelcomeName(String name) {
@@ -831,6 +849,9 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
+  String get subjectCardAddToCartGeneric => 'کارٹ میں ڈالیں';
+
+  @override
   String get subjectCardExploreHint => 'ابواب دیکھیں';
 
   @override
@@ -1105,18 +1126,6 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get promoPracticeBankSubtitle =>
       'مخصوص اسباق کے سوالیہ بینکوں سے امتحانات کی بہتر تیاری کریں';
-
-  @override
-  String get filterCoursesLabel => 'کورسز فلٹر کریں';
-
-  @override
-  String get filterAllCourses => 'تمام کورسز';
-
-  @override
-  String get filterScienceStream => 'سائنس گروپ';
-
-  @override
-  String get filterGeneralStream => 'جنرل گروپ';
 
   @override
   String get progressAllAttempts => 'تمام کوششیں';

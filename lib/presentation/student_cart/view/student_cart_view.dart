@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/async_value_widget.dart';
@@ -12,6 +10,7 @@ import '../../../domain/student_cart/entities/cart_item.dart';
 import '../viewmodel/student_cart_viewmodel.dart';
 import '../widgets/cart_item_card.dart';
 import '../widgets/cart_total_row.dart';
+import '../widgets/checkout_review_sheet.dart';
 
 /// Student shell Cart tab root (§10.2: "Add-to-cart summary, checkout ->
 /// payment gateway redirect"). One primary action per §10.1: the
@@ -64,7 +63,7 @@ class StudentCartView extends ConsumerWidget {
                   SizedBox(height: context.dimens.lg),
                   AppPrimaryButton(
                     label: context.l10n.cartCheckout,
-                    onPressed: () => context.push(AppRoutes.cartCheckout),
+                    onPressed: () => CheckoutReviewSheet.show(context),
                   ),
                 ],
               ),

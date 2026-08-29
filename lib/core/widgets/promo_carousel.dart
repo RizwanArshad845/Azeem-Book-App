@@ -63,7 +63,7 @@ class PromoCarousel extends ConsumerStatefulWidget {
 class _PromoCarouselState extends ConsumerState<PromoCarousel> {
   late final PageController _controller = PageController(
     initialPage: PromoCarouselPageNotifier.virtualBase,
-    viewportFraction: 0.92,
+    viewportFraction: 1.0,
   );
   Timer? _timer;
 
@@ -100,24 +100,28 @@ class _PromoCarouselState extends ConsumerState<PromoCarousel> {
 
     return Column(
       children: [
-        SizedBox(
-          height: widget.height,
-          child: PageView.builder(
-            controller: _controller,
-            onPageChanged: (p) =>
-                ref.read(promoCarouselPageProvider.notifier).setPage(p),
-            itemBuilder: (context, index) {
-              final banner = banners[index % banners.length];
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.dimens.xs),
-                child: Dismissible(
-                  key: ValueKey('promo-${banner.id}-$index'),
-                  direction: DismissDirection.up,
-                  onDismissed: (_) => widget.onDismiss?.call(banner.id),
-                  child: _PromoCard(banner: banner),
-                ),
-              );
-            },
+        RepaintBoundary(
+          child: SizedBox(
+            height: widget.height,
+            child: PageView.builder(
+              controller: _controller,
+              onPageChanged: (p) =>
+                  ref.read(promoCarouselPageProvider.notifier).setPage(p),
+              itemBuilder: (context, index) {
+                final banner = banners[index % banners.length];
+                return Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.dimens.lg,
+                  ),
+                  child: Dismissible(
+                    key: ValueKey('promo-${banner.id}-$index'),
+                    direction: DismissDirection.up,
+                    onDismissed: (_) => widget.onDismiss?.call(banner.id),
+                    child: _PromoCard(banner: banner),
+                  ),
+                );
+              },
+            ),
           ),
         ),
         if (banners.length > 1) ...[

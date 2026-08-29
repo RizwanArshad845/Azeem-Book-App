@@ -11,9 +11,11 @@ import '../../../domain/student_cart/usecases/add_subject_bundle_usecase.dart';
 import '../../../domain/student_cart/usecases/checkout_usecase.dart';
 import '../../../domain/student_cart/usecases/get_cart_usecase.dart';
 import '../../../domain/student_cart/usecases/get_purchased_subject_ids_usecase.dart';
+import '../../../domain/student_cart/usecases/price_for_subject_bundle.dart';
 import '../../../domain/student_cart/usecases/remove_from_cart_usecase.dart';
 import '../../../domain/student_onboarding/entities/subject_enrollment.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
+import '../../student_home/viewmodel/student_home_viewmodel.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 
 /// Student Cart tab (§10.2 "Add-to-cart summary, checkout -> payment
@@ -71,6 +73,22 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
       success: (cart) => AsyncData<Cart>(cart),
       failure: (failure) => AsyncError<Cart>(failure, StackTrace.current),
     );
+  }
+
+  /// Convenience method to resolve subject and tests by [subjectId] and add
+  /// the bundle to cart.
+  Future<void> addSubjectBundleById(String subjectId) async {
+    final tests = await ref.read(testsForSubjectProvider(subjectId).future);
+    final subjects = await ref.read(enrolledSubjectsProvider.future);
+    final subject = subjects.firstWhere(
+      (s) => s.id == subjectId,
+      orElse: () => Subject(
+        id: subjectId,
+        boardClassId: '',
+        name: 'Subject',
+      ),
+    );
+    await addSubjectBundle(subject, tests);
   }
 
   Future<void> removeSubject(String subjectId) async {
@@ -160,3 +178,17 @@ final testsForSubjectProvider =
         failure: (failure) => throw failure,
       );
     });
+
+/// Wraps `priceForSubjectBundle` behind a provider so presentation widgets
+/// (`SubjectCard`, `ChapterListView`) don't import the domain usecase
+/// directly (audit C1) — keyed by `subjectId`, null while tests are still
+/// loading or the subject has no tests yet.
+final subjectBundlePriceProvider = Provider.family<double?, String>((
+  ref,
+  subjectId,
+) {
+  final tests = ref.watch(testsForSubjectProvider(subjectId)).value;
+  return (tests != null && tests.isNotEmpty)
+      ? priceForSubjectBundle(tests)
+      : null;
+});

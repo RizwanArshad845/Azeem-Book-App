@@ -22,20 +22,6 @@ final subjectViewModeProvider =
   SubjectViewModeNotifier.new,
 );
 
-/// "All Courses" filter for the subjects list.
-enum SubjectFilter { all, owned, available }
-
-class SubjectFilterNotifier extends Notifier<SubjectFilter> {
-  @override
-  SubjectFilter build() => SubjectFilter.all;
-  void set(SubjectFilter filter) => state = filter;
-}
-
-final subjectFilterProvider =
-    NotifierProvider<SubjectFilterNotifier, SubjectFilter>(
-  SubjectFilterNotifier.new,
-);
-
 // Student Home tab (§10.2 "Selected subjects grid, live-test banner,
 // subject -> chapter -> test drill-down"). This feature owns no domain/data
 // layer of its own — it is a read-only composition over the existing
@@ -156,19 +142,6 @@ final liveTestsProvider = FutureProvider<List<Test>>((ref) async {
   });
   return liveTests;
 });
-
-/// Riverpod state for course filtering on Home.
-class StudentHomeCourseFilterNotifier extends Notifier<String> {
-  @override
-  String build() => 'All Courses';
-
-  void setFilter(String filter) => state = filter;
-}
-
-final studentHomeCourseFilterProvider =
-    NotifierProvider<StudentHomeCourseFilterNotifier, String>(
-  StudentHomeCourseFilterNotifier.new,
-);
 
 /// Riverpod state for dismissed promo banner IDs.
 class DismissedPromoBannersNotifier extends Notifier<Set<String>> {

@@ -27,11 +27,22 @@ class TestResultsView extends ConsumerWidget {
     required this.testId,
     required this.attempt,
     required this.questions,
+    this.isOwned = false,
+    this.isHistoricalView = false,
   });
 
   final String testId;
   final TestAttempt attempt;
   final List<Question> questions;
+
+  /// Whether the test's subject has been purchased — exempts it from the
+  /// global free-attempts exhaustion gate on Reattempt.
+  final bool isOwned;
+
+  /// True when viewing a past attempt (e.g. from the Progress tab) rather
+  /// than right after submitting — hides Reattempt/Go-Home, showing only
+  /// Review Answers.
+  final bool isHistoricalView;
 
   String _sectionTitle(BuildContext context, int number, QuestionType type) {
     final label = switch (type) {
@@ -58,7 +69,7 @@ class TestResultsView extends ConsumerWidget {
             ? context.colors.warning
             : context.colors.error;
 
-    final exhausted = ref.watch(attemptsExhaustedProvider);
+    final exhausted = !isOwned && ref.watch(attemptsExhaustedProvider);
 
     return SafeArea(
       child: Padding(
@@ -140,33 +151,35 @@ class TestResultsView extends ConsumerWidget {
                 answers: attempt.answers,
               ),
             ),
-            SizedBox(height: context.dimens.sm),
-            Row(
-              children: [
-                Expanded(
-                  child: AppOutlinedButton(
-                    label: context.l10n.testResultsReattemptButton,
-                    onPressed: () {
-                      if (exhausted) {
-                        AppSnackbar.show(
-                          context,
-                          context.l10n.attemptsBlockedMessage,
-                        );
-                        return;
-                      }
-                      ref.invalidate(testTakingViewModelProvider(testId));
-                    },
+            if (!isHistoricalView) ...[
+              SizedBox(height: context.dimens.sm),
+              Row(
+                children: [
+                  Expanded(
+                    child: AppOutlinedButton(
+                      label: context.l10n.testResultsReattemptButton,
+                      onPressed: () {
+                        if (exhausted) {
+                          AppSnackbar.show(
+                            context,
+                            context.l10n.attemptsBlockedMessage,
+                          );
+                          return;
+                        }
+                        ref.invalidate(testTakingViewModelProvider(testId));
+                      },
+                    ),
                   ),
-                ),
-                SizedBox(width: context.dimens.md),
-                Expanded(
-                  child: AppOutlinedButton(
-                    label: context.l10n.resultsReturnHome,
-                    onPressed: () => context.go(AppRoutes.studentHome),
+                  SizedBox(width: context.dimens.md),
+                  Expanded(
+                    child: AppOutlinedButton(
+                      label: context.l10n.resultsReturnHome,
+                      onPressed: () => context.go(AppRoutes.studentHome),
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ],
         ),
       ),

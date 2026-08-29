@@ -18,6 +18,9 @@ class AppDropdownCard<T> extends StatelessWidget {
     this.compareFn,
     this.icon = Icons.tune_rounded,
     this.isRequired = false,
+    this.valueBuilder,
+    this.itemBuilder,
+    this.popupConstraints,
   });
 
   final String label;
@@ -29,49 +32,87 @@ class AppDropdownCard<T> extends StatelessWidget {
   final IconData icon;
   final bool isRequired;
 
+  /// Overrides how the selected value is displayed inside the card (the
+  /// card's own icon/label chrome is always drawn regardless) — falls back
+  /// to a plain `Text` when omitted.
+  final Widget Function(BuildContext context, T? selectedItem)? valueBuilder;
+  final Widget Function(BuildContext context, T item, bool isDisabled, bool isSelected)? itemBuilder;
+  final BoxConstraints? popupConstraints;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.dimens.md,
-        vertical: context.dimens.xs,
-      ),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(context.dimens.radiusLg),
-        border: Border.all(color: context.colors.divider),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(context.dimens.sm),
-            decoration: BoxDecoration(
-              color: context.colors.primary.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(context.dimens.radiusMd),
-            ),
-            child: Icon(icon, color: context.colors.primary, size: context.dimens.iconMd),
+    return AppDropdown<T>(
+      label: label,
+      items: items,
+      onChanged: onChanged,
+      selectedItem: selectedItem,
+      itemAsString: itemAsString,
+      compareFn: compareFn,
+      hideLabel: true,
+      itemBuilder: itemBuilder,
+      popupConstraints: popupConstraints,
+      dropdownBuilder: (context, selected) {
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: context.dimens.md,
+            vertical: context.dimens.sm,
           ),
-          SizedBox(width: context.dimens.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _Label(label: label, isRequired: isRequired),
-                AppDropdown<T>(
-                  label: label,
-                  items: items,
-                  onChanged: onChanged,
-                  selectedItem: selectedItem,
-                  itemAsString: itemAsString,
-                  compareFn: compareFn,
-                  hideLabel: true,
+          decoration: BoxDecoration(
+            color: context.colors.surface,
+            borderRadius: BorderRadius.circular(context.dimens.radiusLg),
+            border: Border.all(color: context.colors.divider),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: context.colors.primary.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(context.dimens.radiusMd),
                 ),
-              ],
-            ),
+                child: Icon(
+                  icon,
+                  color: context.colors.primary,
+                  size: context.dimens.iconMd,
+                ),
+              ),
+              SizedBox(width: context.dimens.sm + 4),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _Label(label: label, isRequired: isRequired),
+                    const SizedBox(height: 2),
+                    if (valueBuilder != null)
+                      valueBuilder!(context, selected)
+                    else
+                      Text(
+                        selected != null
+                            ? (itemAsString != null
+                                ? itemAsString!(selected)
+                                : selected.toString())
+                            : label,
+                        style: context.textStyles.bodyMedium?.copyWith(
+                          color: selected != null
+                              ? context.colors.textPrimary
+                              : context.colors.textSecondary
+                                  .withValues(alpha: 0.7),
+                          fontWeight: selected != null
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -89,14 +130,17 @@ class _Label extends StatelessWidget {
       fontWeight: FontWeight.w600,
     );
     if (!isRequired) return Text(label, style: style);
-    return RichText(
-      text: TextSpan(
+    return Text.rich(
+      TextSpan(
         text: label,
         style: style,
         children: [
           TextSpan(
             text: ' *',
-            style: style?.copyWith(color: context.colors.error, fontWeight: FontWeight.w800),
+            style: style?.copyWith(
+              color: context.colors.error,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ],
       ),

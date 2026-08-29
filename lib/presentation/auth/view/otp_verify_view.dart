@@ -70,6 +70,7 @@ class OtpVerifyView extends ConsumerWidget {
             ],
           )
         else ...[
+          SizedBox(height: context.dimens.md),
           OtpDigitBox(
             length: AppConfig.otpLength,
             enabled: !isLoading,
@@ -81,7 +82,7 @@ class OtpVerifyView extends ConsumerWidget {
                   otpRequiredMessage: context.l10n.otpRequestRequired,
                 ),
           ),
-          SizedBox(height: context.dimens.lg),
+          SizedBox(height: context.dimens.xl),
           if (isLoading) const LoadingIndicator(),
           if (!isLoading && failure is Failure)
             Padding(

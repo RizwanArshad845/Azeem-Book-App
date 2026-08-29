@@ -11,6 +11,7 @@
   "commonSkip": "چھوڑیں",
   "commonCancel": "منسوخ کریں",
   "commonConfirm": "تائید کریں",
+  "commonSubmit": "جمع کروائیں",
   "commonRetry": "دوبارہ کوشش کریں",
   "commonComingSoon": "عنقریب",
   "commonRequiredField": "یہ خانہ ضروری ہے",
@@ -182,10 +183,19 @@
   "profileLogoutConfirmMessage": "دوبارہ سائن ان کرنے کے لیے آپ کو اپنا فون نمبر دوبارہ تصدیق کرنا ہوگا۔",
   "profileDeleteDialogTitle": "اکاؤنٹ حذف کریں؟",
   "profileDeleteDialogBody": "یہ عمل واپس نہیں ہو سکتا۔ آپ کا تمام ڈیٹا مستقل طور پر ختم ہو جائے گا۔",
-  "profileDeleteConfirmField": "تصدیق کے لیے اپنا فون نمبر درج کریں",
+  "profileDeleteConfirmField": "اکاؤنٹ حذف کرنے کے لیے اپنا فون نمبر ({phone}) درج کریں",
+  "@profileDeleteConfirmField": {
+    "placeholders": {
+      "phone": { "type": "String" }
+    }
+  },
 
   "campusLabel": "کیمپس",
   "subjectSelectionTitle": "آپ کے مضامین",
+  "onboardingReviewTitle": "تفصیلات کا جائزہ",
+  "onboardingReviewHeadline": "اپنی تفصیلات کا جائزہ لیں",
+  "onboardingReviewSubtitle": "آگے بڑھنے سے پہلے یقینی بنائیں کہ سب کچھ درست ہے۔",
+  "onboardingReviewNoTeacher": "کوئی استاد تفویض نہیں",
   "studentHomeWelcomeName": "ہیلو، {name}! 👋",
   "@studentHomeWelcomeName": {
     "placeholders": { "name": { "type": "String" } }
@@ -292,6 +302,7 @@
       "price": { "type": "String" }
     }
   },
+  "subjectCardAddToCartGeneric": "کارٹ میں ڈالیں",
   "subjectCardExploreHint": "ابواب دیکھیں",
 
   "metaQuestions": "سوالات",
@@ -398,10 +409,6 @@
   "promoTeacherDiscountSubtitle": "تمام مضامین پر 15 فیصد رعایت حاصل کرنے کے لیے اپنے استاد کا کوڈ استعمال کریں",
   "promoPracticeBankTitle": "ذاتی مشق",
   "promoPracticeBankSubtitle": "مخصوص اسباق کے سوالیہ بینکوں سے امتحانات کی بہتر تیاری کریں",
-  "filterCoursesLabel": "کورسز فلٹر کریں",
-  "filterAllCourses": "تمام کورسز",
-  "filterScienceStream": "سائنس گروپ",
-  "filterGeneralStream": "جنرل گروپ",
   "progressAllSubjects": "تمام مضامین",
   "progressSubjectFilterLabel": "مضمون",
   "progressAttemptFilterLabel": "کوشش",

@@ -86,7 +86,7 @@ class AppTheme {
           minimumSize: const Size.fromHeight(52),
           side: BorderSide(color: colors.primary),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+            borderRadius: BorderRadius.circular(AppDimens.pillRadius),
           ),
         ),
       ),

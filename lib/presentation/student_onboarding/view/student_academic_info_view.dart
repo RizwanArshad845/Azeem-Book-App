@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_dropdown.dart';
@@ -32,7 +34,6 @@ class StudentAcademicInfoView extends ConsumerWidget {
     final selectedClassLevelId = ref.watch(selectedClassLevelViewModelProvider);
     final selectedBoardClassId = ref.watch(selectedBoardClassViewModelProvider);
     final selections = ref.watch(subjectSelectionViewModelProvider);
-    final onboardingState = ref.watch(studentOnboardingViewModelProvider);
 
     AsyncValue<List<BoardClass>>? boardClassesAsync;
     if (selectedClassLevelId != null) {
@@ -132,7 +133,6 @@ class StudentAcademicInfoView extends ConsumerWidget {
           SizedBox(height: context.dimens.xl),
           AppPrimaryButton(
             label: context.l10n.commonConfirm,
-            loading: onboardingState.isLoading,
             onPressed: (selectedBoardClassId == null || selections.isEmpty)
                 ? null
                 : () {
@@ -140,7 +140,7 @@ class StudentAcademicInfoView extends ConsumerWidget {
                         ref.read(studentOnboardingViewModelProvider.notifier);
                     notifier.selectBoardClass(selectedBoardClassId);
                     notifier.replaceSubjectSelections(selections);
-                    notifier.submit();
+                    context.push(AppRoutes.studentOnboardingReview);
                   },
           ),
         ],

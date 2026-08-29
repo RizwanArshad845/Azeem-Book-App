@@ -57,7 +57,7 @@ class OnboardingCard extends StatelessWidget {
               ),
               padding: padding ??
                   EdgeInsets.symmetric(
-                    horizontal: context.dimens.xl,
+                    horizontal: context.dimens.lg,
                     vertical: context.dimens.xl,
                   ),
               child: child,

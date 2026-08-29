@@ -15,8 +15,10 @@ class AppConfig {
   static const bool enableGeminiOcr = false;
 
   /// Free test attempts a student gets across the whole app (any test, any
-  /// chapter) before the upgrade/payment gate locks further attempts.
-  static const int freeAttemptsPerStudent = 5;
+  /// chapter) before the upgrade/payment gate locks further attempts on
+  /// unpurchased subjects. Purchased subjects are exempt from this cap (see
+  /// `TestListView`/`TestResultsView`'s `isOwned` scoping).
+  static const int freeAttemptsPerStudent = 2;
 
   static const int otpLength = 4;
   static const String otpCode = '1234';

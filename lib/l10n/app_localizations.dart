@@ -152,6 +152,12 @@ abstract class AppLocalizations {
   /// **'Confirm'**
   String get commonConfirm;
 
+  /// No description provided for @commonSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get commonSubmit;
+
   /// No description provided for @commonRetry.
   ///
   /// In en, this message translates to:
@@ -1007,8 +1013,8 @@ abstract class AppLocalizations {
   /// No description provided for @profileDeleteConfirmField.
   ///
   /// In en, this message translates to:
-  /// **'Enter your phone number to confirm'**
-  String get profileDeleteConfirmField;
+  /// **'Type your phone number ({phone}) to delete your account'**
+  String profileDeleteConfirmField(String phone);
 
   /// No description provided for @campusLabel.
   ///
@@ -1021,6 +1027,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your subjects'**
   String get subjectSelectionTitle;
+
+  /// No description provided for @onboardingReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Details'**
+  String get onboardingReviewTitle;
+
+  /// No description provided for @onboardingReviewHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Your Details'**
+  String get onboardingReviewHeadline;
+
+  /// No description provided for @onboardingReviewSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Make sure everything looks right before you continue.'**
+  String get onboardingReviewSubtitle;
+
+  /// No description provided for @onboardingReviewNoTeacher.
+  ///
+  /// In en, this message translates to:
+  /// **'No teacher assigned'**
+  String get onboardingReviewNoTeacher;
 
   /// No description provided for @studentHomeWelcomeName.
   ///
@@ -1580,6 +1610,12 @@ abstract class AppLocalizations {
   /// **'Rs. {price}'**
   String subjectCardAddToCart(String price);
 
+  /// No description provided for @subjectCardAddToCartGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Cart'**
+  String get subjectCardAddToCartGeneric;
+
   /// No description provided for @subjectCardExploreHint.
   ///
   /// In en, this message translates to:
@@ -2077,30 +2113,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sharpen exam prep with targeted chapter question banks'**
   String get promoPracticeBankSubtitle;
-
-  /// No description provided for @filterCoursesLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Filter Courses'**
-  String get filterCoursesLabel;
-
-  /// No description provided for @filterAllCourses.
-  ///
-  /// In en, this message translates to:
-  /// **'All Courses'**
-  String get filterAllCourses;
-
-  /// No description provided for @filterScienceStream.
-  ///
-  /// In en, this message translates to:
-  /// **'Science Stream'**
-  String get filterScienceStream;
-
-  /// No description provided for @filterGeneralStream.
-  ///
-  /// In en, this message translates to:
-  /// **'General Stream'**
-  String get filterGeneralStream;
 
   /// No description provided for @progressAllAttempts.
   ///

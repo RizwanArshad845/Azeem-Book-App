@@ -43,20 +43,28 @@ class AttemptsBanner extends StatelessWidget {
             ),
           ),
           SizedBox(width: context.dimens.sm),
-          OutlinedButton(
+          ElevatedButton(
             onPressed: onUpgrade,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: context.colors.secondary,
-              side: BorderSide(color: context.colors.secondary),
+            style: ElevatedButton.styleFrom(
+              minimumSize: Size.zero,
+              backgroundColor: Colors.white,
+              foregroundColor: context.colors.primary,
+              elevation: 0,
               padding: EdgeInsets.symmetric(
-                horizontal: context.dimens.md,
-                vertical: context.dimens.xs,
+                horizontal: context.dimens.md + 2,
+                vertical: context.dimens.xs + 4,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(context.dimens.pillRadius),
               ),
             ),
-            child: Text(upgradeLabel),
+            child: Text(
+              upgradeLabel,
+              style: context.textStyles.labelMedium?.copyWith(
+                color: context.colors.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),

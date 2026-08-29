@@ -352,6 +352,7 @@ class _ChapterResultSheet extends ConsumerWidget {
                 testId: testId,
                 attempt: attempt,
                 questions: questions,
+                isHistoricalView: true,
               ),
             ),
           ),

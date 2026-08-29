@@ -37,6 +37,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonConfirm => 'Confirm';
 
   @override
+  String get commonSubmit => 'Submit';
+
+  @override
   String get commonRetry => 'Retry';
 
   @override
@@ -492,13 +495,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'This action cannot be undone. All your data will be permanently removed.';
 
   @override
-  String get profileDeleteConfirmField => 'Enter your phone number to confirm';
+  String profileDeleteConfirmField(String phone) {
+    return 'Type your phone number ($phone) to delete your account';
+  }
 
   @override
   String get campusLabel => 'Campus';
 
   @override
   String get subjectSelectionTitle => 'Your subjects';
+
+  @override
+  String get onboardingReviewTitle => 'Review Details';
+
+  @override
+  String get onboardingReviewHeadline => 'Review Your Details';
+
+  @override
+  String get onboardingReviewSubtitle =>
+      'Make sure everything looks right before you continue.';
+
+  @override
+  String get onboardingReviewNoTeacher => 'No teacher assigned';
 
   @override
   String studentHomeWelcomeName(String name) {
@@ -824,6 +842,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get subjectCardAddToCartGeneric => 'Add to Cart';
+
+  @override
   String get subjectCardExploreHint => 'Explore chapters';
 
   @override
@@ -1098,18 +1119,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get promoPracticeBankSubtitle =>
       'Sharpen exam prep with targeted chapter question banks';
-
-  @override
-  String get filterCoursesLabel => 'Filter Courses';
-
-  @override
-  String get filterAllCourses => 'All Courses';
-
-  @override
-  String get filterScienceStream => 'Science Stream';
-
-  @override
-  String get filterGeneralStream => 'General Stream';
 
   @override
   String get progressAllAttempts => 'All Attempts';

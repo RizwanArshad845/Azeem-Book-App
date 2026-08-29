@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/confirm_dialog.dart';
+import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
 import '../viewmodel/test_taking_state.dart';
 import '../viewmodel/test_taking_viewmodel.dart';
 import '../widgets/loading_gate.dart';
@@ -25,6 +26,9 @@ class TestTakingView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncState = ref.watch(testTakingViewModelProvider(testId));
     final status = asyncState.value?.status;
+    final purchasedIds = ref.watch(purchasedSubjectIdsProvider).value;
+    final subjectId = asyncState.value?.test?.subjectId;
+    final isOwned = subjectId != null && (purchasedIds?.contains(subjectId) ?? false);
 
     return PopScope(
       canPop: status != TestTakingStatus.inProgress &&
@@ -51,6 +55,7 @@ class TestTakingView extends ConsumerWidget {
                 testId: testId,
                 attempt: state.result!,
                 questions: state.questions,
+                isOwned: isOwned,
               ),
             },
           ),

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
-import '../../../core/widgets/app_snackbar.dart';
-import '../../../domain/common/failure.dart';
-import '../viewmodel/teacher_onboarding_viewmodel.dart';
 import '../viewmodel/teacher_signup_form_providers.dart';
 import '../viewmodel/teacher_signup_form_state.dart';
 import 'teacher_signup_step1_card.dart';
@@ -33,9 +32,7 @@ class TeacherSignupForm extends ConsumerWidget {
 
   void _handleSubmit(
     BuildContext context,
-    WidgetRef ref,
     TeacherFormNotifier notifier,
-    TeacherFormState formState,
   ) {
     // Step 1 is already guaranteed valid by the time step 2 is reachable —
     // `_handleNextStep1` only advances `currentStep` after `validateStep1`
@@ -50,37 +47,15 @@ class TeacherSignupForm extends ConsumerWidget {
 
     if (!isStep2Valid) return;
 
-    final declaredStudentCount =
-        formState.studentCount > 0 ? formState.studentCount : null;
-
-    ref
-        .read(teacherOnboardingViewModelProvider.notifier)
-        .submitSignUp(
-          name: formState.name.trim(),
-          campusId: formState.campus!.id,
-          subjectIds: formState.selectedSubjectIds.toList(),
-          classIds: formState.selectedClassIds.isEmpty
-              ? null
-              : formState.selectedClassIds.toList(),
-          declaredStudentCount: declaredStudentCount,
-        )
-        .then((success) {
-      if (!context.mounted || success) return;
-      final failure = ref.read(teacherOnboardingViewModelProvider).error;
-      AppSnackbar.show(
-        context,
-        failure is Failure ? failure.message : context.l10n.commonErrorGeneric,
-      );
-    });
+    // Actual submission (`submitSignUp`) happens on the Review screen, once
+    // the teacher has had a chance to double-check everything.
+    context.push(AppRoutes.teacherOnboardingReview);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formState = ref.watch(teacherFormNotifierProvider);
     final notifier = ref.read(teacherFormNotifierProvider.notifier);
-    final isSubmitting = ref.watch(
-      teacherOnboardingViewModelProvider.select((s) => s.isLoading),
-    );
 
     final stepChild = formState.currentStep == 1
         ? TeacherSignupStep1Card(
@@ -110,11 +85,11 @@ class TeacherSignupForm extends ConsumerWidget {
             ),
             classesError: formState.classesError,
             subjectsError: formState.subjectsError,
-            isSubmitting: isSubmitting,
+            isSubmitting: false,
             onClassesChanged: notifier.updateClasses,
             onSubjectsChanged: notifier.updateSubjects,
             onBack: () => notifier.setStep(1),
-            onSubmit: () => _handleSubmit(context, ref, notifier, formState),
+            onSubmit: () => _handleSubmit(context, notifier),
             onRetryBoardClasses: () =>
                 ref.invalidate(teacherSignupBoardClassesProvider),
             onRetrySubjects: () => ref.invalidate(
