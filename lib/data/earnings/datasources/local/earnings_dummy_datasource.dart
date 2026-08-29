@@ -73,8 +73,14 @@ class EarningsDummyDataSourceImpl implements EarningsDummyDataSource {
     String teacherId,
   ) async {
     await Future.delayed(_latency);
-    // Dynamically bind to the current teacher ID so mock earnings are visible
-    final records = _records.map((r) => r.copyWith(teacherId: teacherId)).toList()
+    // Bind to the current teacher ID once (not on every read) so mock
+    // earnings are visible regardless of which mock teacher is logged in.
+    if (_records.isNotEmpty && _records.first.teacherId != teacherId) {
+      for (var i = 0; i < _records.length; i++) {
+        _records[i] = _records[i].copyWith(teacherId: teacherId);
+      }
+    }
+    final records = List<EarningsRecordDto>.of(_records)
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return Success(List.unmodifiable(records));
   }

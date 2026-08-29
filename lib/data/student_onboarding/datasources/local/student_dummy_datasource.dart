@@ -326,14 +326,24 @@ class StudentDummyDataSourceImpl implements StudentDummyDataSource {
   @override
   Future<List<StudentDto>> getStudentsForTeacher(String teacherId) async {
     await Future.delayed(const Duration(milliseconds: 500));
-    // Dynamically bind to the active teacher session so all 15 mock students
-    // are immediately available for testing
-    return _students.values.map((s) {
-      final enrollments = s.subjectEnrollments?.map((e) {
-        return e.copyWith(teacherId: teacherId);
-      }).toList();
-      return s.copyWith(subjectEnrollments: enrollments);
-    }).toList();
+    // Bind mock students' subject enrollments to the active teacher session
+    // once (not on every read) so all 15 mock students are immediately
+    // available for testing.
+    final alreadyBound = _students.values.every(
+      (s) => (s.subjectEnrollments ?? const []).every(
+        (e) => e.teacherId == teacherId,
+      ),
+    );
+    if (!alreadyBound) {
+      for (final id in _students.keys.toList()) {
+        final s = _students[id]!;
+        final enrollments = s.subjectEnrollments
+            ?.map((e) => e.copyWith(teacherId: teacherId))
+            .toList();
+        _students[id] = s.copyWith(subjectEnrollments: enrollments);
+      }
+    }
+    return _students.values.toList();
   }
 
   @override
