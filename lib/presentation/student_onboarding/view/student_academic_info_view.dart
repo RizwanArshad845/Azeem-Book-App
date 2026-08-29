@@ -54,7 +54,7 @@ class StudentAcademicInfoView extends ConsumerWidget {
 
     return OnboardingScaffold(
       currentStep: 2,
-      totalSteps: 2,
+      totalSteps: 3,
       role: OnboardingRole.student,
       child: Column(
         mainAxisSize: MainAxisSize.min,

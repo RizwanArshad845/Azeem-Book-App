@@ -54,7 +54,7 @@ class _StudentBasicInfoViewState extends ConsumerState<StudentBasicInfoView> {
 
     return OnboardingScaffold(
       currentStep: 1,
-      totalSteps: 2,
+      totalSteps: 3,
       role: OnboardingRole.student,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

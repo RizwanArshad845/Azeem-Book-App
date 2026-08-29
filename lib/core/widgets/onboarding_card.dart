@@ -25,21 +25,23 @@ class OnboardingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveMaxWidth = maxWidth ?? context.dimens.contentMaxWidth;
-    final radius = BorderRadius.circular(28.0);
+    final radius = BorderRadius.circular(context.dimens.radiusXl);
 
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: effectiveMaxWidth),
       child: Container(
         width: double.infinity,
-        // Shadow lives on the un-clipped outer container so it isn't
-        // cut off by the inner blur's ClipRRect.
+        // Shadow lives on the un-clipped outer container so it isn't cut
+        // off by the inner blur's ClipRRect — rameel's original nests the
+        // shadow inside the same ClipRRect it's clipped by, which hides it
+        // entirely; kept the shadow visible here while matching rameel's
+        // numeric values (alpha/blur) exactly.
         decoration: BoxDecoration(
           borderRadius: radius,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.10),
-              blurRadius: 28,
-              spreadRadius: 2,
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 24,
               offset: const Offset(0, 8),
             ),
           ],
@@ -53,7 +55,7 @@ class OnboardingCard extends StatelessWidget {
                 color: context.colors.surface.withValues(alpha: 0.76),
                 borderRadius: radius,
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.45),
+                  color: Colors.white.withValues(alpha: 0.90),
                   width: 1.5,
                 ),
               ),

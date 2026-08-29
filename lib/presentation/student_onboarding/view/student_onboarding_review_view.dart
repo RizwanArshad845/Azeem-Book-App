@@ -81,6 +81,8 @@ class _StudentOnboardingReviewViewState
     return OnboardingScaffold(
       appBarTitle: context.l10n.onboardingReviewTitle,
       role: OnboardingRole.student,
+      currentStep: 3,
+      totalSteps: 3,
       onBack: () => context.pop(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
