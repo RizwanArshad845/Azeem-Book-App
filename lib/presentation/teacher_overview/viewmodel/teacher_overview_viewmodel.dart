@@ -55,11 +55,10 @@ final teacherOverviewStatsProvider = Provider<TeacherOverviewStats>((ref) {
 
   final actualEarnings = earnings.fold<double>(0, (sum, r) => sum + r.amount);
 
-  final declared =
-      (teacher?.declaredStudentCount != null &&
-              teacher!.declaredStudentCount! > 0)
-          ? teacher.declaredStudentCount!
-          : 50;
+  // No fallback to a fabricated goal — an undeclared count means there's
+  // genuinely no target yet, and the guards below already render that
+  // honestly (0% progress, no projected potential) instead of faking one.
+  final declared = teacher?.declaredStudentCount ?? 0;
 
   final remainingStudents = (declared - totalStudents).clamp(0, 99999);
   // Average expected commission of Rs. 500 per student bundle
@@ -71,7 +70,7 @@ final teacherOverviewStatsProvider = Provider<TeacherOverviewStats>((ref) {
     totalStudents: totalStudents,
     activePaidStudents: activePaidStudents,
     freeStudents: freeStudents,
-    actualEarnings: actualEarnings > 0 ? actualEarnings : 5500.0,
+    actualEarnings: actualEarnings,
     declaredStudents: declared,
     remainingStudents: remainingStudents,
     projectedPotential: projectedPotential,
