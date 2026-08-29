@@ -96,7 +96,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
   }) {
     final otpController = TextEditingController();
 
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -138,8 +138,8 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                   ),
                   SizedBox(height: context.dimens.md),
                   AppTextField(
-                    label: '4-Digit OTP Code',
-                    hint: 'Enter 1234 for testing',
+                    label: context.l10n.teacherOtpCodeLabel,
+                    hint: context.l10n.teacherOtpTestHint,
                     controller: otpController,
                     keyboardType: TextInputType.number,
                     maxLength: 4,
@@ -154,7 +154,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                       } else {
                         AppSnackbar.show(
                           context,
-                          'Please enter the verification code.',
+                          context.l10n.teacherOtpEnterCodeError,
                         );
                       }
                     },
@@ -164,7 +164,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
               ),
             ),
           ),
-    );
+    ).whenComplete(otpController.dispose);
   }
 
   void _handleDeleteAccount() {
@@ -295,18 +295,18 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                                     ).withValues(alpha: 0.3),
                                   ),
                                 ),
-                                child: const Row(
+                                child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       Icons.verified_rounded,
                                       color: Color(0xFF059669),
                                       size: 15,
                                     ),
-                                    SizedBox(width: 4),
+                                    const SizedBox(width: 4),
                                     Text(
-                                      'Azeem Verified Faculty',
-                                      style: TextStyle(
+                                      context.l10n.teacherVerifiedBadge,
+                                      style: const TextStyle(
                                         color: Color(0xFF059669),
                                         fontWeight: FontWeight.bold,
                                         fontSize: 11.5,
@@ -338,8 +338,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                                 spacing: context.dimens.xs,
                                 runSpacing: context.dimens.xs / 2,
                                 children: [
-                                  if (teacher.campusId != null &&
-                                      campusesById.containsKey(
+                                  if (campusesById.containsKey(
                                         teacher.campusId,
                                       ))
                                     _BadgeChip(
@@ -347,8 +346,8 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                                       icon: Icons.account_balance_outlined,
                                     )
                                   else
-                                    const _BadgeChip(
-                                      label: 'Bahawalpur Campus',
+                                    _BadgeChip(
+                                      label: context.l10n.teacherDefaultCampusFallback,
                                       icon: Icons.account_balance_outlined,
                                     ),
                                 ],
@@ -386,8 +385,9 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                               ),
                               SizedBox(height: context.dimens.xs),
                               _BadgeChip(
-                                label:
-                                    '~${teacher.declaredStudentCount ?? 50} Students Enrolled',
+                                label: context.l10n.teacherStudentsEnrolledCount(
+                                  teacher.declaredStudentCount ?? 50,
+                                ),
                                 icon: Icons.groups_outlined,
                               ),
                             ],
@@ -402,7 +402,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               Text(
-                                'Personal Information',
+                                context.l10n.personalInfoTitle,
                                 style: context.textStyles.titleSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
