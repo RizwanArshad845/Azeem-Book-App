@@ -16,9 +16,14 @@ class EarningsRecordCard extends StatelessWidget {
   final EarningsRecord record;
   final String? studentName;
 
+  static final NumberFormat _currency = NumberFormat.currency(
+    symbol: 'Rs. ',
+    decimalDigits: 0,
+  );
+
   @override
   Widget build(BuildContext context) {
-    final currency = NumberFormat.currency(symbol: 'Rs. ', decimalDigits: 0);
+    final currency = _currency;
 
     return AppFrostedCard(
       padding: EdgeInsets.all(context.dimens.md),
@@ -44,8 +49,8 @@ class EarningsRecordCard extends StatelessWidget {
               children: [
                 Text(
                   studentName != null
-                      ? '$studentName • Test Bundle'
-                      : 'Student Pack Purchase',
+                      ? context.l10n.teacherEarningsRecordSubtitle(studentName!)
+                      : context.l10n.teacherStudentPackPurchaseFallback,
                   style: context.textStyles.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: context.colors.textPrimary,
