@@ -4,10 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_bar_actions.dart';
 import '../../../core/widgets/empty_state_view.dart';
-import '../../../core/widgets/stat_summary_card.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../viewmodel/teacher_overview_viewmodel.dart';
-import '../widgets/teacher_earnings_card.dart';
+import '../widgets/projected_earnings_hero_card.dart';
+import '../widgets/teacher_quick_actions_grid.dart';
+import '../widgets/teacher_recent_activity_section.dart';
 import '../widgets/welcome_header.dart';
 
 /// Teacher shell Overview tab root (§10.2: "Students onboarded, actual +
@@ -38,6 +39,8 @@ class TeacherOverviewView extends ConsumerWidget {
       );
     }
 
+    final stats = ref.watch(teacherOverviewStatsProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.teacherOverviewTitle),
@@ -49,16 +52,11 @@ class TeacherOverviewView extends ConsumerWidget {
           children: [
             WelcomeHeader(teacher: teacher),
             SizedBox(height: context.dimens.xl),
-            StatSummaryCard(
-              icon: Icons.groups_outlined,
-              useGradientIconBadge: true,
-              label: context.l10n.teacherOverviewStudents,
-              value: teacher.declaredStudentCount != null
-                  ? '${teacher.declaredStudentCount}'
-                  : context.l10n.teacherOverviewNotSetYet,
-            ),
-            SizedBox(height: context.dimens.md),
-            TeacherEarningsCard(teacher: teacher),
+            ProjectedEarningsHeroCard(stats: stats),
+            SizedBox(height: context.dimens.xl),
+            TeacherQuickActionsGrid(stats: stats),
+            SizedBox(height: context.dimens.xl),
+            const TeacherRecentActivitySection(),
           ],
         ),
       ),
