@@ -3,13 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_button.dart';
-import '../../../core/widgets/app_dropdown_card.dart';
 import '../../../core/widgets/app_snackbar.dart';
-import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/onboarding_scaffold.dart';
 import '../../../core/widgets/onboarding_step_header.dart';
 import '../../../core/widgets/onboarding_summary_item.dart';
-import '../../../domain/campus_directory/entities/campus.dart';
 import '../../../domain/common/failure.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
 import '../viewmodel/teacher_onboarding_viewmodel.dart';
@@ -17,33 +14,12 @@ import '../viewmodel/teacher_signup_form_providers.dart';
 import '../viewmodel/teacher_signup_form_state.dart';
 
 /// Final teacher onboarding step — shows everything collected across the
-/// self-signup form's two steps for the teacher to double-check (and fix a
-/// typo in their name or campus) before a "Submit" finalizes registration.
-class TeacherOnboardingReviewView extends ConsumerStatefulWidget {
+/// self-signup form's two steps for the teacher to double-check before a
+/// "Submit" finalizes registration. Name/campus are read-only here (like
+/// every other field on this screen) — to fix a typo the teacher goes Back
+/// to step 1, which now correctly preserves what they'd already typed.
+class TeacherOnboardingReviewView extends ConsumerWidget {
   const TeacherOnboardingReviewView({super.key});
-
-  @override
-  ConsumerState<TeacherOnboardingReviewView> createState() =>
-      _TeacherOnboardingReviewViewState();
-}
-
-class _TeacherOnboardingReviewViewState
-    extends ConsumerState<TeacherOnboardingReviewView> {
-  late final TextEditingController _nameController;
-
-  @override
-  void initState() {
-    super.initState();
-    _nameController = TextEditingController(
-      text: ref.read(teacherFormNotifierProvider).name,
-    );
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
-  }
 
   String _classIdsKey(Set<String> classIds) {
     final sorted = classIds.toList()..sort();
@@ -80,14 +56,12 @@ class _TeacherOnboardingReviewViewState
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final formState = ref.watch(teacherFormNotifierProvider);
-    final notifier = ref.read(teacherFormNotifierProvider.notifier);
     final phoneNumber = ref.watch(currentUserProvider)?.phoneNumber ?? '';
     final isSubmitting = ref.watch(
       teacherOnboardingViewModelProvider.select((s) => s.isLoading),
     );
-    final campusesAsync = ref.watch(teacherSignupCampusesProvider);
     final boardClassesAsync = ref.watch(teacherSignupBoardClassesProvider);
     final subjectsAsync = ref.watch(
       teacherSignupSubjectsForClassesProvider(
@@ -98,6 +72,7 @@ class _TeacherOnboardingReviewViewState
     final classNames = boardClassesAsync.value
             ?.where((c) => formState.selectedClassIds.contains(c.id))
             .map((c) => c.name)
+            .toSet()
             .toList() ??
         const <String>[];
     final subjectNames = subjectsAsync.value
@@ -107,6 +82,7 @@ class _TeacherOnboardingReviewViewState
             .map((s) => s.name)
             .toList() ??
         const <String>[];
+    final campus = formState.campus;
 
     return OnboardingScaffold(
       appBarTitle: context.l10n.onboardingReviewTitle,
@@ -123,26 +99,18 @@ class _TeacherOnboardingReviewViewState
             subtitle: context.l10n.onboardingReviewSubtitle,
           ),
           SizedBox(height: context.dimens.lg),
-          AppTextField(
-            label: context.l10n.nameLabel,
-            controller: _nameController,
-            textCapitalization: TextCapitalization.words,
-            isRequired: true,
-            onChanged: notifier.updateName,
-          ),
-          SizedBox(height: context.dimens.lg),
-          AppDropdownCard<Campus>(
-            label: context.l10n.campusLabel,
-            items: campusesAsync.value ?? const <Campus>[],
-            selectedItem: formState.campus,
-            isRequired: true,
-            icon: Icons.location_city_rounded,
-            itemAsString: (c) => '${c.name} (${c.city})',
-            onChanged: notifier.updateCampus,
-          ),
-          SizedBox(height: context.dimens.lg),
           OnboardingSummaryList(
             children: [
+              OnboardingSummaryItem(
+                icon: Icons.person_rounded,
+                label: context.l10n.nameLabel,
+                value: formState.name,
+              ),
+              OnboardingSummaryItem(
+                icon: Icons.location_city_rounded,
+                label: context.l10n.campusLabel,
+                value: campus == null ? '' : '${campus.name} — ${campus.city}',
+              ),
               OnboardingSummaryItem(
                 icon: Icons.phone_rounded,
                 label: context.l10n.phoneLabel,

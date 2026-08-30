@@ -39,12 +39,7 @@ class StudentProgressDetailView extends ConsumerWidget {
         const <String, Campus>{};
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text(context.l10n.studentProgressDetailTitle),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
+      appBar: AppBar(title: Text(context.l10n.studentProgressDetailTitle)),
       body: BlurredLogoBackdrop(
         child: SafeArea(
           child: RefreshIndicator(

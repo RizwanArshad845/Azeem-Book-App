@@ -5,50 +5,26 @@ import 'package:go_router/go_router.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/utils/subject_icons.dart';
 import '../../../core/widgets/app_button.dart';
-import '../../../core/widgets/app_dropdown_card.dart';
 import '../../../core/widgets/app_snackbar.dart';
-import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/onboarding_scaffold.dart';
 import '../../../core/widgets/onboarding_step_header.dart';
 import '../../../core/widgets/onboarding_summary_item.dart';
-import '../../../domain/campus_directory/entities/campus.dart';
-import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/common/failure.dart';
+import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/student_onboarding/entities/teacher_option.dart';
 import '../viewmodel/student_onboarding_viewmodel.dart';
 
 /// Final onboarding step — shows everything collected across the basic-info
-/// and academic-info steps for the student to double-check (and fix a typo
-/// in their name or campus) before a "Submit" finalizes registration.
+/// and academic-info steps for the student to double-check before a "Submit"
+/// finalizes registration. Name/campus are read-only here, like every other
+/// field on this screen — to fix a typo the student goes Back to step 1.
 /// Placed here (after the forms, not right after OTP) because this is the
 /// first point where a full profile actually exists to review.
-class StudentOnboardingReviewView extends ConsumerStatefulWidget {
+class StudentOnboardingReviewView extends ConsumerWidget {
   const StudentOnboardingReviewView({super.key});
 
   @override
-  ConsumerState<StudentOnboardingReviewView> createState() =>
-      _StudentOnboardingReviewViewState();
-}
-
-class _StudentOnboardingReviewViewState
-    extends ConsumerState<StudentOnboardingReviewView> {
-  late final TextEditingController _nameController;
-
-  @override
-  void initState() {
-    super.initState();
-    final notifier = ref.read(studentOnboardingViewModelProvider.notifier);
-    _nameController = TextEditingController(text: notifier.name ?? '');
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(studentOnboardingViewModelProvider.notifier);
     final onboardingState = ref.watch(studentOnboardingViewModelProvider);
     final campusId = notifier.campusId;
@@ -93,24 +69,21 @@ class _StudentOnboardingReviewViewState
             subtitle: context.l10n.onboardingReviewSubtitle,
           ),
           SizedBox(height: context.dimens.lg),
-          AppTextField(
-            label: context.l10n.nameLabel,
-            controller: _nameController,
-            textCapitalization: TextCapitalization.words,
-            isRequired: true,
-            onChanged: notifier.recordName,
-          ),
-          SizedBox(height: context.dimens.lg),
-          AppDropdownCard<Campus>(
-            label: context.l10n.campusLabel,
-            items: campusesAsync.value ?? const <Campus>[],
-            selectedItem: selectedCampus,
-            isRequired: true,
-            icon: Icons.location_city_rounded,
-            itemAsString: (c) => '${c.name} (${c.city})',
-            onChanged: (campus) {
-              if (campus != null) notifier.selectCampus(campus.id);
-            },
+          OnboardingSummaryList(
+            children: [
+              OnboardingSummaryItem(
+                icon: Icons.person_rounded,
+                label: context.l10n.nameLabel,
+                value: notifier.name ?? '',
+              ),
+              OnboardingSummaryItem(
+                icon: Icons.location_city_rounded,
+                label: context.l10n.campusLabel,
+                value: selectedCampus == null
+                    ? ''
+                    : '${selectedCampus.name} (${selectedCampus.city})',
+              ),
+            ],
           ),
           if (selectedSubjectIds.isNotEmpty) ...[
             SizedBox(height: context.dimens.lg),

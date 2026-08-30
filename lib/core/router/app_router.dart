@@ -134,7 +134,7 @@ List<BottomNavDestinationSpec> _buildTeacherDestinations(BuildContext context) {
   return [
     BottomNavDestinationSpec(
       icon: Icons.home_outlined,
-      label: context.l10n.navOverview,
+      label: context.l10n.navHome,
     ),
     BottomNavDestinationSpec(
       icon: Icons.people_outline,

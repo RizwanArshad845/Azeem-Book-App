@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/utils/class_level_icons.dart';
+import '../../../core/utils/subject_icons.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
-import '../../../core/widgets/multi_select_option_row.dart';
 import '../../../core/widgets/onboarding_step_header.dart';
-import '../../../domain/catalog/entities/board_class.dart';
+import '../../student_onboarding/widgets/catalog_option_row.dart';
 import '../viewmodel/teacher_signup_form_providers.dart';
 
 /// Step 2 Card stateless component for Teacher Onboarding (Classes & Subjects Selection).
@@ -16,11 +17,12 @@ class TeacherSignupStep2Card extends StatelessWidget {
     super.key,
     required this.selectedClassIds,
     required this.selectedSubjectIds,
-    required this.boardClassesAsync,
+    required this.uniqueBoardClassesAsync,
     required this.subjectsAsync,
     required this.classesError,
     required this.subjectsError,
     required this.isSubmitting,
+    required this.isContinueEnabled,
     required this.onClassesChanged,
     required this.onSubjectsChanged,
     required this.onBack,
@@ -31,17 +33,30 @@ class TeacherSignupStep2Card extends StatelessWidget {
 
   final Set<String> selectedClassIds;
   final Set<String> selectedSubjectIds;
-  final AsyncValue<List<BoardClass>> boardClassesAsync;
+  final AsyncValue<List<UniqueTeacherBoardClass>> uniqueBoardClassesAsync;
   final AsyncValue<List<UniqueTeacherSubject>> subjectsAsync;
   final String? classesError;
   final String? subjectsError;
   final bool isSubmitting;
+  final bool isContinueEnabled;
   final ValueChanged<Set<String>> onClassesChanged;
   final ValueChanged<Set<String>> onSubjectsChanged;
   final VoidCallback onBack;
   final VoidCallback onSubmit;
   final VoidCallback onRetryBoardClasses;
   final VoidCallback onRetrySubjects;
+
+  /// Toggles [ids] in/out of [current] as one group — used for both classes
+  /// and subjects so a teacher can select more than one of each.
+  static Set<String> _toggled(Set<String> current, Iterable<String> ids) {
+    final next = Set<String>.of(current);
+    if (ids.every(current.contains)) {
+      next.removeAll(ids);
+    } else {
+      next.addAll(ids);
+    }
+    return next;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +69,8 @@ class TeacherSignupStep2Card extends StatelessWidget {
           subtitle: context.l10n.boardClassSelectSubtitle,
         ),
         SizedBox(height: context.dimens.lg),
-        AsyncValueWidget<List<BoardClass>>(
-          value: boardClassesAsync,
+        AsyncValueWidget<List<UniqueTeacherBoardClass>>(
+          value: uniqueBoardClassesAsync,
           onRetry: onRetryBoardClasses,
           data: (boardClasses) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,18 +83,14 @@ class TeacherSignupStep2Card extends StatelessWidget {
                 )
               else
                 for (final boardClass in boardClasses) ...[
-                  MultiSelectOptionRow(
+                  CatalogOptionRow(
                     label: boardClass.name,
-                    isSelected: selectedClassIds.contains(boardClass.id),
-                    onSelectedChanged: (isSelected) {
-                      final next = Set<String>.of(selectedClassIds);
-                      if (isSelected) {
-                        next.add(boardClass.id);
-                      } else {
-                        next.remove(boardClass.id);
-                      }
-                      onClassesChanged(next);
-                    },
+                    icon: classOrStreamIcon(boardClass.name),
+                    isEnabled: true,
+                    isSelected: boardClass.ids.any(selectedClassIds.contains),
+                    onTap: () => onClassesChanged(
+                      _toggled(selectedClassIds, boardClass.ids),
+                    ),
                   ),
                   SizedBox(height: context.dimens.sm),
                 ],
@@ -112,20 +123,16 @@ class TeacherSignupStep2Card extends StatelessWidget {
                 )
               else
                 for (final subject in subjects) ...[
-                  MultiSelectOptionRow(
+                  CatalogOptionRow(
                     label: subject.name,
+                    icon: subjectIcon(subject.name),
+                    isEnabled: true,
                     isSelected: subject.subjectIds.any(
                       selectedSubjectIds.contains,
                     ),
-                    onSelectedChanged: (isSelected) {
-                      final next = Set<String>.of(selectedSubjectIds);
-                      if (isSelected) {
-                        next.addAll(subject.subjectIds);
-                      } else {
-                        next.removeAll(subject.subjectIds);
-                      }
-                      onSubjectsChanged(next);
-                    },
+                    onTap: () => onSubjectsChanged(
+                      _toggled(selectedSubjectIds, subject.subjectIds),
+                    ),
                   ),
                   SizedBox(height: context.dimens.sm),
                 ],
@@ -157,7 +164,9 @@ class TeacherSignupStep2Card extends StatelessWidget {
               child: AppPrimaryButton(
                 label: context.l10n.commonContinue,
                 loading: isSubmitting,
-                onPressed: isSubmitting ? null : onSubmit,
+                onPressed: (isSubmitting || !isContinueEnabled)
+                    ? null
+                    : onSubmit,
               ),
             ),
           ],

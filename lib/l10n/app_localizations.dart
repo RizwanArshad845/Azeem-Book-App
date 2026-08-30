@@ -1211,7 +1211,7 @@ abstract class AppLocalizations {
   /// No description provided for @teacherSignupClassesLabel.
   ///
   /// In en, this message translates to:
-  /// **'Classes you teach (optional)'**
+  /// **'Classes you teach'**
   String get teacherSignupClassesLabel;
 
   /// No description provided for @teacherSignupClassesEmpty.
@@ -1241,7 +1241,7 @@ abstract class AppLocalizations {
   /// No description provided for @teacherSignupApproxStudentsLabel.
   ///
   /// In en, this message translates to:
-  /// **'Approx. number of students (optional)'**
+  /// **'Number of students you teach (optional)'**
   String get teacherSignupApproxStudentsLabel;
 
   /// No description provided for @teacherSignupSubmitButton.

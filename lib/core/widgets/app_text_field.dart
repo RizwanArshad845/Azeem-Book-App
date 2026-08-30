@@ -14,6 +14,7 @@ class AppTextField extends StatelessWidget {
     this.maxLines = 1,
     this.maxLength,
     this.prefixText,
+    this.prefixIcon,
     this.textCapitalization = TextCapitalization.none,
     this.isRequired = false,
   });
@@ -27,6 +28,11 @@ class AppTextField extends StatelessWidget {
   final int maxLines;
   final int? maxLength;
   final String? prefixText;
+
+  /// Leading icon shown inside the field, matching the icon every dropdown
+  /// field (`AppDropdownCard`) already renders — kept optional since not
+  /// every text field call site wants one.
+  final IconData? prefixIcon;
   final TextCapitalization textCapitalization;
 
   /// When `true`, renders a prominent red `*` appended to [label] (CLAUDE.md
@@ -63,6 +69,7 @@ class AppTextField extends StatelessWidget {
         hintText: hint,
         errorText: errorText,
         prefixText: prefixText,
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
       ),
     );
   }

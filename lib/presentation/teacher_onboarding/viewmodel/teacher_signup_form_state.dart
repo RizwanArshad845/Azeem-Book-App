@@ -28,6 +28,17 @@ class TeacherFormState {
   final String? classesError;
   final String? subjectsError;
 
+  /// Non-mutating "would this pass `validateStep1`" check, used to reactively
+  /// grey out the step-1 Next button (CLAUDE.md: "Submit buttons: Greyed out
+  /// / disabled until all mandatory fields pass validation") without setting
+  /// error text just from watching — [TeacherFormNotifier.validateStep1] is
+  /// the state-mutating, error-setting counterpart used on tap.
+  bool get isStep1Valid => name.trim().isNotEmpty && campus != null;
+
+  /// Non-mutating "would this pass `validateStep2`" check — see [isStep1Valid].
+  bool get isStep2Valid =>
+      selectedClassIds.isNotEmpty && selectedSubjectIds.isNotEmpty;
+
   TeacherFormState copyWith({
     int? currentStep,
     String? name,

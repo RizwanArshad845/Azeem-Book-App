@@ -9,9 +9,33 @@ import '../viewmodel/teacher_signup_form_state.dart';
 import 'teacher_signup_step1_card.dart';
 import 'teacher_signup_step2_card.dart';
 
-/// 100% Stateless & Riverpod-driven teacher registration form — zero [setState].
-class TeacherSignupForm extends ConsumerWidget {
+/// Riverpod-driven teacher registration form — zero [setState]. Owns a single
+/// `TextEditingController` for the name field (see [_nameController]) since
+/// it's the one widget in this subtree that survives step 1 <-> step 2
+/// switching; everything else stays derived straight from Riverpod state.
+class TeacherSignupForm extends ConsumerStatefulWidget {
   const TeacherSignupForm({super.key});
+
+  @override
+  ConsumerState<TeacherSignupForm> createState() => _TeacherSignupFormState();
+}
+
+class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
+  late final TextEditingController _nameController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(
+      text: ref.read(teacherFormNotifierProvider).name,
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
 
   String _classIdsKey(Set<String> classIds) {
     final sorted = classIds.toList()..sort();
@@ -53,19 +77,27 @@ class TeacherSignupForm extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final formState = ref.watch(teacherFormNotifierProvider);
     final notifier = ref.read(teacherFormNotifierProvider.notifier);
+
+    // Resync only when something external changed the name (initial hydration,
+    // or a future reset) — during normal typing `onNameChanged` already keeps
+    // `formState.name` equal to `_nameController.text`, so this is a no-op.
+    if (_nameController.text != formState.name) {
+      _nameController.text = formState.name;
+    }
 
     final stepChild = formState.currentStep == 1
         ? TeacherSignupStep1Card(
             key: const ValueKey('step1'),
-            name: formState.name,
+            nameController: _nameController,
             campus: formState.campus,
             studentCount: formState.studentCount,
             campusesAsync: ref.watch(teacherSignupCampusesProvider),
             nameError: formState.nameError,
             campusError: formState.campusError,
+            isNextEnabled: formState.isStep1Valid,
             onNameChanged: notifier.updateName,
             onCampusChanged: notifier.updateCampus,
             onStudentCountChanged: notifier.updateStudentCount,
@@ -77,7 +109,9 @@ class TeacherSignupForm extends ConsumerWidget {
             key: const ValueKey('step2'),
             selectedClassIds: formState.selectedClassIds,
             selectedSubjectIds: formState.selectedSubjectIds,
-            boardClassesAsync: ref.watch(teacherSignupBoardClassesProvider),
+            uniqueBoardClassesAsync: ref.watch(
+              teacherSignupUniqueBoardClassesProvider,
+            ),
             subjectsAsync: ref.watch(
               teacherSignupSubjectsForClassesProvider(
                 _classIdsKey(formState.selectedClassIds),
@@ -86,6 +120,7 @@ class TeacherSignupForm extends ConsumerWidget {
             classesError: formState.classesError,
             subjectsError: formState.subjectsError,
             isSubmitting: false,
+            isContinueEnabled: formState.isStep2Valid,
             onClassesChanged: notifier.updateClasses,
             onSubjectsChanged: notifier.updateSubjects,
             onBack: () => notifier.setStep(1),

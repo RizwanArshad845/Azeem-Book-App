@@ -62,17 +62,7 @@ class TeacherEarningsView extends ConsumerWidget {
     final currentPage = ref.watch(_teacherEarningsCurrentPageProvider);
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text(
-          context.l10n.teacherEarningsTitle,
-          style: context.textStyles.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
+      appBar: AppBar(title: Text(context.l10n.teacherEarningsTitle)),
       body: BlurredLogoBackdrop(
         child: SafeArea(
           child: RefreshIndicator(

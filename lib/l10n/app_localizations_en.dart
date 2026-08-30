@@ -608,7 +608,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Select at least one subject you teach.';
 
   @override
-  String get teacherSignupClassesLabel => 'Classes you teach (optional)';
+  String get teacherSignupClassesLabel => 'Classes you teach';
 
   @override
   String get teacherSignupClassesEmpty => 'No board/classes are open yet.';
@@ -625,7 +625,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get teacherSignupApproxStudentsLabel =>
-      'Approx. number of students (optional)';
+      'Number of students you teach (optional)';
 
   @override
   String get teacherSignupSubmitButton => 'Submit for approval';

@@ -21,17 +21,7 @@ class TeacherStudentsView extends ConsumerWidget {
     final studentsAsync = ref.watch(teacherStudentsProvider);
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text(
-          context.l10n.teacherStudentsTitle,
-          style: context.textStyles.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
+      appBar: AppBar(title: Text(context.l10n.teacherStudentsTitle)),
       body: BlurredLogoBackdrop(
         child: SafeArea(
           child: RefreshIndicator(

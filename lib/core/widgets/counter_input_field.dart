@@ -17,6 +17,7 @@ class CounterInputField extends StatefulWidget {
     this.max,
     this.step = 1,
     this.isRequired = false,
+    this.icon,
   });
 
   final String label;
@@ -35,6 +36,10 @@ class CounterInputField extends StatefulWidget {
 
   /// Mirrors [AppTextField.isRequired] — renders a red `*` after [label].
   final bool isRequired;
+
+  /// Leading icon shown before [label], matching the icon every other
+  /// onboarding field (`AppTextField.prefixIcon`, `AppDropdownCard`) renders.
+  final IconData? icon;
 
   @override
   State<CounterInputField> createState() => _CounterInputFieldState();
@@ -76,85 +81,123 @@ class _CounterInputFieldState extends State<CounterInputField> {
   void _handleTextChange(String text) {
     if (text.isEmpty) return;
     final parsed = int.tryParse(text);
-    if (parsed != null) {
-      var clamped = parsed;
-      if (clamped < widget.min) clamped = widget.min;
-      if (widget.max != null && clamped > widget.max!) clamped = widget.max!;
-      widget.onChanged(clamped);
+    if (parsed == null) return;
+
+    var clamped = parsed;
+    if (clamped < widget.min) clamped = widget.min;
+    if (widget.max != null && clamped > widget.max!) clamped = widget.max!;
+    widget.onChanged(clamped);
+
+    // `parsed`/`clamped` strip a stray leading zero ("050" -> 50) or clamp
+    // out-of-range input, but the field's own text wouldn't otherwise be
+    // corrected when the clamped value happens to match `widget.value`
+    // already (didUpdateWidget only rewrites text on an actual value
+    // change) — so normalize display text here instead.
+    final normalized = clamped.toString();
+    if (text != normalized) {
+      _controller.text = normalized;
+      _controller.selection = TextSelection.fromPosition(
+        TextPosition(offset: normalized.length),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    // Label-on-top-of-control, matching the caption-above-value shape both
+    // [AppTextField] (floating label) and [AppDropdownCard]'s `_Label` use —
+    // so this field reads as "the same position" as Name/Campus instead of
+    // its own left-label/right-control row layout.
+    final labelText = widget.isRequired
+        ? RichText(
+            text: TextSpan(
+              style: context.textStyles.labelMedium?.copyWith(
+                color: context.colors.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
+              children: [
+                TextSpan(text: widget.label),
+                TextSpan(
+                  text: ' *',
+                  style: TextStyle(color: context.colors.error),
+                ),
+              ],
+            ),
+          )
+        : Text(
+            widget.label,
+            style: context.textStyles.labelMedium?.copyWith(
+              color: context.colors.textSecondary,
+              fontWeight: FontWeight.w600,
+            ),
+          );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: widget.isRequired
-              ? RichText(
-                  text: TextSpan(
-                    style: context.textStyles.bodyMedium?.copyWith(
+        widget.icon == null
+            ? labelText
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    widget.icon,
+                    size: context.dimens.iconSm,
+                    color: context.colors.primary,
+                  ),
+                  SizedBox(width: context.dimens.xs),
+                  labelText,
+                ],
+              ),
+        SizedBox(height: context.dimens.sm),
+        // Full-width pill (rather than a small left-hugging control with dead
+        // space beside it) — minus/plus pinned to the edges, count centered,
+        // reads as one deliberate card instead of a stray stepper.
+        SizedBox(
+          width: double.infinity,
+          child: Container(
+            decoration: BoxDecoration(
+              color: context.colors.surfaceVariant,
+              borderRadius: BorderRadius.circular(context.dimens.pillRadius),
+              border: Border.all(color: context.colors.divider),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _StepButton(
+                  icon: Icons.remove,
+                  onPressed: _canDecrement
+                      ? () => widget.onChanged(widget.value - widget.step)
+                      : null,
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    textAlign: TextAlign.center,
+                    style: context.textStyles.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
                       color: context.colors.textPrimary,
                     ),
-                    children: [
-                      TextSpan(text: widget.label),
-                      TextSpan(
-                        text: ' *',
-                        style: TextStyle(color: context.colors.error),
-                      ),
-                    ],
-                  ),
-                )
-              : Text(
-                  widget.label,
-                  style: context.textStyles.bodyMedium?.copyWith(
-                    color: context.colors.textPrimary,
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(vertical: 4),
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                    ),
+                    onChanged: _handleTextChange,
                   ),
                 ),
-        ),
-        SizedBox(width: context.dimens.md),
-        Container(
-          decoration: BoxDecoration(
-            color: context.colors.surfaceVariant,
-            borderRadius: BorderRadius.circular(context.dimens.pillRadius),
-            border: Border.all(color: context.colors.divider),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _StepButton(
-                icon: Icons.remove,
-                onPressed: _canDecrement
-                    ? () => widget.onChanged(widget.value - widget.step)
-                    : null,
-              ),
-              SizedBox(
-                width: context.dimens.xl * 1.5,
-                child: TextField(
-                  controller: _controller,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  textAlign: TextAlign.center,
-                  style: context.textStyles.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: context.colors.textPrimary,
-                  ),
-                  decoration: const InputDecoration(
-                    isDense: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 4),
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                  ),
-                  onChanged: _handleTextChange,
+                _StepButton(
+                  icon: Icons.add,
+                  onPressed: _canIncrement
+                      ? () => widget.onChanged(widget.value + widget.step)
+                      : null,
                 ),
-              ),
-              _StepButton(
-                icon: Icons.add,
-                onPressed: _canIncrement
-                    ? () => widget.onChanged(widget.value + widget.step)
-                    : null,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],

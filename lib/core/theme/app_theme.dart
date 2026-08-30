@@ -101,19 +101,19 @@ class AppTheme {
           vertical: AppDimens.md,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+          borderRadius: BorderRadius.circular(AppDimens.radiusLg),
           borderSide: BorderSide(color: colors.divider),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+          borderRadius: BorderRadius.circular(AppDimens.radiusLg),
           borderSide: BorderSide(color: colors.divider),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+          borderRadius: BorderRadius.circular(AppDimens.radiusLg),
           borderSide: BorderSide(color: colors.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+          borderRadius: BorderRadius.circular(AppDimens.radiusLg),
           borderSide: BorderSide(color: colors.error),
         ),
       ),

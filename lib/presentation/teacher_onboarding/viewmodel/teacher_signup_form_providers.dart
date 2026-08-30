@@ -31,6 +31,51 @@ final teacherSignupBoardClassesProvider =
       );
     });
 
+/// A `BoardClass` display name shared by more than one underlying leaf,
+/// carrying every leaf id it maps to — e.g. "Pre-Medical" is seeded once
+/// under `cl-11` ("1st year") and again under `cl-12` ("2nd year"), so a
+/// teacher who teaches Pre-Medical shouldn't have to pick it twice. Mirrors
+/// [UniqueTeacherSubject]'s dedup-by-name shape below.
+class UniqueTeacherBoardClass {
+  const UniqueTeacherBoardClass({required this.name, required this.ids});
+
+  final String name;
+  final List<String> ids;
+
+  String get id => name;
+}
+
+/// Deduped, teacher-facing class list: groups [teacherSignupBoardClassesProvider]'s
+/// leaves by display name (folding the 1st-year/2nd-year duplicates for
+/// Pre-Medical/Pre-Engineering/I.Com/F.A/I.C.S into one row each) and drops
+/// `classLevelId: 'cl-10'` leaves — `cl-10` itself was retired from
+/// `ClassLevel` (see `CatalogDummyDataSource._seed`'s "10th" comment) so its
+/// board class is unreachable and shouldn't still show up here.
+final teacherSignupUniqueBoardClassesProvider =
+    FutureProvider.autoDispose<List<UniqueTeacherBoardClass>>((ref) async {
+      final boardClasses = await ref.watch(
+        teacherSignupBoardClassesProvider.future,
+      );
+
+      final idsByName = <String, List<String>>{};
+      final displayNames = <String, String>{};
+      for (final boardClass in boardClasses) {
+        if (boardClass.classLevelId == 'cl-10') continue;
+        final key = boardClass.name.trim().toLowerCase();
+        idsByName.putIfAbsent(key, () => []).add(boardClass.id);
+        displayNames.putIfAbsent(key, () => boardClass.name.trim());
+      }
+
+      return idsByName.entries
+          .map(
+            (entry) => UniqueTeacherBoardClass(
+              name: displayNames[entry.key] ?? entry.key,
+              ids: entry.value,
+            ),
+          )
+          .toList();
+    });
+
 /// A subject name shared by one or more of the currently-selected classes,
 /// carrying every underlying [Subject.id] it maps to (e.g. "Physics" taught
 /// in both Pre-Medical and Pre-Engineering merges into one row here with

@@ -612,7 +612,7 @@ class AppLocalizationsUr extends AppLocalizations {
       'کم از کم ایک مضمون منتخب کریں جو آپ پڑھاتے ہیں۔';
 
   @override
-  String get teacherSignupClassesLabel => 'کلاسیں جو آپ پڑھاتے ہیں (اختیاری)';
+  String get teacherSignupClassesLabel => 'کلاسیں جو آپ پڑھاتے ہیں';
 
   @override
   String get teacherSignupClassesEmpty =>
@@ -630,7 +630,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get teacherSignupApproxStudentsLabel =>
-      'طلباء کی اندازاً تعداد (اختیاری)';
+      'طلباء کی تعداد جنہیں آپ پڑھاتے ہیں (اختیاری)';
 
   @override
   String get teacherSignupSubmitButton => 'منظوری کے لیے جمع کروائیں';

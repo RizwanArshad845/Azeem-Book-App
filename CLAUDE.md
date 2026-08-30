@@ -57,7 +57,7 @@
 3. **Teacher Onboarding & Validation Rules**:
    - Initial check: "Onboarded via Azeem Developer/Book" vs "Outside Teacher". Pre-seeded Azeem Developer teachers log in directly via SMS OTP (fetching pre-entered details to dashboard); outside teachers proceed through full onboarding.
    - Phone field validation: Strict 11-digit format starting with `03...` (e.g. `03001234567`) with inline error/toast feedback.
-   - Class selection: Mandatory single-class choice (not optional). Subjects auto-filter by class.
+   - Class selection: Multi-select — a teacher may teach more than one class. Subjects are unioned (deduplicated by name) across all selected classes.
    - Required fields marked with a prominent **red asterisk (`*`)**.
    - Student count widget: Integer counter input with explicit `+` / `-` increment & decrement buttons.
    - Submit buttons: Greyed out / disabled until all mandatory fields pass validation.
