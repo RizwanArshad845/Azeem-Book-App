@@ -175,3 +175,50 @@ The teacher self-signup flow is structured into a modern 4-step progressive wiza
 ### 6.3. Deleted Files
 * **None** (all existing legacy views and widgets were upgraded in place without breaking architectural hierarchy).
 
+---
+
+## 7. Teacher Dashboard Changes (Current Sprint)
+
+### 7.1. Overview & Home Tab
+* **App Bar Title**: Updated from generic "Teacher Dashboard" to localized "Home" (`teacherHomeTitle` / `ہوم`).
+* **Welcome Header (`WelcomeHeader`)**: Reduced font size to bold black `titleMedium`, made the initials avatar compact (38px), and removed the redundant subtitle line ("here's how your students are doing").
+
+### 7.2. Terminology Simplification ("Pure Earnings")
+* Completely eliminated the term **"Commission"** across the entire UI and localization files in favor of clean **"Earnings"** (Urdu: `آمدن`):
+  * Header: `Earnings` (formerly `Earnings & Commission`).
+  * Total amount: `Total Earnings` (Urdu: `کل آمدن`).
+  * Student card reward badge: `+Rs. 500 Earned` (Urdu: `+500 روپے حاصل کیے`).
+  * Transaction history: `Earnings History` (Urdu: `آمدن کی تاریخ`).
+  * Dummy notification data updated from `(+Rs. 500 commission)` to `(+Rs. 500 earned)`.
+
+### 7.3. Universal Language Toggle
+* **Created [`lib/core/widgets/app_language_toggle_button.dart`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/core/widgets/app_language_toggle_button.dart)**: Standardized compact `EN | اردو` pill toggle.
+* Integrated into `AppBarActions` (Teacher Dashboard AppBars) and `OnboardingScaffold` (Onboarding AppBars).
+
+### 7.4. App Bar Height & Background Softening
+* **App Theme (`appBarTheme`)**: Reduced toolbar height to `48px`, softened background color with translucent `surfaceVariant.withValues(alpha: 0.65)`, and set font size to compact `fontMd` (16px) with `0.5` subtle elevation.
+
+### 7.5. Students Directory Search Bar Fix
+* **`StudentsFilterBar`**: Eliminated the nested "card-within-card" box border artifact by removing outer container decoration and using a single, clean `OutlineInputBorder` on `TextField`.
+
+### 7.6. Profile Page Feature Restoration & Enrichment
+* **`TeacherProfileView`**:
+  * **Verified Educator Card**: Features teacher avatar, name, phone, and emerald `Azeem Verified Faculty` badge.
+  * **Teaching Scope Card**: Chips for affiliated campuses, classes taught, subjects taught, and declared student reach (`~50 Students Enrolled`).
+  * **Phone Number Change with OTP**: Prompts with a 4-digit OTP verification modal bottom sheet when phone number is modified before saving.
+  * **Delete Account Flow**: Shows destructive typed confirmation dialog, logs out, and redirects cleanly to initial role selection.
+
+### 7.7. Files Modified & Added
+1. [`lib/core/widgets/app_language_toggle_button.dart`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/core/widgets/app_language_toggle_button.dart) *(New)* — Universal language toggle widget.
+2. [`lib/core/widgets/app_bar_actions.dart`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/core/widgets/app_bar_actions.dart) *(Modified)* — Added `AppLanguageToggleButton`.
+3. [`lib/core/widgets/onboarding_scaffold.dart`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/core/widgets/onboarding_scaffold.dart) *(Modified)* — Added `AppLanguageToggleButton`.
+4. [`lib/core/theme/app_theme.dart`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/core/theme/app_theme.dart) *(Modified)* — Softened AppBar background and set compact 48px height.
+5. [`lib/presentation/teacher_overview/view/teacher_overview_view.dart`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/presentation/teacher_overview/view/teacher_overview_view.dart) *(Modified)* — Used `teacherHomeTitle`.
+6. [`lib/presentation/teacher_overview/widgets/welcome_header.dart`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/presentation/teacher_overview/widgets/welcome_header.dart) *(Modified)* — Compact bold title without subtitle.
+7. [`lib/presentation/teacher_overview/widgets/teacher_recent_activity_section.dart`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/presentation/teacher_overview/widgets/teacher_recent_activity_section.dart) *(Modified)* — Included 'earned' in activity detection.
+8. [`lib/presentation/teacher_students/widgets/students_filter_bar.dart`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/presentation/teacher_students/widgets/students_filter_bar.dart) *(Modified)* — Fixed nested card border glitch.
+9. [`lib/presentation/teacher_profile/view/teacher_profile_view.dart`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/presentation/teacher_profile/view/teacher_profile_view.dart) *(Modified)* — Full verified credentials, scope chips, and OTP phone change sheet.
+10. [`lib/data/notifications/datasources/local/notification_dummy_datasource.dart`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/data/notifications/datasources/local/notification_dummy_datasource.dart) *(Modified)* — Seeded earned notification messages.
+11. [`lib/l10n/app_en.arb`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/l10n/app_en.arb), [`lib/l10n/app_ur.arb`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/l10n/app_ur.arb), [`lib/l10n/app_localizations*.dart`](file:///w:/Azeem%20Book%20Related/Azeem-Book-App-1/lib/l10n/app_localizations.dart) *(Modified)* — Localized "Home" and pure "Earnings" keys in English and Urdu.
+
+
