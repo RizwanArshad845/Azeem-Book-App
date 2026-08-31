@@ -168,11 +168,12 @@
   },
 
   "teacherOverviewTitle": "Teacher Dashboard",
+  "teacherHomeTitle": "Home",
   "teacherOverviewStudents": "Students Onboarded",
   "teacherOverviewEarnings": "Total Earnings",
   "teacherOverviewQuickActions": "Quick Actions",
   "teacherStudentsTitle": "My Students",
-  "teacherEarningsTitle": "Earnings & Commission",
+  "teacherEarningsTitle": "Earnings",
 
   "liveTestTitle": "Live Test Registration",
   "liveTestRegister": "Register Now",
@@ -301,12 +302,12 @@
   "teacherStudentsSearchNoMatch": "No students match your search.",
   "studentProgressDetailTitle": "Student progress",
   "studentProgressDetailEmpty": "No test attempts yet for this student.",
-  "teacherEarningsEmpty": "No commissions yet. Earnings show up here as soon as your students purchase a paid pack.",
+  "teacherEarningsEmpty": "No earnings yet. Earnings show up here as soon as your students purchase a paid pack.",
   "teacherEarningsTransactionCount": "{count} transactions",
   "@teacherEarningsTransactionCount": {
     "placeholders": { "count": { "type": "int" } }
   },
-  "teacherEarningsBreakdownTitle": "Commission breakdown",
+  "teacherEarningsBreakdownTitle": "Earnings breakdown",
   "teacherEarningsTriggerPaidPackPurchase": "Paid pack purchases",
   "liveTestsEmpty": "No live tests are scheduled right now. Admin schedules these occasionally — check back later.",
   "liveTestDateTba": "Live date to be announced",
@@ -489,7 +490,7 @@
   },
   "teacherActualEarnings": "Actual Earnings",
   "teacherProjectedEarnings": "Projected Earnings",
-  "teacherCommissionAndEarnings": "Commission & Earnings",
+  "teacherCommissionAndEarnings": "Total Earnings",
   "teacherPerStudentRate": "Rs. 500 / Student",
   "teacherUnlockUpTo": "Unlock up to {amount} more!",
   "@teacherUnlockUpTo": {
@@ -530,7 +531,7 @@
   "teacherAllStudents": "All Students",
   "teacherActivePaid": "Active (Paid)",
   "teacherFreeUnpaid": "Free (Unpaid)",
-  "teacherCommissionEarned": "+Rs. 500 Commission Earned",
+  "teacherCommissionEarned": "+Rs. 500 Earned",
   "teacherBundleNotPurchased": "Bundle not purchased yet",
   "teacherViewProgress": "View Progress",
   "teacherSortRecentlyJoined": "Recently Joined",
@@ -552,9 +553,17 @@
   "teacherNavEarnings": "Earnings",
   "homeNavNotifications": "Notifications",
 
+  "teacherVerifyNewPhoneTitle": "Verify New Phone Number",
+  "teacherVerifyPhoneOtpSentMessage": "A 4-digit verification code has been sent to {phone}.",
+  "@teacherVerifyPhoneOtpSentMessage": {
+    "placeholders": {
+      "phone": { "type": "String" }
+    }
+  },
   "teacherOtpCodeLabel": "4-Digit OTP Code",
   "teacherOtpTestHint": "Enter 1234 for testing",
   "teacherOtpEnterCodeError": "Please enter the verification code.",
+  "teacherOtpInvalidCodeError": "Invalid verification code. Please try again.",
   "teacherVerifiedBadge": "Azeem Verified Faculty",
   "teacherDefaultCampusFallback": "Bahawalpur Campus",
   "teacherStudentsEnrolledCount": "~{count} Students Enrolled",
@@ -566,7 +575,7 @@
   "@teacherPurchasesCount": {
     "placeholders": { "count": { "type": "int" } }
   },
-  "teacherCommissionHistory": "Commission History",
+  "teacherCommissionHistory": "Earnings History",
   "teacherEarningsShowingRange": "Showing {start}–{end} of {total} records",
   "@teacherEarningsShowingRange": {
     "placeholders": {

@@ -435,6 +435,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get teacherOverviewTitle => 'ٹیچر ڈیش بورڈ';
 
   @override
+  String get teacherHomeTitle => 'ہوم';
+
+  @override
   String get teacherOverviewStudents => 'شامل شدہ طلباء';
 
   @override
@@ -447,7 +450,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get teacherStudentsTitle => 'میرے طلباء';
 
   @override
-  String get teacherEarningsTitle => 'آمدنی اور کمیشن';
+  String get teacherEarningsTitle => 'آمدن';
 
   @override
   String get liveTestTitle => 'لائیو ٹیسٹ رجسٹریشن';
@@ -793,7 +796,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get teacherEarningsEmpty =>
-      'ابھی تک کوئی کمیشن نہیں ہے۔ جیسے ہی آپ کے طلباء کوئی کورس خریدیں گے، آمدنی یہاں نظر آئے گی۔';
+      'ابھی تک کوئی آمدن نہیں ہے۔ جیسے ہی آپ کے طلباء کوئی کورس خریدیں گے، آمدن یہاں نظر آئے گی۔';
 
   @override
   String teacherEarningsTransactionCount(int count) {
@@ -801,7 +804,7 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get teacherEarningsBreakdownTitle => 'کمیشن کی تفصیل';
+  String get teacherEarningsBreakdownTitle => 'آمدن کی تفصیل';
 
   @override
   String get teacherEarningsTriggerPaidPackPurchase => 'پیڈ پیک کی خریداری';
@@ -1180,7 +1183,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get teacherProjectedEarnings => 'تخمینی آمدن';
 
   @override
-  String get teacherCommissionAndEarnings => 'کمیشن اور آمدن';
+  String get teacherCommissionAndEarnings => 'کل آمدن';
 
   @override
   String get teacherPerStudentRate => '500 روپے / طالب علم';
@@ -1242,7 +1245,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get teacherFreeUnpaid => 'مفت (غیر ادا شدہ)';
 
   @override
-  String get teacherCommissionEarned => '+500 روپے کمیشن حاصل کیا';
+  String get teacherCommissionEarned => '+500 روپے حاصل کیے';
 
   @override
   String get teacherBundleNotPurchased => 'ابھی بنڈل نہیں خریدا گیا';
@@ -1304,6 +1307,14 @@ class AppLocalizationsUr extends AppLocalizations {
   String get homeNavNotifications => 'اطلاعات';
 
   @override
+  String get teacherVerifyNewPhoneTitle => 'نئے فون نمبر کی تصدیق کریں';
+
+  @override
+  String teacherVerifyPhoneOtpSentMessage(String phone) {
+    return '$phone پر 4 ہندسوں کا تصدیقی کوڈ بھیج دیا گیا ہے۔';
+  }
+
+  @override
   String get teacherOtpCodeLabel => '4 ہندسوں کا کوڈ';
 
   @override
@@ -1311,6 +1322,10 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get teacherOtpEnterCodeError => 'براہ کرم تصدیقی کوڈ درج کریں۔';
+
+  @override
+  String get teacherOtpInvalidCodeError =>
+      'غلط تصدیقی کوڈ۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
   String get teacherVerifiedBadge => 'عظیم تصدیق شدہ فیکلٹی';
@@ -1329,7 +1344,7 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get teacherCommissionHistory => 'کمیشن کی تاریخ';
+  String get teacherCommissionHistory => 'آمدن کی تاریخ';
 
   @override
   String teacherEarningsShowingRange(int start, int end, int total) {
