@@ -83,7 +83,7 @@ class _ActivityRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCommission =
-        notification.message.contains('commission') ||
+        notification.message.contains('earned') ||
         notification.message.contains('purchased');
 
     final icon =
@@ -91,10 +91,10 @@ class _ActivityRow extends StatelessWidget {
             ? Icons.shopping_bag_outlined
             : Icons.person_add_alt_1_outlined;
     final iconColor =
-        isCommission ? const Color(0xFF059669) : context.colors.primary;
+        isCommission ? context.colors.success : context.colors.primary;
     final iconBg =
         isCommission
-            ? const Color(0xFF059669).withValues(alpha: 0.12)
+            ? context.colors.success.withValues(alpha: 0.12)
             : context.colors.primary.withValues(alpha: 0.12);
 
     return Padding(
