@@ -1,6 +1,8 @@
 # Azeem Publications — Backend Design Doc (Django + DRF)
 
 > Design doc only — no runnable Python code. This is the contract a from-scratch Django/DRF backend must satisfy so that flipping `AppConfig.isMockMode` from `true` to `false` in the existing Flutter app is a **zero-Dart-code-change** operation. Every model, endpoint, and JSON shape below is cross-referenced against the actual implemented Flutter code (`lib/domain/**/entities`, `lib/data/**/models/*_dto.dart`, `lib/core/network/api_endpoints.dart`, `lib/domain/common/failure.dart`), not just `project_spec.md` prose — see the **Gaps & Risks** callouts throughout for places where the two disagree today.
+>
+> This doc defines *what* the backend must expose. For *how* the Django project should be structured — MVT layering, ORM conventions, service-layer pattern for the trust boundaries in §4.6, settings/testing/auth-library conventions — see the companion doc `backend_architecture.md`.
 
 ---
 

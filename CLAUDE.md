@@ -2,7 +2,7 @@
 
 > Full architecture, data schema, and screen breakdown live in `project_spec.md` — read the relevant section (`§9` for schema, `§10.2` for nav, etc.) only when the current task needs it, don't load the whole file by default.
 >
-> Backend/API contract (Django + DRF design doc, cross-referenced against actual Flutter entities/DTOs/endpoints) lives in `backend.md` — read it when working on `AppConfig.isMockMode` remote datasources, DTO shapes, or anything that needs to match a real backend contract.
+> Backend/API contract (Django + DRF design doc, cross-referenced against actual Flutter entities/DTOs/endpoints) lives in `backend.md` — read it when working on `AppConfig.isMockMode` remote datasources, DTO shapes, or anything that needs to match a real backend contract. Django project architecture and coding conventions (MVT layering, service layer, ORM patterns, testing/settings conventions) live in `backend_architecture.md` — read it when scaffolding or reviewing the actual Django backend implementation.
 
 ## Core Rules & Architecture
 
