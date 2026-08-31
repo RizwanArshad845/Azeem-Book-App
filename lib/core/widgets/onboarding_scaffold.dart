@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../constants/app_assets.dart';
 import '../extensions/context_extensions.dart';
+import 'app_language_toggle_button.dart';
 import 'app_logo.dart';
 import 'onboarding_card.dart';
 import 'section_progress_indicator.dart';
@@ -50,9 +51,10 @@ class OnboardingScaffold extends StatelessWidget {
               )
             : null,
         actions: [
+          const AppLanguageToggleButton(),
           if (currentStep != null && totalSteps != null)
             Padding(
-              padding: EdgeInsets.only(right: context.dimens.md),
+              padding: EdgeInsets.only(right: context.dimens.sm),
               child: Center(
                 child: Container(
                   padding: EdgeInsets.symmetric(
