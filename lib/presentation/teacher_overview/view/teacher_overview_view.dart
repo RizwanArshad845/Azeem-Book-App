@@ -29,7 +29,7 @@ class TeacherOverviewView extends ConsumerWidget {
       // crashes if that invariant is ever violated.
       return Scaffold(
         appBar: AppBar(
-          title: Text(context.l10n.teacherOverviewTitle),
+          title: Text(context.l10n.teacherHomeTitle),
           actions: const [AppBarActions(role: UserRole.teacher)],
         ),
         body: EmptyStateView(
@@ -43,7 +43,7 @@ class TeacherOverviewView extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.teacherOverviewTitle),
+        title: Text(context.l10n.teacherHomeTitle),
         actions: const [AppBarActions(role: UserRole.teacher)],
       ),
       body: SafeArea(

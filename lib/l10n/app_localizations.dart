@@ -890,6 +890,12 @@ abstract class AppLocalizations {
   /// **'Teacher Dashboard'**
   String get teacherOverviewTitle;
 
+  /// No description provided for @teacherHomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get teacherHomeTitle;
+
   /// No description provided for @teacherOverviewStudents.
   ///
   /// In en, this message translates to:
@@ -917,7 +923,7 @@ abstract class AppLocalizations {
   /// No description provided for @teacherEarningsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Earnings & Commission'**
+  /// **'Earnings'**
   String get teacherEarningsTitle;
 
   /// No description provided for @liveTestTitle.
@@ -1523,7 +1529,7 @@ abstract class AppLocalizations {
   /// No description provided for @teacherEarningsEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No commissions yet. Earnings show up here as soon as your students purchase a paid pack.'**
+  /// **'No earnings yet. Earnings show up here as soon as your students purchase a paid pack.'**
   String get teacherEarningsEmpty;
 
   /// No description provided for @teacherEarningsTransactionCount.
@@ -1535,7 +1541,7 @@ abstract class AppLocalizations {
   /// No description provided for @teacherEarningsBreakdownTitle.
   ///
   /// In en, this message translates to:
-  /// **'Commission breakdown'**
+  /// **'Earnings breakdown'**
   String get teacherEarningsBreakdownTitle;
 
   /// No description provided for @teacherEarningsTriggerPaidPackPurchase.
@@ -2213,7 +2219,7 @@ abstract class AppLocalizations {
   /// No description provided for @teacherCommissionAndEarnings.
   ///
   /// In en, this message translates to:
-  /// **'Commission & Earnings'**
+  /// **'Total Earnings'**
   String get teacherCommissionAndEarnings;
 
   /// No description provided for @teacherPerStudentRate.
@@ -2313,7 +2319,7 @@ abstract class AppLocalizations {
   /// No description provided for @teacherCommissionEarned.
   ///
   /// In en, this message translates to:
-  /// **'+Rs. 500 Commission Earned'**
+  /// **'+Rs. 500 Earned'**
   String get teacherCommissionEarned;
 
   /// No description provided for @teacherBundleNotPurchased.
@@ -2430,6 +2436,18 @@ abstract class AppLocalizations {
   /// **'Notifications'**
   String get homeNavNotifications;
 
+  /// No description provided for @teacherVerifyNewPhoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify New Phone Number'**
+  String get teacherVerifyNewPhoneTitle;
+
+  /// No description provided for @teacherVerifyPhoneOtpSentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'A 4-digit verification code has been sent to {phone}.'**
+  String teacherVerifyPhoneOtpSentMessage(String phone);
+
   /// No description provided for @teacherOtpCodeLabel.
   ///
   /// In en, this message translates to:
@@ -2447,6 +2465,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter the verification code.'**
   String get teacherOtpEnterCodeError;
+
+  /// No description provided for @teacherOtpInvalidCodeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid verification code. Please try again.'**
+  String get teacherOtpInvalidCodeError;
 
   /// No description provided for @teacherVerifiedBadge.
   ///
@@ -2475,7 +2499,7 @@ abstract class AppLocalizations {
   /// No description provided for @teacherCommissionHistory.
   ///
   /// In en, this message translates to:
-  /// **'Commission History'**
+  /// **'Earnings History'**
   String get teacherCommissionHistory;
 
   /// No description provided for @teacherEarningsShowingRange.

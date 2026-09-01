@@ -21,33 +21,42 @@ class StudentsFilterBar extends ConsumerWidget {
         Row(
           children: [
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: context.colors.surface,
-                  borderRadius: BorderRadius.circular(context.dimens.radiusMd),
-                  border: Border.all(
-                    color: context.colors.divider.withValues(alpha: 0.7),
+              child: TextField(
+                onChanged: (val) {
+                  ref
+                      .read(teacherStudentsSearchQueryProvider.notifier)
+                      .setQuery(val);
+                  ref
+                      .read(teacherStudentsCurrentPageProvider.notifier)
+                      .setPage(1);
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: context.colors.surface,
+                  hintText: context.l10n.teacherSearchHint,
+                  hintStyle: context.textStyles.bodySmall?.copyWith(
+                    color: context.colors.textSecondary,
                   ),
-                ),
-                child: TextField(
-                  onChanged: (val) {
-                    ref
-                        .read(teacherStudentsSearchQueryProvider.notifier)
-                        .setQuery(val);
-                    ref
-                        .read(teacherStudentsCurrentPageProvider.notifier)
-                        .setPage(1);
-                  },
-                  decoration: InputDecoration(
-                    hintText: context.l10n.teacherSearchHint,
-                    hintStyle: context.textStyles.bodySmall?.copyWith(
-                      color: context.colors.textSecondary,
+                  prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: context.dimens.md,
+                    vertical: context.dimens.sm,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(
+                      context.dimens.radiusMd,
                     ),
-                    prefixIcon: const Icon(Icons.search_rounded, size: 20),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: context.dimens.md,
-                      vertical: context.dimens.sm,
+                    borderSide: BorderSide(
+                      color: context.colors.divider.withValues(alpha: 0.7),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(
+                      context.dimens.radiusMd,
+                    ),
+                    borderSide: BorderSide(
+                      color: context.colors.primary,
+                      width: 1.5,
                     ),
                   ),
                 ),

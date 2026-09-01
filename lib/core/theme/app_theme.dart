@@ -49,20 +49,21 @@ class AppTheme {
         },
       ),
       appBarTheme: AppBarTheme(
-        // Distinct from `scaffoldBackgroundColor` (colors.background) so the
-        // app bar reads as visually separated from body content app-wide
-        // (CLAUDE.md §4: "highlighted background separation"), plus a subtle
-        // elevation shadow doing the same job on scroll.
-        backgroundColor: colors.surface,
+        // Distinct from `scaffoldBackgroundColor` (colors.background) via a softened
+        // translucent `surfaceVariant` so the app bar reads as visually separated from
+        // body content app-wide (CLAUDE.md §4: "highlighted background separation"),
+        // plus a subtle 0.5 elevation doing the same job cleanly across all roles.
+        toolbarHeight: 48,
+        backgroundColor: colors.surfaceVariant.withValues(alpha: 0.65),
         foregroundColor: colors.textPrimary,
-        elevation: 1,
-        scrolledUnderElevation: 2,
-        shadowColor: Colors.black.withValues(alpha: 0.08),
+        elevation: 0.5,
+        scrolledUnderElevation: 1,
+        shadowColor: Colors.black.withValues(alpha: 0.05),
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
         titleTextStyle: GoogleFonts.plusJakartaSans(
           color: colors.textPrimary,
-          fontSize: AppDimens.fontLg,
+          fontSize: AppDimens.fontXl,
           fontWeight: FontWeight.w700,
         ),
       ),

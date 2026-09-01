@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/config/app_config.dart';
 import '../../../core/di/injection.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/common/result.dart';
@@ -26,6 +27,11 @@ import '../../teacher_onboarding/viewmodel/teacher_onboarding_viewmodel.dart';
 class TeacherProfileViewModel extends AsyncNotifier<void> {
   @override
   Future<void> build() async {}
+
+  /// Validates a phone change OTP against the configured OTP code ([AppConfig.otpCode]).
+  bool verifyPhoneChangeOtp(String otp) {
+    return otp.trim() == AppConfig.otpCode;
+  }
 
   /// Saves a name/phone edit. Returns `true` on success so the view can show
   /// a confirmation snackbar without re-deriving it from `state`.

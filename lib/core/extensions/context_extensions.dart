@@ -33,6 +33,8 @@ class AppDimensType {
   double get iconSm => AppDimens.iconSm;
   double get iconMd => AppDimens.iconMd;
   double get iconLg => AppDimens.iconLg;
+  double get avatarSm => AppDimens.avatarSm;
+  double get avatarMd => AppDimens.avatarMd;
   double get avatarLg => AppDimens.avatarLg;
 
   double get contentMaxWidth => AppDimens.contentMaxWidth;

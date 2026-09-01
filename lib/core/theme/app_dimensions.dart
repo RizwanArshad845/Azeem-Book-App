@@ -17,6 +17,8 @@ class AppDimens {
   static const double iconSm = 16;
   static const double iconMd = 24;
   static const double iconLg = 32;
+  static const double avatarSm = 38;
+  static const double avatarMd = 48;
   static const double avatarLg = 68;
 
   /// Drag handle dimensions for modal bottom sheets.

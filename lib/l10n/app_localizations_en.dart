@@ -433,6 +433,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teacherOverviewTitle => 'Teacher Dashboard';
 
   @override
+  String get teacherHomeTitle => 'Home';
+
+  @override
   String get teacherOverviewStudents => 'Students Onboarded';
 
   @override
@@ -445,7 +448,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teacherStudentsTitle => 'My Students';
 
   @override
-  String get teacherEarningsTitle => 'Earnings & Commission';
+  String get teacherEarningsTitle => 'Earnings';
 
   @override
   String get liveTestTitle => 'Live Test Registration';
@@ -786,7 +789,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get teacherEarningsEmpty =>
-      'No commissions yet. Earnings show up here as soon as your students purchase a paid pack.';
+      'No earnings yet. Earnings show up here as soon as your students purchase a paid pack.';
 
   @override
   String teacherEarningsTransactionCount(int count) {
@@ -794,7 +797,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get teacherEarningsBreakdownTitle => 'Commission breakdown';
+  String get teacherEarningsBreakdownTitle => 'Earnings breakdown';
 
   @override
   String get teacherEarningsTriggerPaidPackPurchase => 'Paid pack purchases';
@@ -1174,7 +1177,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teacherProjectedEarnings => 'Projected Earnings';
 
   @override
-  String get teacherCommissionAndEarnings => 'Commission & Earnings';
+  String get teacherCommissionAndEarnings => 'Total Earnings';
 
   @override
   String get teacherPerStudentRate => 'Rs. 500 / Student';
@@ -1236,7 +1239,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teacherFreeUnpaid => 'Free (Unpaid)';
 
   @override
-  String get teacherCommissionEarned => '+Rs. 500 Commission Earned';
+  String get teacherCommissionEarned => '+Rs. 500 Earned';
 
   @override
   String get teacherBundleNotPurchased => 'Bundle not purchased yet';
@@ -1297,6 +1300,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeNavNotifications => 'Notifications';
 
   @override
+  String get teacherVerifyNewPhoneTitle => 'Verify New Phone Number';
+
+  @override
+  String teacherVerifyPhoneOtpSentMessage(String phone) {
+    return 'A 4-digit verification code has been sent to $phone.';
+  }
+
+  @override
   String get teacherOtpCodeLabel => '4-Digit OTP Code';
 
   @override
@@ -1304,6 +1315,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get teacherOtpEnterCodeError => 'Please enter the verification code.';
+
+  @override
+  String get teacherOtpInvalidCodeError =>
+      'Invalid verification code. Please try again.';
 
   @override
   String get teacherVerifiedBadge => 'Azeem Verified Faculty';
@@ -1322,7 +1337,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get teacherCommissionHistory => 'Commission History';
+  String get teacherCommissionHistory => 'Earnings History';
 
   @override
   String teacherEarningsShowingRange(int start, int end, int total) {
