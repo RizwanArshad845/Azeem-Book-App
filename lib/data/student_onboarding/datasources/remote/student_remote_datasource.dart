@@ -4,9 +4,6 @@ import '../../../../core/network/api_endpoints.dart';
 import '../../models/student_dto.dart';
 import '../../models/subject_enrollment_dto.dart';
 
-/// Dio-backed stub. Not exercised while `AppConfig.isMockMode` is true, but
-/// must compile against the real `ApiEndpoints`/`Dio` signatures so the
-/// eventual mock -> real swap is a one-line config change (§6).
 abstract class StudentRemoteDataSource {
   Future<StudentDto> completeOnboarding(StudentDto student);
 

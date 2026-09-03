@@ -6,10 +6,8 @@ import '../../../domain/teacher_onboarding/entities/teacher.dart';
 part 'teacher_dto.freezed.dart';
 part 'teacher_dto.g.dart';
 
-/// Data-layer DTO mirroring the wire shape of the eventual `/teachers`
-/// endpoints. Identical field shape for both the dummy and remote
-/// datasources so flipping `AppConfig.isMockMode` requires zero call-site
-/// changes (§6.1). Flattens `User` base fields directly — see the `Teacher`
+/// Data-layer DTO mirroring the wire shape of the `/teachers` endpoints.
+/// Flattens `User` base fields directly — see the `Teacher`
 /// entity doc for why (§9.2 models inheritance this codebase's generated
 /// freezed classes don't support). Reuses the domain-layer
 /// `TeacherOnboardingSource`/`TeacherApprovalStatus` enums directly, same as

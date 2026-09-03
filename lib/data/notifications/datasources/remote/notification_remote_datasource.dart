@@ -5,14 +5,19 @@ import '../../../../domain/common/failure.dart';
 import '../../../../domain/common/result.dart';
 import '../../models/notification_dto.dart';
 
-/// Dio-backed notifications datasource. Not exercised while
-/// `AppConfig.isMockMode` is true, but must compile against the real
-/// `ApiEndpoints`/`Dio` signatures so the eventual mock -> real swap is a
-/// one-line config change (project_spec.md §6).
+/// Dio-backed notifications datasource.
 abstract class NotificationRemoteDataSource {
   Future<Result<List<NotificationDto>>> getNotifications(String recipientId);
 
   Future<Result<void>> markAsRead(String notificationId);
+
+  /// Marks every notification addressed to [recipientId] as read
+  /// (`backend.md` §4.7).
+  Future<Result<void>> markAllAsRead(String recipientId);
+
+  /// Removes/archives every notification addressed to [recipientId]
+  /// (`backend.md` §4.7).
+  Future<Result<void>> clearAll(String recipientId);
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
@@ -46,6 +51,36 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   Future<Result<void>> markAsRead(String notificationId) async {
     try {
       await _dio.post<void>(ApiEndpoints.notificationMarkRead(notificationId));
+      return const Success(null);
+    } on DioException catch (e) {
+      final failure = e.error;
+      return ResultFailure(
+        failure is Failure ? failure : UnknownFailure(e.message),
+      );
+    } catch (e) {
+      return ResultFailure(UnknownFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Result<void>> markAllAsRead(String recipientId) async {
+    try {
+      await _dio.post<void>(ApiEndpoints.notificationsReadAll(recipientId));
+      return const Success(null);
+    } on DioException catch (e) {
+      final failure = e.error;
+      return ResultFailure(
+        failure is Failure ? failure : UnknownFailure(e.message),
+      );
+    } catch (e) {
+      return ResultFailure(UnknownFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Result<void>> clearAll(String recipientId) async {
+    try {
+      await _dio.delete<void>(ApiEndpoints.notificationsClearAll(recipientId));
       return const Success(null);
     } on DioException catch (e) {
       final failure = e.error;

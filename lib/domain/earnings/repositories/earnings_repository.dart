@@ -4,8 +4,8 @@ import '../entities/earnings_record.dart';
 /// Commission-record access (project_spec.md §9.2 `EarningsRecord`; §9.1
 /// "triggered when a student completes a paid-pack purchase").
 ///
-/// Concrete implementation picks a dummy or remote datasource based on
-/// `AppConfig.isMockMode` (§6.2) — never called directly from a viewmodel.
+/// Concrete implementation calls the remote datasource directly — never
+/// called directly from a viewmodel.
 abstract class EarningsRepository {
   /// Persists a new commission record with `triggerEvent ==
   /// EarningsTriggerEvent.paidPackPurchase` and `createdAt == now`. Called

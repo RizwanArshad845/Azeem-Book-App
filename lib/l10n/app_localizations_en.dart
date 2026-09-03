@@ -751,6 +751,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get testNoQuestionsFound => 'No questions found for this test.';
 
   @override
+  String get testGradingInProgressMessage => 'Grading your answers…';
+
+  @override
   String get testSubmitFailed =>
       'Could not submit your test. Please try again.';
 
@@ -1311,7 +1314,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teacherOtpCodeLabel => '4-Digit OTP Code';
 
   @override
-  String get teacherOtpTestHint => 'Enter 1234 for testing';
+  String get teacherOtpTestHint => 'Enter the code we sent you';
 
   @override
   String get teacherOtpEnterCodeError => 'Please enter the verification code.';

@@ -291,6 +291,7 @@
   "testExitDialogStay": "Stay",
   "testNotPurchasedMessage": "You need to purchase this test before you can attempt it. Add it to your cart from the test list to unlock it.",
   "testNoQuestionsFound": "No questions found for this test.",
+  "testGradingInProgressMessage": "Grading your answers…",
   "testSubmitFailed": "Could not submit your test. Please try again.",
   "testResultsStrongChapters": "Strong chapters",
   "testResultsWeakChapters": "Chapters to review",
@@ -561,7 +562,7 @@
     }
   },
   "teacherOtpCodeLabel": "4-Digit OTP Code",
-  "teacherOtpTestHint": "Enter 1234 for testing",
+  "teacherOtpTestHint": "Enter the code we sent you",
   "teacherOtpEnterCodeError": "Please enter the verification code.",
   "teacherOtpInvalidCodeError": "Invalid verification code. Please try again.",
   "teacherVerifiedBadge": "Azeem Verified Faculty",

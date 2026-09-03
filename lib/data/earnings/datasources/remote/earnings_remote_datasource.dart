@@ -5,10 +5,7 @@ import '../../../../domain/common/failure.dart';
 import '../../../../domain/common/result.dart';
 import '../../models/earnings_record_dto.dart';
 
-/// Dio-backed earnings datasource. Not exercised while `AppConfig.isMockMode`
-/// is true, but must compile against the real `ApiEndpoints`/`Dio`
-/// signatures so the eventual mock -> real swap is a one-line config change
-/// (project_spec.md §6), matching `CartRemoteDataSource`'s pattern.
+/// Dio-backed earnings datasource.
 ///
 /// Reuses the existing `ApiEndpoints.teacherEarnings(teacherId)` path for
 /// both reads (`GET`) and the create-on-purchase write (`POST`) — no new

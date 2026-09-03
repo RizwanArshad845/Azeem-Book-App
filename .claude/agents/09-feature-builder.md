@@ -18,8 +18,7 @@ Your responsibility is to take a feature prompt (referencing `project_spec.md` s
 
 3. **Implement Repositories & Datasources**:
    - Implement remote datasource (Dio client + `ApiEndpoints`).
-   - Implement local dummy datasource with simulated latency and fake data matching schema.
-   - Implement repository class enforcing `AppConfig.isMockMode` switch.
+   - Implement repository class that calls the remote datasource directly (no dummy/mock layer).
 
 4. **Implement Use Cases & ViewModel**:
    - Write single-purpose use cases in domain layer.

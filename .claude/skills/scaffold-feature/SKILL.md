@@ -13,7 +13,6 @@ For `<feature>` (formatted in snake_case, e.g., `teacher_overview`):
 
 1. **`lib/data/<feature>/`**
    - `datasources/remote/<feature>_remote_datasource.dart`
-   - `datasources/local/<feature>_dummy_datasource.dart`
    - `models/<feature>_dto.dart`
    - `repositories/<feature>_repository_impl.dart`
 
@@ -30,6 +29,6 @@ For `<feature>` (formatted in snake_case, e.g., `teacher_overview`):
 ## Rules & Conventions
 
 - Domain layer files must NOT import Flutter, Riverpod, or Data layer code.
-- Data layer repositories MUST accept both `remote` and `dummy` datasources and switch based on `AppConfig.isMockMode`.
+- Data layer repositories MUST call their `remote` datasource directly — no dummy/mock datasource layer.
 - Presentation viewmodels MUST use Riverpod code generation (`@riverpod`).
 - Views MUST render responsive layouts using `context.colors` and `context.dimens`.

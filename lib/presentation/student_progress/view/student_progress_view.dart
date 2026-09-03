@@ -8,7 +8,6 @@ import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_badge.dart';
-import '../../../domain/catalog/entities/question.dart';
 import '../../../domain/test_taking/entities/test_attempt.dart';
 import '../../test_taking/view/test_results_view.dart';
 import '../viewmodel/student_progress_viewmodel.dart';
@@ -296,8 +295,10 @@ class _ChapterProgressCard extends StatelessWidget {
   }
 }
 
-/// Modal sheet that loads questions for the tapped chapter test and renders
-/// the exact same [TestResultsView] widget used after submitting a test.
+/// Modal sheet rendering the exact same [TestResultsView] widget used after
+/// submitting a test — the graded [attempt] is now fully self-describing
+/// (each answer carries its own question text/marks/AI-grading detail), so
+/// no separate questions fetch is needed to show a past result.
 class _ChapterResultSheet extends ConsumerWidget {
   const _ChapterResultSheet({
     required this.chapterTitle,
@@ -311,8 +312,6 @@ class _ChapterResultSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final questionsAsync = ref.watch(chapterQuestionsProvider(testId));
-
     return FractionallySizedBox(
       heightFactor: 0.90,
       child: Column(
@@ -345,15 +344,10 @@ class _ChapterResultSheet extends ConsumerWidget {
           ),
           const Divider(height: 1),
           Expanded(
-            child: AsyncValueWidget<List<Question>>(
-              value: questionsAsync,
-              onRetry: () => ref.invalidate(chapterQuestionsProvider(testId)),
-              data: (questions) => TestResultsView(
-                testId: testId,
-                attempt: attempt,
-                questions: questions,
-                isHistoricalView: true,
-              ),
+            child: TestResultsView(
+              testId: testId,
+              attempt: attempt,
+              isHistoricalView: true,
             ),
           ),
         ],

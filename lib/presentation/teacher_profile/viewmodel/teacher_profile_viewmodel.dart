@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/config/app_config.dart';
 import '../../../core/di/injection.dart';
+import '../../../domain/auth/usecases/request_phone_change_otp_usecase.dart';
+import '../../../domain/auth/usecases/verify_phone_change_otp_usecase.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/common/result.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
@@ -28,9 +29,33 @@ class TeacherProfileViewModel extends AsyncNotifier<void> {
   @override
   Future<void> build() async {}
 
-  /// Validates a phone change OTP against the configured OTP code ([AppConfig.otpCode]).
-  bool verifyPhoneChangeOtp(String otp) {
-    return otp.trim() == AppConfig.otpCode;
+  /// Requests a real OTP be sent to [newPhone] (`backend.md` §4.8). Returns
+  /// `true` on success so the view can open the verification sheet.
+  Future<bool> requestPhoneChangeOtp(String currentPhone, String newPhone) async {
+    state = const AsyncLoading<void>();
+    final result = await sl<RequestPhoneChangeOtpUseCase>()(
+      currentPhone,
+      newPhone,
+    );
+    if (result is ResultFailure<void>) {
+      state = AsyncError<void>(result.failure, StackTrace.current);
+      return false;
+    }
+    state = const AsyncData<void>(null);
+    return true;
+  }
+
+  /// Verifies the OTP sent to [newPhone] against the real backend
+  /// (`backend.md` §4.8). Returns `true` on success.
+  Future<bool> verifyPhoneChangeOtp(String newPhone, String otp) async {
+    state = const AsyncLoading<void>();
+    final result = await sl<VerifyPhoneChangeOtpUseCase>()(newPhone, otp);
+    if (result is ResultFailure<void>) {
+      state = AsyncError<void>(result.failure, StackTrace.current);
+      return false;
+    }
+    state = const AsyncData<void>(null);
+    return true;
   }
 
   /// Saves a name/phone edit. Returns `true` on success so the view can show

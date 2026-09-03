@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SubmissionAnswerDto {
 
- String get questionId; String? get answerText; int? get selectedOptionIndex; bool? get isCorrect; bool get gradedByAi; String? get solutionExplanation;
+ String get questionId; QuestionType? get type; String? get questionText; String? get answerText; int? get selectedOptionIndex; String? get expectedAnswer; int? get marksAwarded; int? get possibleMarks; List<TokenJudgementDto>? get tokenJudgements; String? get justification; String? get solutionExplanation; bool get gradedByAi;
 /// Create a copy of SubmissionAnswerDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $SubmissionAnswerDtoCopyWith<SubmissionAnswerDto> get copyWith => _$SubmissionAn
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubmissionAnswerDto&&(identical(other.questionId, questionId) || other.questionId == questionId)&&(identical(other.answerText, answerText) || other.answerText == answerText)&&(identical(other.selectedOptionIndex, selectedOptionIndex) || other.selectedOptionIndex == selectedOptionIndex)&&(identical(other.isCorrect, isCorrect) || other.isCorrect == isCorrect)&&(identical(other.gradedByAi, gradedByAi) || other.gradedByAi == gradedByAi)&&(identical(other.solutionExplanation, solutionExplanation) || other.solutionExplanation == solutionExplanation));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubmissionAnswerDto&&(identical(other.questionId, questionId) || other.questionId == questionId)&&(identical(other.type, type) || other.type == type)&&(identical(other.questionText, questionText) || other.questionText == questionText)&&(identical(other.answerText, answerText) || other.answerText == answerText)&&(identical(other.selectedOptionIndex, selectedOptionIndex) || other.selectedOptionIndex == selectedOptionIndex)&&(identical(other.expectedAnswer, expectedAnswer) || other.expectedAnswer == expectedAnswer)&&(identical(other.marksAwarded, marksAwarded) || other.marksAwarded == marksAwarded)&&(identical(other.possibleMarks, possibleMarks) || other.possibleMarks == possibleMarks)&&const DeepCollectionEquality().equals(other.tokenJudgements, tokenJudgements)&&(identical(other.justification, justification) || other.justification == justification)&&(identical(other.solutionExplanation, solutionExplanation) || other.solutionExplanation == solutionExplanation)&&(identical(other.gradedByAi, gradedByAi) || other.gradedByAi == gradedByAi));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,questionId,answerText,selectedOptionIndex,isCorrect,gradedByAi,solutionExplanation);
+int get hashCode => Object.hash(runtimeType,questionId,type,questionText,answerText,selectedOptionIndex,expectedAnswer,marksAwarded,possibleMarks,const DeepCollectionEquality().hash(tokenJudgements),justification,solutionExplanation,gradedByAi);
 
 @override
 String toString() {
-  return 'SubmissionAnswerDto(questionId: $questionId, answerText: $answerText, selectedOptionIndex: $selectedOptionIndex, isCorrect: $isCorrect, gradedByAi: $gradedByAi, solutionExplanation: $solutionExplanation)';
+  return 'SubmissionAnswerDto(questionId: $questionId, type: $type, questionText: $questionText, answerText: $answerText, selectedOptionIndex: $selectedOptionIndex, expectedAnswer: $expectedAnswer, marksAwarded: $marksAwarded, possibleMarks: $possibleMarks, tokenJudgements: $tokenJudgements, justification: $justification, solutionExplanation: $solutionExplanation, gradedByAi: $gradedByAi)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $SubmissionAnswerDtoCopyWith<$Res>  {
   factory $SubmissionAnswerDtoCopyWith(SubmissionAnswerDto value, $Res Function(SubmissionAnswerDto) _then) = _$SubmissionAnswerDtoCopyWithImpl;
 @useResult
 $Res call({
- String questionId, String? answerText, int? selectedOptionIndex, bool? isCorrect, bool gradedByAi, String? solutionExplanation
+ String questionId, QuestionType? type, String? questionText, String? answerText, int? selectedOptionIndex, String? expectedAnswer, int? marksAwarded, int? possibleMarks, List<TokenJudgementDto>? tokenJudgements, String? justification, String? solutionExplanation, bool gradedByAi
 });
 
 
@@ -65,15 +65,21 @@ class _$SubmissionAnswerDtoCopyWithImpl<$Res>
 
 /// Create a copy of SubmissionAnswerDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? questionId = null,Object? answerText = freezed,Object? selectedOptionIndex = freezed,Object? isCorrect = freezed,Object? gradedByAi = null,Object? solutionExplanation = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? questionId = null,Object? type = freezed,Object? questionText = freezed,Object? answerText = freezed,Object? selectedOptionIndex = freezed,Object? expectedAnswer = freezed,Object? marksAwarded = freezed,Object? possibleMarks = freezed,Object? tokenJudgements = freezed,Object? justification = freezed,Object? solutionExplanation = freezed,Object? gradedByAi = null,}) {
   return _then(_self.copyWith(
 questionId: null == questionId ? _self.questionId : questionId // ignore: cast_nullable_to_non_nullable
-as String,answerText: freezed == answerText ? _self.answerText : answerText // ignore: cast_nullable_to_non_nullable
+as String,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as QuestionType?,questionText: freezed == questionText ? _self.questionText : questionText // ignore: cast_nullable_to_non_nullable
+as String?,answerText: freezed == answerText ? _self.answerText : answerText // ignore: cast_nullable_to_non_nullable
 as String?,selectedOptionIndex: freezed == selectedOptionIndex ? _self.selectedOptionIndex : selectedOptionIndex // ignore: cast_nullable_to_non_nullable
-as int?,isCorrect: freezed == isCorrect ? _self.isCorrect : isCorrect // ignore: cast_nullable_to_non_nullable
-as bool?,gradedByAi: null == gradedByAi ? _self.gradedByAi : gradedByAi // ignore: cast_nullable_to_non_nullable
-as bool,solutionExplanation: freezed == solutionExplanation ? _self.solutionExplanation : solutionExplanation // ignore: cast_nullable_to_non_nullable
-as String?,
+as int?,expectedAnswer: freezed == expectedAnswer ? _self.expectedAnswer : expectedAnswer // ignore: cast_nullable_to_non_nullable
+as String?,marksAwarded: freezed == marksAwarded ? _self.marksAwarded : marksAwarded // ignore: cast_nullable_to_non_nullable
+as int?,possibleMarks: freezed == possibleMarks ? _self.possibleMarks : possibleMarks // ignore: cast_nullable_to_non_nullable
+as int?,tokenJudgements: freezed == tokenJudgements ? _self.tokenJudgements : tokenJudgements // ignore: cast_nullable_to_non_nullable
+as List<TokenJudgementDto>?,justification: freezed == justification ? _self.justification : justification // ignore: cast_nullable_to_non_nullable
+as String?,solutionExplanation: freezed == solutionExplanation ? _self.solutionExplanation : solutionExplanation // ignore: cast_nullable_to_non_nullable
+as String?,gradedByAi: null == gradedByAi ? _self.gradedByAi : gradedByAi // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -158,10 +164,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String questionId,  String? answerText,  int? selectedOptionIndex,  bool? isCorrect,  bool gradedByAi,  String? solutionExplanation)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String questionId,  QuestionType? type,  String? questionText,  String? answerText,  int? selectedOptionIndex,  String? expectedAnswer,  int? marksAwarded,  int? possibleMarks,  List<TokenJudgementDto>? tokenJudgements,  String? justification,  String? solutionExplanation,  bool gradedByAi)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SubmissionAnswerDto() when $default != null:
-return $default(_that.questionId,_that.answerText,_that.selectedOptionIndex,_that.isCorrect,_that.gradedByAi,_that.solutionExplanation);case _:
+return $default(_that.questionId,_that.type,_that.questionText,_that.answerText,_that.selectedOptionIndex,_that.expectedAnswer,_that.marksAwarded,_that.possibleMarks,_that.tokenJudgements,_that.justification,_that.solutionExplanation,_that.gradedByAi);case _:
   return orElse();
 
 }
@@ -179,10 +185,10 @@ return $default(_that.questionId,_that.answerText,_that.selectedOptionIndex,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String questionId,  String? answerText,  int? selectedOptionIndex,  bool? isCorrect,  bool gradedByAi,  String? solutionExplanation)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String questionId,  QuestionType? type,  String? questionText,  String? answerText,  int? selectedOptionIndex,  String? expectedAnswer,  int? marksAwarded,  int? possibleMarks,  List<TokenJudgementDto>? tokenJudgements,  String? justification,  String? solutionExplanation,  bool gradedByAi)  $default,) {final _that = this;
 switch (_that) {
 case _SubmissionAnswerDto():
-return $default(_that.questionId,_that.answerText,_that.selectedOptionIndex,_that.isCorrect,_that.gradedByAi,_that.solutionExplanation);case _:
+return $default(_that.questionId,_that.type,_that.questionText,_that.answerText,_that.selectedOptionIndex,_that.expectedAnswer,_that.marksAwarded,_that.possibleMarks,_that.tokenJudgements,_that.justification,_that.solutionExplanation,_that.gradedByAi);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +205,10 @@ return $default(_that.questionId,_that.answerText,_that.selectedOptionIndex,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String questionId,  String? answerText,  int? selectedOptionIndex,  bool? isCorrect,  bool gradedByAi,  String? solutionExplanation)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String questionId,  QuestionType? type,  String? questionText,  String? answerText,  int? selectedOptionIndex,  String? expectedAnswer,  int? marksAwarded,  int? possibleMarks,  List<TokenJudgementDto>? tokenJudgements,  String? justification,  String? solutionExplanation,  bool gradedByAi)?  $default,) {final _that = this;
 switch (_that) {
 case _SubmissionAnswerDto() when $default != null:
-return $default(_that.questionId,_that.answerText,_that.selectedOptionIndex,_that.isCorrect,_that.gradedByAi,_that.solutionExplanation);case _:
+return $default(_that.questionId,_that.type,_that.questionText,_that.answerText,_that.selectedOptionIndex,_that.expectedAnswer,_that.marksAwarded,_that.possibleMarks,_that.tokenJudgements,_that.justification,_that.solutionExplanation,_that.gradedByAi);case _:
   return null;
 
 }
@@ -214,15 +220,21 @@ return $default(_that.questionId,_that.answerText,_that.selectedOptionIndex,_tha
 @JsonSerializable()
 
 class _SubmissionAnswerDto extends SubmissionAnswerDto {
-  const _SubmissionAnswerDto({required this.questionId, this.answerText, this.selectedOptionIndex, this.isCorrect, this.gradedByAi = false, this.solutionExplanation}): super._();
+  const _SubmissionAnswerDto({required this.questionId, this.type, this.questionText, this.answerText, this.selectedOptionIndex, this.expectedAnswer, this.marksAwarded, this.possibleMarks, this.tokenJudgements, this.justification, this.solutionExplanation, this.gradedByAi = false}): super._();
   factory _SubmissionAnswerDto.fromJson(Map<String, dynamic> json) => _$SubmissionAnswerDtoFromJson(json);
 
 @override final  String questionId;
+@override final  QuestionType? type;
+@override final  String? questionText;
 @override final  String? answerText;
 @override final  int? selectedOptionIndex;
-@override final  bool? isCorrect;
-@override@JsonKey() final  bool gradedByAi;
+@override final  String? expectedAnswer;
+@override final  int? marksAwarded;
+@override final  int? possibleMarks;
+@override final  List<TokenJudgementDto>? tokenJudgements;
+@override final  String? justification;
 @override final  String? solutionExplanation;
+@override@JsonKey() final  bool gradedByAi;
 
 /// Create a copy of SubmissionAnswerDto
 /// with the given fields replaced by the non-null parameter values.
@@ -237,16 +249,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubmissionAnswerDto&&(identical(other.questionId, questionId) || other.questionId == questionId)&&(identical(other.answerText, answerText) || other.answerText == answerText)&&(identical(other.selectedOptionIndex, selectedOptionIndex) || other.selectedOptionIndex == selectedOptionIndex)&&(identical(other.isCorrect, isCorrect) || other.isCorrect == isCorrect)&&(identical(other.gradedByAi, gradedByAi) || other.gradedByAi == gradedByAi)&&(identical(other.solutionExplanation, solutionExplanation) || other.solutionExplanation == solutionExplanation));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubmissionAnswerDto&&(identical(other.questionId, questionId) || other.questionId == questionId)&&(identical(other.type, type) || other.type == type)&&(identical(other.questionText, questionText) || other.questionText == questionText)&&(identical(other.answerText, answerText) || other.answerText == answerText)&&(identical(other.selectedOptionIndex, selectedOptionIndex) || other.selectedOptionIndex == selectedOptionIndex)&&(identical(other.expectedAnswer, expectedAnswer) || other.expectedAnswer == expectedAnswer)&&(identical(other.marksAwarded, marksAwarded) || other.marksAwarded == marksAwarded)&&(identical(other.possibleMarks, possibleMarks) || other.possibleMarks == possibleMarks)&&const DeepCollectionEquality().equals(other.tokenJudgements, tokenJudgements)&&(identical(other.justification, justification) || other.justification == justification)&&(identical(other.solutionExplanation, solutionExplanation) || other.solutionExplanation == solutionExplanation)&&(identical(other.gradedByAi, gradedByAi) || other.gradedByAi == gradedByAi));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,questionId,answerText,selectedOptionIndex,isCorrect,gradedByAi,solutionExplanation);
+int get hashCode => Object.hash(runtimeType,questionId,type,questionText,answerText,selectedOptionIndex,expectedAnswer,marksAwarded,possibleMarks,const DeepCollectionEquality().hash(tokenJudgements),justification,solutionExplanation,gradedByAi);
 
 @override
 String toString() {
-  return 'SubmissionAnswerDto(questionId: $questionId, answerText: $answerText, selectedOptionIndex: $selectedOptionIndex, isCorrect: $isCorrect, gradedByAi: $gradedByAi, solutionExplanation: $solutionExplanation)';
+  return 'SubmissionAnswerDto(questionId: $questionId, type: $type, questionText: $questionText, answerText: $answerText, selectedOptionIndex: $selectedOptionIndex, expectedAnswer: $expectedAnswer, marksAwarded: $marksAwarded, possibleMarks: $possibleMarks, tokenJudgements: $tokenJudgements, justification: $justification, solutionExplanation: $solutionExplanation, gradedByAi: $gradedByAi)';
 }
 
 
@@ -257,7 +269,7 @@ abstract mixin class _$SubmissionAnswerDtoCopyWith<$Res> implements $SubmissionA
   factory _$SubmissionAnswerDtoCopyWith(_SubmissionAnswerDto value, $Res Function(_SubmissionAnswerDto) _then) = __$SubmissionAnswerDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String questionId, String? answerText, int? selectedOptionIndex, bool? isCorrect, bool gradedByAi, String? solutionExplanation
+ String questionId, QuestionType? type, String? questionText, String? answerText, int? selectedOptionIndex, String? expectedAnswer, int? marksAwarded, int? possibleMarks, List<TokenJudgementDto>? tokenJudgements, String? justification, String? solutionExplanation, bool gradedByAi
 });
 
 
@@ -274,15 +286,21 @@ class __$SubmissionAnswerDtoCopyWithImpl<$Res>
 
 /// Create a copy of SubmissionAnswerDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? questionId = null,Object? answerText = freezed,Object? selectedOptionIndex = freezed,Object? isCorrect = freezed,Object? gradedByAi = null,Object? solutionExplanation = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? questionId = null,Object? type = freezed,Object? questionText = freezed,Object? answerText = freezed,Object? selectedOptionIndex = freezed,Object? expectedAnswer = freezed,Object? marksAwarded = freezed,Object? possibleMarks = freezed,Object? tokenJudgements = freezed,Object? justification = freezed,Object? solutionExplanation = freezed,Object? gradedByAi = null,}) {
   return _then(_SubmissionAnswerDto(
 questionId: null == questionId ? _self.questionId : questionId // ignore: cast_nullable_to_non_nullable
-as String,answerText: freezed == answerText ? _self.answerText : answerText // ignore: cast_nullable_to_non_nullable
+as String,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as QuestionType?,questionText: freezed == questionText ? _self.questionText : questionText // ignore: cast_nullable_to_non_nullable
+as String?,answerText: freezed == answerText ? _self.answerText : answerText // ignore: cast_nullable_to_non_nullable
 as String?,selectedOptionIndex: freezed == selectedOptionIndex ? _self.selectedOptionIndex : selectedOptionIndex // ignore: cast_nullable_to_non_nullable
-as int?,isCorrect: freezed == isCorrect ? _self.isCorrect : isCorrect // ignore: cast_nullable_to_non_nullable
-as bool?,gradedByAi: null == gradedByAi ? _self.gradedByAi : gradedByAi // ignore: cast_nullable_to_non_nullable
-as bool,solutionExplanation: freezed == solutionExplanation ? _self.solutionExplanation : solutionExplanation // ignore: cast_nullable_to_non_nullable
-as String?,
+as int?,expectedAnswer: freezed == expectedAnswer ? _self.expectedAnswer : expectedAnswer // ignore: cast_nullable_to_non_nullable
+as String?,marksAwarded: freezed == marksAwarded ? _self.marksAwarded : marksAwarded // ignore: cast_nullable_to_non_nullable
+as int?,possibleMarks: freezed == possibleMarks ? _self.possibleMarks : possibleMarks // ignore: cast_nullable_to_non_nullable
+as int?,tokenJudgements: freezed == tokenJudgements ? _self.tokenJudgements : tokenJudgements // ignore: cast_nullable_to_non_nullable
+as List<TokenJudgementDto>?,justification: freezed == justification ? _self.justification : justification // ignore: cast_nullable_to_non_nullable
+as String?,solutionExplanation: freezed == solutionExplanation ? _self.solutionExplanation : solutionExplanation // ignore: cast_nullable_to_non_nullable
+as String?,gradedByAi: null == gradedByAi ? _self.gradedByAi : gradedByAi // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

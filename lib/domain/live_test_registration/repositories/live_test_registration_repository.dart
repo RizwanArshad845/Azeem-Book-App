@@ -3,9 +3,8 @@ import '../entities/live_test_registration.dart';
 
 /// Student registration-of-interest against an Admin-scheduled live `Test`
 /// (project_spec.md §9.2 `LiveTestRegistration`; §11 Phase-1 "Live tests |
-/// Beta (register + run)"). Concrete implementation picks a dummy or remote
-/// datasource based on `AppConfig.isMockMode` (§6.2) — never called directly
-/// from a viewmodel.
+/// Beta (register + run)"). Concrete implementation calls the remote
+/// datasource directly — never called directly from a viewmodel.
 ///
 /// Deliberately has no "create/schedule a live test" method: that is the
 /// `Test.isLive`/`Test.liveDate` surface owned by `CatalogRepository`

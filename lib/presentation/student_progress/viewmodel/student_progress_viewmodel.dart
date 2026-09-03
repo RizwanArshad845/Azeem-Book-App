@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/injection.dart';
 import '../../../core/di/riverpod_providers.dart';
 import '../../../domain/catalog/entities/chapter.dart';
-import '../../../domain/catalog/entities/question.dart';
 import '../../../domain/catalog/entities/test.dart';
 import '../../../domain/test_taking/entities/test_attempt.dart';
 import '../../../domain/test_taking/usecases/get_student_test_attempts_usecase.dart';
@@ -522,17 +521,6 @@ final filteredChapterProgressSummaryProvider =
     weakCount: weakChapterIds.length,
     strongCount: strongChapterIds.length,
     averageCount: averageChapterIds.length,
-  );
-});
-
-/// Fetches the questions for a specific test/chapter attempt when opening result details.
-final chapterQuestionsProvider =
-    FutureProvider.family<List<Question>, String>((ref, testId) async {
-  final getQuestions = ref.read(getQuestionsUseCaseProvider);
-  final result = await getQuestions(testId);
-  return result.when(
-    success: (questions) => questions,
-    failure: (failure) => throw failure,
   );
 });
 

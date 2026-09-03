@@ -2,9 +2,8 @@ import '../../common/result.dart';
 import '../entities/teacher.dart';
 
 /// Zero Flutter/Riverpod/package dependencies per §2 Clean Architecture
-/// rules. Concrete implementation picks a dummy or remote datasource based
-/// on `AppConfig.isMockMode` (§6.2) — never called directly from a
-/// viewmodel.
+/// rules. Concrete implementation calls the remote datasource directly —
+/// never called directly from a viewmodel.
 abstract class TeacherRepository {
   /// Looks up an existing Teacher by phone number, or `null` if none exists
   /// yet. Used to distinguish a salesman-seeded record (skip signup) from a

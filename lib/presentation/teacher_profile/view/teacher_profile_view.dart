@@ -68,14 +68,39 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
 
     // If phone number changed, require OTP verification sheet first
     if (phoneNumber != currentTeacher.phoneNumber) {
-      _showPhoneOtpVerificationSheet(
+      _requestPhoneChangeOtp(
+        currentPhone: currentTeacher.phoneNumber,
         newPhone: phoneNumber,
-        onVerified: () => _commitUpdate(name: name, phoneNumber: phoneNumber),
+        onSent: () => _showPhoneOtpVerificationSheet(
+          newPhone: phoneNumber,
+          onVerified: () => _commitUpdate(name: name, phoneNumber: phoneNumber),
+        ),
       );
       return;
     }
 
     _commitUpdate(name: name, phoneNumber: phoneNumber);
+  }
+
+  void _requestPhoneChangeOtp({
+    required String currentPhone,
+    required String newPhone,
+    required VoidCallback onSent,
+  }) {
+    ref
+        .read(teacherProfileViewModelProvider.notifier)
+        .requestPhoneChangeOtp(currentPhone, newPhone)
+        .then((sent) {
+      if (!mounted) return;
+      if (sent) {
+        onSent();
+        return;
+      }
+      final error = ref.read(teacherProfileViewModelProvider).error;
+      final msg =
+          error is Failure ? error.message : context.l10n.commonErrorGeneric;
+      AppSnackbar.show(context, msg);
+    });
   }
 
   void _commitUpdate({required String name, required String phoneNumber}) {
@@ -460,6 +485,7 @@ class _PhoneOtpVerificationSheet extends ConsumerStatefulWidget {
 class _PhoneOtpVerificationSheetState
     extends ConsumerState<_PhoneOtpVerificationSheet> {
   late final TextEditingController _otpController;
+  bool _isVerifying = false;
 
   @override
   void initState() {
@@ -473,22 +499,29 @@ class _PhoneOtpVerificationSheetState
     super.dispose();
   }
 
-  void _handleVerify() {
+  Future<void> _handleVerify() async {
     final otp = _otpController.text.trim();
     if (otp.isEmpty) {
       AppSnackbar.show(context, context.l10n.teacherOtpEnterCodeError);
       return;
     }
 
-    final isValid = ref
+    setState(() => _isVerifying = true);
+    final isValid = await ref
         .read(teacherProfileViewModelProvider.notifier)
-        .verifyPhoneChangeOtp(otp);
+        .verifyPhoneChangeOtp(widget.newPhone, otp);
+    if (!mounted) return;
+    setState(() => _isVerifying = false);
 
     if (isValid) {
       Navigator.pop(context);
       widget.onVerified();
     } else {
-      AppSnackbar.show(context, context.l10n.teacherOtpInvalidCodeError);
+      final error = ref.read(teacherProfileViewModelProvider).error;
+      final msg = error is Failure
+          ? error.message
+          : context.l10n.teacherOtpInvalidCodeError;
+      AppSnackbar.show(context, msg);
     }
   }
 
@@ -540,7 +573,8 @@ class _PhoneOtpVerificationSheetState
             SizedBox(height: context.dimens.md),
             AppPrimaryButton(
               label: context.l10n.otpVerifyButton,
-              onPressed: _handleVerify,
+              loading: _isVerifying,
+              onPressed: _isVerifying ? null : _handleVerify,
             ),
             SizedBox(height: context.dimens.sm),
           ],

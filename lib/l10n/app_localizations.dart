@@ -1460,6 +1460,12 @@ abstract class AppLocalizations {
   /// **'No questions found for this test.'**
   String get testNoQuestionsFound;
 
+  /// No description provided for @testGradingInProgressMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading your answers…'**
+  String get testGradingInProgressMessage;
+
   /// No description provided for @testSubmitFailed.
   ///
   /// In en, this message translates to:
@@ -2457,7 +2463,7 @@ abstract class AppLocalizations {
   /// No description provided for @teacherOtpTestHint.
   ///
   /// In en, this message translates to:
-  /// **'Enter 1234 for testing'**
+  /// **'Enter the code we sent you'**
   String get teacherOtpTestHint;
 
   /// No description provided for @teacherOtpEnterCodeError.

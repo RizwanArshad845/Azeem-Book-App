@@ -21,4 +21,16 @@ abstract class AuthRepository {
 
   /// Clears the current session (interceptor token + persisted storage).
   Future<Result<void>> logout();
+
+  /// Triggers sending an OTP to [newPhone] so a signed-in user can confirm a
+  /// phone-number change away from [currentPhone] (`teacher-profile`'s
+  /// phone-edit flow).
+  Future<Result<void>> requestPhoneChangeOtp(
+    String currentPhone,
+    String newPhone,
+  );
+
+  /// Verifies the OTP sent to [newPhone] before the caller commits the
+  /// phone-number edit.
+  Future<Result<void>> verifyPhoneChangeOtp(String newPhone, String otp);
 }

@@ -6,8 +6,7 @@ part 'subject_enrollment_dto.freezed.dart';
 part 'subject_enrollment_dto.g.dart';
 
 /// Data-layer DTO mirroring the wire shape of a `SubjectEnrollment` row per
-/// §9.2. Identical field shape for both the dummy and remote datasources so
-/// flipping `AppConfig.isMockMode` requires zero call-site changes (§6.1).
+/// §9.2.
 @freezed
 abstract class SubjectEnrollmentDto with _$SubjectEnrollmentDto {
   const SubjectEnrollmentDto._();

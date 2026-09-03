@@ -19,16 +19,14 @@ class SectionBreakdown {
   final int totalMarks;
 }
 
-/// Groups [questions] by [QuestionType] and folds in the graded [answers] to
-/// produce a per-type marks breakdown for the results screen. Pure function —
-/// no side effects, so it needs no repository/DI wiring. An answer counts as
-/// correct only when `isCorrect == true`; null/false (incl. ungraded text
-/// answers) count as wrong. Sections with no questions are omitted.
-List<SectionBreakdown> computeSectionBreakdown(
-  List<Question> questions,
-  List<SubmissionAnswer> answers,
-) {
-  final answersById = {for (final a in answers) a.questionId: a};
+/// Groups a graded attempt's [answers] by [QuestionType] to produce a
+/// per-type marks breakdown for the results screen. Pure function — no side
+/// effects, so it needs no repository/DI wiring. Each answer is now fully
+/// self-describing (server-graded `type`/`marksAwarded`/`possibleMarks`), so
+/// this no longer needs the original question list cross-referenced by id.
+/// Answers missing a `type` (still ungraded) are skipped. Sections with no
+/// answers are omitted.
+List<SectionBreakdown> computeSectionBreakdown(List<SubmissionAnswer> answers) {
   const order = [
     QuestionType.mcq,
     QuestionType.shortAnswer,
@@ -37,18 +35,18 @@ List<SectionBreakdown> computeSectionBreakdown(
 
   final result = <SectionBreakdown>[];
   for (final type in order) {
-    final sectionQuestions = questions.where((q) => q.type == type);
-    if (sectionQuestions.isEmpty) continue;
+    final sectionAnswers = answers.where((a) => a.type == type);
+    if (sectionAnswers.isEmpty) continue;
 
     var correct = 0;
     var wrong = 0;
     var earned = 0;
     var total = 0;
-    for (final q in sectionQuestions) {
-      total += q.marks;
-      if (answersById[q.id]?.isCorrect == true) {
+    for (final answer in sectionAnswers) {
+      total += answer.possibleMarks ?? 0;
+      if (answer.isCorrect == true) {
         correct++;
-        earned += q.marks;
+        earned += answer.marksAwarded ?? 0;
       } else {
         wrong++;
       }

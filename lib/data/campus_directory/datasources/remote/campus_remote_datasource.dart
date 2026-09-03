@@ -3,8 +3,6 @@ import 'package:dio/dio.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../models/campus_dto.dart';
 
-/// Same method signature as [CampusDummyDataSource] so the repository can
-/// swap between the two based purely on `AppConfig.isMockMode` (§6.2).
 abstract class CampusRemoteDataSource {
   Future<List<CampusDto>> getCampuses();
 }

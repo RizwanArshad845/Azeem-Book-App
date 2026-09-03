@@ -10,11 +10,9 @@ abstract class TeacherDirectoryDummyDataSource {
   Future<List<TeacherOptionDto>> getTeachersForCampus(String campusId);
 }
 
-/// Small hardcoded set of sample teachers spread across a few of the
-/// campuses seeded by campus-directory's dummy datasource
-/// (`lib/data/campus_directory/datasources/local/campus_dummy_datasource.dart`),
-/// with `subjectIds` drawn from catalog's dummy subjects
-/// (`lib/data/catalog/datasources/local/catalog_dummy_datasource.dart`).
+/// Small hardcoded set of sample teachers spread across a few real campuses/
+/// subjects, since there's no real "teachers by campus" endpoint yet (see
+/// the class doc comment above).
 class TeacherDirectoryDummyDataSourceImpl
     implements TeacherDirectoryDummyDataSource {
   static const List<TeacherOptionDto> _teachers = [

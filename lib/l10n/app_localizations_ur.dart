@@ -757,6 +757,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get testNoQuestionsFound => 'اس ٹیسٹ کے لیے کوئی سوال نہیں ملا۔';
 
   @override
+  String get testGradingInProgressMessage => 'آپ کے جوابات کی جانچ ہو رہی ہے…';
+
+  @override
   String get testSubmitFailed =>
       'ٹیسٹ جمع نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں۔';
 
@@ -1318,7 +1321,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get teacherOtpCodeLabel => '4 ہندسوں کا کوڈ';
 
   @override
-  String get teacherOtpTestHint => 'ٹیسٹنگ کے لیے 1234 درج کریں';
+  String get teacherOtpTestHint => 'بھیجا گیا کوڈ درج کریں';
 
   @override
   String get teacherOtpEnterCodeError => 'براہ کرم تصدیقی کوڈ درج کریں۔';

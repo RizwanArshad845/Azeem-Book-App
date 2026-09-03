@@ -7,6 +7,7 @@ import '../../../core/widgets/confirm_dialog.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
 import '../viewmodel/test_taking_state.dart';
 import '../viewmodel/test_taking_viewmodel.dart';
+import '../widgets/grading_in_progress_view.dart';
 import '../widgets/loading_gate.dart';
 import '../widgets/not_purchased_view.dart';
 import '../widgets/question_body.dart';
@@ -32,7 +33,8 @@ class TestTakingView extends ConsumerWidget {
 
     return PopScope(
       canPop: status != TestTakingStatus.inProgress &&
-          status != TestTakingStatus.submitting,
+          status != TestTakingStatus.submitting &&
+          status != TestTakingStatus.awaitingGrading,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         final confirmed = await _confirmExit(context);
@@ -51,10 +53,10 @@ class TestTakingView extends ConsumerWidget {
               TestTakingStatus.notPurchased => const NotPurchasedView(),
               TestTakingStatus.inProgress ||
               TestTakingStatus.submitting => QuestionBody(testId: testId),
+              TestTakingStatus.awaitingGrading => const GradingInProgressView(),
               TestTakingStatus.submitted => TestResultsView(
                 testId: testId,
                 attempt: state.result!,
-                questions: state.questions,
                 isOwned: isOwned,
               ),
             },

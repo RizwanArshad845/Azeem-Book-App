@@ -7,9 +7,7 @@ part 'auth_session_dto.freezed.dart';
 part 'auth_session_dto.g.dart';
 
 /// Data-layer DTO mirroring the wire shape of `/auth/otp/request` and
-/// `/auth/otp/verify` responses. Identical field shape for both the dummy
-/// and remote datasources so flipping `AppConfig.isMockMode` requires zero
-/// call-site changes (§6.1).
+/// `/auth/otp/verify` responses.
 @freezed
 abstract class AuthSessionDto with _$AuthSessionDto {
   const factory AuthSessionDto({

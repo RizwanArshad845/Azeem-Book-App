@@ -1,11 +1,9 @@
 class AppConfig {
   const AppConfig._();
 
-  /// Sourced from `--dart-define=MOCK_MODE=true|false`; defaults to mock so
-  /// local dev/demo builds never need the flag passed explicitly.
-  static const bool isMockMode =
-      bool.fromEnvironment('MOCK_MODE', defaultValue: true);
-
+  // TODO: point this at the real deployed Django backend before shipping —
+  // this placeholder was only ever correct for `isMockMode` builds, which
+  // no longer exist.
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
     defaultValue: 'https://api.azeempublications.dev',
@@ -21,9 +19,6 @@ class AppConfig {
   static const int freeAttemptsPerStudent = 2;
 
   static const int otpLength = 4;
-  static const String otpCode = '1234';
-  static const int otpMaxAttempts = 3;
-  static const int otpLockoutRestartSeconds = 3;
 
   static const int splashDelaySeconds = 2;
 }

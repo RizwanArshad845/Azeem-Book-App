@@ -8,8 +8,8 @@ import '../entities/payment.dart';
 /// Per-student cart + checkout access (project_spec.md §9.2 `Cart`,
 /// `CartItem`, `Payment`; §10.2 Cart tab).
 ///
-/// Concrete implementation picks a dummy or remote datasource based on
-/// `AppConfig.isMockMode` (§6.2) — never called directly from a viewmodel.
+/// Concrete implementation calls the remote datasource directly — never
+/// called directly from a viewmodel.
 ///
 /// [addSubjectBundle] takes a [Subject] and its [Test]s (and the student's
 /// current [SubjectEnrollment]s) directly rather than just a `subjectId`,

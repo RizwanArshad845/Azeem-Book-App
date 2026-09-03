@@ -20,20 +20,20 @@ import '../widgets/review_answers_sheet.dart';
 /// the test_result reference: a score hero (X/total + %), a 3-up stats row
 /// (Correct / Wrong / Time), a per-section marks breakdown, and Review /
 /// Reattempt / Back actions. Reattempt is gated by the global free-attempts
-/// limit.
+/// limit. Sourced entirely from [attempt] — each graded `SubmissionAnswer`
+/// is now self-describing (question text/type/marks), so no separate
+/// question list needs to be fetched to render a result.
 class TestResultsView extends ConsumerWidget {
   const TestResultsView({
     super.key,
     required this.testId,
     required this.attempt,
-    required this.questions,
     this.isOwned = false,
     this.isHistoricalView = false,
   });
 
   final String testId;
   final TestAttempt attempt;
-  final List<Question> questions;
 
   /// Whether the test's subject has been purchased — exempts it from the
   /// global free-attempts exhaustion gate on Reattempt.
@@ -55,7 +55,7 @@ class TestResultsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sections = computeSectionBreakdown(questions, attempt.answers);
+    final sections = computeSectionBreakdown(attempt.answers);
     final earned = sections.fold<int>(0, (s, x) => s + x.earnedMarks);
     final total = sections.fold<int>(0, (s, x) => s + x.totalMarks);
     final correct = sections.fold<int>(0, (s, x) => s + x.correct);
@@ -147,7 +147,6 @@ class TestResultsView extends ConsumerWidget {
               icon: Icons.fact_check_outlined,
               onPressed: () => ReviewAnswersSheet.show(
                 context,
-                questions: questions,
                 answers: attempt.answers,
               ),
             ),

@@ -6,6 +6,8 @@ class ApiEndpoints {
 
   static const String authOtpRequest = '/auth/otp/request';
   static const String authOtpVerify = '/auth/otp/verify';
+  static const String authPhoneChangeRequest = '/auth/phone-change/request';
+  static const String authPhoneChangeVerify = '/auth/phone-change/verify';
 
   static const String catalogClassLevels = '/catalog/class-levels';
   static const String catalogBoardClasses = '/catalog/board-classes';
@@ -15,6 +17,8 @@ class ApiEndpoints {
   static const String catalogTests = '/catalog/tests';
   static const String catalogQuestions = '/catalog/questions';
 
+  static const String teachers = '/teachers';
+  static const String teacherSignUp = '/teachers/signup';
   static String teacherById(String teacherId) => '/teachers/$teacherId';
   static String teacherOverview(String teacherId) =>
       '/teachers/$teacherId/overview';
@@ -32,15 +36,25 @@ class ApiEndpoints {
   static String studentTestAttempts(String studentId) =>
       '/students/$studentId/test-attempts';
 
+  static String testStartAttempt(String testId) =>
+      '/tests/$testId/start-attempt';
   static String testSubmit(String testId) => '/tests/$testId/submit';
+  static String attemptAnswers(String attemptId) =>
+      '/attempts/$attemptId/answers';
+  static String attemptById(String attemptId) => '/attempts/$attemptId';
 
-  static const String cartCheckout = '/cart/checkout';
+  static String studentCheckout(String studentId) =>
+      '/students/$studentId/checkout';
   static const String paymentStatus = '/payments/status';
 
   static String notifications(String recipientId) =>
       '/notifications/$recipientId';
   static String notificationMarkRead(String notificationId) =>
       '/notifications/$notificationId/read';
+  static String notificationsReadAll(String recipientId) =>
+      '/notifications/$recipientId/read-all';
+  static String notificationsClearAll(String recipientId) =>
+      '/notifications/$recipientId/clear-all';
 
   static const String liveTestRegister = '/live-tests/register';
   static String liveTestRegistrationsForStudent(String studentId) =>

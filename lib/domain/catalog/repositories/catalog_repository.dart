@@ -10,8 +10,8 @@ import '../entities/test.dart';
 /// board/classes, subjects, chapters, tests, and questions (project_spec.md
 /// §9.2).
 ///
-/// Concrete implementation picks a dummy or remote datasource based on
-/// `AppConfig.isMockMode` (§6.2) — never called directly from a viewmodel.
+/// Concrete implementation calls the remote datasource directly — never
+/// called directly from a viewmodel.
 abstract class CatalogRepository {
   /// Every Admin-authored class level (enabled and disabled) — the coarser
   /// "9th"/"10th"/"11th"/"12th" grade axis that [BoardClass] leaves nest

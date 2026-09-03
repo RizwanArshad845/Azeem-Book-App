@@ -11,10 +11,17 @@ _TestAttemptDto _$TestAttemptDtoFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       studentId: json['studentId'] as String,
       testId: json['testId'] as String,
-      answers: (json['answers'] as List<dynamic>)
-          .map((e) => SubmissionAnswerDto.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      scorePercent: (json['scorePercent'] as num).toDouble(),
+      status: $enumDecode(_$TestAttemptStatusEnumMap, json['status']),
+      answers:
+          (json['answers'] as List<dynamic>?)
+              ?.map(
+                (e) => SubmissionAnswerDto.fromJson(e as Map<String, dynamic>),
+              )
+              .toList() ??
+          const <SubmissionAnswerDto>[],
+      scorePercent: (json['scorePercent'] as num?)?.toDouble() ?? 0.0,
+      totalMarksAwarded: (json['totalMarksAwarded'] as num?)?.toInt(),
+      totalPossibleMarks: (json['totalPossibleMarks'] as num?)?.toInt(),
       weakChapterIds: (json['weakChapterIds'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
@@ -31,11 +38,20 @@ Map<String, dynamic> _$TestAttemptDtoToJson(_TestAttemptDto instance) =>
       'id': instance.id,
       'studentId': instance.studentId,
       'testId': instance.testId,
+      'status': _$TestAttemptStatusEnumMap[instance.status]!,
       'answers': instance.answers,
       'scorePercent': instance.scorePercent,
+      'totalMarksAwarded': instance.totalMarksAwarded,
+      'totalPossibleMarks': instance.totalPossibleMarks,
       'weakChapterIds': instance.weakChapterIds,
       'strongChapterIds': instance.strongChapterIds,
       'durationSeconds': instance.durationSeconds,
       'isLiveTestAttempt': instance.isLiveTestAttempt,
       'attemptedAt': instance.attemptedAt.toIso8601String(),
     };
+
+const _$TestAttemptStatusEnumMap = {
+  TestAttemptStatus.submitted: 'submitted',
+  TestAttemptStatus.grading: 'grading',
+  TestAttemptStatus.graded: 'graded',
+};

@@ -8,6 +8,9 @@ import '../../../domain/common/failure.dart';
 import '../../../domain/student_cart/usecases/get_purchased_subject_ids_usecase.dart';
 import '../../../domain/test_taking/entities/submission_answer.dart';
 import '../../../domain/test_taking/entities/test_attempt.dart';
+import '../../../domain/test_taking/usecases/auto_save_answer_usecase.dart';
+import '../../../domain/test_taking/usecases/get_attempt_usecase.dart';
+import '../../../domain/test_taking/usecases/start_test_attempt_usecase.dart';
 import '../../../domain/test_taking/usecases/submit_test_attempt_usecase.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
 import '../../student_progress/viewmodel/student_progress_viewmodel.dart';
@@ -21,19 +24,12 @@ import 'test_taking_state.dart';
 /// included, once the screen is popped) — this project has no
 /// `riverpod_generator` dependency (only `flutter_riverpod`), so this is a
 /// hand-written family notifier via `AsyncNotifierProvider.family`, not
-/// `@riverpod` codegen (confirmed against `flutter_riverpod: ^3.4.2`'s
-/// public API in `riverpod-3.4.2/lib/src/providers/async_notifier/`).
-/// Also note: this codebase's Riverpod 3.x has no `AsyncValue.valueOrNull`
-/// — `.value` is used directly throughout, matching the rest of the app.
+/// `@riverpod` codegen. This codebase's Riverpod 3.x has no
+/// `AsyncValue.valueOrNull` — `.value` is used directly throughout.
 class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
   TestTakingViewModel(this.testId);
 
   final String testId;
-
-  /// No fixed per-test duration exists in project_spec.md §9.2 (only
-  /// `liveTest.liveDate` is modeled, not a duration) — Phase-1 placeholder:
-  /// every non-live test gets a generous flat 30 minutes.
-  static const int _defaultDurationSeconds = 30 * 60;
 
   Timer? _timer;
 
@@ -65,7 +61,7 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
       throw const NotFoundFailure('This test could not be found.');
     }
 
-    // Purchase gate (must run before questions are loaded): a student may
+    // Purchase gate (must run before starting an attempt): a student may
     // attempt a test only if it's a free sample or its subject is in their
     // purchased-subject-ids set (bundle-only purchasing — see `CartItem`
     // doc comment).
@@ -82,21 +78,27 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
       }
     }
 
-    final questionsResult = await ref.read(getQuestionsUseCaseProvider)(testId);
-    final questions = questionsResult.when(
-      success: (qs) => qs,
+    final sessionResult = await sl<StartTestAttemptUseCase>()(testId);
+    final attemptSession = sessionResult.when(
+      success: (s) => s,
       failure: (failure) => throw failure,
     );
+
+    final secondsRemaining = attemptSession.deadlineAt
+        .difference(DateTime.now())
+        .inSeconds
+        .clamp(0, 1 << 31);
 
     _startTimer();
 
     return TestTakingState(
       status: TestTakingStatus.inProgress,
       test: test,
-      questions: questions,
+      attemptId: attemptSession.attemptId,
+      questions: attemptSession.questions,
       currentIndex: 0,
       answers: const {},
-      secondsRemaining: _defaultDurationSeconds,
+      secondsRemaining: secondsRemaining,
     );
   }
 
@@ -120,7 +122,9 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
     });
   }
 
-  /// Records/overwrites the selected mcq option for [questionId].
+  /// Records/overwrites the selected mcq option for [questionId], and
+  /// fires a best-effort autosave — failures are swallowed since this is
+  /// purely a convenience against losing progress, not the final submit.
   void selectOption(String questionId, int optionIndex) {
     final current = state.value;
     if (current == null || current.status != TestTakingStatus.inProgress) {
@@ -132,10 +136,12 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
       selectedOptionIndex: optionIndex,
     );
     state = AsyncData(current.copyWith(answers: updated));
+    _autoSave(current.attemptId, questionId, selectedOptionIndex: optionIndex);
   }
 
   /// Records/overwrites the free-text answer for [questionId] (short or
-  /// long answer — same widget, same storage shape).
+  /// long answer — same widget, same storage shape), and fires a
+  /// best-effort autosave.
   void setTextAnswer(String questionId, String text) {
     final current = state.value;
     if (current == null || current.status != TestTakingStatus.inProgress) {
@@ -144,6 +150,24 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
     final updated = Map<String, SubmissionAnswer>.from(current.answers);
     updated[questionId] = SubmissionAnswer(questionId: questionId, answerText: text);
     state = AsyncData(current.copyWith(answers: updated));
+    _autoSave(current.attemptId, questionId, answerText: text);
+  }
+
+  void _autoSave(
+    String? attemptId,
+    String questionId, {
+    int? selectedOptionIndex,
+    String? answerText,
+  }) {
+    if (attemptId == null) return;
+    // Fire-and-forget: an autosave failure shouldn't interrupt typing/
+    // selecting, the final submit is what actually matters.
+    sl<AutoSaveAnswerUseCase>()(
+      attemptId,
+      questionId,
+      selectedOptionIndex: selectedOptionIndex,
+      answerText: answerText,
+    );
   }
 
   void nextQuestion() {
@@ -168,20 +192,25 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
     state = AsyncData(current.copyWith(currentIndex: index));
   }
 
-  /// Grades every question via the domain use cases, submits the resulting
-  /// [TestAttempt], and transitions to [TestTakingStatus.submitted] on
-  /// success. Returns the graded attempt (or `null` on failure — status is
-  /// reverted to [TestTakingStatus.inProgress] so the student can retry
-  /// rather than losing their in-progress answers).
+  /// Posts the raw (ungraded) answers, transitions to
+  /// [TestTakingStatus.awaitingGrading], and polls until the server reports
+  /// `status == graded`. Returns the graded attempt (or `null` on submit
+  /// failure — status is reverted to [TestTakingStatus.inProgress] so the
+  /// student can retry rather than losing their in-progress answers; `null`
+  /// on a polling timeout leaves the state at `awaitingGrading` since the
+  /// submission itself already succeeded server-side).
   Future<TestAttempt?> submitAttempt() async {
     final current = state.value;
-    if (current == null || current.test == null) return null;
+    if (current == null || current.test == null || current.attemptId == null) {
+      return null;
+    }
     if (current.status == TestTakingStatus.submitted) return current.result;
-    if (current.status == TestTakingStatus.submitting) return null;
+    if (current.status == TestTakingStatus.submitting ||
+        current.status == TestTakingStatus.awaitingGrading) {
+      return null;
+    }
 
-    final session = ref.read(currentUserProvider);
-    if (session == null) return null;
-
+    final attemptId = current.attemptId!;
     state = AsyncData(current.copyWith(status: TestTakingStatus.submitting));
 
     final rawAnswers = <String, Object>{};
@@ -195,36 +224,54 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
       }
     }
 
-    final elapsed = _defaultDurationSeconds - current.secondsRemaining;
+    final submitResult = await sl<SubmitTestAttemptUseCase>()(
+      testId,
+      attemptId,
+      rawAnswers,
+    );
+    final submitted = submitResult.when(
+      success: (_) => true,
+      failure: (_) => false,
+    );
+    if (!submitted) {
+      state = AsyncData(current.copyWith(status: TestTakingStatus.inProgress));
+      return null;
+    }
 
-    final result = await sl<SubmitTestAttemptUseCase>()(
-      id: 'attempt-${session.userId}-${DateTime.now().millisecondsSinceEpoch}',
-      studentId: session.userId,
-      testId: testId,
-      questions: current.questions,
-      rawAnswers: rawAnswers,
-      durationSeconds: elapsed,
-      isLiveTestAttempt: current.test!.isLive,
+    _timer?.cancel();
+    final awaitingState = state.value ?? current;
+    state = AsyncData(
+      awaitingState.copyWith(status: TestTakingStatus.awaitingGrading),
     );
 
-    return result.when(
-      success: (attempt) {
-        _timer?.cancel();
-        state = AsyncData(
-          current.copyWith(status: TestTakingStatus.submitted, result: attempt),
-        );
-        // So the Progress tab reflects this attempt immediately without a
-        // manual pull-to-refresh — the other progress-derived providers
-        // transitively watch this one and cascade-recompute on their own.
-        ref.invalidate(studentTestAttemptsProvider);
-        return attempt;
-      },
-      failure: (_) {
-        // Keep the student's answers intact so they can retry submitting.
-        state = AsyncData(current.copyWith(status: TestTakingStatus.inProgress));
-        return null;
-      },
+    final graded = await _pollUntilGraded(attemptId);
+    final latest = state.value;
+    if (latest == null) return null;
+    if (graded == null) return null;
+
+    state = AsyncData(
+      latest.copyWith(status: TestTakingStatus.submitted, result: graded),
     );
+    // So the Progress tab reflects this attempt immediately without a
+    // manual pull-to-refresh — the other progress-derived providers
+    // transitively watch this one and cascade-recompute on their own.
+    ref.invalidate(studentTestAttemptsProvider);
+    return graded;
+  }
+
+  /// Polls `GET /attempts/{attemptId}` every 2s (bounded to ~80s total)
+  /// until the server reports `status == graded`, or gives up and returns
+  /// `null` if grading takes longer than that.
+  Future<TestAttempt?> _pollUntilGraded(String attemptId) async {
+    const maxAttempts = 40;
+    const interval = Duration(seconds: 2);
+    for (var i = 0; i < maxAttempts; i++) {
+      await Future<void>.delayed(interval);
+      final result = await sl<GetAttemptUseCase>()(attemptId);
+      final attempt = result.when(success: (a) => a, failure: (_) => null);
+      if (attempt?.status == TestAttemptStatus.graded) return attempt;
+    }
+    return null;
   }
 }
 

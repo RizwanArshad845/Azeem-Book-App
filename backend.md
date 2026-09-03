@@ -149,7 +149,7 @@ Base path assumed: `/api/v1` (not yet declared anywhere in the Flutter `AppConfi
 
 | Endpoint | Method | Notes |
 |---|---|---|
-| `/cart/checkout` | POST | `{"studentId": string}` → `Payment`. This is where the earnings-attribution trigger belongs server-side (see above) |
+| `/students/{id}/checkout` | POST | No body (`studentId` is in the path). → `Payment`. This is where the earnings-attribution trigger belongs server-side (see above) |
 | `/payments/status?studentId=` | GET | `{"purchasedTestIds": string[]}` — backing the purchase gate; must be derived from real `Payment` rows, see above |
 
 ### 4.7 Notifications

@@ -10,10 +10,7 @@ import '../../models/question_dto.dart';
 import '../../models/subject_dto.dart';
 import '../../models/test_dto.dart';
 
-/// Dio-backed catalog datasource. Not exercised while
-/// `AppConfig.isMockMode` is true, but must compile against the real
-/// `ApiEndpoints`/`Dio` signatures so the eventual mock -> real swap is a
-/// one-line config change (project_spec.md §6).
+/// Dio-backed catalog datasource.
 abstract class CatalogRemoteDataSource {
   Future<Result<List<ClassLevelDto>>> getClassLevels();
 

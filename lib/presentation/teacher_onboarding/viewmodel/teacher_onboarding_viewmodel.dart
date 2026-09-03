@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/config/app_config.dart';
 import '../../../core/di/injection.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
@@ -100,14 +99,9 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
       declaredStudentCount: declaredStudentCount,
       salesmanId: null,
       onboardingSource: TeacherOnboardingSource.selfSignup,
-      // Dummy mode has no way to ever flip this back to `approved` — the
-      // Admin App that would do so is a separate, out-of-scope codebase
-      // (project_spec.md line 4) — so self-signup teachers auto-approve in
-      // mock mode to keep the teacher flow testable end-to-end. Real-API
-      // mode keeps the actual approval gate.
-      approvalStatus: AppConfig.isMockMode
-          ? TeacherApprovalStatus.approved
-          : TeacherApprovalStatus.pendingAdminApproval,
+      // Self-signup teachers always start pending — only the (separate,
+      // out-of-scope) Admin App can flip this to `approved`.
+      approvalStatus: TeacherApprovalStatus.pendingAdminApproval,
       actualEarnings: 0,
       projectedEarnings: null,
     );

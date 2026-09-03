@@ -4,13 +4,25 @@ import '../../../../core/network/api_endpoints.dart';
 import '../../../../domain/common/failure.dart';
 import '../../../../domain/common/result.dart';
 import '../../models/test_attempt_dto.dart';
+import '../../models/test_attempt_session_dto.dart';
 
-/// Dio-backed submission datasource. Not exercised while
-/// `AppConfig.isMockMode` is true, but must compile against the real
-/// `ApiEndpoints`/`Dio` signatures so the eventual mock -> real swap is a
-/// one-line config change (project_spec.md §6).
 abstract class TestAttemptRemoteDataSource {
-  Future<Result<TestAttemptDto>> submitAttempt(TestAttemptDto attempt);
+  Future<Result<TestAttemptSessionDto>> startAttempt(String testId);
+
+  Future<Result<void>> autoSaveAnswer(
+    String attemptId,
+    String questionId, {
+    int? selectedOptionIndex,
+    String? answerText,
+  });
+
+  Future<Result<void>> submitAttempt(
+    String testId,
+    String attemptId,
+    Map<String, Object> rawAnswers,
+  );
+
+  Future<Result<TestAttemptDto>> getAttempt(String attemptId);
 
   Future<Result<List<TestAttemptDto>>> getAttemptsForStudent(
     String studentId,
@@ -23,11 +35,64 @@ class TestAttemptRemoteDataSourceImpl implements TestAttemptRemoteDataSource {
   final Dio _dio;
 
   @override
-  Future<Result<TestAttemptDto>> submitAttempt(TestAttemptDto attempt) {
+  Future<Result<TestAttemptSessionDto>> startAttempt(String testId) {
     return _guard(() async {
       final response = await _dio.post<Map<String, dynamic>>(
-        ApiEndpoints.testSubmit(attempt.testId),
-        data: attempt.toJson(),
+        ApiEndpoints.testStartAttempt(testId),
+      );
+      return TestAttemptSessionDto.fromJson(response.data!);
+    });
+  }
+
+  @override
+  Future<Result<void>> autoSaveAnswer(
+    String attemptId,
+    String questionId, {
+    int? selectedOptionIndex,
+    String? answerText,
+  }) {
+    return _guard(() async {
+      await _dio.patch<void>(
+        ApiEndpoints.attemptAnswers(attemptId),
+        data: {
+          'questionId': questionId,
+          if (selectedOptionIndex != null)
+            'selectedOptionIndex': selectedOptionIndex,
+          if (answerText != null) 'answerText': answerText,
+        },
+      );
+    });
+  }
+
+  @override
+  Future<Result<void>> submitAttempt(
+    String testId,
+    String attemptId,
+    Map<String, Object> rawAnswers,
+  ) {
+    return _guard(() async {
+      await _dio.post<void>(
+        ApiEndpoints.testSubmit(testId),
+        data: {
+          'attemptId': attemptId,
+          'answers': [
+            for (final entry in rawAnswers.entries)
+              {
+                'questionId': entry.key,
+                if (entry.value is int) 'selectedOptionIndex': entry.value,
+                if (entry.value is String) 'answerText': entry.value,
+              },
+          ],
+        },
+      );
+    });
+  }
+
+  @override
+  Future<Result<TestAttemptDto>> getAttempt(String attemptId) {
+    return _guard(() async {
+      final response = await _dio.get<Map<String, dynamic>>(
+        ApiEndpoints.attemptById(attemptId),
       );
       return TestAttemptDto.fromJson(response.data!);
     });

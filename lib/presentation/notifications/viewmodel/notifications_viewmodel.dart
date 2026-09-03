@@ -2,7 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
 import '../../../domain/notifications/entities/notification.dart';
+import '../../../domain/notifications/usecases/clear_all_notifications_usecase.dart';
 import '../../../domain/notifications/usecases/get_notifications_usecase.dart';
+import '../../../domain/notifications/usecases/mark_all_notifications_read_usecase.dart';
 import '../../../domain/notifications/usecases/mark_notification_read_usecase.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
 
@@ -52,22 +54,39 @@ class NotificationsViewModel extends AsyncNotifier<List<Notification>> {
   /// Marks all current notifications as read.
   Future<void> markAllAsRead() async {
     final current = state.value;
-    if (current == null || current.isEmpty) return;
+    final recipientId = ref.read(currentUserProvider)?.userId;
+    if (current == null || current.isEmpty || recipientId == null) return;
 
     state = AsyncData<List<Notification>>([
       for (final n in current) n.copyWith(isRead: true),
     ]);
 
-    for (final n in current) {
-      if (!n.isRead) {
-        await sl<MarkNotificationReadUseCase>()(n.id);
-      }
-    }
+    final result = await sl<MarkAllNotificationsReadUseCase>()(recipientId);
+    result.when(
+      success: (_) {},
+      failure: (_) {
+        state = AsyncData<List<Notification>>(current);
+      },
+    );
   }
 
-  /// Clears all notifications locally.
+  /// Clears all notifications server-side.
   Future<void> clearAll() async {
+    final current = state.value;
+    final recipientId = ref.read(currentUserProvider)?.userId;
+    if (recipientId == null) return;
+
     state = const AsyncData<List<Notification>>([]);
+
+    final result = await sl<ClearAllNotificationsUseCase>()(recipientId);
+    result.when(
+      success: (_) {},
+      failure: (_) {
+        if (current != null) {
+          state = AsyncData<List<Notification>>(current);
+        }
+      },
+    );
   }
 }
 

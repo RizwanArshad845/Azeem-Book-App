@@ -1,14 +1,37 @@
 import '../../common/result.dart';
 import '../entities/test_attempt.dart';
+import '../entities/test_attempt_session.dart';
 
-/// Persists a student's graded [TestAttempt] (project_spec.md §9.2
-/// `TestAttempt`). Concrete implementation picks a dummy or remote
-/// datasource based on `AppConfig.isMockMode` (§6.2) — never called
-/// directly from a viewmodel.
+/// Persists and grades a student's [TestAttempt] (project_spec.md §9.2
+/// `TestAttempt`). Concrete implementation calls the remote datasource
+/// directly — never called directly from a viewmodel.
 abstract class TestAttemptRepository {
-  /// Grades and persists [attempt] (already fully graded by the domain
-  /// use cases before this is called), returning the stored record.
-  Future<Result<TestAttempt>> submitAttempt(TestAttempt attempt);
+  /// Starts a new attempt at [testId], returning the questions (answer-key
+  /// free) and the server-authoritative deadline for the countdown timer.
+  Future<Result<TestAttemptSession>> startAttempt(String testId);
+
+  /// Best-effort periodic autosave of a single in-progress answer — either
+  /// [selectedOptionIndex] (mcq) or [answerText] (short/long answer).
+  Future<Result<void>> autoSaveAnswer(
+    String attemptId,
+    String questionId, {
+    int? selectedOptionIndex,
+    String? answerText,
+  });
+
+  /// Submits the raw (ungraded) answers for [attemptId] and kicks off
+  /// server-side grading — does not return the graded result inline; poll
+  /// [getAttempt] until `status == graded`.
+  Future<Result<void>> submitAttempt(
+    String testId,
+    String attemptId,
+    Map<String, Object> rawAnswers,
+  );
+
+  /// Fetches the current state of [attemptId] — used both to poll a
+  /// just-submitted attempt until it's graded, and to fetch an
+  /// already-graded attempt's full detail.
+  Future<Result<TestAttempt>> getAttempt(String attemptId);
 
   /// All attempts previously submitted by [studentId], used by
   /// `student-progress` (attempted-tests list, weak/strong chapter

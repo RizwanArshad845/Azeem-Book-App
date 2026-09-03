@@ -4,11 +4,12 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../domain/catalog/entities/question.dart';
+import '../../../domain/test_taking/entities/attempt_question.dart';
 
-/// Renders a `shortAnswer`/`longAnswer` [Question] — same UI for both (a
-/// single free-text field), only the label/line-count differ, per the task
-/// brief ("reuse one widget with a text field for both short/long since UI
-/// is identical").
+/// Renders a `shortAnswer`/`longAnswer` [AttemptQuestion] — same UI for both
+/// (a single free-text field), only the label/line-count differ, per the
+/// task brief ("reuse one widget with a text field for both short/long since
+/// UI is identical").
 class ShortAnswerQuestionCard extends StatefulWidget {
   const ShortAnswerQuestionCard({
     super.key,
@@ -17,7 +18,7 @@ class ShortAnswerQuestionCard extends StatefulWidget {
     required this.onChanged,
   });
 
-  final Question question;
+  final AttemptQuestion question;
   final String? answerText;
   final ValueChanged<String> onChanged;
 

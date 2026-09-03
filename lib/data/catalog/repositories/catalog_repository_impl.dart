@@ -1,4 +1,3 @@
-import '../../../core/config/app_config.dart';
 import '../../../domain/catalog/entities/board_class.dart';
 import '../../../domain/catalog/entities/chapter.dart';
 import '../../../domain/catalog/entities/class_level.dart';
@@ -7,28 +6,18 @@ import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
 import '../../../domain/catalog/repositories/catalog_repository.dart';
 import '../../../domain/common/result.dart';
-import '../datasources/local/catalog_dummy_datasource.dart';
 import '../datasources/remote/catalog_remote_datasource.dart';
 
-/// Switches between [CatalogRemoteDataSource] and [CatalogDummyDataSource]
-/// based on `AppConfig.isMockMode` (project_spec.md §6.2) and maps DTOs to
-/// domain entities so nothing above this layer ever sees a DTO.
+/// Maps [CatalogRemoteDataSource] DTOs to domain entities so nothing above
+/// this layer ever sees a DTO.
 class CatalogRepositoryImpl implements CatalogRepository {
-  CatalogRepositoryImpl({
-    required this.remote,
-    required this.dummy,
-    this.isMockMode = AppConfig.isMockMode,
-  });
+  CatalogRepositoryImpl({required this.remote});
 
   final CatalogRemoteDataSource remote;
-  final CatalogDummyDataSource dummy;
-  final bool isMockMode;
 
   @override
   Future<Result<List<ClassLevel>>> getClassLevels() async {
-    final result = isMockMode
-        ? await dummy.getClassLevels()
-        : await remote.getClassLevels();
+    final result = await remote.getClassLevels();
     return result.when(
       success: (dtos) => Success(dtos.map((d) => d.toDomain()).toList()),
       failure: (f) => ResultFailure(f),
@@ -37,9 +26,7 @@ class CatalogRepositoryImpl implements CatalogRepository {
 
   @override
   Future<Result<List<BoardClass>>> getBoardClasses() async {
-    final result = isMockMode
-        ? await dummy.getBoardClasses()
-        : await remote.getBoardClasses();
+    final result = await remote.getBoardClasses();
     return result.when(
       success: (dtos) => Success(dtos.map((d) => d.toDomain()).toList()),
       failure: (f) => ResultFailure(f),
@@ -48,9 +35,7 @@ class CatalogRepositoryImpl implements CatalogRepository {
 
   @override
   Future<Result<List<Subject>>> getSubjects(String boardClassId) async {
-    final result = isMockMode
-        ? await dummy.getSubjects(boardClassId)
-        : await remote.getSubjects(boardClassId);
+    final result = await remote.getSubjects(boardClassId);
     return result.when(
       success: (dtos) => Success(dtos.map((d) => d.toDomain()).toList()),
       failure: (f) => ResultFailure(f),
@@ -59,9 +44,7 @@ class CatalogRepositoryImpl implements CatalogRepository {
 
   @override
   Future<Result<List<Chapter>>> getChapters(String subjectId) async {
-    final result = isMockMode
-        ? await dummy.getChapters(subjectId)
-        : await remote.getChapters(subjectId);
+    final result = await remote.getChapters(subjectId);
     return result.when(
       success: (dtos) => Success(dtos.map((d) => d.toDomain()).toList()),
       failure: (f) => ResultFailure(f),
@@ -73,9 +56,10 @@ class CatalogRepositoryImpl implements CatalogRepository {
     String? subjectId,
     String? chapterId,
   }) async {
-    final result = isMockMode
-        ? await dummy.getTests(subjectId: subjectId, chapterId: chapterId)
-        : await remote.getTests(subjectId: subjectId, chapterId: chapterId);
+    final result = await remote.getTests(
+      subjectId: subjectId,
+      chapterId: chapterId,
+    );
     return result.when(
       success: (dtos) => Success(dtos.map((d) => d.toDomain()).toList()),
       failure: (f) => ResultFailure(f),
@@ -84,9 +68,7 @@ class CatalogRepositoryImpl implements CatalogRepository {
 
   @override
   Future<Result<List<Question>>> getQuestions(String testId) async {
-    final result = isMockMode
-        ? await dummy.getQuestions(testId)
-        : await remote.getQuestions(testId);
+    final result = await remote.getQuestions(testId);
     return result.when(
       success: (dtos) => Success(dtos.map((d) => d.toDomain()).toList()),
       failure: (f) => ResultFailure(f),

@@ -10,4 +10,10 @@ abstract class NotificationRepository {
 
   /// Marks [notificationId] as read.
   Future<Result<void>> markAsRead(String notificationId);
+
+  /// Marks every notification addressed to [recipientId] as read.
+  Future<Result<void>> markAllAsRead(String recipientId);
+
+  /// Removes/archives every notification addressed to [recipientId].
+  Future<Result<void>> clearAll(String recipientId);
 }

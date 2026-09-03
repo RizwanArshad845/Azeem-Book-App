@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_card.dart';
-import '../../../domain/catalog/entities/question.dart';
+import '../../../domain/test_taking/entities/attempt_question.dart';
 
-/// Renders a single mcq [Question] as tappable radio-style option rows
+/// Renders a single mcq [AttemptQuestion] as tappable radio-style option rows
 /// (project_spec.md §10.1 — cards for scannable data, shared widget kit
 /// only, `context.colors`/`context.dimens`, no per-screen bespoke variant).
 class McqQuestionCard extends StatelessWidget {
@@ -16,7 +16,7 @@ class McqQuestionCard extends StatelessWidget {
     required this.onSelect,
   });
 
-  final Question question;
+  final AttemptQuestion question;
   final int? selectedOptionIndex;
   final ValueChanged<int> onSelect;
 

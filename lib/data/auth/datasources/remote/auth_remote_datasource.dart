@@ -4,10 +4,6 @@ import '../../../../core/network/api_endpoints.dart';
 import '../../../../domain/auth/entities/user_role.dart';
 import '../../models/auth_session_dto.dart';
 
-/// Same method signatures as [AuthDummyDataSource] so the repository can
-/// swap between the two based purely on `AppConfig.isMockMode` (§6.2). Not
-/// exercised while `AppConfig.isMockMode` is true, but kept compiling
-/// against real Dio/`ApiEndpoints` signatures so the flag flip is zero-code.
 abstract class AuthRemoteDataSource {
   Future<AuthSessionDto> requestOtp(String phoneNumber, UserRole role);
 
@@ -16,6 +12,13 @@ abstract class AuthRemoteDataSource {
     String otp,
     UserRole role,
   );
+
+  /// Sends an OTP to [newPhone] to confirm a phone-number change away from
+  /// [currentPhone] (`backend.md` §4.8).
+  Future<void> requestPhoneChangeOtp(String currentPhone, String newPhone);
+
+  /// Verifies the OTP sent to [newPhone] (`backend.md` §4.8).
+  Future<void> verifyPhoneChangeOtp(String newPhone, String otp);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -43,5 +46,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       data: {'phoneNumber': phoneNumber, 'otp': otp, 'role': role.name},
     );
     return AuthSessionDto.fromJson(response.data ?? const {});
+  }
+
+  @override
+  Future<void> requestPhoneChangeOtp(
+    String currentPhone,
+    String newPhone,
+  ) async {
+    await _dio.post<void>(
+      ApiEndpoints.authPhoneChangeRequest,
+      data: {'currentPhone': currentPhone, 'newPhone': newPhone},
+    );
+  }
+
+  @override
+  Future<void> verifyPhoneChangeOtp(String newPhone, String otp) async {
+    await _dio.post<void>(
+      ApiEndpoints.authPhoneChangeVerify,
+      data: {'newPhone': newPhone, 'otp': otp},
+    );
   }
 }

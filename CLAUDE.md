@@ -2,14 +2,14 @@
 
 > Full architecture, data schema, and screen breakdown live in `project_spec.md` — read the relevant section (`§9` for schema, `§10.2` for nav, etc.) only when the current task needs it, don't load the whole file by default.
 >
-> Backend/API contract (Django + DRF design doc, cross-referenced against actual Flutter entities/DTOs/endpoints) lives in `backend.md` — read it when working on `AppConfig.isMockMode` remote datasources, DTO shapes, or anything that needs to match a real backend contract. Django project architecture and coding conventions (MVT layering, service layer, ORM patterns, testing/settings conventions) live in `backend_architecture.md` — read it when scaffolding or reviewing the actual Django backend implementation.
+> Backend/API contract (Django + DRF design doc, cross-referenced against actual Flutter entities/DTOs/endpoints) lives in `backend.md` — read it when working on remote datasources, DTO shapes, or anything that needs to match a real backend contract. Django project architecture and coding conventions (MVT layering, service layer, ORM patterns, testing/settings conventions) live in `backend_architecture.md` — read it when scaffolding or reviewing the actual Django backend implementation.
 
 ## Core Rules & Architecture
 
 1. **Clean Architecture + MVVM Pattern**:
    - `lib/core`: Cross-cutting DI, router, theme, config, constants, extensions, shared widgets, network.
    - `lib/domain/<feature>`: Entities (`freezed`), abstract repository interfaces, single-purpose use cases. Zero Flutter/Riverpod/package dependencies.
-   - `lib/data/<feature>`: DTOs/models (`freezed` + `json_serializable`), datasources (remote Dio + local dummy), repository implementations.
+   - `lib/data/<feature>`: DTOs/models (`freezed` + `json_serializable`), remote Dio datasources, repository implementations.
    - `lib/presentation/<feature>`: Views, ViewModels (hand-written `Notifier`/`AsyncNotifier`, see §2 below), feature widgets. No raw repository or entity calls directly from views.
 
 2. **State Management**:
@@ -23,9 +23,9 @@
    - Service locator powered by `get_it` in `core/di/injection.dart`.
    - Riverpod providers expose `get_it` instances to the UI layer.
 
-4. **Dummy-Data-First Rule**:
-   - Every repository MUST choose between remote and dummy datasources via `AppConfig.isMockMode`.
-   - Never call a real API endpoint directly from a viewmodel or view.
+4. **Real-Backend-Only Rule**:
+   - There is no dummy/mock datasource layer or `AppConfig.isMockMode` switch — every repository calls its remote Dio datasource directly.
+   - Never call a real API endpoint directly from a viewmodel or view; always go through a repository/use case.
 
 5. **UI & Design Rules (§10.1)**:
    - One primary action per screen (prominent `AppButton`).

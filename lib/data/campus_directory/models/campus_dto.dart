@@ -6,8 +6,6 @@ part 'campus_dto.freezed.dart';
 part 'campus_dto.g.dart';
 
 /// Data-layer DTO mirroring the wire shape of `/catalog/campuses` per §9.2.
-/// Identical field shape for both the dummy and remote datasources so
-/// flipping `AppConfig.isMockMode` requires zero call-site changes (§6.1).
 @freezed
 abstract class CampusDto with _$CampusDto {
   const factory CampusDto({

@@ -5,11 +5,7 @@ import '../../../../domain/common/failure.dart';
 import '../../../../domain/common/result.dart';
 import '../../models/live_test_registration_dto.dart';
 
-/// Dio-backed live-test-registration datasource. Not exercised while
-/// `AppConfig.isMockMode` is true, but must compile against the real
-/// `ApiEndpoints`/`Dio` signatures so the eventual mock -> real swap is a
-/// one-line config change (project_spec.md §6), matching
-/// `CartRemoteDataSource`'s pattern.
+/// Dio-backed live-test-registration datasource.
 abstract class LiveTestRegistrationRemoteDataSource {
   Future<Result<LiveTestRegistrationDto>> register(
     String studentId,

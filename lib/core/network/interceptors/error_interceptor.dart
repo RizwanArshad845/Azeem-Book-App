@@ -47,8 +47,20 @@ class ErrorInterceptor extends Interceptor {
     }
 
     final statusCode = err.response?.statusCode;
-    if (statusCode == 401) return const UnauthorizedFailure();
+    if (statusCode == 400) {
+      return const ValidationFailure(
+        'The information provided is incorrect or incomplete. Please check and try again.',
+      );
+    }
+    if (statusCode == 401 || statusCode == 403) {
+      return const UnauthorizedFailure();
+    }
     if (statusCode == 404) return const NotFoundFailure();
+    if (statusCode == 429) {
+      return const ValidationFailure(
+        'Too many attempts. Please wait a moment before trying again.',
+      );
+    }
     if (statusCode != null && statusCode >= 500) return const ServerFailure();
     return UnknownFailure(err.message);
   }
