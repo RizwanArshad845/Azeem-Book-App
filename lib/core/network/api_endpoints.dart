@@ -27,6 +27,7 @@ class ApiEndpoints {
   static String teacherEarnings(String teacherId) =>
       '/teachers/$teacherId/earnings';
 
+  static const String studentSignUp = '/students/signup';
   static String studentById(String studentId) => '/students/$studentId';
   static String studentCart(String studentId) => '/students/$studentId/cart';
   static String studentProgress(String studentId) =>
@@ -38,13 +39,11 @@ class ApiEndpoints {
 
   static String testStartAttempt(String testId) =>
       '/tests/$testId/start-attempt';
-  static String testSubmit(String testId) => '/tests/$testId/submit';
-  static String attemptAnswers(String attemptId) =>
-      '/attempts/$attemptId/answers';
+  static String attemptSubmit(String attemptId) =>
+      '/attempts/$attemptId/submit';
   static String attemptById(String attemptId) => '/attempts/$attemptId';
 
-  static String studentCheckout(String studentId) =>
-      '/students/$studentId/checkout';
+  static const String cartCheckout = '/cart/checkout';
   static const String paymentStatus = '/payments/status';
 
   static String notifications(String recipientId) =>

@@ -1,12 +1,10 @@
 class AppConfig {
   const AppConfig._();
 
-  // TODO: point this at the real deployed Django backend before shipping —
-  // this placeholder was only ever correct for `isMockMode` builds, which
-  // no longer exist.
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://api.azeempublications.dev',
+    defaultValue:
+        'https://backend-azeem-book-production.up.railway.app/api/v1',
   );
 
   static const bool enableLiveTests = true;
@@ -18,7 +16,7 @@ class AppConfig {
   /// `TestListView`/`TestResultsView`'s `isOwned` scoping).
   static const int freeAttemptsPerStudent = 2;
 
-  static const int otpLength = 4;
+  static const int otpLength = 6;
 
   static const int splashDelaySeconds = 2;
 }

@@ -8,7 +8,6 @@ import '../../../domain/common/failure.dart';
 import '../../../domain/student_cart/usecases/get_purchased_subject_ids_usecase.dart';
 import '../../../domain/test_taking/entities/submission_answer.dart';
 import '../../../domain/test_taking/entities/test_attempt.dart';
-import '../../../domain/test_taking/usecases/auto_save_answer_usecase.dart';
 import '../../../domain/test_taking/usecases/get_attempt_usecase.dart';
 import '../../../domain/test_taking/usecases/start_test_attempt_usecase.dart';
 import '../../../domain/test_taking/usecases/submit_test_attempt_usecase.dart';
@@ -122,9 +121,11 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
     });
   }
 
-  /// Records/overwrites the selected mcq option for [questionId], and
-  /// fires a best-effort autosave — failures are swallowed since this is
-  /// purely a convenience against losing progress, not the final submit.
+  /// Records/overwrites the selected mcq option for [questionId] —
+  /// local-only (Riverpod state), no network call. The complete answer set
+  /// is sent in one shot on [submitAttempt] (`FRONTEND_INTEGRATION.md` §6.6
+  /// "Answer persistence & grading UX": no per-answer network round trip
+  /// during test-taking).
   void selectOption(String questionId, int optionIndex) {
     final current = state.value;
     if (current == null || current.status != TestTakingStatus.inProgress) {
@@ -136,12 +137,11 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
       selectedOptionIndex: optionIndex,
     );
     state = AsyncData(current.copyWith(answers: updated));
-    _autoSave(current.attemptId, questionId, selectedOptionIndex: optionIndex);
   }
 
   /// Records/overwrites the free-text answer for [questionId] (short or
-  /// long answer — same widget, same storage shape), and fires a
-  /// best-effort autosave.
+  /// long answer — same widget, same storage shape) — local-only, see
+  /// [selectOption].
   void setTextAnswer(String questionId, String text) {
     final current = state.value;
     if (current == null || current.status != TestTakingStatus.inProgress) {
@@ -150,24 +150,6 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
     final updated = Map<String, SubmissionAnswer>.from(current.answers);
     updated[questionId] = SubmissionAnswer(questionId: questionId, answerText: text);
     state = AsyncData(current.copyWith(answers: updated));
-    _autoSave(current.attemptId, questionId, answerText: text);
-  }
-
-  void _autoSave(
-    String? attemptId,
-    String questionId, {
-    int? selectedOptionIndex,
-    String? answerText,
-  }) {
-    if (attemptId == null) return;
-    // Fire-and-forget: an autosave failure shouldn't interrupt typing/
-    // selecting, the final submit is what actually matters.
-    sl<AutoSaveAnswerUseCase>()(
-      attemptId,
-      questionId,
-      selectedOptionIndex: selectedOptionIndex,
-      answerText: answerText,
-    );
   }
 
   void nextQuestion() {
@@ -225,7 +207,6 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
     }
 
     final submitResult = await sl<SubmitTestAttemptUseCase>()(
-      testId,
       attemptId,
       rawAnswers,
     );

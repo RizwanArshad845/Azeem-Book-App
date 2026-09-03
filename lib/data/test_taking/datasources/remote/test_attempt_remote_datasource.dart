@@ -9,15 +9,7 @@ import '../../models/test_attempt_session_dto.dart';
 abstract class TestAttemptRemoteDataSource {
   Future<Result<TestAttemptSessionDto>> startAttempt(String testId);
 
-  Future<Result<void>> autoSaveAnswer(
-    String attemptId,
-    String questionId, {
-    int? selectedOptionIndex,
-    String? answerText,
-  });
-
   Future<Result<void>> submitAttempt(
-    String testId,
     String attemptId,
     Map<String, Object> rawAnswers,
   );
@@ -44,37 +36,20 @@ class TestAttemptRemoteDataSourceImpl implements TestAttemptRemoteDataSource {
     });
   }
 
-  @override
-  Future<Result<void>> autoSaveAnswer(
-    String attemptId,
-    String questionId, {
-    int? selectedOptionIndex,
-    String? answerText,
-  }) {
-    return _guard(() async {
-      await _dio.patch<void>(
-        ApiEndpoints.attemptAnswers(attemptId),
-        data: {
-          'questionId': questionId,
-          if (selectedOptionIndex != null)
-            'selectedOptionIndex': selectedOptionIndex,
-          if (answerText != null) 'answerText': answerText,
-        },
-      );
-    });
-  }
-
+  /// Local-first: this is the only network call the app makes for a
+  /// student's answers — the complete set collected client-side, sent once
+  /// on submit (`FRONTEND_INTEGRATION.md` §6.6 "Answer persistence &
+  /// grading UX"). There is no per-answer `PATCH /attempts/{id}/answers`
+  /// call during test-taking.
   @override
   Future<Result<void>> submitAttempt(
-    String testId,
     String attemptId,
     Map<String, Object> rawAnswers,
   ) {
     return _guard(() async {
       await _dio.post<void>(
-        ApiEndpoints.testSubmit(testId),
+        ApiEndpoints.attemptSubmit(attemptId),
         data: {
-          'attemptId': attemptId,
           'answers': [
             for (final entry in rawAnswers.entries)
               {

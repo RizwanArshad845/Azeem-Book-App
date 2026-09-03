@@ -22,16 +22,18 @@ class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
 
   final Dio _dio;
 
-  /// Writes the profile (campus + board/class) via `studentById`, then the
-  /// subject-enrollment join rows via `studentSubjectEnrollments` — the two
-  /// read-only `ApiEndpoints` this feature was told to build against.
+  /// Creates the profile (name/phone/campus/board-class) via
+  /// `POST /students/signup` — the real backend 404s a `PUT` against a
+  /// student id with no profile row behind it yet, so onboarding must
+  /// create first — then writes the subject-enrollment join rows via
+  /// `studentSubjectEnrollments`.
   @override
   Future<StudentDto> completeOnboarding(StudentDto student) async {
     final profileJson = Map<String, dynamic>.from(student.toJson())
       ..remove('subjectEnrollments');
 
-    final profileResponse = await _dio.put<Map<String, dynamic>>(
-      ApiEndpoints.studentById(student.id),
+    final profileResponse = await _dio.post<Map<String, dynamic>>(
+      ApiEndpoints.studentSignUp,
       data: profileJson,
     );
 

@@ -21,27 +21,11 @@ class TestAttemptRepositoryImpl implements TestAttemptRepository {
   }
 
   @override
-  Future<Result<void>> autoSaveAnswer(
-    String attemptId,
-    String questionId, {
-    int? selectedOptionIndex,
-    String? answerText,
-  }) {
-    return remote.autoSaveAnswer(
-      attemptId,
-      questionId,
-      selectedOptionIndex: selectedOptionIndex,
-      answerText: answerText,
-    );
-  }
-
-  @override
   Future<Result<void>> submitAttempt(
-    String testId,
     String attemptId,
     Map<String, Object> rawAnswers,
   ) {
-    return remote.submitAttempt(testId, attemptId, rawAnswers);
+    return remote.submitAttempt(attemptId, rawAnswers);
   }
 
   @override

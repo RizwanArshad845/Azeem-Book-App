@@ -10,20 +10,10 @@ abstract class TestAttemptRepository {
   /// free) and the server-authoritative deadline for the countdown timer.
   Future<Result<TestAttemptSession>> startAttempt(String testId);
 
-  /// Best-effort periodic autosave of a single in-progress answer — either
-  /// [selectedOptionIndex] (mcq) or [answerText] (short/long answer).
-  Future<Result<void>> autoSaveAnswer(
-    String attemptId,
-    String questionId, {
-    int? selectedOptionIndex,
-    String? answerText,
-  });
-
-  /// Submits the raw (ungraded) answers for [attemptId] and kicks off
-  /// server-side grading — does not return the graded result inline; poll
-  /// [getAttempt] until `status == graded`.
+  /// Submits the complete, locally-collected (raw, ungraded) answer set for
+  /// [attemptId] and kicks off server-side grading — does not return the
+  /// graded result inline; poll [getAttempt] until `status == graded`.
   Future<Result<void>> submitAttempt(
-    String testId,
     String attemptId,
     Map<String, Object> rawAnswers,
   );

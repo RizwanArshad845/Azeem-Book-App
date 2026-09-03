@@ -23,13 +23,13 @@ class TeacherRemoteDataSourceImpl implements TeacherRemoteDataSource {
 
   @override
   Future<TeacherDto?> getTeacherByPhone(String phoneNumber) async {
-    final response = await _dio.get<List<dynamic>>(
+    final response = await _dio.get<Map<String, dynamic>?>(
       ApiEndpoints.teachers,
       queryParameters: {'phoneNumber': phoneNumber},
     );
-    final data = response.data ?? const <dynamic>[];
-    if (data.isEmpty) return null;
-    return TeacherDto.fromJson(data.first as Map<String, dynamic>);
+    final data = response.data;
+    if (data == null) return null;
+    return TeacherDto.fromJson(data);
   }
 
   @override

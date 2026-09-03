@@ -68,7 +68,6 @@ import '../../domain/student_cart/usecases/remove_from_cart_usecase.dart';
 import '../../data/test_taking/datasources/remote/test_attempt_remote_datasource.dart';
 import '../../data/test_taking/repositories/test_attempt_repository_impl.dart';
 import '../../domain/test_taking/repositories/test_attempt_repository.dart';
-import '../../domain/test_taking/usecases/auto_save_answer_usecase.dart';
 import '../../domain/test_taking/usecases/get_attempt_usecase.dart';
 import '../../domain/test_taking/usecases/get_student_test_attempts_usecase.dart';
 import '../../domain/test_taking/usecases/start_test_attempt_usecase.dart';
@@ -204,7 +203,6 @@ void setupLocator() {
     () => TestAttemptRepositoryImpl(remote: sl()),
   );
   sl.registerFactory(() => StartTestAttemptUseCase(sl()));
-  sl.registerFactory(() => AutoSaveAnswerUseCase(sl()));
   sl.registerFactory(() => SubmitTestAttemptUseCase(sl()));
   sl.registerFactory(() => GetAttemptUseCase(sl()));
 

@@ -30,10 +30,13 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
     String recipientId,
   ) async {
     try {
-      final response = await _dio.get<List<dynamic>>(
+      // Paginated DRF envelope (`{count, next, previous, results}`), not a
+      // bare array — only the first page (default size 20) is fetched here.
+      final response = await _dio.get<Map<String, dynamic>>(
         ApiEndpoints.notifications(recipientId),
       );
-      final items = (response.data ?? <dynamic>[])
+      final results = response.data?['results'] as List<dynamic>? ?? [];
+      final items = results
           .map((e) => NotificationDto.fromJson(e as Map<String, dynamic>))
           .toList();
       return Success(items);

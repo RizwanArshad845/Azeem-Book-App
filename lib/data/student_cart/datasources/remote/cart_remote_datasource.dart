@@ -9,12 +9,12 @@ import '../../models/payment_dto.dart';
 
 /// Dio-backed cart/checkout datasource.
 ///
-/// `ApiEndpoints` only exposes `studentCart(studentId)`,
-/// `studentCheckout(studentId)`, and `paymentStatus` (no per-item
-/// sub-resource), so add/remove are modeled as a `POST`/`DELETE` against the
-/// cart resource itself, each returning the updated cart — matching how
-/// `studentCart` is documented as the single read/write surface for a
-/// student's cart.
+/// `ApiEndpoints` only exposes `studentCart(studentId)`, `cartCheckout`
+/// (no `{id}` — the backend derives the student from the JWT), and
+/// `paymentStatus` (no per-item sub-resource), so add/remove are modeled as
+/// a `POST`/`DELETE` against the cart resource itself, each returning the
+/// updated cart — matching how `studentCart` is documented as the single
+/// read/write surface for a student's cart.
 abstract class CartRemoteDataSource {
   Future<Result<CartDto>> getCart(String studentId);
 
@@ -68,7 +68,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   Future<Result<PaymentDto>> checkout(String studentId) {
     return _guard(() async {
       final response = await _dio.post<Map<String, dynamic>>(
-        ApiEndpoints.studentCheckout(studentId),
+        ApiEndpoints.cartCheckout,
       );
       return PaymentDto.fromJson(response.data!);
     });

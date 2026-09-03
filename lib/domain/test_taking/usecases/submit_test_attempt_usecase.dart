@@ -15,8 +15,7 @@ class SubmitTestAttemptUseCase {
   /// mcq option index (`int`) or free-text (`String`). Missing entries are
   /// treated as unanswered.
   Future<Result<void>> call(
-    String testId,
     String attemptId,
     Map<String, Object> rawAnswers,
-  ) => _repository.submitAttempt(testId, attemptId, rawAnswers);
+  ) => _repository.submitAttempt(attemptId, rawAnswers);
 }

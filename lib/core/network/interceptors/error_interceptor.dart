@@ -47,21 +47,41 @@ class ErrorInterceptor extends Interceptor {
     }
 
     final statusCode = err.response?.statusCode;
+    final serverMessage = _serverMessage(err);
     if (statusCode == 400) {
-      return const ValidationFailure(
-        'The information provided is incorrect or incomplete. Please check and try again.',
+      return ValidationFailure(
+        serverMessage ??
+            'The information provided is incorrect or incomplete. Please check and try again.',
       );
     }
     if (statusCode == 401 || statusCode == 403) {
-      return const UnauthorizedFailure();
+      return UnauthorizedFailure(serverMessage);
     }
-    if (statusCode == 404) return const NotFoundFailure();
+    if (statusCode == 404) return NotFoundFailure(serverMessage);
     if (statusCode == 429) {
-      return const ValidationFailure(
-        'Too many attempts. Please wait a moment before trying again.',
+      return ValidationFailure(
+        serverMessage ??
+            'Too many attempts. Please wait a moment before trying again.',
       );
     }
-    if (statusCode != null && statusCode >= 500) return const ServerFailure();
-    return UnknownFailure(err.message);
+    if (statusCode != null && statusCode >= 500) {
+      return ServerFailure(serverMessage);
+    }
+    return UnknownFailure(serverMessage ?? err.message);
+  }
+
+  /// The real backend always errors as `{"error": {"code", "message"}}`
+  /// (`FRONTEND_INTEGRATION.md` §4) — surface that `message` instead of a
+  /// generic one whenever the response body actually has this shape.
+  String? _serverMessage(DioException err) {
+    final data = err.response?.data;
+    if (data is Map<String, dynamic>) {
+      final error = data['error'];
+      if (error is Map<String, dynamic>) {
+        final message = error['message'];
+        if (message is String && message.isNotEmpty) return message;
+      }
+    }
+    return null;
   }
 }
