@@ -13,20 +13,23 @@ class CartItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final discountedPrice = item.discountedPrice;
+    final testCount = item.testCount;
     return AppListRow(
-      title: item.subjectName,
+      title: item.subjectName ?? item.subjectId,
       titleMaxLines: 2,
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            context.l10n.cartItemTestCount(item.testCount),
-            style: context.textStyles.bodySmall?.copyWith(
-              color: context.colors.textSecondary,
+          if (testCount != null) ...[
+            Text(
+              context.l10n.cartItemTestCount(testCount),
+              style: context.textStyles.bodySmall?.copyWith(
+                color: context.colors.textSecondary,
+              ),
             ),
-          ),
-          SizedBox(height: context.dimens.xs),
+            SizedBox(height: context.dimens.xs),
+          ],
           discountedPrice != null
               ? Row(
                   mainAxisSize: MainAxisSize.min,

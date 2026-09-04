@@ -12,5 +12,6 @@ abstract class Chapter with _$Chapter {
     required String subjectId,
     required String title,
     required int order,
+    @Default(false) bool isFreeSample,
   }) = _Chapter;
 }

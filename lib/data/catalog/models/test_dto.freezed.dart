@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TestDto {
 
- String get id; String get title; TestKind get kind; String get boardClassId; String get subjectId; String? get chapterId; bool get isLive; DateTime? get liveDate; bool get isFreeSample; String get createdByAdminId; DateTime get createdAt; int get questionCount; int get durationMinutes; int get totalMarks;
+ String get id; String get title; TestKind get kind; String get boardClassId; String get subjectId; String? get chapterId; bool get isLive; DateTime? get liveDate; bool get isFreeSample; DateTime get createdAt; int get questionCount; int get durationMinutes; int get totalMarks;
 /// Create a copy of TestDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $TestDtoCopyWith<TestDto> get copyWith => _$TestDtoCopyWithImpl<TestDto>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TestDto&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.boardClassId, boardClassId) || other.boardClassId == boardClassId)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.isLive, isLive) || other.isLive == isLive)&&(identical(other.liveDate, liveDate) || other.liveDate == liveDate)&&(identical(other.isFreeSample, isFreeSample) || other.isFreeSample == isFreeSample)&&(identical(other.createdByAdminId, createdByAdminId) || other.createdByAdminId == createdByAdminId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.questionCount, questionCount) || other.questionCount == questionCount)&&(identical(other.durationMinutes, durationMinutes) || other.durationMinutes == durationMinutes)&&(identical(other.totalMarks, totalMarks) || other.totalMarks == totalMarks));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TestDto&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.boardClassId, boardClassId) || other.boardClassId == boardClassId)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.isLive, isLive) || other.isLive == isLive)&&(identical(other.liveDate, liveDate) || other.liveDate == liveDate)&&(identical(other.isFreeSample, isFreeSample) || other.isFreeSample == isFreeSample)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.questionCount, questionCount) || other.questionCount == questionCount)&&(identical(other.durationMinutes, durationMinutes) || other.durationMinutes == durationMinutes)&&(identical(other.totalMarks, totalMarks) || other.totalMarks == totalMarks));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,kind,boardClassId,subjectId,chapterId,isLive,liveDate,isFreeSample,createdByAdminId,createdAt,questionCount,durationMinutes,totalMarks);
+int get hashCode => Object.hash(runtimeType,id,title,kind,boardClassId,subjectId,chapterId,isLive,liveDate,isFreeSample,createdAt,questionCount,durationMinutes,totalMarks);
 
 @override
 String toString() {
-  return 'TestDto(id: $id, title: $title, kind: $kind, boardClassId: $boardClassId, subjectId: $subjectId, chapterId: $chapterId, isLive: $isLive, liveDate: $liveDate, isFreeSample: $isFreeSample, createdByAdminId: $createdByAdminId, createdAt: $createdAt, questionCount: $questionCount, durationMinutes: $durationMinutes, totalMarks: $totalMarks)';
+  return 'TestDto(id: $id, title: $title, kind: $kind, boardClassId: $boardClassId, subjectId: $subjectId, chapterId: $chapterId, isLive: $isLive, liveDate: $liveDate, isFreeSample: $isFreeSample, createdAt: $createdAt, questionCount: $questionCount, durationMinutes: $durationMinutes, totalMarks: $totalMarks)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $TestDtoCopyWith<$Res>  {
   factory $TestDtoCopyWith(TestDto value, $Res Function(TestDto) _then) = _$TestDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, TestKind kind, String boardClassId, String subjectId, String? chapterId, bool isLive, DateTime? liveDate, bool isFreeSample, String createdByAdminId, DateTime createdAt, int questionCount, int durationMinutes, int totalMarks
+ String id, String title, TestKind kind, String boardClassId, String subjectId, String? chapterId, bool isLive, DateTime? liveDate, bool isFreeSample, DateTime createdAt, int questionCount, int durationMinutes, int totalMarks
 });
 
 
@@ -65,7 +65,7 @@ class _$TestDtoCopyWithImpl<$Res>
 
 /// Create a copy of TestDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? kind = null,Object? boardClassId = null,Object? subjectId = null,Object? chapterId = freezed,Object? isLive = null,Object? liveDate = freezed,Object? isFreeSample = null,Object? createdByAdminId = null,Object? createdAt = null,Object? questionCount = null,Object? durationMinutes = null,Object? totalMarks = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? kind = null,Object? boardClassId = null,Object? subjectId = null,Object? chapterId = freezed,Object? isLive = null,Object? liveDate = freezed,Object? isFreeSample = null,Object? createdAt = null,Object? questionCount = null,Object? durationMinutes = null,Object? totalMarks = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -76,8 +76,7 @@ as String,chapterId: freezed == chapterId ? _self.chapterId : chapterId // ignor
 as String?,isLive: null == isLive ? _self.isLive : isLive // ignore: cast_nullable_to_non_nullable
 as bool,liveDate: freezed == liveDate ? _self.liveDate : liveDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,isFreeSample: null == isFreeSample ? _self.isFreeSample : isFreeSample // ignore: cast_nullable_to_non_nullable
-as bool,createdByAdminId: null == createdByAdminId ? _self.createdByAdminId : createdByAdminId // ignore: cast_nullable_to_non_nullable
-as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,questionCount: null == questionCount ? _self.questionCount : questionCount // ignore: cast_nullable_to_non_nullable
 as int,durationMinutes: null == durationMinutes ? _self.durationMinutes : durationMinutes // ignore: cast_nullable_to_non_nullable
 as int,totalMarks: null == totalMarks ? _self.totalMarks : totalMarks // ignore: cast_nullable_to_non_nullable
@@ -166,10 +165,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  TestKind kind,  String boardClassId,  String subjectId,  String? chapterId,  bool isLive,  DateTime? liveDate,  bool isFreeSample,  String createdByAdminId,  DateTime createdAt,  int questionCount,  int durationMinutes,  int totalMarks)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  TestKind kind,  String boardClassId,  String subjectId,  String? chapterId,  bool isLive,  DateTime? liveDate,  bool isFreeSample,  DateTime createdAt,  int questionCount,  int durationMinutes,  int totalMarks)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TestDto() when $default != null:
-return $default(_that.id,_that.title,_that.kind,_that.boardClassId,_that.subjectId,_that.chapterId,_that.isLive,_that.liveDate,_that.isFreeSample,_that.createdByAdminId,_that.createdAt,_that.questionCount,_that.durationMinutes,_that.totalMarks);case _:
+return $default(_that.id,_that.title,_that.kind,_that.boardClassId,_that.subjectId,_that.chapterId,_that.isLive,_that.liveDate,_that.isFreeSample,_that.createdAt,_that.questionCount,_that.durationMinutes,_that.totalMarks);case _:
   return orElse();
 
 }
@@ -187,10 +186,10 @@ return $default(_that.id,_that.title,_that.kind,_that.boardClassId,_that.subject
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  TestKind kind,  String boardClassId,  String subjectId,  String? chapterId,  bool isLive,  DateTime? liveDate,  bool isFreeSample,  String createdByAdminId,  DateTime createdAt,  int questionCount,  int durationMinutes,  int totalMarks)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  TestKind kind,  String boardClassId,  String subjectId,  String? chapterId,  bool isLive,  DateTime? liveDate,  bool isFreeSample,  DateTime createdAt,  int questionCount,  int durationMinutes,  int totalMarks)  $default,) {final _that = this;
 switch (_that) {
 case _TestDto():
-return $default(_that.id,_that.title,_that.kind,_that.boardClassId,_that.subjectId,_that.chapterId,_that.isLive,_that.liveDate,_that.isFreeSample,_that.createdByAdminId,_that.createdAt,_that.questionCount,_that.durationMinutes,_that.totalMarks);case _:
+return $default(_that.id,_that.title,_that.kind,_that.boardClassId,_that.subjectId,_that.chapterId,_that.isLive,_that.liveDate,_that.isFreeSample,_that.createdAt,_that.questionCount,_that.durationMinutes,_that.totalMarks);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -207,10 +206,10 @@ return $default(_that.id,_that.title,_that.kind,_that.boardClassId,_that.subject
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  TestKind kind,  String boardClassId,  String subjectId,  String? chapterId,  bool isLive,  DateTime? liveDate,  bool isFreeSample,  String createdByAdminId,  DateTime createdAt,  int questionCount,  int durationMinutes,  int totalMarks)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  TestKind kind,  String boardClassId,  String subjectId,  String? chapterId,  bool isLive,  DateTime? liveDate,  bool isFreeSample,  DateTime createdAt,  int questionCount,  int durationMinutes,  int totalMarks)?  $default,) {final _that = this;
 switch (_that) {
 case _TestDto() when $default != null:
-return $default(_that.id,_that.title,_that.kind,_that.boardClassId,_that.subjectId,_that.chapterId,_that.isLive,_that.liveDate,_that.isFreeSample,_that.createdByAdminId,_that.createdAt,_that.questionCount,_that.durationMinutes,_that.totalMarks);case _:
+return $default(_that.id,_that.title,_that.kind,_that.boardClassId,_that.subjectId,_that.chapterId,_that.isLive,_that.liveDate,_that.isFreeSample,_that.createdAt,_that.questionCount,_that.durationMinutes,_that.totalMarks);case _:
   return null;
 
 }
@@ -222,7 +221,7 @@ return $default(_that.id,_that.title,_that.kind,_that.boardClassId,_that.subject
 @JsonSerializable()
 
 class _TestDto extends TestDto {
-  const _TestDto({required this.id, required this.title, required this.kind, required this.boardClassId, required this.subjectId, this.chapterId, this.isLive = false, this.liveDate, this.isFreeSample = false, required this.createdByAdminId, required this.createdAt, this.questionCount = 0, this.durationMinutes = 0, this.totalMarks = 0}): super._();
+  const _TestDto({required this.id, required this.title, required this.kind, required this.boardClassId, required this.subjectId, this.chapterId, this.isLive = false, this.liveDate, this.isFreeSample = false, required this.createdAt, this.questionCount = 0, this.durationMinutes = 0, this.totalMarks = 0}): super._();
   factory _TestDto.fromJson(Map<String, dynamic> json) => _$TestDtoFromJson(json);
 
 @override final  String id;
@@ -234,7 +233,6 @@ class _TestDto extends TestDto {
 @override@JsonKey() final  bool isLive;
 @override final  DateTime? liveDate;
 @override@JsonKey() final  bool isFreeSample;
-@override final  String createdByAdminId;
 @override final  DateTime createdAt;
 @override@JsonKey() final  int questionCount;
 @override@JsonKey() final  int durationMinutes;
@@ -253,16 +251,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TestDto&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.boardClassId, boardClassId) || other.boardClassId == boardClassId)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.isLive, isLive) || other.isLive == isLive)&&(identical(other.liveDate, liveDate) || other.liveDate == liveDate)&&(identical(other.isFreeSample, isFreeSample) || other.isFreeSample == isFreeSample)&&(identical(other.createdByAdminId, createdByAdminId) || other.createdByAdminId == createdByAdminId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.questionCount, questionCount) || other.questionCount == questionCount)&&(identical(other.durationMinutes, durationMinutes) || other.durationMinutes == durationMinutes)&&(identical(other.totalMarks, totalMarks) || other.totalMarks == totalMarks));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TestDto&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.boardClassId, boardClassId) || other.boardClassId == boardClassId)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.chapterId, chapterId) || other.chapterId == chapterId)&&(identical(other.isLive, isLive) || other.isLive == isLive)&&(identical(other.liveDate, liveDate) || other.liveDate == liveDate)&&(identical(other.isFreeSample, isFreeSample) || other.isFreeSample == isFreeSample)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.questionCount, questionCount) || other.questionCount == questionCount)&&(identical(other.durationMinutes, durationMinutes) || other.durationMinutes == durationMinutes)&&(identical(other.totalMarks, totalMarks) || other.totalMarks == totalMarks));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,kind,boardClassId,subjectId,chapterId,isLive,liveDate,isFreeSample,createdByAdminId,createdAt,questionCount,durationMinutes,totalMarks);
+int get hashCode => Object.hash(runtimeType,id,title,kind,boardClassId,subjectId,chapterId,isLive,liveDate,isFreeSample,createdAt,questionCount,durationMinutes,totalMarks);
 
 @override
 String toString() {
-  return 'TestDto(id: $id, title: $title, kind: $kind, boardClassId: $boardClassId, subjectId: $subjectId, chapterId: $chapterId, isLive: $isLive, liveDate: $liveDate, isFreeSample: $isFreeSample, createdByAdminId: $createdByAdminId, createdAt: $createdAt, questionCount: $questionCount, durationMinutes: $durationMinutes, totalMarks: $totalMarks)';
+  return 'TestDto(id: $id, title: $title, kind: $kind, boardClassId: $boardClassId, subjectId: $subjectId, chapterId: $chapterId, isLive: $isLive, liveDate: $liveDate, isFreeSample: $isFreeSample, createdAt: $createdAt, questionCount: $questionCount, durationMinutes: $durationMinutes, totalMarks: $totalMarks)';
 }
 
 
@@ -273,7 +271,7 @@ abstract mixin class _$TestDtoCopyWith<$Res> implements $TestDtoCopyWith<$Res> {
   factory _$TestDtoCopyWith(_TestDto value, $Res Function(_TestDto) _then) = __$TestDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, TestKind kind, String boardClassId, String subjectId, String? chapterId, bool isLive, DateTime? liveDate, bool isFreeSample, String createdByAdminId, DateTime createdAt, int questionCount, int durationMinutes, int totalMarks
+ String id, String title, TestKind kind, String boardClassId, String subjectId, String? chapterId, bool isLive, DateTime? liveDate, bool isFreeSample, DateTime createdAt, int questionCount, int durationMinutes, int totalMarks
 });
 
 
@@ -290,7 +288,7 @@ class __$TestDtoCopyWithImpl<$Res>
 
 /// Create a copy of TestDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? kind = null,Object? boardClassId = null,Object? subjectId = null,Object? chapterId = freezed,Object? isLive = null,Object? liveDate = freezed,Object? isFreeSample = null,Object? createdByAdminId = null,Object? createdAt = null,Object? questionCount = null,Object? durationMinutes = null,Object? totalMarks = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? kind = null,Object? boardClassId = null,Object? subjectId = null,Object? chapterId = freezed,Object? isLive = null,Object? liveDate = freezed,Object? isFreeSample = null,Object? createdAt = null,Object? questionCount = null,Object? durationMinutes = null,Object? totalMarks = null,}) {
   return _then(_TestDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -301,8 +299,7 @@ as String,chapterId: freezed == chapterId ? _self.chapterId : chapterId // ignor
 as String?,isLive: null == isLive ? _self.isLive : isLive // ignore: cast_nullable_to_non_nullable
 as bool,liveDate: freezed == liveDate ? _self.liveDate : liveDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,isFreeSample: null == isFreeSample ? _self.isFreeSample : isFreeSample // ignore: cast_nullable_to_non_nullable
-as bool,createdByAdminId: null == createdByAdminId ? _self.createdByAdminId : createdByAdminId // ignore: cast_nullable_to_non_nullable
-as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,questionCount: null == questionCount ? _self.questionCount : questionCount // ignore: cast_nullable_to_non_nullable
 as int,durationMinutes: null == durationMinutes ? _self.durationMinutes : durationMinutes // ignore: cast_nullable_to_non_nullable
 as int,totalMarks: null == totalMarks ? _self.totalMarks : totalMarks // ignore: cast_nullable_to_non_nullable

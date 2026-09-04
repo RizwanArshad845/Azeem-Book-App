@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EarningsRecordDto {
 
- String get id; String? get teacherId; String? get salesmanId; String get studentId; double get amount; EarningsTriggerEvent get triggerEvent; DateTime get createdAt;
+ String get id; String? get teacherId; String? get salesmanId; String get studentId;@DecimalStringConverter() double get amount; EarningsTriggerEvent get triggerEvent; DateTime get createdAt;
 /// Create a copy of EarningsRecordDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $EarningsRecordDtoCopyWith<$Res>  {
   factory $EarningsRecordDtoCopyWith(EarningsRecordDto value, $Res Function(EarningsRecordDto) _then) = _$EarningsRecordDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String? teacherId, String? salesmanId, String studentId, double amount, EarningsTriggerEvent triggerEvent, DateTime createdAt
+ String id, String? teacherId, String? salesmanId, String studentId,@DecimalStringConverter() double amount, EarningsTriggerEvent triggerEvent, DateTime createdAt
 });
 
 
@@ -159,7 +159,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? teacherId,  String? salesmanId,  String studentId,  double amount,  EarningsTriggerEvent triggerEvent,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? teacherId,  String? salesmanId,  String studentId, @DecimalStringConverter()  double amount,  EarningsTriggerEvent triggerEvent,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EarningsRecordDto() when $default != null:
 return $default(_that.id,_that.teacherId,_that.salesmanId,_that.studentId,_that.amount,_that.triggerEvent,_that.createdAt);case _:
@@ -180,7 +180,7 @@ return $default(_that.id,_that.teacherId,_that.salesmanId,_that.studentId,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? teacherId,  String? salesmanId,  String studentId,  double amount,  EarningsTriggerEvent triggerEvent,  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? teacherId,  String? salesmanId,  String studentId, @DecimalStringConverter()  double amount,  EarningsTriggerEvent triggerEvent,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _EarningsRecordDto():
 return $default(_that.id,_that.teacherId,_that.salesmanId,_that.studentId,_that.amount,_that.triggerEvent,_that.createdAt);case _:
@@ -200,7 +200,7 @@ return $default(_that.id,_that.teacherId,_that.salesmanId,_that.studentId,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? teacherId,  String? salesmanId,  String studentId,  double amount,  EarningsTriggerEvent triggerEvent,  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? teacherId,  String? salesmanId,  String studentId, @DecimalStringConverter()  double amount,  EarningsTriggerEvent triggerEvent,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _EarningsRecordDto() when $default != null:
 return $default(_that.id,_that.teacherId,_that.salesmanId,_that.studentId,_that.amount,_that.triggerEvent,_that.createdAt);case _:
@@ -215,14 +215,14 @@ return $default(_that.id,_that.teacherId,_that.salesmanId,_that.studentId,_that.
 @JsonSerializable()
 
 class _EarningsRecordDto extends EarningsRecordDto {
-  const _EarningsRecordDto({required this.id, this.teacherId, this.salesmanId, required this.studentId, required this.amount, required this.triggerEvent, required this.createdAt}): super._();
+  const _EarningsRecordDto({required this.id, this.teacherId, this.salesmanId, required this.studentId, @DecimalStringConverter() required this.amount, required this.triggerEvent, required this.createdAt}): super._();
   factory _EarningsRecordDto.fromJson(Map<String, dynamic> json) => _$EarningsRecordDtoFromJson(json);
 
 @override final  String id;
 @override final  String? teacherId;
 @override final  String? salesmanId;
 @override final  String studentId;
-@override final  double amount;
+@override@DecimalStringConverter() final  double amount;
 @override final  EarningsTriggerEvent triggerEvent;
 @override final  DateTime createdAt;
 
@@ -259,7 +259,7 @@ abstract mixin class _$EarningsRecordDtoCopyWith<$Res> implements $EarningsRecor
   factory _$EarningsRecordDtoCopyWith(_EarningsRecordDto value, $Res Function(_EarningsRecordDto) _then) = __$EarningsRecordDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String? teacherId, String? salesmanId, String studentId, double amount, EarningsTriggerEvent triggerEvent, DateTime createdAt
+ String id, String? teacherId, String? salesmanId, String studentId,@DecimalStringConverter() double amount, EarningsTriggerEvent triggerEvent, DateTime createdAt
 });
 
 

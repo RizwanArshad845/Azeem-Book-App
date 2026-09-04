@@ -14,7 +14,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TestAttemptSession {
 
- String get attemptId; DateTime get deadlineAt; List<AttemptQuestion> get questions;
+ String get attemptId;// Nullable: `FRONTEND_INTEGRATION.md` §6.6 types this `iso8601|null`.
+ DateTime? get deadlineAt; List<AttemptQuestion> get questions;
 /// Create a copy of TestAttemptSession
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +46,7 @@ abstract mixin class $TestAttemptSessionCopyWith<$Res>  {
   factory $TestAttemptSessionCopyWith(TestAttemptSession value, $Res Function(TestAttemptSession) _then) = _$TestAttemptSessionCopyWithImpl;
 @useResult
 $Res call({
- String attemptId, DateTime deadlineAt, List<AttemptQuestion> questions
+ String attemptId, DateTime? deadlineAt, List<AttemptQuestion> questions
 });
 
 
@@ -62,11 +63,11 @@ class _$TestAttemptSessionCopyWithImpl<$Res>
 
 /// Create a copy of TestAttemptSession
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? attemptId = null,Object? deadlineAt = null,Object? questions = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? attemptId = null,Object? deadlineAt = freezed,Object? questions = null,}) {
   return _then(_self.copyWith(
 attemptId: null == attemptId ? _self.attemptId : attemptId // ignore: cast_nullable_to_non_nullable
-as String,deadlineAt: null == deadlineAt ? _self.deadlineAt : deadlineAt // ignore: cast_nullable_to_non_nullable
-as DateTime,questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable
+as String,deadlineAt: freezed == deadlineAt ? _self.deadlineAt : deadlineAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable
 as List<AttemptQuestion>,
   ));
 }
@@ -152,7 +153,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String attemptId,  DateTime deadlineAt,  List<AttemptQuestion> questions)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String attemptId,  DateTime? deadlineAt,  List<AttemptQuestion> questions)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TestAttemptSession() when $default != null:
 return $default(_that.attemptId,_that.deadlineAt,_that.questions);case _:
@@ -173,7 +174,7 @@ return $default(_that.attemptId,_that.deadlineAt,_that.questions);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String attemptId,  DateTime deadlineAt,  List<AttemptQuestion> questions)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String attemptId,  DateTime? deadlineAt,  List<AttemptQuestion> questions)  $default,) {final _that = this;
 switch (_that) {
 case _TestAttemptSession():
 return $default(_that.attemptId,_that.deadlineAt,_that.questions);case _:
@@ -193,7 +194,7 @@ return $default(_that.attemptId,_that.deadlineAt,_that.questions);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String attemptId,  DateTime deadlineAt,  List<AttemptQuestion> questions)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String attemptId,  DateTime? deadlineAt,  List<AttemptQuestion> questions)?  $default,) {final _that = this;
 switch (_that) {
 case _TestAttemptSession() when $default != null:
 return $default(_that.attemptId,_that.deadlineAt,_that.questions);case _:
@@ -208,11 +209,12 @@ return $default(_that.attemptId,_that.deadlineAt,_that.questions);case _:
 
 
 class _TestAttemptSession implements TestAttemptSession {
-  const _TestAttemptSession({required this.attemptId, required this.deadlineAt, required this.questions});
+  const _TestAttemptSession({required this.attemptId, this.deadlineAt, required this.questions});
   
 
 @override final  String attemptId;
-@override final  DateTime deadlineAt;
+// Nullable: `FRONTEND_INTEGRATION.md` §6.6 types this `iso8601|null`.
+@override final  DateTime? deadlineAt;
 @override final  List<AttemptQuestion> questions;
 
 /// Create a copy of TestAttemptSession
@@ -245,7 +247,7 @@ abstract mixin class _$TestAttemptSessionCopyWith<$Res> implements $TestAttemptS
   factory _$TestAttemptSessionCopyWith(_TestAttemptSession value, $Res Function(_TestAttemptSession) _then) = __$TestAttemptSessionCopyWithImpl;
 @override @useResult
 $Res call({
- String attemptId, DateTime deadlineAt, List<AttemptQuestion> questions
+ String attemptId, DateTime? deadlineAt, List<AttemptQuestion> questions
 });
 
 
@@ -262,11 +264,11 @@ class __$TestAttemptSessionCopyWithImpl<$Res>
 
 /// Create a copy of TestAttemptSession
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? attemptId = null,Object? deadlineAt = null,Object? questions = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? attemptId = null,Object? deadlineAt = freezed,Object? questions = null,}) {
   return _then(_TestAttemptSession(
 attemptId: null == attemptId ? _self.attemptId : attemptId // ignore: cast_nullable_to_non_nullable
-as String,deadlineAt: null == deadlineAt ? _self.deadlineAt : deadlineAt // ignore: cast_nullable_to_non_nullable
-as DateTime,questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable
+as String,deadlineAt: freezed == deadlineAt ? _self.deadlineAt : deadlineAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable
 as List<AttemptQuestion>,
   ));
 }

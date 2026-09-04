@@ -16,7 +16,7 @@ abstract class TestAttemptDto with _$TestAttemptDto {
     required String testId,
     required TestAttemptStatus status,
     @Default(<SubmissionAnswerDto>[]) List<SubmissionAnswerDto> answers,
-    @Default(0.0) double scorePercent,
+    double? scorePercent,
     int? totalMarksAwarded,
     int? totalPossibleMarks,
     List<String>? weakChapterIds,
@@ -24,6 +24,7 @@ abstract class TestAttemptDto with _$TestAttemptDto {
     int? durationSeconds,
     @Default(false) bool isLiveTestAttempt,
     required DateTime attemptedAt,
+    DateTime? submittedAt,
   }) = _TestAttemptDto;
 
   factory TestAttemptDto.fromJson(Map<String, dynamic> json) =>
@@ -43,6 +44,7 @@ abstract class TestAttemptDto with _$TestAttemptDto {
     durationSeconds: durationSeconds,
     isLiveTestAttempt: isLiveTestAttempt,
     attemptedAt: attemptedAt,
+    submittedAt: submittedAt,
   );
 
   factory TestAttemptDto.fromDomain(TestAttempt entity) => TestAttemptDto(
@@ -59,5 +61,6 @@ abstract class TestAttemptDto with _$TestAttemptDto {
     durationSeconds: entity.durationSeconds,
     isLiveTestAttempt: entity.isLiveTestAttempt,
     attemptedAt: entity.attemptedAt,
+    submittedAt: entity.submittedAt,
   );
 }

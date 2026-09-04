@@ -13,7 +13,7 @@ abstract class TestAttemptSessionDto with _$TestAttemptSessionDto {
 
   const factory TestAttemptSessionDto({
     required String attemptId,
-    required DateTime deadlineAt,
+    DateTime? deadlineAt,
     required List<AttemptQuestionDto> questions,
   }) = _TestAttemptSessionDto;
 

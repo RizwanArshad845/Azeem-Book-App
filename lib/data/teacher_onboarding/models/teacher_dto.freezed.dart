@@ -15,7 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TeacherDto {
 
- String get id; String get name; String get phoneNumber; UserRole get role; bool get isDeleted; DateTime get createdAt; DateTime get updatedAt; String get campusId; List<String> get subjects; List<String>? get classes; int? get declaredStudentCount; String? get salesmanId; TeacherOnboardingSource get onboardingSource; TeacherApprovalStatus get approvalStatus; double get actualEarnings; double? get projectedEarnings;
+ String get id; String get name; String get phoneNumber; UserRole get role; bool get isDeleted; DateTime get createdAt; DateTime get updatedAt; String get campusId; List<String> get subjectIds; List<String>? get classIds; int? get declaredStudentCount; String? get salesmanId; TeacherOnboardingSource get onboardingSource; TeacherApprovalStatus get approvalStatus;// `actualEarnings`/`projectedEarnings` serialize as JSON strings on the
+// real backend, not numbers (`FRONTEND_INTEGRATION.md` §3).
+@DecimalStringConverter() double get actualEarnings;@NullableDecimalStringConverter() double? get projectedEarnings;
 /// Create a copy of TeacherDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +30,16 @@ $TeacherDtoCopyWith<TeacherDto> get copyWith => _$TeacherDtoCopyWithImpl<Teacher
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TeacherDto&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.role, role) || other.role == role)&&(identical(other.isDeleted, isDeleted) || other.isDeleted == isDeleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.campusId, campusId) || other.campusId == campusId)&&const DeepCollectionEquality().equals(other.subjects, subjects)&&const DeepCollectionEquality().equals(other.classes, classes)&&(identical(other.declaredStudentCount, declaredStudentCount) || other.declaredStudentCount == declaredStudentCount)&&(identical(other.salesmanId, salesmanId) || other.salesmanId == salesmanId)&&(identical(other.onboardingSource, onboardingSource) || other.onboardingSource == onboardingSource)&&(identical(other.approvalStatus, approvalStatus) || other.approvalStatus == approvalStatus)&&(identical(other.actualEarnings, actualEarnings) || other.actualEarnings == actualEarnings)&&(identical(other.projectedEarnings, projectedEarnings) || other.projectedEarnings == projectedEarnings));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TeacherDto&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.role, role) || other.role == role)&&(identical(other.isDeleted, isDeleted) || other.isDeleted == isDeleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.campusId, campusId) || other.campusId == campusId)&&const DeepCollectionEquality().equals(other.subjectIds, subjectIds)&&const DeepCollectionEquality().equals(other.classIds, classIds)&&(identical(other.declaredStudentCount, declaredStudentCount) || other.declaredStudentCount == declaredStudentCount)&&(identical(other.salesmanId, salesmanId) || other.salesmanId == salesmanId)&&(identical(other.onboardingSource, onboardingSource) || other.onboardingSource == onboardingSource)&&(identical(other.approvalStatus, approvalStatus) || other.approvalStatus == approvalStatus)&&(identical(other.actualEarnings, actualEarnings) || other.actualEarnings == actualEarnings)&&(identical(other.projectedEarnings, projectedEarnings) || other.projectedEarnings == projectedEarnings));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,phoneNumber,role,isDeleted,createdAt,updatedAt,campusId,const DeepCollectionEquality().hash(subjects),const DeepCollectionEquality().hash(classes),declaredStudentCount,salesmanId,onboardingSource,approvalStatus,actualEarnings,projectedEarnings);
+int get hashCode => Object.hash(runtimeType,id,name,phoneNumber,role,isDeleted,createdAt,updatedAt,campusId,const DeepCollectionEquality().hash(subjectIds),const DeepCollectionEquality().hash(classIds),declaredStudentCount,salesmanId,onboardingSource,approvalStatus,actualEarnings,projectedEarnings);
 
 @override
 String toString() {
-  return 'TeacherDto(id: $id, name: $name, phoneNumber: $phoneNumber, role: $role, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, campusId: $campusId, subjects: $subjects, classes: $classes, declaredStudentCount: $declaredStudentCount, salesmanId: $salesmanId, onboardingSource: $onboardingSource, approvalStatus: $approvalStatus, actualEarnings: $actualEarnings, projectedEarnings: $projectedEarnings)';
+  return 'TeacherDto(id: $id, name: $name, phoneNumber: $phoneNumber, role: $role, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, campusId: $campusId, subjectIds: $subjectIds, classIds: $classIds, declaredStudentCount: $declaredStudentCount, salesmanId: $salesmanId, onboardingSource: $onboardingSource, approvalStatus: $approvalStatus, actualEarnings: $actualEarnings, projectedEarnings: $projectedEarnings)';
 }
 
 
@@ -48,7 +50,7 @@ abstract mixin class $TeacherDtoCopyWith<$Res>  {
   factory $TeacherDtoCopyWith(TeacherDto value, $Res Function(TeacherDto) _then) = _$TeacherDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String phoneNumber, UserRole role, bool isDeleted, DateTime createdAt, DateTime updatedAt, String campusId, List<String> subjects, List<String>? classes, int? declaredStudentCount, String? salesmanId, TeacherOnboardingSource onboardingSource, TeacherApprovalStatus approvalStatus, double actualEarnings, double? projectedEarnings
+ String id, String name, String phoneNumber, UserRole role, bool isDeleted, DateTime createdAt, DateTime updatedAt, String campusId, List<String> subjectIds, List<String>? classIds, int? declaredStudentCount, String? salesmanId, TeacherOnboardingSource onboardingSource, TeacherApprovalStatus approvalStatus,@DecimalStringConverter() double actualEarnings,@NullableDecimalStringConverter() double? projectedEarnings
 });
 
 
@@ -65,7 +67,7 @@ class _$TeacherDtoCopyWithImpl<$Res>
 
 /// Create a copy of TeacherDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? phoneNumber = null,Object? role = null,Object? isDeleted = null,Object? createdAt = null,Object? updatedAt = null,Object? campusId = null,Object? subjects = null,Object? classes = freezed,Object? declaredStudentCount = freezed,Object? salesmanId = freezed,Object? onboardingSource = null,Object? approvalStatus = null,Object? actualEarnings = null,Object? projectedEarnings = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? phoneNumber = null,Object? role = null,Object? isDeleted = null,Object? createdAt = null,Object? updatedAt = null,Object? campusId = null,Object? subjectIds = null,Object? classIds = freezed,Object? declaredStudentCount = freezed,Object? salesmanId = freezed,Object? onboardingSource = null,Object? approvalStatus = null,Object? actualEarnings = null,Object? projectedEarnings = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -75,8 +77,8 @@ as UserRole,isDeleted: null == isDeleted ? _self.isDeleted : isDeleted // ignore
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,campusId: null == campusId ? _self.campusId : campusId // ignore: cast_nullable_to_non_nullable
-as String,subjects: null == subjects ? _self.subjects : subjects // ignore: cast_nullable_to_non_nullable
-as List<String>,classes: freezed == classes ? _self.classes : classes // ignore: cast_nullable_to_non_nullable
+as String,subjectIds: null == subjectIds ? _self.subjectIds : subjectIds // ignore: cast_nullable_to_non_nullable
+as List<String>,classIds: freezed == classIds ? _self.classIds : classIds // ignore: cast_nullable_to_non_nullable
 as List<String>?,declaredStudentCount: freezed == declaredStudentCount ? _self.declaredStudentCount : declaredStudentCount // ignore: cast_nullable_to_non_nullable
 as int?,salesmanId: freezed == salesmanId ? _self.salesmanId : salesmanId // ignore: cast_nullable_to_non_nullable
 as String?,onboardingSource: null == onboardingSource ? _self.onboardingSource : onboardingSource // ignore: cast_nullable_to_non_nullable
@@ -168,10 +170,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String phoneNumber,  UserRole role,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  String campusId,  List<String> subjects,  List<String>? classes,  int? declaredStudentCount,  String? salesmanId,  TeacherOnboardingSource onboardingSource,  TeacherApprovalStatus approvalStatus,  double actualEarnings,  double? projectedEarnings)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String phoneNumber,  UserRole role,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  String campusId,  List<String> subjectIds,  List<String>? classIds,  int? declaredStudentCount,  String? salesmanId,  TeacherOnboardingSource onboardingSource,  TeacherApprovalStatus approvalStatus, @DecimalStringConverter()  double actualEarnings, @NullableDecimalStringConverter()  double? projectedEarnings)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TeacherDto() when $default != null:
-return $default(_that.id,_that.name,_that.phoneNumber,_that.role,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.campusId,_that.subjects,_that.classes,_that.declaredStudentCount,_that.salesmanId,_that.onboardingSource,_that.approvalStatus,_that.actualEarnings,_that.projectedEarnings);case _:
+return $default(_that.id,_that.name,_that.phoneNumber,_that.role,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.campusId,_that.subjectIds,_that.classIds,_that.declaredStudentCount,_that.salesmanId,_that.onboardingSource,_that.approvalStatus,_that.actualEarnings,_that.projectedEarnings);case _:
   return orElse();
 
 }
@@ -189,10 +191,10 @@ return $default(_that.id,_that.name,_that.phoneNumber,_that.role,_that.isDeleted
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String phoneNumber,  UserRole role,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  String campusId,  List<String> subjects,  List<String>? classes,  int? declaredStudentCount,  String? salesmanId,  TeacherOnboardingSource onboardingSource,  TeacherApprovalStatus approvalStatus,  double actualEarnings,  double? projectedEarnings)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String phoneNumber,  UserRole role,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  String campusId,  List<String> subjectIds,  List<String>? classIds,  int? declaredStudentCount,  String? salesmanId,  TeacherOnboardingSource onboardingSource,  TeacherApprovalStatus approvalStatus, @DecimalStringConverter()  double actualEarnings, @NullableDecimalStringConverter()  double? projectedEarnings)  $default,) {final _that = this;
 switch (_that) {
 case _TeacherDto():
-return $default(_that.id,_that.name,_that.phoneNumber,_that.role,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.campusId,_that.subjects,_that.classes,_that.declaredStudentCount,_that.salesmanId,_that.onboardingSource,_that.approvalStatus,_that.actualEarnings,_that.projectedEarnings);case _:
+return $default(_that.id,_that.name,_that.phoneNumber,_that.role,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.campusId,_that.subjectIds,_that.classIds,_that.declaredStudentCount,_that.salesmanId,_that.onboardingSource,_that.approvalStatus,_that.actualEarnings,_that.projectedEarnings);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -209,10 +211,10 @@ return $default(_that.id,_that.name,_that.phoneNumber,_that.role,_that.isDeleted
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String phoneNumber,  UserRole role,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  String campusId,  List<String> subjects,  List<String>? classes,  int? declaredStudentCount,  String? salesmanId,  TeacherOnboardingSource onboardingSource,  TeacherApprovalStatus approvalStatus,  double actualEarnings,  double? projectedEarnings)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String phoneNumber,  UserRole role,  bool isDeleted,  DateTime createdAt,  DateTime updatedAt,  String campusId,  List<String> subjectIds,  List<String>? classIds,  int? declaredStudentCount,  String? salesmanId,  TeacherOnboardingSource onboardingSource,  TeacherApprovalStatus approvalStatus, @DecimalStringConverter()  double actualEarnings, @NullableDecimalStringConverter()  double? projectedEarnings)?  $default,) {final _that = this;
 switch (_that) {
 case _TeacherDto() when $default != null:
-return $default(_that.id,_that.name,_that.phoneNumber,_that.role,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.campusId,_that.subjects,_that.classes,_that.declaredStudentCount,_that.salesmanId,_that.onboardingSource,_that.approvalStatus,_that.actualEarnings,_that.projectedEarnings);case _:
+return $default(_that.id,_that.name,_that.phoneNumber,_that.role,_that.isDeleted,_that.createdAt,_that.updatedAt,_that.campusId,_that.subjectIds,_that.classIds,_that.declaredStudentCount,_that.salesmanId,_that.onboardingSource,_that.approvalStatus,_that.actualEarnings,_that.projectedEarnings);case _:
   return null;
 
 }
@@ -224,7 +226,7 @@ return $default(_that.id,_that.name,_that.phoneNumber,_that.role,_that.isDeleted
 @JsonSerializable()
 
 class _TeacherDto extends TeacherDto {
-  const _TeacherDto({required this.id, required this.name, required this.phoneNumber, required this.role, this.isDeleted = false, required this.createdAt, required this.updatedAt, required this.campusId, required this.subjects, this.classes, this.declaredStudentCount, this.salesmanId, required this.onboardingSource, required this.approvalStatus, this.actualEarnings = 0, this.projectedEarnings}): super._();
+  const _TeacherDto({required this.id, required this.name, required this.phoneNumber, required this.role, this.isDeleted = false, required this.createdAt, required this.updatedAt, required this.campusId, required this.subjectIds, this.classIds, this.declaredStudentCount, this.salesmanId, required this.onboardingSource, required this.approvalStatus, @DecimalStringConverter() this.actualEarnings = 0, @NullableDecimalStringConverter() this.projectedEarnings}): super._();
   factory _TeacherDto.fromJson(Map<String, dynamic> json) => _$TeacherDtoFromJson(json);
 
 @override final  String id;
@@ -235,14 +237,16 @@ class _TeacherDto extends TeacherDto {
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
 @override final  String campusId;
-@override final  List<String> subjects;
-@override final  List<String>? classes;
+@override final  List<String> subjectIds;
+@override final  List<String>? classIds;
 @override final  int? declaredStudentCount;
 @override final  String? salesmanId;
 @override final  TeacherOnboardingSource onboardingSource;
 @override final  TeacherApprovalStatus approvalStatus;
-@override@JsonKey() final  double actualEarnings;
-@override final  double? projectedEarnings;
+// `actualEarnings`/`projectedEarnings` serialize as JSON strings on the
+// real backend, not numbers (`FRONTEND_INTEGRATION.md` §3).
+@override@JsonKey()@DecimalStringConverter() final  double actualEarnings;
+@override@NullableDecimalStringConverter() final  double? projectedEarnings;
 
 /// Create a copy of TeacherDto
 /// with the given fields replaced by the non-null parameter values.
@@ -257,16 +261,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TeacherDto&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.role, role) || other.role == role)&&(identical(other.isDeleted, isDeleted) || other.isDeleted == isDeleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.campusId, campusId) || other.campusId == campusId)&&const DeepCollectionEquality().equals(other.subjects, subjects)&&const DeepCollectionEquality().equals(other.classes, classes)&&(identical(other.declaredStudentCount, declaredStudentCount) || other.declaredStudentCount == declaredStudentCount)&&(identical(other.salesmanId, salesmanId) || other.salesmanId == salesmanId)&&(identical(other.onboardingSource, onboardingSource) || other.onboardingSource == onboardingSource)&&(identical(other.approvalStatus, approvalStatus) || other.approvalStatus == approvalStatus)&&(identical(other.actualEarnings, actualEarnings) || other.actualEarnings == actualEarnings)&&(identical(other.projectedEarnings, projectedEarnings) || other.projectedEarnings == projectedEarnings));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TeacherDto&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.role, role) || other.role == role)&&(identical(other.isDeleted, isDeleted) || other.isDeleted == isDeleted)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.campusId, campusId) || other.campusId == campusId)&&const DeepCollectionEquality().equals(other.subjectIds, subjectIds)&&const DeepCollectionEquality().equals(other.classIds, classIds)&&(identical(other.declaredStudentCount, declaredStudentCount) || other.declaredStudentCount == declaredStudentCount)&&(identical(other.salesmanId, salesmanId) || other.salesmanId == salesmanId)&&(identical(other.onboardingSource, onboardingSource) || other.onboardingSource == onboardingSource)&&(identical(other.approvalStatus, approvalStatus) || other.approvalStatus == approvalStatus)&&(identical(other.actualEarnings, actualEarnings) || other.actualEarnings == actualEarnings)&&(identical(other.projectedEarnings, projectedEarnings) || other.projectedEarnings == projectedEarnings));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,phoneNumber,role,isDeleted,createdAt,updatedAt,campusId,const DeepCollectionEquality().hash(subjects),const DeepCollectionEquality().hash(classes),declaredStudentCount,salesmanId,onboardingSource,approvalStatus,actualEarnings,projectedEarnings);
+int get hashCode => Object.hash(runtimeType,id,name,phoneNumber,role,isDeleted,createdAt,updatedAt,campusId,const DeepCollectionEquality().hash(subjectIds),const DeepCollectionEquality().hash(classIds),declaredStudentCount,salesmanId,onboardingSource,approvalStatus,actualEarnings,projectedEarnings);
 
 @override
 String toString() {
-  return 'TeacherDto(id: $id, name: $name, phoneNumber: $phoneNumber, role: $role, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, campusId: $campusId, subjects: $subjects, classes: $classes, declaredStudentCount: $declaredStudentCount, salesmanId: $salesmanId, onboardingSource: $onboardingSource, approvalStatus: $approvalStatus, actualEarnings: $actualEarnings, projectedEarnings: $projectedEarnings)';
+  return 'TeacherDto(id: $id, name: $name, phoneNumber: $phoneNumber, role: $role, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, campusId: $campusId, subjectIds: $subjectIds, classIds: $classIds, declaredStudentCount: $declaredStudentCount, salesmanId: $salesmanId, onboardingSource: $onboardingSource, approvalStatus: $approvalStatus, actualEarnings: $actualEarnings, projectedEarnings: $projectedEarnings)';
 }
 
 
@@ -277,7 +281,7 @@ abstract mixin class _$TeacherDtoCopyWith<$Res> implements $TeacherDtoCopyWith<$
   factory _$TeacherDtoCopyWith(_TeacherDto value, $Res Function(_TeacherDto) _then) = __$TeacherDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String phoneNumber, UserRole role, bool isDeleted, DateTime createdAt, DateTime updatedAt, String campusId, List<String> subjects, List<String>? classes, int? declaredStudentCount, String? salesmanId, TeacherOnboardingSource onboardingSource, TeacherApprovalStatus approvalStatus, double actualEarnings, double? projectedEarnings
+ String id, String name, String phoneNumber, UserRole role, bool isDeleted, DateTime createdAt, DateTime updatedAt, String campusId, List<String> subjectIds, List<String>? classIds, int? declaredStudentCount, String? salesmanId, TeacherOnboardingSource onboardingSource, TeacherApprovalStatus approvalStatus,@DecimalStringConverter() double actualEarnings,@NullableDecimalStringConverter() double? projectedEarnings
 });
 
 
@@ -294,7 +298,7 @@ class __$TeacherDtoCopyWithImpl<$Res>
 
 /// Create a copy of TeacherDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? phoneNumber = null,Object? role = null,Object? isDeleted = null,Object? createdAt = null,Object? updatedAt = null,Object? campusId = null,Object? subjects = null,Object? classes = freezed,Object? declaredStudentCount = freezed,Object? salesmanId = freezed,Object? onboardingSource = null,Object? approvalStatus = null,Object? actualEarnings = null,Object? projectedEarnings = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? phoneNumber = null,Object? role = null,Object? isDeleted = null,Object? createdAt = null,Object? updatedAt = null,Object? campusId = null,Object? subjectIds = null,Object? classIds = freezed,Object? declaredStudentCount = freezed,Object? salesmanId = freezed,Object? onboardingSource = null,Object? approvalStatus = null,Object? actualEarnings = null,Object? projectedEarnings = freezed,}) {
   return _then(_TeacherDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -304,8 +308,8 @@ as UserRole,isDeleted: null == isDeleted ? _self.isDeleted : isDeleted // ignore
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,campusId: null == campusId ? _self.campusId : campusId // ignore: cast_nullable_to_non_nullable
-as String,subjects: null == subjects ? _self.subjects : subjects // ignore: cast_nullable_to_non_nullable
-as List<String>,classes: freezed == classes ? _self.classes : classes // ignore: cast_nullable_to_non_nullable
+as String,subjectIds: null == subjectIds ? _self.subjectIds : subjectIds // ignore: cast_nullable_to_non_nullable
+as List<String>,classIds: freezed == classIds ? _self.classIds : classIds // ignore: cast_nullable_to_non_nullable
 as List<String>?,declaredStudentCount: freezed == declaredStudentCount ? _self.declaredStudentCount : declaredStudentCount // ignore: cast_nullable_to_non_nullable
 as int?,salesmanId: freezed == salesmanId ? _self.salesmanId : salesmanId // ignore: cast_nullable_to_non_nullable
 as String?,onboardingSource: null == onboardingSource ? _self.onboardingSource : onboardingSource // ignore: cast_nullable_to_non_nullable

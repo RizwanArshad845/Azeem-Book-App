@@ -37,8 +37,11 @@ abstract class Teacher with _$Teacher {
 
     // --- Teacher-specific fields (§9.2) ---
     required String campusId,
-    required List<String> subjects,
-    List<String>? classes,
+    // Wire key is `subjectIds`/`classIds` (uuid references, not names) per
+    // `FRONTEND_INTEGRATION.md` §6.2 — resolve display names via the
+    // catalog subjects/board-classes lists, don't render these raw.
+    required List<String> subjectIds,
+    List<String>? classIds,
     int? declaredStudentCount,
     String? salesmanId,
     required TeacherOnboardingSource onboardingSource,

@@ -15,7 +15,10 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NotificationDto {
 
- String get id; String get recipientId; NotificationRecipientRole get recipientRole; NotificationType get type; String get message; bool get isRead; DateTime get createdAt;
+ String get id; String get recipientId; NotificationRecipientRole get recipientRole;// Falls back to `NotificationType.unknown` instead of throwing for any
+// wire value not in the enum (e.g. a type added server-side before this
+// client is updated) — see that enum's doc comment.
+@JsonKey(unknownEnumValue: NotificationType.unknown) NotificationType get type; String get message; bool get isRead; DateTime get createdAt;
 /// Create a copy of NotificationDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +51,7 @@ abstract mixin class $NotificationDtoCopyWith<$Res>  {
   factory $NotificationDtoCopyWith(NotificationDto value, $Res Function(NotificationDto) _then) = _$NotificationDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String recipientId, NotificationRecipientRole recipientRole, NotificationType type, String message, bool isRead, DateTime createdAt
+ String id, String recipientId, NotificationRecipientRole recipientRole,@JsonKey(unknownEnumValue: NotificationType.unknown) NotificationType type, String message, bool isRead, DateTime createdAt
 });
 
 
@@ -159,7 +162,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String recipientId,  NotificationRecipientRole recipientRole,  NotificationType type,  String message,  bool isRead,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String recipientId,  NotificationRecipientRole recipientRole, @JsonKey(unknownEnumValue: NotificationType.unknown)  NotificationType type,  String message,  bool isRead,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NotificationDto() when $default != null:
 return $default(_that.id,_that.recipientId,_that.recipientRole,_that.type,_that.message,_that.isRead,_that.createdAt);case _:
@@ -180,7 +183,7 @@ return $default(_that.id,_that.recipientId,_that.recipientRole,_that.type,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String recipientId,  NotificationRecipientRole recipientRole,  NotificationType type,  String message,  bool isRead,  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String recipientId,  NotificationRecipientRole recipientRole, @JsonKey(unknownEnumValue: NotificationType.unknown)  NotificationType type,  String message,  bool isRead,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _NotificationDto():
 return $default(_that.id,_that.recipientId,_that.recipientRole,_that.type,_that.message,_that.isRead,_that.createdAt);case _:
@@ -200,7 +203,7 @@ return $default(_that.id,_that.recipientId,_that.recipientRole,_that.type,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String recipientId,  NotificationRecipientRole recipientRole,  NotificationType type,  String message,  bool isRead,  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String recipientId,  NotificationRecipientRole recipientRole, @JsonKey(unknownEnumValue: NotificationType.unknown)  NotificationType type,  String message,  bool isRead,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _NotificationDto() when $default != null:
 return $default(_that.id,_that.recipientId,_that.recipientRole,_that.type,_that.message,_that.isRead,_that.createdAt);case _:
@@ -215,13 +218,16 @@ return $default(_that.id,_that.recipientId,_that.recipientRole,_that.type,_that.
 @JsonSerializable()
 
 class _NotificationDto extends NotificationDto {
-  const _NotificationDto({required this.id, required this.recipientId, required this.recipientRole, required this.type, required this.message, this.isRead = false, required this.createdAt}): super._();
+  const _NotificationDto({required this.id, required this.recipientId, required this.recipientRole, @JsonKey(unknownEnumValue: NotificationType.unknown) required this.type, required this.message, this.isRead = false, required this.createdAt}): super._();
   factory _NotificationDto.fromJson(Map<String, dynamic> json) => _$NotificationDtoFromJson(json);
 
 @override final  String id;
 @override final  String recipientId;
 @override final  NotificationRecipientRole recipientRole;
-@override final  NotificationType type;
+// Falls back to `NotificationType.unknown` instead of throwing for any
+// wire value not in the enum (e.g. a type added server-side before this
+// client is updated) — see that enum's doc comment.
+@override@JsonKey(unknownEnumValue: NotificationType.unknown) final  NotificationType type;
 @override final  String message;
 @override@JsonKey() final  bool isRead;
 @override final  DateTime createdAt;
@@ -259,7 +265,7 @@ abstract mixin class _$NotificationDtoCopyWith<$Res> implements $NotificationDto
   factory _$NotificationDtoCopyWith(_NotificationDto value, $Res Function(_NotificationDto) _then) = __$NotificationDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String recipientId, NotificationRecipientRole recipientRole, NotificationType type, String message, bool isRead, DateTime createdAt
+ String id, String recipientId, NotificationRecipientRole recipientRole,@JsonKey(unknownEnumValue: NotificationType.unknown) NotificationType type, String message, bool isRead, DateTime createdAt
 });
 
 

@@ -8,18 +8,52 @@ part 'notification.freezed.dart';
 /// `teacher`/`student` recipients.
 enum NotificationRecipientRole { admin, teacher, student, salesman }
 
-/// `type` of a [Notification] (project_spec.md §9.2). Drives the message
-/// copy shown in the Notifications tab (§10.2): student-facing types are
-/// `newTestUploaded`, `discountAnnouncement`, `liveTestReminder`;
-/// teacher-facing types are `studentRegistered`, `profileUpdatePending`,
-/// `teacherAwaitingApproval`.
+/// `type` of a [Notification] (project_spec.md §9.2). Full 27-value wire
+/// enum per `FRONTEND_INTEGRATION.md` §7 — of these, §8 documents only 11
+/// as actually fired by the backend today (`studentRegistered`,
+/// `teacherAwaitingApproval`, `studentEnrolled`, `discountAnnouncement`,
+/// `newTestUploaded`, `paymentSuccessful`, `earningsCredited`,
+/// `liveTestCompleted`, `otpLockoutTriggered`, `resultReady`,
+/// `testGradingFailed`); the rest are defined-but-unused enum values
+/// (refunds, payouts, question flagging, etc. — each needs a whole feature
+/// built first). All 27 are listed here (not just the 11 live ones) so a
+/// single unrecognized notification never throws and kills the whole
+/// notifications-list fetch (`$enumDecode` in the generated
+/// `NotificationDto.fromJson`) — see [unknown] for the true last-resort
+/// fallback beyond even this list.
 enum NotificationType {
   studentRegistered,
   profileUpdatePending,
   teacherAwaitingApproval,
+  phoneRecoveryRequested,
+  accountDeletionRequested,
+  studentPurchasedPack,
+  teacherPayoutRequested,
+  refundRequested,
+  paymentFailedAlert,
+  salesmanSeededTeacher,
+  questionFlagged,
+  liveTestCompleted,
+  otpLockoutTriggered,
+  roleViolationAttempt,
+  earningsCredited,
+  studentEnrolled,
+  profileUpdateApproved,
+  payoutDisbursed,
   newTestUploaded,
   discountAnnouncement,
   liveTestReminder,
+  freeAttemptsExhausted,
+  paymentSuccessful,
+  salesmanCommissionCredited,
+  teacherJoinedWithCode,
+  resultReady,
+  testGradingFailed,
+
+  /// Not a real wire value — `@JsonKey(unknownEnumValue: ...)` fallback on
+  /// `NotificationDto.type` for any future type added server-side before
+  /// this enum is updated to match.
+  unknown,
 }
 
 /// A single notification entry for either a Teacher or Student recipient

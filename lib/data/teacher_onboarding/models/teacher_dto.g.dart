@@ -15,10 +15,10 @@ _TeacherDto _$TeacherDtoFromJson(Map<String, dynamic> json) => _TeacherDto(
   createdAt: DateTime.parse(json['createdAt'] as String),
   updatedAt: DateTime.parse(json['updatedAt'] as String),
   campusId: json['campusId'] as String,
-  subjects: (json['subjects'] as List<dynamic>)
+  subjectIds: (json['subjectIds'] as List<dynamic>)
       .map((e) => e as String)
       .toList(),
-  classes: (json['classes'] as List<dynamic>?)
+  classIds: (json['classIds'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
   declaredStudentCount: (json['declaredStudentCount'] as num?)?.toInt(),
@@ -31,8 +31,12 @@ _TeacherDto _$TeacherDtoFromJson(Map<String, dynamic> json) => _TeacherDto(
     _$TeacherApprovalStatusEnumMap,
     json['approvalStatus'],
   ),
-  actualEarnings: (json['actualEarnings'] as num?)?.toDouble() ?? 0,
-  projectedEarnings: (json['projectedEarnings'] as num?)?.toDouble(),
+  actualEarnings: json['actualEarnings'] == null
+      ? 0
+      : const DecimalStringConverter().fromJson(json['actualEarnings']),
+  projectedEarnings: const NullableDecimalStringConverter().fromJson(
+    json['projectedEarnings'],
+  ),
 );
 
 Map<String, dynamic> _$TeacherDtoToJson(
@@ -46,15 +50,19 @@ Map<String, dynamic> _$TeacherDtoToJson(
   'createdAt': instance.createdAt.toIso8601String(),
   'updatedAt': instance.updatedAt.toIso8601String(),
   'campusId': instance.campusId,
-  'subjects': instance.subjects,
-  'classes': instance.classes,
+  'subjectIds': instance.subjectIds,
+  'classIds': instance.classIds,
   'declaredStudentCount': instance.declaredStudentCount,
   'salesmanId': instance.salesmanId,
   'onboardingSource':
       _$TeacherOnboardingSourceEnumMap[instance.onboardingSource]!,
   'approvalStatus': _$TeacherApprovalStatusEnumMap[instance.approvalStatus]!,
-  'actualEarnings': instance.actualEarnings,
-  'projectedEarnings': instance.projectedEarnings,
+  'actualEarnings': const DecimalStringConverter().toJson(
+    instance.actualEarnings,
+  ),
+  'projectedEarnings': const NullableDecimalStringConverter().toJson(
+    instance.projectedEarnings,
+  ),
 };
 
 const _$UserRoleEnumMap = {

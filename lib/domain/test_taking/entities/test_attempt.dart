@@ -5,15 +5,22 @@ import 'submission_answer.dart';
 part 'test_attempt.freezed.dart';
 
 /// Grading lifecycle of a [TestAttempt] once raw answers are submitted —
-/// `submitted` (queued) -> `grading` (AI grading in flight) -> `graded`
-/// (final `scorePercent`/`answers` detail available).
-enum TestAttemptStatus { submitted, grading, graded }
+/// `inProgress` (attempt started, not yet submitted) -> `pendingGrading`
+/// (submitted, AI grading in flight) -> `graded` (final `scorePercent`/
+/// `answers` detail available) or `gradingFailed` (retries exhausted — see
+/// `FRONTEND_INTEGRATION.md` §6.6 "Answer persistence & grading UX").
+enum TestAttemptStatus { inProgress, pendingGrading, graded, gradingFailed }
 
 /// A student's submission of a [Test] (project_spec.md §9.2 `TestAttempt`).
 /// Persisted so later features (`student-progress`, `teacher-students`) can
 /// read it back. `weakChapterIds`/`strongChapterIds` are computed
 /// server-side once at grading time from this attempt's own answers — not a
 /// running aggregate across all of the student's attempts.
+///
+/// "All-or-nothing release" (§6.6): every score/answer field is `null` (or
+/// `[]` for `answers`) unless `status == graded` — `scorePercent` is
+/// nullable rather than defaulting to `0.0` so an ungraded attempt is never
+/// indistinguishable from a real zero score.
 @freezed
 abstract class TestAttempt with _$TestAttempt {
   const factory TestAttempt({
@@ -22,7 +29,7 @@ abstract class TestAttempt with _$TestAttempt {
     required String testId,
     required TestAttemptStatus status,
     @Default(<SubmissionAnswer>[]) List<SubmissionAnswer> answers,
-    @Default(0.0) double scorePercent,
+    double? scorePercent,
     int? totalMarksAwarded,
     int? totalPossibleMarks,
     List<String>? weakChapterIds,
@@ -30,5 +37,6 @@ abstract class TestAttempt with _$TestAttempt {
     int? durationSeconds,
     @Default(false) bool isLiveTestAttempt,
     required DateTime attemptedAt,
+    DateTime? submittedAt,
   }) = _TestAttempt;
 }

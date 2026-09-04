@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Chapter {
 
- String get id; String get subjectId; String get title; int get order;
+ String get id; String get subjectId; String get title; int get order; bool get isFreeSample;
 /// Create a copy of Chapter
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ChapterCopyWith<Chapter> get copyWith => _$ChapterCopyWithImpl<Chapter>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Chapter&&(identical(other.id, id) || other.id == id)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.title, title) || other.title == title)&&(identical(other.order, order) || other.order == order));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Chapter&&(identical(other.id, id) || other.id == id)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.title, title) || other.title == title)&&(identical(other.order, order) || other.order == order)&&(identical(other.isFreeSample, isFreeSample) || other.isFreeSample == isFreeSample));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,subjectId,title,order);
+int get hashCode => Object.hash(runtimeType,id,subjectId,title,order,isFreeSample);
 
 @override
 String toString() {
-  return 'Chapter(id: $id, subjectId: $subjectId, title: $title, order: $order)';
+  return 'Chapter(id: $id, subjectId: $subjectId, title: $title, order: $order, isFreeSample: $isFreeSample)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $ChapterCopyWith<$Res>  {
   factory $ChapterCopyWith(Chapter value, $Res Function(Chapter) _then) = _$ChapterCopyWithImpl;
 @useResult
 $Res call({
- String id, String subjectId, String title, int order
+ String id, String subjectId, String title, int order, bool isFreeSample
 });
 
 
@@ -62,13 +62,14 @@ class _$ChapterCopyWithImpl<$Res>
 
 /// Create a copy of Chapter
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? subjectId = null,Object? title = null,Object? order = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? subjectId = null,Object? title = null,Object? order = null,Object? isFreeSample = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,subjectId: null == subjectId ? _self.subjectId : subjectId // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,order: null == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
-as int,
+as int,isFreeSample: null == isFreeSample ? _self.isFreeSample : isFreeSample // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -153,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String subjectId,  String title,  int order)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String subjectId,  String title,  int order,  bool isFreeSample)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Chapter() when $default != null:
-return $default(_that.id,_that.subjectId,_that.title,_that.order);case _:
+return $default(_that.id,_that.subjectId,_that.title,_that.order,_that.isFreeSample);case _:
   return orElse();
 
 }
@@ -174,10 +175,10 @@ return $default(_that.id,_that.subjectId,_that.title,_that.order);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String subjectId,  String title,  int order)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String subjectId,  String title,  int order,  bool isFreeSample)  $default,) {final _that = this;
 switch (_that) {
 case _Chapter():
-return $default(_that.id,_that.subjectId,_that.title,_that.order);case _:
+return $default(_that.id,_that.subjectId,_that.title,_that.order,_that.isFreeSample);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +195,10 @@ return $default(_that.id,_that.subjectId,_that.title,_that.order);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String subjectId,  String title,  int order)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String subjectId,  String title,  int order,  bool isFreeSample)?  $default,) {final _that = this;
 switch (_that) {
 case _Chapter() when $default != null:
-return $default(_that.id,_that.subjectId,_that.title,_that.order);case _:
+return $default(_that.id,_that.subjectId,_that.title,_that.order,_that.isFreeSample);case _:
   return null;
 
 }
@@ -209,13 +210,14 @@ return $default(_that.id,_that.subjectId,_that.title,_that.order);case _:
 
 
 class _Chapter implements Chapter {
-  const _Chapter({required this.id, required this.subjectId, required this.title, required this.order});
+  const _Chapter({required this.id, required this.subjectId, required this.title, required this.order, this.isFreeSample = false});
   
 
 @override final  String id;
 @override final  String subjectId;
 @override final  String title;
 @override final  int order;
+@override@JsonKey() final  bool isFreeSample;
 
 /// Create a copy of Chapter
 /// with the given fields replaced by the non-null parameter values.
@@ -227,16 +229,16 @@ _$ChapterCopyWith<_Chapter> get copyWith => __$ChapterCopyWithImpl<_Chapter>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Chapter&&(identical(other.id, id) || other.id == id)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.title, title) || other.title == title)&&(identical(other.order, order) || other.order == order));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Chapter&&(identical(other.id, id) || other.id == id)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.title, title) || other.title == title)&&(identical(other.order, order) || other.order == order)&&(identical(other.isFreeSample, isFreeSample) || other.isFreeSample == isFreeSample));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,subjectId,title,order);
+int get hashCode => Object.hash(runtimeType,id,subjectId,title,order,isFreeSample);
 
 @override
 String toString() {
-  return 'Chapter(id: $id, subjectId: $subjectId, title: $title, order: $order)';
+  return 'Chapter(id: $id, subjectId: $subjectId, title: $title, order: $order, isFreeSample: $isFreeSample)';
 }
 
 
@@ -247,7 +249,7 @@ abstract mixin class _$ChapterCopyWith<$Res> implements $ChapterCopyWith<$Res> {
   factory _$ChapterCopyWith(_Chapter value, $Res Function(_Chapter) _then) = __$ChapterCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String subjectId, String title, int order
+ String id, String subjectId, String title, int order, bool isFreeSample
 });
 
 
@@ -264,13 +266,14 @@ class __$ChapterCopyWithImpl<$Res>
 
 /// Create a copy of Chapter
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? subjectId = null,Object? title = null,Object? order = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? subjectId = null,Object? title = null,Object? order = null,Object? isFreeSample = null,}) {
   return _then(_Chapter(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,subjectId: null == subjectId ? _self.subjectId : subjectId // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,order: null == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
-as int,
+as int,isFreeSample: null == isFreeSample ? _self.isFreeSample : isFreeSample // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

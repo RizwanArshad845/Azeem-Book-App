@@ -19,7 +19,7 @@ _TestAttemptDto _$TestAttemptDtoFromJson(Map<String, dynamic> json) =>
               )
               .toList() ??
           const <SubmissionAnswerDto>[],
-      scorePercent: (json['scorePercent'] as num?)?.toDouble() ?? 0.0,
+      scorePercent: (json['scorePercent'] as num?)?.toDouble(),
       totalMarksAwarded: (json['totalMarksAwarded'] as num?)?.toInt(),
       totalPossibleMarks: (json['totalPossibleMarks'] as num?)?.toInt(),
       weakChapterIds: (json['weakChapterIds'] as List<dynamic>?)
@@ -31,6 +31,9 @@ _TestAttemptDto _$TestAttemptDtoFromJson(Map<String, dynamic> json) =>
       durationSeconds: (json['durationSeconds'] as num?)?.toInt(),
       isLiveTestAttempt: json['isLiveTestAttempt'] as bool? ?? false,
       attemptedAt: DateTime.parse(json['attemptedAt'] as String),
+      submittedAt: json['submittedAt'] == null
+          ? null
+          : DateTime.parse(json['submittedAt'] as String),
     );
 
 Map<String, dynamic> _$TestAttemptDtoToJson(_TestAttemptDto instance) =>
@@ -48,10 +51,12 @@ Map<String, dynamic> _$TestAttemptDtoToJson(_TestAttemptDto instance) =>
       'durationSeconds': instance.durationSeconds,
       'isLiveTestAttempt': instance.isLiveTestAttempt,
       'attemptedAt': instance.attemptedAt.toIso8601String(),
+      'submittedAt': instance.submittedAt?.toIso8601String(),
     };
 
 const _$TestAttemptStatusEnumMap = {
-  TestAttemptStatus.submitted: 'submitted',
-  TestAttemptStatus.grading: 'grading',
+  TestAttemptStatus.inProgress: 'inProgress',
+  TestAttemptStatus.pendingGrading: 'pendingGrading',
   TestAttemptStatus.graded: 'graded',
+  TestAttemptStatus.gradingFailed: 'gradingFailed',
 };

@@ -56,7 +56,6 @@ import '../../data/earnings/datasources/remote/earnings_remote_datasource.dart';
 import '../../data/earnings/repositories/earnings_repository_impl.dart';
 import '../../domain/earnings/repositories/earnings_repository.dart';
 import '../../domain/earnings/usecases/get_earnings_for_teacher_usecase.dart';
-import '../../domain/earnings/usecases/record_earnings_usecase.dart';
 import '../../data/student_cart/datasources/remote/cart_remote_datasource.dart';
 import '../../data/student_cart/repositories/cart_repository_impl.dart';
 import '../../domain/student_cart/repositories/cart_repository.dart';
@@ -179,7 +178,6 @@ void setupLocator() {
   sl.registerLazySingleton<EarningsRepository>(
     () => EarningsRepositoryImpl(remote: sl()),
   );
-  sl.registerFactory(() => RecordEarningsUseCase(sl()));
   sl.registerFactory(() => GetEarningsForTeacherUseCase(sl()));
 
   // student-cart
@@ -192,7 +190,7 @@ void setupLocator() {
   sl.registerFactory(() => GetCartUseCase(sl()));
   sl.registerFactory(() => AddSubjectBundleUseCase(sl()));
   sl.registerFactory(() => RemoveFromCartUseCase(sl()));
-  sl.registerFactory(() => CheckoutUseCase(sl(), sl()));
+  sl.registerFactory(() => CheckoutUseCase(sl()));
   sl.registerFactory(() => GetPurchasedSubjectIdsUseCase(sl()));
 
   // test-taking

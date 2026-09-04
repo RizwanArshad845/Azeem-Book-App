@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CartDto {
 
- String get id; String get studentId; List<CartItemDto>? get items; double get totalAmount;
+ String get id; String get studentId; List<CartItemDto>? get items;@DecimalStringConverter() double get totalAmount;
 /// Create a copy of CartDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $CartDtoCopyWith<$Res>  {
   factory $CartDtoCopyWith(CartDto value, $Res Function(CartDto) _then) = _$CartDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String studentId, List<CartItemDto>? items, double totalAmount
+ String id, String studentId, List<CartItemDto>? items,@DecimalStringConverter() double totalAmount
 });
 
 
@@ -156,7 +156,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String studentId,  List<CartItemDto>? items,  double totalAmount)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String studentId,  List<CartItemDto>? items, @DecimalStringConverter()  double totalAmount)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CartDto() when $default != null:
 return $default(_that.id,_that.studentId,_that.items,_that.totalAmount);case _:
@@ -177,7 +177,7 @@ return $default(_that.id,_that.studentId,_that.items,_that.totalAmount);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String studentId,  List<CartItemDto>? items,  double totalAmount)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String studentId,  List<CartItemDto>? items, @DecimalStringConverter()  double totalAmount)  $default,) {final _that = this;
 switch (_that) {
 case _CartDto():
 return $default(_that.id,_that.studentId,_that.items,_that.totalAmount);case _:
@@ -197,7 +197,7 @@ return $default(_that.id,_that.studentId,_that.items,_that.totalAmount);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String studentId,  List<CartItemDto>? items,  double totalAmount)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String studentId,  List<CartItemDto>? items, @DecimalStringConverter()  double totalAmount)?  $default,) {final _that = this;
 switch (_that) {
 case _CartDto() when $default != null:
 return $default(_that.id,_that.studentId,_that.items,_that.totalAmount);case _:
@@ -212,13 +212,13 @@ return $default(_that.id,_that.studentId,_that.items,_that.totalAmount);case _:
 @JsonSerializable()
 
 class _CartDto extends CartDto {
-  const _CartDto({required this.id, required this.studentId, this.items, this.totalAmount = 0}): super._();
+  const _CartDto({required this.id, required this.studentId, this.items, @DecimalStringConverter() this.totalAmount = 0}): super._();
   factory _CartDto.fromJson(Map<String, dynamic> json) => _$CartDtoFromJson(json);
 
 @override final  String id;
 @override final  String studentId;
 @override final  List<CartItemDto>? items;
-@override@JsonKey() final  double totalAmount;
+@override@JsonKey()@DecimalStringConverter() final  double totalAmount;
 
 /// Create a copy of CartDto
 /// with the given fields replaced by the non-null parameter values.
@@ -253,7 +253,7 @@ abstract mixin class _$CartDtoCopyWith<$Res> implements $CartDtoCopyWith<$Res> {
   factory _$CartDtoCopyWith(_CartDto value, $Res Function(_CartDto) _then) = __$CartDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String studentId, List<CartItemDto>? items, double totalAmount
+ String id, String studentId, List<CartItemDto>? items,@DecimalStringConverter() double totalAmount
 });
 
 

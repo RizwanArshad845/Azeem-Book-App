@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PaymentDto {
 
- String get id; String get studentId; double get amount; PaymentStatus get status; String? get gatewayReference; DateTime get createdAt;
+ String get id; String get studentId;@DecimalStringConverter() double get amount; PaymentStatus get status; String? get gatewayReference; DateTime get createdAt;
 /// Create a copy of PaymentDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $PaymentDtoCopyWith<$Res>  {
   factory $PaymentDtoCopyWith(PaymentDto value, $Res Function(PaymentDto) _then) = _$PaymentDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String studentId, double amount, PaymentStatus status, String? gatewayReference, DateTime createdAt
+ String id, String studentId,@DecimalStringConverter() double amount, PaymentStatus status, String? gatewayReference, DateTime createdAt
 });
 
 
@@ -158,7 +158,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String studentId,  double amount,  PaymentStatus status,  String? gatewayReference,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String studentId, @DecimalStringConverter()  double amount,  PaymentStatus status,  String? gatewayReference,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PaymentDto() when $default != null:
 return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gatewayReference,_that.createdAt);case _:
@@ -179,7 +179,7 @@ return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gateway
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String studentId,  double amount,  PaymentStatus status,  String? gatewayReference,  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String studentId, @DecimalStringConverter()  double amount,  PaymentStatus status,  String? gatewayReference,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _PaymentDto():
 return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gatewayReference,_that.createdAt);case _:
@@ -199,7 +199,7 @@ return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gateway
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String studentId,  double amount,  PaymentStatus status,  String? gatewayReference,  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String studentId, @DecimalStringConverter()  double amount,  PaymentStatus status,  String? gatewayReference,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _PaymentDto() when $default != null:
 return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gatewayReference,_that.createdAt);case _:
@@ -214,12 +214,12 @@ return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gateway
 @JsonSerializable()
 
 class _PaymentDto extends PaymentDto {
-  const _PaymentDto({required this.id, required this.studentId, required this.amount, required this.status, this.gatewayReference, required this.createdAt}): super._();
+  const _PaymentDto({required this.id, required this.studentId, @DecimalStringConverter() required this.amount, required this.status, this.gatewayReference, required this.createdAt}): super._();
   factory _PaymentDto.fromJson(Map<String, dynamic> json) => _$PaymentDtoFromJson(json);
 
 @override final  String id;
 @override final  String studentId;
-@override final  double amount;
+@override@DecimalStringConverter() final  double amount;
 @override final  PaymentStatus status;
 @override final  String? gatewayReference;
 @override final  DateTime createdAt;
@@ -257,7 +257,7 @@ abstract mixin class _$PaymentDtoCopyWith<$Res> implements $PaymentDtoCopyWith<$
   factory _$PaymentDtoCopyWith(_PaymentDto value, $Res Function(_PaymentDto) _then) = __$PaymentDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String studentId, double amount, PaymentStatus status, String? gatewayReference, DateTime createdAt
+ String id, String studentId,@DecimalStringConverter() double amount, PaymentStatus status, String? gatewayReference, DateTime createdAt
 });
 
 

@@ -11,7 +11,12 @@ abstract class SubjectEnrollment with _$SubjectEnrollment {
   const SubjectEnrollment._();
 
   const factory SubjectEnrollment({
-    required String studentId,
+    // Nullable: the wire response for `PUT /students/{id}/subject-
+    // enrollments` (`FRONTEND_INTEGRATION.md` §6.3) is `{id, subjectId,
+    // teacherId, discountApplied}` — no `studentId` (implied by the URL) —
+    // this is only populated client-side at construction time via [create].
+    String? studentId,
+    String? id,
     required String subjectId,
     String? teacherId,
     @Default(false) bool discountApplied,

@@ -66,7 +66,7 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
     // doc comment).
     if (!test.isFreeSample) {
       final purchasedResult = await sl<GetPurchasedSubjectIdsUseCase>()(
-        session.userId,
+        session.userId!,
       );
       final isPurchased = purchasedResult.when(
         success: (ids) => ids.contains(test.subjectId),
@@ -83,7 +83,11 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
       failure: (failure) => throw failure,
     );
 
-    final secondsRemaining = attemptSession.deadlineAt
+    // No server-computed deadline (§6.6: `deadlineAt` may be `null`) — fall
+    // back to a generous cap rather than crash or end the attempt instantly.
+    final deadlineAt =
+        attemptSession.deadlineAt ?? DateTime.now().add(const Duration(hours: 24));
+    final secondsRemaining = deadlineAt
         .difference(DateTime.now())
         .inSeconds
         .clamp(0, 1 << 31);

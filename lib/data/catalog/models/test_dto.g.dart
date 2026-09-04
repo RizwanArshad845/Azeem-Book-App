@@ -18,7 +18,6 @@ _TestDto _$TestDtoFromJson(Map<String, dynamic> json) => _TestDto(
       ? null
       : DateTime.parse(json['liveDate'] as String),
   isFreeSample: json['isFreeSample'] as bool? ?? false,
-  createdByAdminId: json['createdByAdminId'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
   questionCount: (json['questionCount'] as num?)?.toInt() ?? 0,
   durationMinutes: (json['durationMinutes'] as num?)?.toInt() ?? 0,
@@ -35,7 +34,6 @@ Map<String, dynamic> _$TestDtoToJson(_TestDto instance) => <String, dynamic>{
   'isLive': instance.isLive,
   'liveDate': instance.liveDate?.toIso8601String(),
   'isFreeSample': instance.isFreeSample,
-  'createdByAdminId': instance.createdByAdminId,
   'createdAt': instance.createdAt.toIso8601String(),
   'questionCount': instance.questionCount,
   'durationMinutes': instance.durationMinutes,

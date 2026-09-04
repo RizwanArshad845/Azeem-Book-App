@@ -14,7 +14,11 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SubjectEnrollment {
 
- String get studentId; String get subjectId; String? get teacherId; bool get discountApplied;
+// Nullable: the wire response for `PUT /students/{id}/subject-
+// enrollments` (`FRONTEND_INTEGRATION.md` §6.3) is `{id, subjectId,
+// teacherId, discountApplied}` — no `studentId` (implied by the URL) —
+// this is only populated client-side at construction time via [create].
+ String? get studentId; String? get id; String get subjectId; String? get teacherId; bool get discountApplied;
 /// Create a copy of SubjectEnrollment
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +29,16 @@ $SubjectEnrollmentCopyWith<SubjectEnrollment> get copyWith => _$SubjectEnrollmen
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubjectEnrollment&&(identical(other.studentId, studentId) || other.studentId == studentId)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.teacherId, teacherId) || other.teacherId == teacherId)&&(identical(other.discountApplied, discountApplied) || other.discountApplied == discountApplied));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubjectEnrollment&&(identical(other.studentId, studentId) || other.studentId == studentId)&&(identical(other.id, id) || other.id == id)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.teacherId, teacherId) || other.teacherId == teacherId)&&(identical(other.discountApplied, discountApplied) || other.discountApplied == discountApplied));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,studentId,subjectId,teacherId,discountApplied);
+int get hashCode => Object.hash(runtimeType,studentId,id,subjectId,teacherId,discountApplied);
 
 @override
 String toString() {
-  return 'SubjectEnrollment(studentId: $studentId, subjectId: $subjectId, teacherId: $teacherId, discountApplied: $discountApplied)';
+  return 'SubjectEnrollment(studentId: $studentId, id: $id, subjectId: $subjectId, teacherId: $teacherId, discountApplied: $discountApplied)';
 }
 
 
@@ -45,7 +49,7 @@ abstract mixin class $SubjectEnrollmentCopyWith<$Res>  {
   factory $SubjectEnrollmentCopyWith(SubjectEnrollment value, $Res Function(SubjectEnrollment) _then) = _$SubjectEnrollmentCopyWithImpl;
 @useResult
 $Res call({
- String studentId, String subjectId, String? teacherId, bool discountApplied
+ String? studentId, String? id, String subjectId, String? teacherId, bool discountApplied
 });
 
 
@@ -62,10 +66,11 @@ class _$SubjectEnrollmentCopyWithImpl<$Res>
 
 /// Create a copy of SubjectEnrollment
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? studentId = null,Object? subjectId = null,Object? teacherId = freezed,Object? discountApplied = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? studentId = freezed,Object? id = freezed,Object? subjectId = null,Object? teacherId = freezed,Object? discountApplied = null,}) {
   return _then(_self.copyWith(
-studentId: null == studentId ? _self.studentId : studentId // ignore: cast_nullable_to_non_nullable
-as String,subjectId: null == subjectId ? _self.subjectId : subjectId // ignore: cast_nullable_to_non_nullable
+studentId: freezed == studentId ? _self.studentId : studentId // ignore: cast_nullable_to_non_nullable
+as String?,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,subjectId: null == subjectId ? _self.subjectId : subjectId // ignore: cast_nullable_to_non_nullable
 as String,teacherId: freezed == teacherId ? _self.teacherId : teacherId // ignore: cast_nullable_to_non_nullable
 as String?,discountApplied: null == discountApplied ? _self.discountApplied : discountApplied // ignore: cast_nullable_to_non_nullable
 as bool,
@@ -153,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String studentId,  String subjectId,  String? teacherId,  bool discountApplied)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? studentId,  String? id,  String subjectId,  String? teacherId,  bool discountApplied)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SubjectEnrollment() when $default != null:
-return $default(_that.studentId,_that.subjectId,_that.teacherId,_that.discountApplied);case _:
+return $default(_that.studentId,_that.id,_that.subjectId,_that.teacherId,_that.discountApplied);case _:
   return orElse();
 
 }
@@ -174,10 +179,10 @@ return $default(_that.studentId,_that.subjectId,_that.teacherId,_that.discountAp
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String studentId,  String subjectId,  String? teacherId,  bool discountApplied)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? studentId,  String? id,  String subjectId,  String? teacherId,  bool discountApplied)  $default,) {final _that = this;
 switch (_that) {
 case _SubjectEnrollment():
-return $default(_that.studentId,_that.subjectId,_that.teacherId,_that.discountApplied);case _:
+return $default(_that.studentId,_that.id,_that.subjectId,_that.teacherId,_that.discountApplied);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +199,10 @@ return $default(_that.studentId,_that.subjectId,_that.teacherId,_that.discountAp
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String studentId,  String subjectId,  String? teacherId,  bool discountApplied)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? studentId,  String? id,  String subjectId,  String? teacherId,  bool discountApplied)?  $default,) {final _that = this;
 switch (_that) {
 case _SubjectEnrollment() when $default != null:
-return $default(_that.studentId,_that.subjectId,_that.teacherId,_that.discountApplied);case _:
+return $default(_that.studentId,_that.id,_that.subjectId,_that.teacherId,_that.discountApplied);case _:
   return null;
 
 }
@@ -209,10 +214,15 @@ return $default(_that.studentId,_that.subjectId,_that.teacherId,_that.discountAp
 
 
 class _SubjectEnrollment extends SubjectEnrollment {
-  const _SubjectEnrollment({required this.studentId, required this.subjectId, this.teacherId, this.discountApplied = false}): super._();
+  const _SubjectEnrollment({this.studentId, this.id, required this.subjectId, this.teacherId, this.discountApplied = false}): super._();
   
 
-@override final  String studentId;
+// Nullable: the wire response for `PUT /students/{id}/subject-
+// enrollments` (`FRONTEND_INTEGRATION.md` §6.3) is `{id, subjectId,
+// teacherId, discountApplied}` — no `studentId` (implied by the URL) —
+// this is only populated client-side at construction time via [create].
+@override final  String? studentId;
+@override final  String? id;
 @override final  String subjectId;
 @override final  String? teacherId;
 @override@JsonKey() final  bool discountApplied;
@@ -227,16 +237,16 @@ _$SubjectEnrollmentCopyWith<_SubjectEnrollment> get copyWith => __$SubjectEnroll
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubjectEnrollment&&(identical(other.studentId, studentId) || other.studentId == studentId)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.teacherId, teacherId) || other.teacherId == teacherId)&&(identical(other.discountApplied, discountApplied) || other.discountApplied == discountApplied));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubjectEnrollment&&(identical(other.studentId, studentId) || other.studentId == studentId)&&(identical(other.id, id) || other.id == id)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.teacherId, teacherId) || other.teacherId == teacherId)&&(identical(other.discountApplied, discountApplied) || other.discountApplied == discountApplied));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,studentId,subjectId,teacherId,discountApplied);
+int get hashCode => Object.hash(runtimeType,studentId,id,subjectId,teacherId,discountApplied);
 
 @override
 String toString() {
-  return 'SubjectEnrollment(studentId: $studentId, subjectId: $subjectId, teacherId: $teacherId, discountApplied: $discountApplied)';
+  return 'SubjectEnrollment(studentId: $studentId, id: $id, subjectId: $subjectId, teacherId: $teacherId, discountApplied: $discountApplied)';
 }
 
 
@@ -247,7 +257,7 @@ abstract mixin class _$SubjectEnrollmentCopyWith<$Res> implements $SubjectEnroll
   factory _$SubjectEnrollmentCopyWith(_SubjectEnrollment value, $Res Function(_SubjectEnrollment) _then) = __$SubjectEnrollmentCopyWithImpl;
 @override @useResult
 $Res call({
- String studentId, String subjectId, String? teacherId, bool discountApplied
+ String? studentId, String? id, String subjectId, String? teacherId, bool discountApplied
 });
 
 
@@ -264,10 +274,11 @@ class __$SubjectEnrollmentCopyWithImpl<$Res>
 
 /// Create a copy of SubjectEnrollment
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? studentId = null,Object? subjectId = null,Object? teacherId = freezed,Object? discountApplied = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? studentId = freezed,Object? id = freezed,Object? subjectId = null,Object? teacherId = freezed,Object? discountApplied = null,}) {
   return _then(_SubjectEnrollment(
-studentId: null == studentId ? _self.studentId : studentId // ignore: cast_nullable_to_non_nullable
-as String,subjectId: null == subjectId ? _self.subjectId : subjectId // ignore: cast_nullable_to_non_nullable
+studentId: freezed == studentId ? _self.studentId : studentId // ignore: cast_nullable_to_non_nullable
+as String?,id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,subjectId: null == subjectId ? _self.subjectId : subjectId // ignore: cast_nullable_to_non_nullable
 as String,teacherId: freezed == teacherId ? _self.teacherId : teacherId // ignore: cast_nullable_to_non_nullable
 as String?,discountApplied: null == discountApplied ? _self.discountApplied : discountApplied // ignore: cast_nullable_to_non_nullable
 as bool,

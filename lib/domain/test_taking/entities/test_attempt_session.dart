@@ -12,7 +12,8 @@ part 'test_attempt_session.freezed.dart';
 abstract class TestAttemptSession with _$TestAttemptSession {
   const factory TestAttemptSession({
     required String attemptId,
-    required DateTime deadlineAt,
+    // Nullable: `FRONTEND_INTEGRATION.md` §6.6 types this `iso8601|null`.
+    DateTime? deadlineAt,
     required List<AttemptQuestion> questions,
   }) = _TestAttemptSession;
 }

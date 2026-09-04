@@ -56,12 +56,17 @@ class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
 
   /// Backs the `teacher-students` Students tab — the `ApiEndpoints`
   /// contract this feature was told to build against.
+  ///
+  /// Paginated DRF envelope (`{count, next, previous, results}`), not a
+  /// bare array (`FRONTEND_INTEGRATION.md` §5/§6.2) — only the first page
+  /// (default size 20) is fetched here.
   @override
   Future<List<StudentDto>> getStudentsForTeacher(String teacherId) async {
-    final response = await _dio.get<List<dynamic>>(
+    final response = await _dio.get<Map<String, dynamic>>(
       ApiEndpoints.teacherStudents(teacherId),
     );
-    return (response.data ?? const <dynamic>[])
+    final results = response.data?['results'] as List<dynamic>? ?? [];
+    return results
         .map((e) => StudentDto.fromJson(e as Map<String, dynamic>))
         .toList();
   }

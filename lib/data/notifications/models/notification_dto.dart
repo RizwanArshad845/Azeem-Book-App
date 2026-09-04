@@ -15,6 +15,10 @@ abstract class NotificationDto with _$NotificationDto {
     required String id,
     required String recipientId,
     required NotificationRecipientRole recipientRole,
+    // Falls back to `NotificationType.unknown` instead of throwing for any
+    // wire value not in the enum (e.g. a type added server-side before this
+    // client is updated) — see that enum's doc comment.
+    @JsonKey(unknownEnumValue: NotificationType.unknown)
     required NotificationType type,
     required String message,
     @Default(false) bool isRead,

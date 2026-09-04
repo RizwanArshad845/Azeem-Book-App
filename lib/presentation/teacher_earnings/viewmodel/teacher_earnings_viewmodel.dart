@@ -9,11 +9,12 @@ import '../../teacher_overview/viewmodel/teacher_overview_viewmodel.dart';
 /// read-only transaction-level breakdown behind the two summary numbers
 /// already shown on the Overview tab's `_EarningsCard`
 /// (`Teacher.actualEarnings`/`projectedEarnings`, untouched by this
-/// feature). Nothing is written back from this screen: the only write path
-/// for an `EarningsRecord` is `RecordEarningsUseCase`, invoked from
-/// `student_cart`'s checkout flow — so a plain `FutureProvider` is enough
-/// here, no `AsyncNotifier` needed (mirrors `cartTestsByIdProvider`'s
-/// read-only `FutureProvider` pattern in `student_cart_viewmodel.dart`).
+/// feature). Nothing is written back from this screen — `EarningsRecord`s
+/// are created server-side automatically on a successful checkout
+/// (`FRONTEND_INTEGRATION.md` §6.5/§8 `earningsCredited`), there's no
+/// client write path at all — so a plain `FutureProvider` is enough here,
+/// no `AsyncNotifier` needed (mirrors `cartTestsByIdProvider`'s read-only
+/// `FutureProvider` pattern in `student_cart_viewmodel.dart`).
 ///
 /// Depends on `currentTeacherProvider` (teacher_overview) the same way that
 /// feature already reuses it, rather than re-deriving the logged-in

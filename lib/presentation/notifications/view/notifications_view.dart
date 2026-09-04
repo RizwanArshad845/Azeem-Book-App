@@ -138,6 +138,27 @@ class _NotificationCard extends ConsumerWidget {
       Icons.hourglass_top_rounded,
       const Color(0xFFD97706), // Amber
     ),
+    NotificationType.paymentSuccessful || NotificationType.studentEnrolled => (
+      Icons.check_circle_rounded,
+      const Color(0xFF059669), // Emerald Green
+    ),
+    NotificationType.earningsCredited => (
+      Icons.payments_rounded,
+      const Color(0xFF059669), // Emerald Green
+    ),
+    NotificationType.resultReady || NotificationType.liveTestCompleted => (
+      Icons.emoji_events_rounded,
+      const Color(0xFF7C3AED), // Purple
+    ),
+    NotificationType.testGradingFailed => (
+      Icons.error_outline_rounded,
+      const Color(0xFFDC2626), // Red
+    ),
+    // Every other defined `NotificationType` (§8: not yet triggered by any
+    // real backend event today, plus the `unknown` decode fallback) — a
+    // generic bell so an unrecognized/future type still renders instead of
+    // hitting a non-exhaustive-switch build error.
+    _ => (Icons.notifications_rounded, const Color(0xFF64748B)), // Slate
   };
 
   @override

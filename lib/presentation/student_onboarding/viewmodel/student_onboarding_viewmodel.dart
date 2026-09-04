@@ -122,7 +122,7 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
     final enrollments = _selectedSubjectIds
         .map(
           (subjectId) => SubjectEnrollment.create(
-            studentId: session.userId,
+            studentId: session.userId!,
             subjectId: subjectId,
             teacherId: _teacherIdBySubjectId[subjectId],
           ),
@@ -130,7 +130,7 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
         .toList();
 
     final student = Student(
-      id: session.userId,
+      id: session.userId!,
       name: name,
       phoneNumber: session.phoneNumber,
       role: session.role,

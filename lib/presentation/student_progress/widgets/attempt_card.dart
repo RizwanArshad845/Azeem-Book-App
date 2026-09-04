@@ -32,14 +32,14 @@ class AttemptCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${attempt.scorePercent.toStringAsFixed(0)}% score',
+            '${(attempt.scorePercent ?? 0).toStringAsFixed(0)}% score',
             style: secondaryStyle,
           ),
           SizedBox(height: context.dimens.xs / 2),
           Text(_submittedAtFormat.format(attempt.attemptedAt), style: secondaryStyle),
         ],
       ),
-      trailing: _ScoreBandBadge(scorePercent: attempt.scorePercent),
+      trailing: _ScoreBandBadge(scorePercent: attempt.scorePercent ?? 0),
     );
   }
 }

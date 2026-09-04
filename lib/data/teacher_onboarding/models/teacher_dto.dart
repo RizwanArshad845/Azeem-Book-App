@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../core/network/converters/decimal_json_converter.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
 
@@ -25,14 +26,16 @@ abstract class TeacherDto with _$TeacherDto {
     required DateTime createdAt,
     required DateTime updatedAt,
     required String campusId,
-    required List<String> subjects,
-    List<String>? classes,
+    required List<String> subjectIds,
+    List<String>? classIds,
     int? declaredStudentCount,
     String? salesmanId,
     required TeacherOnboardingSource onboardingSource,
     required TeacherApprovalStatus approvalStatus,
-    @Default(0) double actualEarnings,
-    double? projectedEarnings,
+    // `actualEarnings`/`projectedEarnings` serialize as JSON strings on the
+    // real backend, not numbers (`FRONTEND_INTEGRATION.md` §3).
+    @Default(0) @DecimalStringConverter() double actualEarnings,
+    @NullableDecimalStringConverter() double? projectedEarnings,
   }) = _TeacherDto;
 
   factory TeacherDto.fromJson(Map<String, dynamic> json) =>
@@ -47,8 +50,8 @@ abstract class TeacherDto with _$TeacherDto {
     createdAt: createdAt,
     updatedAt: updatedAt,
     campusId: campusId,
-    subjects: subjects,
-    classes: classes,
+    subjectIds: subjectIds,
+    classIds: classIds,
     declaredStudentCount: declaredStudentCount,
     salesmanId: salesmanId,
     onboardingSource: onboardingSource,
@@ -66,8 +69,8 @@ abstract class TeacherDto with _$TeacherDto {
     createdAt: entity.createdAt,
     updatedAt: entity.updatedAt,
     campusId: entity.campusId,
-    subjects: entity.subjects,
-    classes: entity.classes,
+    subjectIds: entity.subjectIds,
+    classIds: entity.classIds,
     declaredStudentCount: entity.declaredStudentCount,
     salesmanId: entity.salesmanId,
     onboardingSource: entity.onboardingSource,

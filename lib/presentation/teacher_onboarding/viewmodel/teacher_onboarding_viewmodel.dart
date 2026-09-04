@@ -86,7 +86,7 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
 
     final now = DateTime.now();
     final teacher = Teacher(
-      id: session.userId,
+      id: session.userId!,
       name: name,
       phoneNumber: session.phoneNumber,
       role: session.role,
@@ -94,8 +94,8 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
       createdAt: now,
       updatedAt: now,
       campusId: campusId,
-      subjects: subjectIds,
-      classes: classIds,
+      subjectIds: subjectIds,
+      classIds: classIds,
       declaredStudentCount: declaredStudentCount,
       salesmanId: null,
       onboardingSource: TeacherOnboardingSource.selfSignup,

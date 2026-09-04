@@ -39,7 +39,7 @@ final studentTestAttemptsProvider = FutureProvider<List<TestAttempt>>((
     return const <TestAttempt>[];
   }
 
-  final result = await sl<GetStudentTestAttemptsUseCase>()(session.userId);
+  final result = await sl<GetStudentTestAttemptsUseCase>()(session.userId!);
   return result.when(
     success: (attempts) => attempts,
     failure: (failure) => throw failure,
@@ -253,7 +253,7 @@ SubjectProgressSummary _summarizeSubject({
   for (final attempt in subjectAttempts) {
     weakChapterIds.addAll(attempt.weakChapterIds ?? const []);
     strongChapterIds.addAll(attempt.strongChapterIds ?? const []);
-    scoreSum += attempt.scorePercent;
+    scoreSum += attempt.scorePercent ?? 0;
   }
 
   return SubjectProgressSummary(
@@ -415,7 +415,7 @@ final filteredOverallMasteryProvider = FutureProvider<OverallMasteryData>((ref) 
   }
 
   final averageScorePercent =
-      attempts.map((a) => a.scorePercent).reduce((a, b) => a + b) /
+      attempts.map((a) => a.scorePercent ?? 0).reduce((a, b) => a + b) /
       attempts.length;
 
   return OverallMasteryData(
@@ -465,7 +465,7 @@ final filteredChapterProgressListProvider =
 
     final testAttempts = entry.value;
     final avgScore =
-        testAttempts.map((a) => a.scorePercent).reduce((a, b) => a + b) /
+        testAttempts.map((a) => a.scorePercent ?? 0).reduce((a, b) => a + b) /
         testAttempts.length;
 
     final sortedAttempts = List<TestAttempt>.from(testAttempts)

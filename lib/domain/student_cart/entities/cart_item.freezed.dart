@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CartItem {
 
- String get subjectId; String get subjectName; int get testCount; double get price; double? get discountedPrice;
+ String? get id; String get subjectId; String? get subjectName; int? get testCount; double get price; double? get discountedPrice;
 /// Create a copy of CartItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $CartItemCopyWith<CartItem> get copyWith => _$CartItemCopyWithImpl<CartItem>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CartItem&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.subjectName, subjectName) || other.subjectName == subjectName)&&(identical(other.testCount, testCount) || other.testCount == testCount)&&(identical(other.price, price) || other.price == price)&&(identical(other.discountedPrice, discountedPrice) || other.discountedPrice == discountedPrice));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CartItem&&(identical(other.id, id) || other.id == id)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.subjectName, subjectName) || other.subjectName == subjectName)&&(identical(other.testCount, testCount) || other.testCount == testCount)&&(identical(other.price, price) || other.price == price)&&(identical(other.discountedPrice, discountedPrice) || other.discountedPrice == discountedPrice));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,subjectId,subjectName,testCount,price,discountedPrice);
+int get hashCode => Object.hash(runtimeType,id,subjectId,subjectName,testCount,price,discountedPrice);
 
 @override
 String toString() {
-  return 'CartItem(subjectId: $subjectId, subjectName: $subjectName, testCount: $testCount, price: $price, discountedPrice: $discountedPrice)';
+  return 'CartItem(id: $id, subjectId: $subjectId, subjectName: $subjectName, testCount: $testCount, price: $price, discountedPrice: $discountedPrice)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $CartItemCopyWith<$Res>  {
   factory $CartItemCopyWith(CartItem value, $Res Function(CartItem) _then) = _$CartItemCopyWithImpl;
 @useResult
 $Res call({
- String subjectId, String subjectName, int testCount, double price, double? discountedPrice
+ String? id, String subjectId, String? subjectName, int? testCount, double price, double? discountedPrice
 });
 
 
@@ -62,12 +62,13 @@ class _$CartItemCopyWithImpl<$Res>
 
 /// Create a copy of CartItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? subjectId = null,Object? subjectName = null,Object? testCount = null,Object? price = null,Object? discountedPrice = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? subjectId = null,Object? subjectName = freezed,Object? testCount = freezed,Object? price = null,Object? discountedPrice = freezed,}) {
   return _then(_self.copyWith(
-subjectId: null == subjectId ? _self.subjectId : subjectId // ignore: cast_nullable_to_non_nullable
-as String,subjectName: null == subjectName ? _self.subjectName : subjectName // ignore: cast_nullable_to_non_nullable
-as String,testCount: null == testCount ? _self.testCount : testCount // ignore: cast_nullable_to_non_nullable
-as int,price: null == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,subjectId: null == subjectId ? _self.subjectId : subjectId // ignore: cast_nullable_to_non_nullable
+as String,subjectName: freezed == subjectName ? _self.subjectName : subjectName // ignore: cast_nullable_to_non_nullable
+as String?,testCount: freezed == testCount ? _self.testCount : testCount // ignore: cast_nullable_to_non_nullable
+as int?,price: null == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
 as double,discountedPrice: freezed == discountedPrice ? _self.discountedPrice : discountedPrice // ignore: cast_nullable_to_non_nullable
 as double?,
   ));
@@ -154,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String subjectId,  String subjectName,  int testCount,  double price,  double? discountedPrice)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String subjectId,  String? subjectName,  int? testCount,  double price,  double? discountedPrice)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CartItem() when $default != null:
-return $default(_that.subjectId,_that.subjectName,_that.testCount,_that.price,_that.discountedPrice);case _:
+return $default(_that.id,_that.subjectId,_that.subjectName,_that.testCount,_that.price,_that.discountedPrice);case _:
   return orElse();
 
 }
@@ -175,10 +176,10 @@ return $default(_that.subjectId,_that.subjectName,_that.testCount,_that.price,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String subjectId,  String subjectName,  int testCount,  double price,  double? discountedPrice)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String subjectId,  String? subjectName,  int? testCount,  double price,  double? discountedPrice)  $default,) {final _that = this;
 switch (_that) {
 case _CartItem():
-return $default(_that.subjectId,_that.subjectName,_that.testCount,_that.price,_that.discountedPrice);case _:
+return $default(_that.id,_that.subjectId,_that.subjectName,_that.testCount,_that.price,_that.discountedPrice);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +196,10 @@ return $default(_that.subjectId,_that.subjectName,_that.testCount,_that.price,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String subjectId,  String subjectName,  int testCount,  double price,  double? discountedPrice)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String subjectId,  String? subjectName,  int? testCount,  double price,  double? discountedPrice)?  $default,) {final _that = this;
 switch (_that) {
 case _CartItem() when $default != null:
-return $default(_that.subjectId,_that.subjectName,_that.testCount,_that.price,_that.discountedPrice);case _:
+return $default(_that.id,_that.subjectId,_that.subjectName,_that.testCount,_that.price,_that.discountedPrice);case _:
   return null;
 
 }
@@ -210,12 +211,13 @@ return $default(_that.subjectId,_that.subjectName,_that.testCount,_that.price,_t
 
 
 class _CartItem implements CartItem {
-  const _CartItem({required this.subjectId, required this.subjectName, required this.testCount, required this.price, this.discountedPrice});
+  const _CartItem({this.id, required this.subjectId, this.subjectName, this.testCount, required this.price, this.discountedPrice});
   
 
+@override final  String? id;
 @override final  String subjectId;
-@override final  String subjectName;
-@override final  int testCount;
+@override final  String? subjectName;
+@override final  int? testCount;
 @override final  double price;
 @override final  double? discountedPrice;
 
@@ -229,16 +231,16 @@ _$CartItemCopyWith<_CartItem> get copyWith => __$CartItemCopyWithImpl<_CartItem>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CartItem&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.subjectName, subjectName) || other.subjectName == subjectName)&&(identical(other.testCount, testCount) || other.testCount == testCount)&&(identical(other.price, price) || other.price == price)&&(identical(other.discountedPrice, discountedPrice) || other.discountedPrice == discountedPrice));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CartItem&&(identical(other.id, id) || other.id == id)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.subjectName, subjectName) || other.subjectName == subjectName)&&(identical(other.testCount, testCount) || other.testCount == testCount)&&(identical(other.price, price) || other.price == price)&&(identical(other.discountedPrice, discountedPrice) || other.discountedPrice == discountedPrice));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,subjectId,subjectName,testCount,price,discountedPrice);
+int get hashCode => Object.hash(runtimeType,id,subjectId,subjectName,testCount,price,discountedPrice);
 
 @override
 String toString() {
-  return 'CartItem(subjectId: $subjectId, subjectName: $subjectName, testCount: $testCount, price: $price, discountedPrice: $discountedPrice)';
+  return 'CartItem(id: $id, subjectId: $subjectId, subjectName: $subjectName, testCount: $testCount, price: $price, discountedPrice: $discountedPrice)';
 }
 
 
@@ -249,7 +251,7 @@ abstract mixin class _$CartItemCopyWith<$Res> implements $CartItemCopyWith<$Res>
   factory _$CartItemCopyWith(_CartItem value, $Res Function(_CartItem) _then) = __$CartItemCopyWithImpl;
 @override @useResult
 $Res call({
- String subjectId, String subjectName, int testCount, double price, double? discountedPrice
+ String? id, String subjectId, String? subjectName, int? testCount, double price, double? discountedPrice
 });
 
 
@@ -266,12 +268,13 @@ class __$CartItemCopyWithImpl<$Res>
 
 /// Create a copy of CartItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? subjectId = null,Object? subjectName = null,Object? testCount = null,Object? price = null,Object? discountedPrice = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? subjectId = null,Object? subjectName = freezed,Object? testCount = freezed,Object? price = null,Object? discountedPrice = freezed,}) {
   return _then(_CartItem(
-subjectId: null == subjectId ? _self.subjectId : subjectId // ignore: cast_nullable_to_non_nullable
-as String,subjectName: null == subjectName ? _self.subjectName : subjectName // ignore: cast_nullable_to_non_nullable
-as String,testCount: null == testCount ? _self.testCount : testCount // ignore: cast_nullable_to_non_nullable
-as int,price: null == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,subjectId: null == subjectId ? _self.subjectId : subjectId // ignore: cast_nullable_to_non_nullable
+as String,subjectName: freezed == subjectName ? _self.subjectName : subjectName // ignore: cast_nullable_to_non_nullable
+as String?,testCount: freezed == testCount ? _self.testCount : testCount // ignore: cast_nullable_to_non_nullable
+as int?,price: null == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
 as double,discountedPrice: freezed == discountedPrice ? _self.discountedPrice : discountedPrice // ignore: cast_nullable_to_non_nullable
 as double?,
   ));

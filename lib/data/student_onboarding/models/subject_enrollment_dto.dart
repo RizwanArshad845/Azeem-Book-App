@@ -12,7 +12,10 @@ abstract class SubjectEnrollmentDto with _$SubjectEnrollmentDto {
   const SubjectEnrollmentDto._();
 
   const factory SubjectEnrollmentDto({
-    required String studentId,
+    // Nullable: `FRONTEND_INTEGRATION.md` §6.3's response shape is `{id,
+    // subjectId, teacherId, discountApplied}` — no `studentId`.
+    String? studentId,
+    String? id,
     required String subjectId,
     String? teacherId,
     @Default(false) bool discountApplied,
@@ -23,6 +26,7 @@ abstract class SubjectEnrollmentDto with _$SubjectEnrollmentDto {
 
   SubjectEnrollment toDomain() => SubjectEnrollment(
     studentId: studentId,
+    id: id,
     subjectId: subjectId,
     teacherId: teacherId,
     discountApplied: discountApplied,
@@ -31,6 +35,7 @@ abstract class SubjectEnrollmentDto with _$SubjectEnrollmentDto {
   factory SubjectEnrollmentDto.fromDomain(SubjectEnrollment entity) =>
       SubjectEnrollmentDto(
         studentId: entity.studentId,
+        id: entity.id,
         subjectId: entity.subjectId,
         teacherId: entity.teacherId,
         discountApplied: entity.discountApplied,

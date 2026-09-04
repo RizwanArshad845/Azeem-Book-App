@@ -12,7 +12,7 @@ _EarningsRecordDto _$EarningsRecordDtoFromJson(Map<String, dynamic> json) =>
       teacherId: json['teacherId'] as String?,
       salesmanId: json['salesmanId'] as String?,
       studentId: json['studentId'] as String,
-      amount: (json['amount'] as num).toDouble(),
+      amount: const DecimalStringConverter().fromJson(json['amount']),
       triggerEvent: $enumDecode(
         _$EarningsTriggerEventEnumMap,
         json['triggerEvent'],
@@ -26,7 +26,7 @@ Map<String, dynamic> _$EarningsRecordDtoToJson(_EarningsRecordDto instance) =>
       'teacherId': instance.teacherId,
       'salesmanId': instance.salesmanId,
       'studentId': instance.studentId,
-      'amount': instance.amount,
+      'amount': const DecimalStringConverter().toJson(instance.amount),
       'triggerEvent': _$EarningsTriggerEventEnumMap[instance.triggerEvent]!,
       'createdAt': instance.createdAt.toIso8601String(),
     };

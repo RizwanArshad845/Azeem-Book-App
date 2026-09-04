@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../core/network/converters/decimal_json_converter.dart';
 import '../../../domain/earnings/entities/earnings_record.dart';
 
 part 'earnings_record_dto.freezed.dart';
@@ -14,7 +15,7 @@ abstract class EarningsRecordDto with _$EarningsRecordDto {
     String? teacherId,
     String? salesmanId,
     required String studentId,
-    required double amount,
+    @DecimalStringConverter() required double amount,
     required EarningsTriggerEvent triggerEvent,
     required DateTime createdAt,
   }) = _EarningsRecordDto;

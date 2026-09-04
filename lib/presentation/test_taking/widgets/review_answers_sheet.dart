@@ -55,7 +55,13 @@ class ReviewAnswersSheet extends StatelessWidget {
       questionText: answer.questionText ?? '',
       scoreLabel: '$earned/$marks',
       correctAnswerLabel: context.l10n.reviewCorrectAnswerLabel,
-      correctAnswer: answer.expectedAnswer,
+      // `expectedAnswer` covers short/long-answer questions; mcq questions
+      // only get a `correctOptionIndex` back (no answer-key text) per
+      // `FRONTEND_INTEGRATION.md` §6.6 — fall back to an option label.
+      correctAnswer: answer.expectedAnswer ??
+          (answer.correctOptionIndex != null
+              ? 'Option ${answer.correctOptionIndex! + 1}'
+              : null),
       solutionLabel: context.l10n.testResultsSolutionLabel,
       solution: answer.justification ?? answer.solutionExplanation,
     );

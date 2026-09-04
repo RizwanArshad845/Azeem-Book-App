@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TestAttemptSessionDto {
 
- String get attemptId; DateTime get deadlineAt; List<AttemptQuestionDto> get questions;
+ String get attemptId; DateTime? get deadlineAt; List<AttemptQuestionDto> get questions;
 /// Create a copy of TestAttemptSessionDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $TestAttemptSessionDtoCopyWith<$Res>  {
   factory $TestAttemptSessionDtoCopyWith(TestAttemptSessionDto value, $Res Function(TestAttemptSessionDto) _then) = _$TestAttemptSessionDtoCopyWithImpl;
 @useResult
 $Res call({
- String attemptId, DateTime deadlineAt, List<AttemptQuestionDto> questions
+ String attemptId, DateTime? deadlineAt, List<AttemptQuestionDto> questions
 });
 
 
@@ -65,11 +65,11 @@ class _$TestAttemptSessionDtoCopyWithImpl<$Res>
 
 /// Create a copy of TestAttemptSessionDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? attemptId = null,Object? deadlineAt = null,Object? questions = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? attemptId = null,Object? deadlineAt = freezed,Object? questions = null,}) {
   return _then(_self.copyWith(
 attemptId: null == attemptId ? _self.attemptId : attemptId // ignore: cast_nullable_to_non_nullable
-as String,deadlineAt: null == deadlineAt ? _self.deadlineAt : deadlineAt // ignore: cast_nullable_to_non_nullable
-as DateTime,questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable
+as String,deadlineAt: freezed == deadlineAt ? _self.deadlineAt : deadlineAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable
 as List<AttemptQuestionDto>,
   ));
 }
@@ -155,7 +155,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String attemptId,  DateTime deadlineAt,  List<AttemptQuestionDto> questions)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String attemptId,  DateTime? deadlineAt,  List<AttemptQuestionDto> questions)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TestAttemptSessionDto() when $default != null:
 return $default(_that.attemptId,_that.deadlineAt,_that.questions);case _:
@@ -176,7 +176,7 @@ return $default(_that.attemptId,_that.deadlineAt,_that.questions);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String attemptId,  DateTime deadlineAt,  List<AttemptQuestionDto> questions)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String attemptId,  DateTime? deadlineAt,  List<AttemptQuestionDto> questions)  $default,) {final _that = this;
 switch (_that) {
 case _TestAttemptSessionDto():
 return $default(_that.attemptId,_that.deadlineAt,_that.questions);case _:
@@ -196,7 +196,7 @@ return $default(_that.attemptId,_that.deadlineAt,_that.questions);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String attemptId,  DateTime deadlineAt,  List<AttemptQuestionDto> questions)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String attemptId,  DateTime? deadlineAt,  List<AttemptQuestionDto> questions)?  $default,) {final _that = this;
 switch (_that) {
 case _TestAttemptSessionDto() when $default != null:
 return $default(_that.attemptId,_that.deadlineAt,_that.questions);case _:
@@ -211,11 +211,11 @@ return $default(_that.attemptId,_that.deadlineAt,_that.questions);case _:
 @JsonSerializable()
 
 class _TestAttemptSessionDto extends TestAttemptSessionDto {
-  const _TestAttemptSessionDto({required this.attemptId, required this.deadlineAt, required this.questions}): super._();
+  const _TestAttemptSessionDto({required this.attemptId, this.deadlineAt, required this.questions}): super._();
   factory _TestAttemptSessionDto.fromJson(Map<String, dynamic> json) => _$TestAttemptSessionDtoFromJson(json);
 
 @override final  String attemptId;
-@override final  DateTime deadlineAt;
+@override final  DateTime? deadlineAt;
 @override final  List<AttemptQuestionDto> questions;
 
 /// Create a copy of TestAttemptSessionDto
@@ -251,7 +251,7 @@ abstract mixin class _$TestAttemptSessionDtoCopyWith<$Res> implements $TestAttem
   factory _$TestAttemptSessionDtoCopyWith(_TestAttemptSessionDto value, $Res Function(_TestAttemptSessionDto) _then) = __$TestAttemptSessionDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String attemptId, DateTime deadlineAt, List<AttemptQuestionDto> questions
+ String attemptId, DateTime? deadlineAt, List<AttemptQuestionDto> questions
 });
 
 
@@ -268,11 +268,11 @@ class __$TestAttemptSessionDtoCopyWithImpl<$Res>
 
 /// Create a copy of TestAttemptSessionDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? attemptId = null,Object? deadlineAt = null,Object? questions = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? attemptId = null,Object? deadlineAt = freezed,Object? questions = null,}) {
   return _then(_TestAttemptSessionDto(
 attemptId: null == attemptId ? _self.attemptId : attemptId // ignore: cast_nullable_to_non_nullable
-as String,deadlineAt: null == deadlineAt ? _self.deadlineAt : deadlineAt // ignore: cast_nullable_to_non_nullable
-as DateTime,questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable
+as String,deadlineAt: freezed == deadlineAt ? _self.deadlineAt : deadlineAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable
 as List<AttemptQuestionDto>,
   ));
 }

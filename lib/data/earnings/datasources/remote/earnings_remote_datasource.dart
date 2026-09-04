@@ -5,15 +5,11 @@ import '../../../../domain/common/failure.dart';
 import '../../../../domain/common/result.dart';
 import '../../models/earnings_record_dto.dart';
 
-/// Dio-backed earnings datasource.
-///
-/// Reuses the existing `ApiEndpoints.teacherEarnings(teacherId)` path for
-/// both reads (`GET`) and the create-on-purchase write (`POST`) — no new
-/// endpoint needed, matching how `CartRemoteDataSource` reuses
-/// `studentCart` for both add/remove.
+/// Dio-backed earnings datasource. Read-only — `GET
+/// /teachers/{id}/earnings` per `FRONTEND_INTEGRATION.md` §6.2; there is no
+/// client-facing write endpoint (§6.5: records are created server-side on
+/// checkout).
 abstract class EarningsRemoteDataSource {
-  Future<Result<EarningsRecordDto>> recordEarnings(EarningsRecordDto draft);
-
   Future<Result<List<EarningsRecordDto>>> getEarningsForTeacher(
     String teacherId,
   );
@@ -23,17 +19,6 @@ class EarningsRemoteDataSourceImpl implements EarningsRemoteDataSource {
   EarningsRemoteDataSourceImpl(this._dio);
 
   final Dio _dio;
-
-  @override
-  Future<Result<EarningsRecordDto>> recordEarnings(EarningsRecordDto draft) {
-    return _guard(() async {
-      final response = await _dio.post<Map<String, dynamic>>(
-        ApiEndpoints.teacherEarnings(draft.teacherId ?? ''),
-        data: draft.toJson(),
-      );
-      return EarningsRecordDto.fromJson(response.data!);
-    });
-  }
 
   @override
   Future<Result<List<EarningsRecordDto>>> getEarningsForTeacher(

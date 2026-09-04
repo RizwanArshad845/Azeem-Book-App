@@ -13,7 +13,11 @@ part 'auth_session.freezed.dart';
 @freezed
 abstract class AuthSession with _$AuthSession {
   const factory AuthSession({
-    required String userId,
+    // Nullable: `POST /auth/otp/request` returns `userId: null` (no profile
+    // exists yet) — only `POST /auth/otp/verify` guarantees a non-null id
+    // (`FRONTEND_INTEGRATION.md` §6.1). Callers that only ever read a
+    // post-verify session may assert non-null.
+    String? userId,
     required UserRole role,
     required String phoneNumber,
     // Nullable until a real backend issues one; dummy mode synthesizes a

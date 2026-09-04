@@ -11,7 +11,8 @@ part 'auth_session_dto.g.dart';
 @freezed
 abstract class AuthSessionDto with _$AuthSessionDto {
   const factory AuthSessionDto({
-    required String userId,
+    // Nullable: `POST /auth/otp/request` returns `userId: null`.
+    String? userId,
     required UserRole role,
     required String phoneNumber,
     String? token,

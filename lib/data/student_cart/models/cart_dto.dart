@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../core/network/converters/decimal_json_converter.dart';
 import '../../../domain/student_cart/entities/cart.dart';
 import 'cart_item_dto.dart';
 
@@ -14,7 +15,7 @@ abstract class CartDto with _$CartDto {
     required String id,
     required String studentId,
     List<CartItemDto>? items,
-    @Default(0) double totalAmount,
+    @Default(0) @DecimalStringConverter() double totalAmount,
   }) = _CartDto;
 
   factory CartDto.fromJson(Map<String, dynamic> json) =>

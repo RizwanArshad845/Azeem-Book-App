@@ -88,7 +88,7 @@ class TeacherPendingApprovalView extends ConsumerWidget {
                             ),
                             TeacherInfoRow(
                               label: context.l10n.teacherSignupSubjectsLabel,
-                              value: teacher.subjects.length.toString(),
+                              value: teacher.subjectIds.length.toString(),
                             ),
                           ],
                         ),

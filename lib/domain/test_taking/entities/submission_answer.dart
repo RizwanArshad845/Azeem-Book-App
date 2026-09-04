@@ -25,6 +25,7 @@ abstract class SubmissionAnswer with _$SubmissionAnswer {
     String? questionText,
     String? answerText,
     int? selectedOptionIndex,
+    int? correctOptionIndex,
     String? expectedAnswer,
     int? marksAwarded,
     int? possibleMarks,

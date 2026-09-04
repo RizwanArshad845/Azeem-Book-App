@@ -14,7 +14,11 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthSession {
 
- String get userId; UserRole get role; String get phoneNumber;// Nullable until a real backend issues one; dummy mode synthesizes a
+// Nullable: `POST /auth/otp/request` returns `userId: null` (no profile
+// exists yet) — only `POST /auth/otp/verify` guarantees a non-null id
+// (`FRONTEND_INTEGRATION.md` §6.1). Callers that only ever read a
+// post-verify session may assert non-null.
+ String? get userId; UserRole get role; String get phoneNumber;// Nullable until a real backend issues one; dummy mode synthesizes a
 // fake token string on successful OTP verification (§6.1).
  String? get token;
 /// Create a copy of AuthSession
@@ -47,7 +51,7 @@ abstract mixin class $AuthSessionCopyWith<$Res>  {
   factory $AuthSessionCopyWith(AuthSession value, $Res Function(AuthSession) _then) = _$AuthSessionCopyWithImpl;
 @useResult
 $Res call({
- String userId, UserRole role, String phoneNumber, String? token
+ String? userId, UserRole role, String phoneNumber, String? token
 });
 
 
@@ -64,10 +68,10 @@ class _$AuthSessionCopyWithImpl<$Res>
 
 /// Create a copy of AuthSession
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? role = null,Object? phoneNumber = null,Object? token = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userId = freezed,Object? role = null,Object? phoneNumber = null,Object? token = freezed,}) {
   return _then(_self.copyWith(
-userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String?,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as UserRole,phoneNumber: null == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
 as String,token: freezed == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -155,7 +159,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  UserRole role,  String phoneNumber,  String? token)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? userId,  UserRole role,  String phoneNumber,  String? token)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthSession() when $default != null:
 return $default(_that.userId,_that.role,_that.phoneNumber,_that.token);case _:
@@ -176,7 +180,7 @@ return $default(_that.userId,_that.role,_that.phoneNumber,_that.token);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  UserRole role,  String phoneNumber,  String? token)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? userId,  UserRole role,  String phoneNumber,  String? token)  $default,) {final _that = this;
 switch (_that) {
 case _AuthSession():
 return $default(_that.userId,_that.role,_that.phoneNumber,_that.token);case _:
@@ -196,7 +200,7 @@ return $default(_that.userId,_that.role,_that.phoneNumber,_that.token);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  UserRole role,  String phoneNumber,  String? token)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? userId,  UserRole role,  String phoneNumber,  String? token)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthSession() when $default != null:
 return $default(_that.userId,_that.role,_that.phoneNumber,_that.token);case _:
@@ -211,10 +215,14 @@ return $default(_that.userId,_that.role,_that.phoneNumber,_that.token);case _:
 
 
 class _AuthSession implements AuthSession {
-  const _AuthSession({required this.userId, required this.role, required this.phoneNumber, this.token});
+  const _AuthSession({this.userId, required this.role, required this.phoneNumber, this.token});
   
 
-@override final  String userId;
+// Nullable: `POST /auth/otp/request` returns `userId: null` (no profile
+// exists yet) — only `POST /auth/otp/verify` guarantees a non-null id
+// (`FRONTEND_INTEGRATION.md` §6.1). Callers that only ever read a
+// post-verify session may assert non-null.
+@override final  String? userId;
 @override final  UserRole role;
 @override final  String phoneNumber;
 // Nullable until a real backend issues one; dummy mode synthesizes a
@@ -251,7 +259,7 @@ abstract mixin class _$AuthSessionCopyWith<$Res> implements $AuthSessionCopyWith
   factory _$AuthSessionCopyWith(_AuthSession value, $Res Function(_AuthSession) _then) = __$AuthSessionCopyWithImpl;
 @override @useResult
 $Res call({
- String userId, UserRole role, String phoneNumber, String? token
+ String? userId, UserRole role, String phoneNumber, String? token
 });
 
 
@@ -268,10 +276,10 @@ class __$AuthSessionCopyWithImpl<$Res>
 
 /// Create a copy of AuthSession
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? role = null,Object? phoneNumber = null,Object? token = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userId = freezed,Object? role = null,Object? phoneNumber = null,Object? token = freezed,}) {
   return _then(_AuthSession(
-userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String?,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as UserRole,phoneNumber: null == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
 as String,token: freezed == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
 as String?,

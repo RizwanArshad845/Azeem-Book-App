@@ -8,7 +8,7 @@ part of 'auth_session_dto.dart';
 
 _AuthSessionDto _$AuthSessionDtoFromJson(Map<String, dynamic> json) =>
     _AuthSessionDto(
-      userId: json['userId'] as String,
+      userId: json['userId'] as String?,
       role: $enumDecode(_$UserRoleEnumMap, json['role']),
       phoneNumber: json['phoneNumber'] as String,
       token: json['token'] as String?,

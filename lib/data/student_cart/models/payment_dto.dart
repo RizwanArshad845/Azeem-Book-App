@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../core/network/converters/decimal_json_converter.dart';
 import '../../../domain/student_cart/entities/payment.dart';
 
 part 'payment_dto.freezed.dart';
@@ -12,7 +13,7 @@ abstract class PaymentDto with _$PaymentDto {
   const factory PaymentDto({
     required String id,
     required String studentId,
-    required double amount,
+    @DecimalStringConverter() required double amount,
     required PaymentStatus status,
     String? gatewayReference,
     required DateTime createdAt,

@@ -31,7 +31,7 @@ class LiveTestRegistrationViewModel
     }
 
     final result = await sl<GetLiveTestRegistrationsUseCase>()(
-      session.userId,
+      session.userId!,
     );
     return result.when(
       success: (registrations) => registrations,
@@ -56,7 +56,7 @@ class LiveTestRegistrationViewModel
 
     state = const AsyncLoading<List<LiveTestRegistration>>();
     final result = await sl<RegisterForLiveTestUseCase>()(
-      studentId: session.userId,
+      studentId: session.userId!,
       testId: testId,
     );
     state = result.when(

@@ -21,7 +21,6 @@ abstract class Test with _$Test {
     @Default(false) bool isLive,
     DateTime? liveDate,
     @Default(false) bool isFreeSample,
-    required String createdByAdminId,
     required DateTime createdAt,
     // Denormalized stats surfaced on test cards / result screen (§9.2). Server
     // derives these from the related [Question] set; kept on [Test] so list

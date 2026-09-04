@@ -5,7 +5,6 @@ import '../../../core/di/riverpod_providers.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
 import '../../../domain/student_cart/entities/cart.dart';
-import '../../../domain/student_cart/entities/cart_item.dart';
 import '../../../domain/student_cart/entities/payment.dart';
 import '../../../domain/student_cart/usecases/add_subject_bundle_usecase.dart';
 import '../../../domain/student_cart/usecases/checkout_usecase.dart';
@@ -43,7 +42,7 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
       return const Cart(id: '', studentId: '', items: null, totalAmount: 0);
     }
 
-    final result = await sl<GetCartUseCase>()(session.userId);
+    final result = await sl<GetCartUseCase>()(session.userId!);
     return result.when(
       success: (cart) => cart,
       failure: (failure) => throw failure,
@@ -64,7 +63,7 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
 
     state = const AsyncLoading<Cart>();
     final result = await sl<AddSubjectBundleUseCase>()(
-      session.userId,
+      session.userId!,
       subject,
       tests,
       subjectEnrollments: subjectEnrollments,
@@ -96,7 +95,7 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
     if (session == null) return;
 
     state = const AsyncLoading<Cart>();
-    final result = await sl<RemoveFromCartUseCase>()(session.userId, subjectId);
+    final result = await sl<RemoveFromCartUseCase>()(session.userId!, subjectId);
     state = result.when(
       success: (cart) => AsyncData<Cart>(cart),
       failure: (failure) => AsyncError<Cart>(failure, StackTrace.current),
@@ -108,27 +107,14 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
   /// the auth/onboarding "let the caller/router handle navigation"
   /// convention; `CheckoutView` calls this and renders the result itself.
   ///
-  /// Reads this notifier's own already-resolved `Cart` items plus
-  /// `studentOnboardingViewModelProvider` (same source `addSubjectBundle`
-  /// already uses) and passes them into `CheckoutUseCase` so it can
-  /// attribute a teacher commission per purchased item without needing its
-  /// own catalog/student-repository dependency — see `CheckoutUseCase` doc
-  /// comment. `CartItem.subjectId` is now direct, so no `testsById` lookup
-  /// is needed.
+  /// Teacher-commission attribution happens server-side automatically on a
+  /// successful checkout — see `CheckoutUseCase` doc comment — so this only
+  /// needs the student id.
   Future<Payment?> checkout() async {
     final session = ref.read(currentUserProvider);
     if (session == null) return null;
 
-    final cartItems = state.value?.items ?? const <CartItem>[];
-    final student = ref.read(studentOnboardingViewModelProvider).value;
-    final subjectEnrollments =
-        student?.subjectEnrollments ?? const <SubjectEnrollment>[];
-
-    final result = await sl<CheckoutUseCase>()(
-      session.userId,
-      cartItems: cartItems,
-      subjectEnrollments: subjectEnrollments,
-    );
+    final result = await sl<CheckoutUseCase>()(session.userId!);
     return result.when(
       success: (payment) {
         // Repository clears the cart's items on a successful payment;
@@ -159,7 +145,7 @@ final purchasedSubjectIdsProvider = FutureProvider<Set<String>>((ref) async {
   final session = ref.watch(currentUserProvider);
   if (session == null) return const <String>{};
 
-  final result = await sl<GetPurchasedSubjectIdsUseCase>()(session.userId);
+  final result = await sl<GetPurchasedSubjectIdsUseCase>()(session.userId!);
   return result.when(
     success: (ids) => ids,
     failure: (failure) => throw failure,

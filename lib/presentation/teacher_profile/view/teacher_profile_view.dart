@@ -336,8 +336,8 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                                 ),
                             ],
                           ),
-                          if (teacher.classes != null &&
-                              teacher.classes!.isNotEmpty) ...[
+                          if (teacher.classIds != null &&
+                              teacher.classIds!.isNotEmpty) ...[
                             SizedBox(height: context.dimens.md),
                             Text(
                               context.l10n.teacherProfileClassesTaught,
@@ -351,7 +351,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                               spacing: context.dimens.xs,
                               runSpacing: context.dimens.xs / 2,
                               children: [
-                                for (final className in teacher.classes!)
+                                for (final className in teacher.classIds!)
                                   _BadgeChip(
                                     label: className,
                                     icon: Icons.school_outlined,
@@ -372,7 +372,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                             spacing: context.dimens.xs,
                             runSpacing: context.dimens.xs / 2,
                             children: [
-                              for (final subjectId in teacher.subjects)
+                              for (final subjectId in teacher.subjectIds)
                                 _BadgeChip(
                                   label: subjectsById[subjectId]?.name ??
                                       subjectId,

@@ -15,7 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthSessionDto {
 
- String get userId; UserRole get role; String get phoneNumber; String? get token;
+// Nullable: `POST /auth/otp/request` returns `userId: null`.
+ String? get userId; UserRole get role; String get phoneNumber; String? get token;
 /// Create a copy of AuthSessionDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +49,7 @@ abstract mixin class $AuthSessionDtoCopyWith<$Res>  {
   factory $AuthSessionDtoCopyWith(AuthSessionDto value, $Res Function(AuthSessionDto) _then) = _$AuthSessionDtoCopyWithImpl;
 @useResult
 $Res call({
- String userId, UserRole role, String phoneNumber, String? token
+ String? userId, UserRole role, String phoneNumber, String? token
 });
 
 
@@ -65,10 +66,10 @@ class _$AuthSessionDtoCopyWithImpl<$Res>
 
 /// Create a copy of AuthSessionDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? role = null,Object? phoneNumber = null,Object? token = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userId = freezed,Object? role = null,Object? phoneNumber = null,Object? token = freezed,}) {
   return _then(_self.copyWith(
-userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String?,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as UserRole,phoneNumber: null == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
 as String,token: freezed == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -156,7 +157,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  UserRole role,  String phoneNumber,  String? token)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? userId,  UserRole role,  String phoneNumber,  String? token)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthSessionDto() when $default != null:
 return $default(_that.userId,_that.role,_that.phoneNumber,_that.token);case _:
@@ -177,7 +178,7 @@ return $default(_that.userId,_that.role,_that.phoneNumber,_that.token);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  UserRole role,  String phoneNumber,  String? token)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? userId,  UserRole role,  String phoneNumber,  String? token)  $default,) {final _that = this;
 switch (_that) {
 case _AuthSessionDto():
 return $default(_that.userId,_that.role,_that.phoneNumber,_that.token);case _:
@@ -197,7 +198,7 @@ return $default(_that.userId,_that.role,_that.phoneNumber,_that.token);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  UserRole role,  String phoneNumber,  String? token)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? userId,  UserRole role,  String phoneNumber,  String? token)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthSessionDto() when $default != null:
 return $default(_that.userId,_that.role,_that.phoneNumber,_that.token);case _:
@@ -212,10 +213,11 @@ return $default(_that.userId,_that.role,_that.phoneNumber,_that.token);case _:
 @JsonSerializable()
 
 class _AuthSessionDto extends AuthSessionDto {
-  const _AuthSessionDto({required this.userId, required this.role, required this.phoneNumber, this.token}): super._();
+  const _AuthSessionDto({this.userId, required this.role, required this.phoneNumber, this.token}): super._();
   factory _AuthSessionDto.fromJson(Map<String, dynamic> json) => _$AuthSessionDtoFromJson(json);
 
-@override final  String userId;
+// Nullable: `POST /auth/otp/request` returns `userId: null`.
+@override final  String? userId;
 @override final  UserRole role;
 @override final  String phoneNumber;
 @override final  String? token;
@@ -253,7 +255,7 @@ abstract mixin class _$AuthSessionDtoCopyWith<$Res> implements $AuthSessionDtoCo
   factory _$AuthSessionDtoCopyWith(_AuthSessionDto value, $Res Function(_AuthSessionDto) _then) = __$AuthSessionDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String userId, UserRole role, String phoneNumber, String? token
+ String? userId, UserRole role, String phoneNumber, String? token
 });
 
 
@@ -270,10 +272,10 @@ class __$AuthSessionDtoCopyWithImpl<$Res>
 
 /// Create a copy of AuthSessionDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? role = null,Object? phoneNumber = null,Object? token = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userId = freezed,Object? role = null,Object? phoneNumber = null,Object? token = freezed,}) {
   return _then(_AuthSessionDto(
-userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String?,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as UserRole,phoneNumber: null == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
 as String,token: freezed == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
 as String?,

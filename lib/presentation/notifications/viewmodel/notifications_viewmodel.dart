@@ -17,7 +17,7 @@ class NotificationsViewModel extends AsyncNotifier<List<Notification>> {
       return const [];
     }
 
-    final result = await sl<GetNotificationsUseCase>()(user.userId);
+    final result = await sl<GetNotificationsUseCase>()(user.userId!);
     return result.when(
       success: (notifications) => notifications,
       failure: (failure) => throw failure,
