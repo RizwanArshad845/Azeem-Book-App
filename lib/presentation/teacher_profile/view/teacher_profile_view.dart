@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/config/app_config.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/providers/locale_provider.dart';
@@ -568,7 +569,7 @@ class _PhoneOtpVerificationSheetState
               hint: context.l10n.teacherOtpTestHint,
               controller: _otpController,
               keyboardType: TextInputType.number,
-              maxLength: 4,
+              maxLength: AppConfig.otpLength,
             ),
             SizedBox(height: context.dimens.md),
             AppPrimaryButton(
