@@ -79,6 +79,18 @@ final subjectByIdProvider = FutureProvider.family<Subject?, String>(
     for (final subject in subjects) {
       if (subject.id == subjectId) return subject;
     }
+    final student = ref.watch(currentStudentProvider);
+    final boardClassId = student?.boardClassId;
+    if (boardClassId != null && boardClassId.isNotEmpty) {
+      final result = await ref.read(getSubjectsUseCaseProvider)(boardClassId);
+      final bcSubjects = result.when(
+        success: (list) => list,
+        failure: (_) => const <Subject>[],
+      );
+      for (final subject in bcSubjects) {
+        if (subject.id == subjectId) return subject;
+      }
+    }
     return null;
   },
 );
@@ -155,5 +167,14 @@ final dismissedPromoBannersProvider =
     NotifierProvider<DismissedPromoBannersNotifier, Set<String>>(
   DismissedPromoBannersNotifier.new,
 );
+
+/// Clears the catalog's in-memory cache (`CatalogRepositoryImpl` — subjects/
+/// chapters/tests warmed by `StudentOnboardingViewModel`'s post-submit
+/// preload) so pull-to-refresh on Home bypasses it and re-fetches live data.
+/// Lives here rather than being called directly from `StudentHomeView`
+/// per CLAUDE.md's "no raw repository calls from views" rule.
+void clearCatalogCache(WidgetRef ref) {
+  ref.read(catalogRepositoryProvider).clearCache();
+}
 
 

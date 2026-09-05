@@ -1,21 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_list_row.dart';
 import '../../../domain/student_cart/entities/cart_item.dart';
+import '../../student_home/viewmodel/student_home_viewmodel.dart';
+import '../viewmodel/student_cart_viewmodel.dart';
 
-class CartItemCard extends StatelessWidget {
+class CartItemCard extends ConsumerWidget {
   const CartItemCard({super.key, required this.item, required this.onRemove});
 
   final CartItem item;
   final VoidCallback onRemove;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final discountedPrice = item.discountedPrice;
-    final testCount = item.testCount;
+    final resolvedSubject =
+        (item.subjectName == null || item.subjectName!.isEmpty)
+            ? ref.watch(subjectByIdProvider(item.subjectId)).value
+            : null;
+    final resolvedTests = item.testCount == null
+        ? ref.watch(testsForSubjectProvider(item.subjectId)).value
+        : null;
+    final testCount = item.testCount ?? resolvedTests?.length;
+
+    final rawName = (item.subjectName != null && item.subjectName!.isNotEmpty)
+        ? item.subjectName!
+        : (resolvedSubject?.name ?? item.subjectId);
+    final displayName = context.l10n.localizedSubjectName(rawName);
+
     return AppListRow(
-      title: item.subjectName ?? item.subjectId,
+      title: displayName,
       titleMaxLines: 2,
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,4 +1,4 @@
-import '../../../domain/common/failure.dart';
+import '../../../core/network/result_guard.dart';
 import '../../../domain/common/result.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
 import '../../../domain/teacher_onboarding/repositories/teacher_repository.dart';
@@ -11,52 +11,33 @@ class TeacherRepositoryImpl implements TeacherRepository {
   final TeacherRemoteDataSource remote;
 
   @override
-  Future<Result<Teacher?>> getTeacherByPhone(String phoneNumber) async {
-    try {
+  Future<Result<Teacher?>> getTeacherByPhone(String phoneNumber) {
+    return guardRequest(() async {
       final dto = await remote.getTeacherByPhone(phoneNumber);
-      return Success(dto?.toDomain());
-    } on Failure catch (f) {
-      return ResultFailure(f);
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+      return dto?.toDomain();
+    });
   }
 
   @override
-  Future<Result<Teacher>> signUp(Teacher teacher) async {
-    try {
+  Future<Result<Teacher>> signUp(Teacher teacher) {
+    return guardRequest(() async {
       final dto = TeacherDto.fromDomain(teacher);
       final created = await remote.signUp(dto);
-      return Success(created.toDomain());
-    } on Failure catch (f) {
-      return ResultFailure(f);
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+      return created.toDomain();
+    });
   }
 
   @override
-  Future<Result<Teacher>> updateTeacher(Teacher teacher) async {
-    try {
+  Future<Result<Teacher>> updateTeacher(Teacher teacher) {
+    return guardRequest(() async {
       final dto = TeacherDto.fromDomain(teacher);
       final saved = await remote.updateTeacher(dto);
-      return Success(saved.toDomain());
-    } on Failure catch (f) {
-      return ResultFailure(f);
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+      return saved.toDomain();
+    });
   }
 
   @override
-  Future<Result<void>> deleteAccount(String teacherId) async {
-    try {
-      await remote.deleteAccount(teacherId);
-      return const Success(null);
-    } on Failure catch (f) {
-      return ResultFailure(f);
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+  Future<Result<void>> deleteAccount(String teacherId) {
+    return guardRequest(() => remote.deleteAccount(teacherId));
   }
 }

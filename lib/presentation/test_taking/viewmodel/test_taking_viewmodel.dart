@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
 import '../../../core/di/riverpod_providers.dart';
+import '../../../core/services/logger.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/student_cart/usecases/get_purchased_subject_ids_usecase.dart';
 import '../../../domain/test_taking/entities/submission_answer.dart';
@@ -251,9 +252,34 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
     const maxAttempts = 40;
     const interval = Duration(seconds: 2);
     for (var i = 0; i < maxAttempts; i++) {
+      // `.autoDispose` doesn't cancel this in-flight loop when the student
+      // navigates away from the test-taking screen — without this guard it
+      // keeps hitting `GET /attempts/{id}` in the background for the full
+      // ~80s budget even after the provider (and its `state` writes) are
+      // meaningless.
+      if (!ref.mounted) return null;
       await Future<void>.delayed(interval);
+      if (!ref.mounted) return null;
       final result = await sl<GetAttemptUseCase>()(attemptId);
-      final attempt = result.when(success: (a) => a, failure: (_) => null);
+      final attempt = result.when(
+        success: (a) => a,
+        failure: (failure) {
+          // Otherwise indistinguishable from "parsed fine, just not graded
+          // yet" — this is the only trace of a request/decode failure
+          // (e.g. an unrecognized `status` wire value) during polling, since
+          // `LoggingInterceptor` never logs response bodies.
+          sl<Logger>().w(
+            'Poll #$i for attempt $attemptId failed: ${failure.message}',
+          );
+          return null;
+        },
+      );
+      if (attempt != null && attempt.status == TestAttemptStatus.unknown) {
+        sl<Logger>().w(
+          'Poll #$i for attempt $attemptId decoded with an unrecognized '
+          'status — backend/DTO status enum likely mismatched.',
+        );
+      }
       if (attempt?.status == TestAttemptStatus.graded) return attempt;
     }
     return null;

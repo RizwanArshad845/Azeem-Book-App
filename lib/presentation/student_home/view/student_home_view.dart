@@ -52,8 +52,11 @@ class StudentHomeView extends ConsumerWidget {
             ? const LoadingIndicator()
             : RefreshIndicator(
                 onRefresh: () async {
+                  clearCatalogCache(ref);
                   ref.invalidate(liveTestsProvider);
                   ref.invalidate(enrolledSubjectsProvider);
+                  ref.invalidate(purchasedSubjectIdsProvider);
+                  ref.invalidate(studentCartViewModelProvider);
                 },
                 child: ListView(
                   padding: EdgeInsets.symmetric(vertical: context.dimens.lg),
@@ -271,7 +274,10 @@ class _SubjectsSection extends ConsumerWidget {
                         color: context.colors.textSecondary,
                       ),
                     ),
-                    onTap: () => context.push(_chapterListPath(subject.id)),
+                    onTap: () => context.push(
+                      _chapterListPath(subject.id),
+                      extra: subject.name,
+                    ),
                   );
                 },
               );

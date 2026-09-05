@@ -43,10 +43,59 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
     }
 
     final result = await sl<GetCartUseCase>()(session.userId!);
-    return result.when(
+    final cart = result.when(
       success: (cart) => cart,
       failure: (failure) => throw failure,
     );
+    return _enrichCart(cart);
+  }
+
+  /// Resolves any missing [CartItem.subjectName] or [CartItem.testCount] from
+  /// the catalog providers so presentation screens display the human-readable
+  /// subject name instead of the raw backend identifier.
+  Future<Cart> _enrichCart(Cart cart) async {
+    final items = cart.items;
+    if (items == null || items.isEmpty) return cart;
+
+    final needsEnrichment = items.any(
+      (i) =>
+          i.subjectName == null ||
+          i.subjectName!.isEmpty ||
+          i.testCount == null,
+    );
+    if (!needsEnrichment) return cart;
+
+    final enriched = await Future.wait(
+      items.map((item) async {
+        var subjectName = item.subjectName;
+        var testCount = item.testCount;
+
+        if (subjectName == null || subjectName.isEmpty) {
+          try {
+            final subject =
+                await ref.read(subjectByIdProvider(item.subjectId).future);
+            if (subject != null) {
+              subjectName = subject.name;
+            }
+          } catch (_) {}
+        }
+
+        if (testCount == null) {
+          try {
+            final tests =
+                await ref.read(testsForSubjectProvider(item.subjectId).future);
+            testCount = tests.length;
+          } catch (_) {}
+        }
+
+        return item.copyWith(
+          subjectName: subjectName ?? item.subjectName,
+          testCount: testCount ?? item.testCount,
+        );
+      }),
+    );
+
+    return cart.copyWith(items: enriched);
   }
 
   /// Adds a whole [subject] bundle (all of [tests]) to the cart, reading the
@@ -68,9 +117,10 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
       tests,
       subjectEnrollments: subjectEnrollments,
     );
-    state = result.when(
-      success: (cart) => AsyncData<Cart>(cart),
-      failure: (failure) => AsyncError<Cart>(failure, StackTrace.current),
+    state = await result.when(
+      success: (cart) async => AsyncData<Cart>(await _enrichCart(cart)),
+      failure: (failure) async =>
+          AsyncError<Cart>(failure, StackTrace.current),
     );
   }
 
@@ -78,14 +128,20 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
   /// the bundle to cart.
   Future<void> addSubjectBundleById(String subjectId) async {
     final tests = await ref.read(testsForSubjectProvider(subjectId).future);
-    final subjects = await ref.read(enrolledSubjectsProvider.future);
-    final subject = subjects.firstWhere(
-      (s) => s.id == subjectId,
-      orElse: () => Subject(
-        id: subjectId,
-        boardClassId: '',
-        name: 'Subject',
-      ),
+    var subject = await ref.read(subjectByIdProvider(subjectId).future);
+    if (subject == null) {
+      final subjects = await ref.read(enrolledSubjectsProvider.future);
+      for (final s in subjects) {
+        if (s.id == subjectId) {
+          subject = s;
+          break;
+        }
+      }
+    }
+    subject ??= Subject(
+      id: subjectId,
+      boardClassId: '',
+      name: 'Subject',
     );
     await addSubjectBundle(subject, tests);
   }
@@ -96,9 +152,10 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
 
     state = const AsyncLoading<Cart>();
     final result = await sl<RemoveFromCartUseCase>()(session.userId!, subjectId);
-    state = result.when(
-      success: (cart) => AsyncData<Cart>(cart),
-      failure: (failure) => AsyncError<Cart>(failure, StackTrace.current),
+    state = await result.when(
+      success: (cart) async => AsyncData<Cart>(await _enrichCart(cart)),
+      failure: (failure) async =>
+          AsyncError<Cart>(failure, StackTrace.current),
     );
   }
 

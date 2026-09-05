@@ -12,7 +12,7 @@ class LoggingInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) {
-    _logger.d('--> ${options.method} ${options.uri}');
+    _logger.d('--> ${options.method} ${options.uri} @ ${DateTime.now()}');
     handler.next(options);
   }
 
@@ -21,7 +21,15 @@ class LoggingInterceptor extends Interceptor {
     Response<dynamic> response,
     ResponseInterceptorHandler handler,
   ) {
-    _logger.d('<-- ${response.statusCode} ${response.requestOptions.uri}');
+    _logger.d(
+      '<-- ${response.statusCode} ${response.requestOptions.uri} @ ${DateTime.now()}',
+    );
+    // Full body only for the attempt submit/poll cycle — narrow on purpose so
+    // this never dumps OTP/auth/profile payloads (phone numbers, tokens) to
+    // device logs for every other endpoint.
+    if (response.requestOptions.path.contains('/attempts/')) {
+      _logger.d('    body: ${response.data}');
+    }
     handler.next(response);
   }
 

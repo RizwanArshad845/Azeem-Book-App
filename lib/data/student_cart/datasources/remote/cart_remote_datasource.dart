@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_endpoints.dart';
-import '../../../../domain/common/failure.dart';
+import '../../../../core/network/result_guard.dart';
 import '../../../../domain/common/result.dart';
 import '../../models/cart_dto.dart';
 import '../../models/cart_item_dto.dart';
@@ -34,7 +34,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
 
   @override
   Future<Result<CartDto>> getCart(String studentId) {
-    return _guard(() async {
+    return guardRequest(() async {
       final response = await _dio.get<Map<String, dynamic>>(
         ApiEndpoints.studentCart(studentId),
       );
@@ -44,7 +44,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
 
   @override
   Future<Result<CartDto>> addSubjectBundle(String studentId, CartItemDto item) {
-    return _guard(() async {
+    return guardRequest(() async {
       final response = await _dio.post<Map<String, dynamic>>(
         ApiEndpoints.studentCart(studentId),
         data: item.toJson(),
@@ -55,7 +55,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
 
   @override
   Future<Result<CartDto>> removeItem(String studentId, String subjectId) {
-    return _guard(() async {
+    return guardRequest(() async {
       final response = await _dio.delete<Map<String, dynamic>>(
         ApiEndpoints.studentCart(studentId),
         queryParameters: {'subjectId': subjectId},
@@ -66,7 +66,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
 
   @override
   Future<Result<PaymentDto>> checkout(String studentId) {
-    return _guard(() async {
+    return guardRequest(() async {
       final response = await _dio.post<Map<String, dynamic>>(
         ApiEndpoints.cartCheckout,
       );
@@ -76,7 +76,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
 
   @override
   Future<Result<Set<String>>> getPurchasedSubjectIds(String studentId) {
-    return _guard(() async {
+    return guardRequest(() async {
       final response = await _dio.get<Map<String, dynamic>>(
         ApiEndpoints.paymentStatus,
         queryParameters: {'studentId': studentId},
@@ -89,16 +89,4 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
     });
   }
 
-  Future<Result<T>> _guard<T>(Future<T> Function() body) async {
-    try {
-      return Success(await body());
-    } on DioException catch (e) {
-      final failure = e.error;
-      return ResultFailure(
-        failure is Failure ? failure : UnknownFailure(e.message),
-      );
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
-  }
 }

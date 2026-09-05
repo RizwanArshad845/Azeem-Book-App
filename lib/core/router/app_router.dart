@@ -358,6 +358,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                       state,
                       ChapterListView(
                         subjectId: state.pathParameters['subjectId']!,
+                        subjectName: state.extra as String?,
                       ),
                     ),
                   ),

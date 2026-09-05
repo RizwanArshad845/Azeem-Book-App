@@ -23,5 +23,15 @@ abstract class AuthSession with _$AuthSession {
     // Nullable until a real backend issues one; dummy mode synthesizes a
     // fake token string on successful OTP verification (§6.1).
     String? token,
+    // New (backend commit cb7deb0): `POST /auth/otp/verify` and `GET
+    // /auth/session-status` now return this alongside `userId`/`token` —
+    // `"NOT_REGISTERED"` (no profile row yet, must complete signup/
+    // onboarding before reaching the shell) or `"DASHBOARD"` (profile
+    // exists). Kept as a raw wire string, not an enum: teacher has a third
+    // value not enumerated here, and unrecognized/absent values must fail
+    // open to the existing per-role profile-lookup inference
+    // (`student`/`teacherOnboardingViewModelProvider`) rather than crash a
+    // strict enum decode.
+    String? status,
   }) = _AuthSession;
 }

@@ -15,6 +15,11 @@ abstract class StudentRemoteDataSource {
 
   /// Soft-deletes the student's account server-side.
   Future<void> deleteAccount(String studentId);
+
+  /// Reads the current student's profile by id, or `null` if no `Student`
+  /// row exists yet (backend 404s before onboarding completes, mirroring
+  /// the `completeOnboarding` doc comment above).
+  Future<StudentDto?> getStudentById(String studentId);
 }
 
 class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
@@ -88,5 +93,20 @@ class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
   @override
   Future<void> deleteAccount(String studentId) async {
     await _dio.delete<void>(ApiEndpoints.studentById(studentId));
+  }
+
+  @override
+  Future<StudentDto?> getStudentById(String studentId) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        ApiEndpoints.studentById(studentId),
+      );
+      final data = response.data;
+      if (data == null) return null;
+      return StudentDto.fromJson(data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return null;
+      rethrow;
+    }
   }
 }

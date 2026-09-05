@@ -9,7 +9,18 @@ part 'test_attempt.freezed.dart';
 /// (submitted, AI grading in flight) -> `graded` (final `scorePercent`/
 /// `answers` detail available) or `gradingFailed` (retries exhausted — see
 /// `FRONTEND_INTEGRATION.md` §6.6 "Answer persistence & grading UX").
-enum TestAttemptStatus { inProgress, pendingGrading, graded, gradingFailed }
+///
+/// `unknown` is a decode-only fallback (`@JsonKey(unknownEnumValue: ...)` on
+/// `TestAttemptDto.status`) for a wire value that doesn't match any of the
+/// above — keeps one unrecognized `status` string from throwing away the
+/// entire attempt payload during grading polling (`_pollUntilGraded`).
+enum TestAttemptStatus {
+  inProgress,
+  pendingGrading,
+  graded,
+  gradingFailed,
+  unknown,
+}
 
 /// A student's submission of a [Test] (project_spec.md §9.2 `TestAttempt`).
 /// Persisted so later features (`student-progress`, `teacher-students`) can

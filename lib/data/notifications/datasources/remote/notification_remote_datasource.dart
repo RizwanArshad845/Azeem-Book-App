@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_endpoints.dart';
-import '../../../../domain/common/failure.dart';
+import '../../../../core/network/result_guard.dart';
 import '../../../../domain/common/result.dart';
 import '../../models/notification_dto.dart';
 
@@ -28,70 +28,38 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   @override
   Future<Result<List<NotificationDto>>> getNotifications(
     String recipientId,
-  ) async {
-    try {
+  ) {
+    return guardRequest(() async {
       // Paginated DRF envelope (`{count, next, previous, results}`), not a
       // bare array — only the first page (default size 20) is fetched here.
       final response = await _dio.get<Map<String, dynamic>>(
         ApiEndpoints.notifications(recipientId),
       );
       final results = response.data?['results'] as List<dynamic>? ?? [];
-      final items = results
+      return results
           .map((e) => NotificationDto.fromJson(e as Map<String, dynamic>))
           .toList();
-      return Success(items);
-    } on DioException catch (e) {
-      final failure = e.error;
-      return ResultFailure(
-        failure is Failure ? failure : UnknownFailure(e.message),
-      );
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+    });
   }
 
   @override
-  Future<Result<void>> markAsRead(String notificationId) async {
-    try {
+  Future<Result<void>> markAsRead(String notificationId) {
+    return guardRequest(() async {
       await _dio.post<void>(ApiEndpoints.notificationMarkRead(notificationId));
-      return const Success(null);
-    } on DioException catch (e) {
-      final failure = e.error;
-      return ResultFailure(
-        failure is Failure ? failure : UnknownFailure(e.message),
-      );
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+    });
   }
 
   @override
-  Future<Result<void>> markAllAsRead(String recipientId) async {
-    try {
+  Future<Result<void>> markAllAsRead(String recipientId) {
+    return guardRequest(() async {
       await _dio.post<void>(ApiEndpoints.notificationsReadAll(recipientId));
-      return const Success(null);
-    } on DioException catch (e) {
-      final failure = e.error;
-      return ResultFailure(
-        failure is Failure ? failure : UnknownFailure(e.message),
-      );
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+    });
   }
 
   @override
-  Future<Result<void>> clearAll(String recipientId) async {
-    try {
+  Future<Result<void>> clearAll(String recipientId) {
+    return guardRequest(() async {
       await _dio.delete<void>(ApiEndpoints.notificationsClearAll(recipientId));
-      return const Success(null);
-    } on DioException catch (e) {
-      final failure = e.error;
-      return ResultFailure(
-        failure is Failure ? failure : UnknownFailure(e.message),
-      );
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+    });
   }
 }

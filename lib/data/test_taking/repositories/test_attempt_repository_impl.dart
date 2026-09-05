@@ -1,3 +1,4 @@
+import '../../../domain/common/failure.dart';
 import '../../../domain/common/result.dart';
 import '../../../domain/test_taking/entities/test_attempt.dart';
 import '../../../domain/test_taking/entities/test_attempt_session.dart';
@@ -44,7 +45,9 @@ class TestAttemptRepositoryImpl implements TestAttemptRepository {
     final result = await remote.getAttemptsForStudent(studentId);
     return result.when(
       success: (dtos) => Success(dtos.map((dto) => dto.toDomain()).toList()),
-      failure: (f) => ResultFailure(f),
+      failure: (f) => f is NotFoundFailure
+          ? const Success(<TestAttempt>[])
+          : ResultFailure(f),
     );
   }
 }

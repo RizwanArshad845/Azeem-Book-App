@@ -1,3 +1,4 @@
+import '../../../core/network/result_guard.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/common/result.dart';
 import '../../../domain/student_onboarding/entities/student.dart';
@@ -11,52 +12,47 @@ class StudentRepositoryImpl implements StudentRepository {
   final StudentRemoteDataSource remote;
 
   @override
-  Future<Result<Student>> completeOnboarding(Student student) async {
-    try {
+  Future<Result<Student>> completeOnboarding(Student student) {
+    return guardRequest(() async {
       final dto = StudentDto.fromDomain(student);
       final saved = await remote.completeOnboarding(dto);
-      return Success(saved.toDomain());
-    } on Failure catch (f) {
-      return ResultFailure(f);
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+      return saved.toDomain();
+    });
   }
 
   @override
   Future<Result<List<Student>>> getStudentsForTeacher(String teacherId) async {
-    try {
-      final dtos = await remote.getStudentsForTeacher(teacherId);
-      return Success(dtos.map((d) => d.toDomain()).toList());
-    } on Failure catch (f) {
-      return ResultFailure(f);
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+    final result = await guardRequest(
+      () async => (await remote.getStudentsForTeacher(teacherId))
+          .map((d) => d.toDomain())
+          .toList(),
+    );
+    return result.when(
+      success: Success.new,
+      failure: (f) =>
+          f is NotFoundFailure ? const Success(<Student>[]) : ResultFailure(f),
+    );
   }
 
   @override
-  Future<Result<Student>> updateStudent(Student student) async {
-    try {
+  Future<Result<Student>> updateStudent(Student student) {
+    return guardRequest(() async {
       final dto = StudentDto.fromDomain(student);
       final saved = await remote.updateStudent(dto);
-      return Success(saved.toDomain());
-    } on Failure catch (f) {
-      return ResultFailure(f);
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+      return saved.toDomain();
+    });
   }
 
   @override
-  Future<Result<void>> deleteAccount(String studentId) async {
-    try {
-      await remote.deleteAccount(studentId);
-      return const Success(null);
-    } on Failure catch (f) {
-      return ResultFailure(f);
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+  Future<Result<void>> deleteAccount(String studentId) {
+    return guardRequest(() => remote.deleteAccount(studentId));
+  }
+
+  @override
+  Future<Result<Student?>> getStudentById(String studentId) {
+    return guardRequest(() async {
+      final dto = await remote.getStudentById(studentId);
+      return dto?.toDomain();
+    });
   }
 }

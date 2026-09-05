@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_endpoints.dart';
-import '../../../../domain/common/failure.dart';
+import '../../../../core/network/result_guard.dart';
 import '../../../../domain/common/result.dart';
 import '../../models/live_test_registration_dto.dart';
 
@@ -28,7 +28,7 @@ class LiveTestRegistrationRemoteDataSourceImpl
     String studentId,
     String testId,
   ) {
-    return _guard(() async {
+    return guardRequest(() async {
       final response = await _dio.post<Map<String, dynamic>>(
         ApiEndpoints.liveTestRegister,
         data: {'studentId': studentId, 'testId': testId},
@@ -41,7 +41,7 @@ class LiveTestRegistrationRemoteDataSourceImpl
   Future<Result<List<LiveTestRegistrationDto>>> getRegistrationsForStudent(
     String studentId,
   ) {
-    return _guard(() async {
+    return guardRequest(() async {
       final response = await _dio.get<List<dynamic>>(
         ApiEndpoints.liveTestRegistrationsForStudent(studentId),
       );
@@ -51,16 +51,4 @@ class LiveTestRegistrationRemoteDataSourceImpl
     });
   }
 
-  Future<Result<T>> _guard<T>(Future<T> Function() body) async {
-    try {
-      return Success(await body());
-    } on DioException catch (e) {
-      final failure = e.error;
-      return ResultFailure(
-        failure is Failure ? failure : UnknownFailure(e.message),
-      );
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
-  }
 }

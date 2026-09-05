@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_endpoints.dart';
-import '../../../../domain/common/failure.dart';
+import '../../../../core/network/result_guard.dart';
 import '../../../../domain/common/result.dart';
 import '../../models/earnings_record_dto.dart';
 
@@ -24,7 +24,7 @@ class EarningsRemoteDataSourceImpl implements EarningsRemoteDataSource {
   Future<Result<List<EarningsRecordDto>>> getEarningsForTeacher(
     String teacherId,
   ) {
-    return _guard(() async {
+    return guardRequest(() async {
       final response = await _dio.get<List<dynamic>>(
         ApiEndpoints.teacherEarnings(teacherId),
       );
@@ -34,18 +34,5 @@ class EarningsRemoteDataSourceImpl implements EarningsRemoteDataSource {
           )
           .toList();
     });
-  }
-
-  Future<Result<T>> _guard<T>(Future<T> Function() body) async {
-    try {
-      return Success(await body());
-    } on DioException catch (e) {
-      final failure = e.error;
-      return ResultFailure(
-        failure is Failure ? failure : UnknownFailure(e.message),
-      );
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
   }
 }

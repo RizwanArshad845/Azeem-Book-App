@@ -22,7 +22,7 @@ import '../entities/payment.dart';
 /// existing providers) supplies the entities.
 abstract class CartRepository {
   /// Returns the student's cart, creating an empty one on first access.
-  Future<Result<Cart>> getCart(String studentId);
+  Future<Result<Cart>> getCart(String studentId, {bool forceRefresh = false});
 
   /// Adds a whole-[subject] bundle (all of [tests], purchased together — see
   /// `CartItem` doc comment for why bundle-only) to [studentId]'s cart.
@@ -50,5 +50,10 @@ abstract class CartRepository {
   /// gate: a student may attempt a test if it's `Test.isFreeSample` or its
   /// `subjectId` is in this set — subject-scoped rather than test-scoped so
   /// a test Admin adds to an already-purchased subject is unlocked too.
-  Future<Result<Set<String>>> getPurchasedSubjectIds(String studentId);
+  Future<Result<Set<String>>> getPurchasedSubjectIds(
+    String studentId, {
+    bool forceRefresh = false,
+  });
+
+  void clearCache();
 }

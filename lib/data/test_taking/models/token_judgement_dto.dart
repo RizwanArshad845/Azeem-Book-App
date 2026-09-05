@@ -11,7 +11,11 @@ abstract class TokenJudgementDto with _$TokenJudgementDto {
 
   const factory TokenJudgementDto({
     required String token,
-    required bool used,
+    // Wire key is `usedMeaningfully`, not `used` — confirmed against the
+    // real backend payload (every `tokenJudgements` entry has
+    // `usedMeaningfully`, never a `used` key at all). Kept as `used` on the
+    // Dart side for a cleaner call-site name; only the JSON key differs.
+    @JsonKey(name: 'usedMeaningfully') required bool used,
   }) = _TokenJudgementDto;
 
   factory TokenJudgementDto.fromJson(Map<String, dynamic> json) =>

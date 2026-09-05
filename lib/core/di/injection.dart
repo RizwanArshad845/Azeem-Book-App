@@ -32,6 +32,7 @@ import '../../domain/student_onboarding/repositories/student_repository.dart';
 import '../../domain/student_onboarding/repositories/teacher_directory_repository.dart';
 import '../../domain/student_onboarding/usecases/complete_student_onboarding_usecase.dart';
 import '../../domain/student_onboarding/usecases/delete_student_account_usecase.dart';
+import '../../domain/student_onboarding/usecases/get_student_by_id_usecase.dart';
 import '../../domain/student_onboarding/usecases/update_student_usecase.dart';
 import '../../domain/student_onboarding/usecases/get_students_for_teacher_usecase.dart';
 import '../../domain/student_onboarding/usecases/get_teachers_for_campus_usecase.dart';
@@ -151,6 +152,7 @@ void setupLocator() {
   sl.registerFactory(() => GetStudentsForTeacherUseCase(sl()));
   sl.registerFactory(() => UpdateStudentUseCase(sl()));
   sl.registerFactory(() => DeleteStudentAccountUseCase(sl()));
+  sl.registerFactory(() => GetStudentByIdUseCase(sl()));
   sl.registerLazySingleton<TeacherDirectoryDummyDataSource>(
     TeacherDirectoryDummyDataSourceImpl.new,
   );

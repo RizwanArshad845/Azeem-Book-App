@@ -16,6 +16,7 @@ abstract class AuthSessionDto with _$AuthSessionDto {
     required UserRole role,
     required String phoneNumber,
     String? token,
+    String? status,
   }) = _AuthSessionDto;
 
   const AuthSessionDto._();
@@ -28,6 +29,7 @@ abstract class AuthSessionDto with _$AuthSessionDto {
     role: role,
     phoneNumber: phoneNumber,
     token: token,
+    status: status,
   );
 
   factory AuthSessionDto.fromDomain(AuthSession entity) => AuthSessionDto(
@@ -35,5 +37,6 @@ abstract class AuthSessionDto with _$AuthSessionDto {
     role: entity.role,
     phoneNumber: entity.phoneNumber,
     token: entity.token,
+    status: entity.status,
   );
 }

@@ -11,7 +11,11 @@ _TestAttemptDto _$TestAttemptDtoFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       studentId: json['studentId'] as String,
       testId: json['testId'] as String,
-      status: $enumDecode(_$TestAttemptStatusEnumMap, json['status']),
+      status: $enumDecode(
+        _$TestAttemptStatusEnumMap,
+        json['status'],
+        unknownValue: TestAttemptStatus.unknown,
+      ),
       answers:
           (json['answers'] as List<dynamic>?)
               ?.map(
@@ -59,4 +63,5 @@ const _$TestAttemptStatusEnumMap = {
   TestAttemptStatus.pendingGrading: 'pendingGrading',
   TestAttemptStatus.graded: 'graded',
   TestAttemptStatus.gradingFailed: 'gradingFailed',
+  TestAttemptStatus.unknown: 'unknown',
 };

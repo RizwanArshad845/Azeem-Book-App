@@ -15,7 +15,11 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TokenJudgementDto {
 
- String get token; bool get used;
+ String get token;// Wire key is `usedMeaningfully`, not `used` — confirmed against the
+// real backend payload (every `tokenJudgements` entry has
+// `usedMeaningfully`, never a `used` key at all). Kept as `used` on the
+// Dart side for a cleaner call-site name; only the JSON key differs.
+@JsonKey(name: 'usedMeaningfully') bool get used;
 /// Create a copy of TokenJudgementDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +52,7 @@ abstract mixin class $TokenJudgementDtoCopyWith<$Res>  {
   factory $TokenJudgementDtoCopyWith(TokenJudgementDto value, $Res Function(TokenJudgementDto) _then) = _$TokenJudgementDtoCopyWithImpl;
 @useResult
 $Res call({
- String token, bool used
+ String token,@JsonKey(name: 'usedMeaningfully') bool used
 });
 
 
@@ -154,7 +158,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String token,  bool used)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String token, @JsonKey(name: 'usedMeaningfully')  bool used)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TokenJudgementDto() when $default != null:
 return $default(_that.token,_that.used);case _:
@@ -175,7 +179,7 @@ return $default(_that.token,_that.used);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String token,  bool used)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String token, @JsonKey(name: 'usedMeaningfully')  bool used)  $default,) {final _that = this;
 switch (_that) {
 case _TokenJudgementDto():
 return $default(_that.token,_that.used);case _:
@@ -195,7 +199,7 @@ return $default(_that.token,_that.used);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String token,  bool used)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String token, @JsonKey(name: 'usedMeaningfully')  bool used)?  $default,) {final _that = this;
 switch (_that) {
 case _TokenJudgementDto() when $default != null:
 return $default(_that.token,_that.used);case _:
@@ -210,11 +214,15 @@ return $default(_that.token,_that.used);case _:
 @JsonSerializable()
 
 class _TokenJudgementDto extends TokenJudgementDto {
-  const _TokenJudgementDto({required this.token, required this.used}): super._();
+  const _TokenJudgementDto({required this.token, @JsonKey(name: 'usedMeaningfully') required this.used}): super._();
   factory _TokenJudgementDto.fromJson(Map<String, dynamic> json) => _$TokenJudgementDtoFromJson(json);
 
 @override final  String token;
-@override final  bool used;
+// Wire key is `usedMeaningfully`, not `used` — confirmed against the
+// real backend payload (every `tokenJudgements` entry has
+// `usedMeaningfully`, never a `used` key at all). Kept as `used` on the
+// Dart side for a cleaner call-site name; only the JSON key differs.
+@override@JsonKey(name: 'usedMeaningfully') final  bool used;
 
 /// Create a copy of TokenJudgementDto
 /// with the given fields replaced by the non-null parameter values.
@@ -249,7 +257,7 @@ abstract mixin class _$TokenJudgementDtoCopyWith<$Res> implements $TokenJudgemen
   factory _$TokenJudgementDtoCopyWith(_TokenJudgementDto value, $Res Function(_TokenJudgementDto) _then) = __$TokenJudgementDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String token, bool used
+ String token,@JsonKey(name: 'usedMeaningfully') bool used
 });
 
 

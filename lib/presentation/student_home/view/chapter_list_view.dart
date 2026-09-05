@@ -10,6 +10,7 @@ import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../../domain/catalog/entities/chapter.dart';
+import '../../../domain/catalog/entities/subject.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
 import '../../student_progress/viewmodel/student_progress_viewmodel.dart';
 import '../viewmodel/student_home_viewmodel.dart';
@@ -37,9 +38,17 @@ class ChapterListView extends ConsumerWidget {
   final String subjectId;
   final String? subjectName;
 
-  Future<void> _buyNow(BuildContext context, WidgetRef ref) async {
-    final subject = await ref.read(subjectByIdProvider(subjectId).future);
-    final tests = ref.read(testsForSubjectProvider(subjectId)).value;
+  Future<void> _buyNow(
+    BuildContext context,
+    WidgetRef ref, {
+    String? fallbackName,
+  }) async {
+    var subject = await ref.read(subjectByIdProvider(subjectId).future);
+    if (subject == null && fallbackName != null) {
+      subject = Subject(id: subjectId, boardClassId: '', name: fallbackName);
+    }
+    final tests = ref.read(testsForSubjectProvider(subjectId)).value ??
+        await ref.read(testsForSubjectProvider(subjectId).future);
     if (subject != null && tests != null && tests.isNotEmpty) {
       await ref
           .read(studentCartViewModelProvider.notifier)
@@ -58,9 +67,11 @@ class ChapterListView extends ConsumerWidget {
     final tests = ref.watch(testsForSubjectProvider(subjectId)).value;
     final price = ref.watch(subjectBundlePriceProvider(subjectId));
     final hasAttempted = ref.watch(hasCompletedAnyTestAttemptProvider);
+    final resolvedSubject = ref.watch(subjectByIdProvider(subjectId)).value;
+    final resolvedSubjectName = subjectName ?? resolvedSubject?.name;
 
-    final title = subjectName != null
-        ? context.l10n.localizedSubjectName(subjectName!)
+    final title = resolvedSubjectName != null
+        ? context.l10n.localizedSubjectName(resolvedSubjectName)
         : context.l10n.chapterListTitle;
 
     return Scaffold(
@@ -138,9 +149,10 @@ class ChapterListView extends ConsumerWidget {
               if (!isOwned && tests != null && tests.isNotEmpty) ...[
                 SizedBox(height: context.dimens.md),
                 SubjectBundleHeader(
-                  subjectName: title,
+                  subjectName: resolvedSubjectName ?? title,
                   price: hasAttempted ? price?.toStringAsFixed(0) : null,
-                  onBuyNow: () => _buyNow(context, ref),
+                  onBuyNow: () =>
+                      _buyNow(context, ref, fallbackName: resolvedSubjectName),
                 ),
               ],
             ],

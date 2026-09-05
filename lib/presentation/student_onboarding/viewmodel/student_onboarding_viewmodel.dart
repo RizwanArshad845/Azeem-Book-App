@@ -4,15 +4,21 @@ import '../../../core/di/injection.dart';
 import '../../../core/di/riverpod_providers.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
 import '../../../domain/catalog/entities/board_class.dart';
-import '../../../domain/catalog/entities/class_level.dart';
 import '../../../domain/catalog/entities/subject.dart';
+import '../../../domain/catalog/repositories/catalog_repository.dart';
 import '../../../domain/common/failure.dart';
+import '../../../domain/common/result.dart';
+import '../../../domain/student_cart/repositories/cart_repository.dart';
 import '../../../domain/student_onboarding/entities/student.dart';
 import '../../../domain/student_onboarding/entities/subject_enrollment.dart';
 import '../../../domain/student_onboarding/entities/teacher_option.dart';
 import '../../../domain/student_onboarding/usecases/complete_student_onboarding_usecase.dart';
+import '../../../domain/student_onboarding/usecases/get_student_by_id_usecase.dart';
 import '../../../domain/student_onboarding/usecases/get_teachers_for_campus_usecase.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
+
+export '../../../core/di/riverpod_providers.dart'
+    show boardClassesProvider, campusesProvider, classLevelsProvider;
 
 /// campus -> board/class -> subjects+teachers onboarding flow (§9.1/§9.2,
 /// §10.2). Holds in-progress selections across the 3 steps and, on
@@ -30,8 +36,31 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
   final Set<String> _selectedSubjectIds = {};
   final Map<String, String?> _teacherIdBySubjectId = {};
 
+  /// Re-derives the current student whenever [currentUserProvider] changes,
+  /// mirroring `TeacherOnboardingViewModel.build()`. Without this, a
+  /// previous user's cached `Student` survived logout/relogin in this
+  /// process-lifetime `ProviderContainer` and was shown to whichever
+  /// different student logged in next.
   @override
-  Future<Student?> build() async => null;
+  Future<Student?> build() async {
+    final session = ref.watch(currentUserProvider);
+    if (session == null || session.userId == null) return null;
+
+    // Backend commit cb7deb0: `status` is already known synchronously from
+    // the OTP-verify response — a `NOT_REGISTERED` session has no `Student`
+    // row yet by definition, so resolving to `null` here immediately (no
+    // network round-trip) both saves a guaranteed-404 `GET /students/{id}`
+    // call and closes the brief async window where the router's redirect
+    // (`_redirectFor`) would otherwise allow the in-flight location through
+    // before this provider settles.
+    if (session.status == 'NOT_REGISTERED') return null;
+
+    final result = await sl<GetStudentByIdUseCase>()(session.userId!);
+    return result.when(
+      success: (student) => student,
+      failure: (failure) => throw failure,
+    );
+  }
 
   String? get name => _name;
 
@@ -145,10 +174,49 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
 
     state = const AsyncLoading<Student?>();
     final result = await sl<CompleteStudentOnboardingUseCase>()(student);
-    state = result.when(
-      success: (saved) => AsyncData<Student?>(saved),
-      failure: (failure) => AsyncError<Student?>(failure, StackTrace.current),
-    );
+    if (result is Success<Student>) {
+      final saved = result.data;
+      // Preload dashboard network calls (enrolled subjects, tests, chapters, cart)
+      // while the submit button is in loading state, so user experiences no lag on dashboard
+      await _preloadDashboardData(saved);
+      state = AsyncData<Student?>(saved);
+    } else if (result is ResultFailure<Student>) {
+      state = AsyncError<Student?>(result.failure, StackTrace.current);
+    }
+  }
+
+  Future<void> _preloadDashboardData(Student student) async {
+    try {
+      final boardClassId = student.boardClassId;
+      final enrolledIds = (student.subjectEnrollments ?? const [])
+          .map((e) => e.subjectId)
+          .toList();
+
+      final catalogRepo = sl<CatalogRepository>();
+      final futures = <Future<dynamic>>[];
+
+      // 1. Fetch all subjects for this board class
+      if (boardClassId != null) {
+        futures.add(catalogRepo.getSubjects(boardClassId));
+      }
+
+      // 2. Fetch tests and chapters for each enrolled subject
+      for (final subjectId in enrolledIds) {
+        futures.add(catalogRepo.getTests(subjectId: subjectId));
+        futures.add(catalogRepo.getChapters(subjectId));
+      }
+
+      // 3. Preload purchased subject ids and cart
+      try {
+        final cartRepo = sl<CartRepository>();
+        futures.add(cartRepo.getPurchasedSubjectIds(student.id));
+        futures.add(cartRepo.getCart(student.id));
+      } catch (_) {}
+
+      await Future.wait<dynamic>(futures).timeout(const Duration(seconds: 4));
+    } catch (_) {
+      // Graceful fallback: preload failure shouldn't fail onboarding submission
+    }
   }
 
   /// Lets other features (`student-profile`'s "Edit profile" action) push
@@ -166,38 +234,10 @@ final studentOnboardingViewModelProvider =
     );
 
 // ---------------------------------------------------------------------
-// Read-only catalog lookups for the 3 views. These are plain `FutureProvider`s
-// (not part of `StudentOnboardingViewModel`'s own `AsyncValue`) because
-// they're derived reads scoped to a single screen each, wrapping use cases
-// already exposed by campus-directory/catalog
-// (`lib/core/di/riverpod_providers.dart`) plus this feature's own
-// throwaway teacher-directory use case — not additional business/mutation
-// state for the onboarding flow itself.
+// Read-only catalog lookups for the 3 views.
+// Note: campusesProvider, boardClassesProvider, and classLevelsProvider
+// are defined in `lib/core/di/riverpod_providers.dart` and re-exported above.
 // ---------------------------------------------------------------------
-
-final campusesProvider = FutureProvider<List<Campus>>((ref) async {
-  final result = await ref.read(getCampusesUseCaseProvider)();
-  return result.when(success: (campuses) => campuses, failure: (f) => throw f);
-});
-
-final boardClassesProvider = FutureProvider<List<BoardClass>>((ref) async {
-  final result = await ref.read(getBoardClassesUseCaseProvider)();
-  return result.when(
-    success: (boardClasses) => boardClasses,
-    failure: (f) => throw f,
-  );
-});
-
-/// Every Admin-authored [ClassLevel] (enabled and disabled) — step 1 of
-/// `StudentAcademicInfoView`'s class -> group -> subjects flow (§3 of the
-/// onboarding-merge plan).
-final classLevelsProvider = FutureProvider<List<ClassLevel>>((ref) async {
-  final result = await ref.read(getClassLevelsUseCaseProvider)();
-  return result.when(
-    success: (classLevels) => classLevels,
-    failure: (f) => throw f,
-  );
-});
 
 /// [BoardClass] leaves under a single [classLevelId], filtered client-side
 /// from [boardClassesProvider]'s full list (`GetBoardClassesUseCase` has no

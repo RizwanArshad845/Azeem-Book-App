@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_endpoints.dart';
-import '../../../../domain/common/failure.dart';
+import '../../../../core/network/result_guard.dart';
 import '../../../../domain/common/result.dart';
 import '../../models/board_class_dto.dart';
 import '../../models/chapter_dto.dart';
@@ -92,23 +92,15 @@ class CatalogRemoteDataSourceImpl implements CatalogRemoteDataSource {
     String path,
     T Function(Map<String, dynamic> json) fromJson, {
     Map<String, dynamic>? queryParameters,
-  }) async {
-    try {
+  }) {
+    return guardRequest(() async {
       final response = await _dio.get<List<dynamic>>(
         path,
         queryParameters: queryParameters,
       );
-      final items = (response.data ?? <dynamic>[])
+      return (response.data ?? <dynamic>[])
           .map((e) => fromJson(e as Map<String, dynamic>))
           .toList();
-      return Success(items);
-    } on DioException catch (e) {
-      final failure = e.error;
-      return ResultFailure(
-        failure is Failure ? failure : UnknownFailure(e.message),
-      );
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+    });
   }
 }

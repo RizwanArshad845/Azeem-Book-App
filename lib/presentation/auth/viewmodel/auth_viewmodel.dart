@@ -8,6 +8,8 @@ import '../../../domain/auth/usecases/logout_usecase.dart';
 import '../../../domain/auth/usecases/request_otp_usecase.dart';
 import '../../../domain/auth/usecases/verify_otp_usecase.dart';
 import '../../../domain/common/failure.dart';
+import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
+import '../../teacher_onboarding/viewmodel/teacher_onboarding_viewmodel.dart';
 
 
 class AuthViewModel extends AsyncNotifier<AuthSession?> {
@@ -103,7 +105,11 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
     );
   }
 
-  /// Clears the current session.
+  /// Clears the current session, and force-resets every other provider that
+  /// caches "who is the current user" data derived from it. Without this,
+  /// a previous user's cached `Student`/`Teacher` survives in this
+  /// process-lifetime `ProviderContainer` (`lib/main.dart`) and gets shown
+  /// to the next different user who logs in.
   Future<void> logout() async {
     state = const AsyncLoading<AuthSession?>();
     final result = await sl<LogoutUseCase>()();
@@ -111,6 +117,10 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
       success: (_) => const AsyncData<AuthSession?>(null),
       failure: (failure) => AsyncError<AuthSession?>(failure, StackTrace.current),
     );
+    if (state.hasValue && state.value == null) {
+      ref.invalidate(studentOnboardingViewModelProvider);
+      ref.invalidate(teacherOnboardingViewModelProvider);
+    }
   }
 }
 

@@ -15,7 +15,10 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TestAttemptDto {
 
- String get id; String get studentId; String get testId; TestAttemptStatus get status; List<SubmissionAnswerDto> get answers; double? get scorePercent; int? get totalMarksAwarded; int? get totalPossibleMarks; List<String>? get weakChapterIds; List<String>? get strongChapterIds; int? get durationSeconds; bool get isLiveTestAttempt; DateTime get attemptedAt; DateTime? get submittedAt;
+ String get id; String get studentId; String get testId;// `unknownEnumValue` so a backend `status` string this DTO doesn't
+// recognize maps to `TestAttemptStatus.unknown` instead of throwing and
+// losing the whole attempt payload (see enum doc comment).
+@JsonKey(unknownEnumValue: TestAttemptStatus.unknown) TestAttemptStatus get status; List<SubmissionAnswerDto> get answers; double? get scorePercent; int? get totalMarksAwarded; int? get totalPossibleMarks; List<String>? get weakChapterIds; List<String>? get strongChapterIds; int? get durationSeconds; bool get isLiveTestAttempt; DateTime get attemptedAt; DateTime? get submittedAt;
 /// Create a copy of TestAttemptDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +51,7 @@ abstract mixin class $TestAttemptDtoCopyWith<$Res>  {
   factory $TestAttemptDtoCopyWith(TestAttemptDto value, $Res Function(TestAttemptDto) _then) = _$TestAttemptDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String studentId, String testId, TestAttemptStatus status, List<SubmissionAnswerDto> answers, double? scorePercent, int? totalMarksAwarded, int? totalPossibleMarks, List<String>? weakChapterIds, List<String>? strongChapterIds, int? durationSeconds, bool isLiveTestAttempt, DateTime attemptedAt, DateTime? submittedAt
+ String id, String studentId, String testId,@JsonKey(unknownEnumValue: TestAttemptStatus.unknown) TestAttemptStatus status, List<SubmissionAnswerDto> answers, double? scorePercent, int? totalMarksAwarded, int? totalPossibleMarks, List<String>? weakChapterIds, List<String>? strongChapterIds, int? durationSeconds, bool isLiveTestAttempt, DateTime attemptedAt, DateTime? submittedAt
 });
 
 
@@ -166,7 +169,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String studentId,  String testId,  TestAttemptStatus status,  List<SubmissionAnswerDto> answers,  double? scorePercent,  int? totalMarksAwarded,  int? totalPossibleMarks,  List<String>? weakChapterIds,  List<String>? strongChapterIds,  int? durationSeconds,  bool isLiveTestAttempt,  DateTime attemptedAt,  DateTime? submittedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String studentId,  String testId, @JsonKey(unknownEnumValue: TestAttemptStatus.unknown)  TestAttemptStatus status,  List<SubmissionAnswerDto> answers,  double? scorePercent,  int? totalMarksAwarded,  int? totalPossibleMarks,  List<String>? weakChapterIds,  List<String>? strongChapterIds,  int? durationSeconds,  bool isLiveTestAttempt,  DateTime attemptedAt,  DateTime? submittedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TestAttemptDto() when $default != null:
 return $default(_that.id,_that.studentId,_that.testId,_that.status,_that.answers,_that.scorePercent,_that.totalMarksAwarded,_that.totalPossibleMarks,_that.weakChapterIds,_that.strongChapterIds,_that.durationSeconds,_that.isLiveTestAttempt,_that.attemptedAt,_that.submittedAt);case _:
@@ -187,7 +190,7 @@ return $default(_that.id,_that.studentId,_that.testId,_that.status,_that.answers
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String studentId,  String testId,  TestAttemptStatus status,  List<SubmissionAnswerDto> answers,  double? scorePercent,  int? totalMarksAwarded,  int? totalPossibleMarks,  List<String>? weakChapterIds,  List<String>? strongChapterIds,  int? durationSeconds,  bool isLiveTestAttempt,  DateTime attemptedAt,  DateTime? submittedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String studentId,  String testId, @JsonKey(unknownEnumValue: TestAttemptStatus.unknown)  TestAttemptStatus status,  List<SubmissionAnswerDto> answers,  double? scorePercent,  int? totalMarksAwarded,  int? totalPossibleMarks,  List<String>? weakChapterIds,  List<String>? strongChapterIds,  int? durationSeconds,  bool isLiveTestAttempt,  DateTime attemptedAt,  DateTime? submittedAt)  $default,) {final _that = this;
 switch (_that) {
 case _TestAttemptDto():
 return $default(_that.id,_that.studentId,_that.testId,_that.status,_that.answers,_that.scorePercent,_that.totalMarksAwarded,_that.totalPossibleMarks,_that.weakChapterIds,_that.strongChapterIds,_that.durationSeconds,_that.isLiveTestAttempt,_that.attemptedAt,_that.submittedAt);case _:
@@ -207,7 +210,7 @@ return $default(_that.id,_that.studentId,_that.testId,_that.status,_that.answers
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String studentId,  String testId,  TestAttemptStatus status,  List<SubmissionAnswerDto> answers,  double? scorePercent,  int? totalMarksAwarded,  int? totalPossibleMarks,  List<String>? weakChapterIds,  List<String>? strongChapterIds,  int? durationSeconds,  bool isLiveTestAttempt,  DateTime attemptedAt,  DateTime? submittedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String studentId,  String testId, @JsonKey(unknownEnumValue: TestAttemptStatus.unknown)  TestAttemptStatus status,  List<SubmissionAnswerDto> answers,  double? scorePercent,  int? totalMarksAwarded,  int? totalPossibleMarks,  List<String>? weakChapterIds,  List<String>? strongChapterIds,  int? durationSeconds,  bool isLiveTestAttempt,  DateTime attemptedAt,  DateTime? submittedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _TestAttemptDto() when $default != null:
 return $default(_that.id,_that.studentId,_that.testId,_that.status,_that.answers,_that.scorePercent,_that.totalMarksAwarded,_that.totalPossibleMarks,_that.weakChapterIds,_that.strongChapterIds,_that.durationSeconds,_that.isLiveTestAttempt,_that.attemptedAt,_that.submittedAt);case _:
@@ -222,13 +225,16 @@ return $default(_that.id,_that.studentId,_that.testId,_that.status,_that.answers
 @JsonSerializable()
 
 class _TestAttemptDto extends TestAttemptDto {
-  const _TestAttemptDto({required this.id, required this.studentId, required this.testId, required this.status, this.answers = const <SubmissionAnswerDto>[], this.scorePercent, this.totalMarksAwarded, this.totalPossibleMarks, this.weakChapterIds, this.strongChapterIds, this.durationSeconds, this.isLiveTestAttempt = false, required this.attemptedAt, this.submittedAt}): super._();
+  const _TestAttemptDto({required this.id, required this.studentId, required this.testId, @JsonKey(unknownEnumValue: TestAttemptStatus.unknown) required this.status, this.answers = const <SubmissionAnswerDto>[], this.scorePercent, this.totalMarksAwarded, this.totalPossibleMarks, this.weakChapterIds, this.strongChapterIds, this.durationSeconds, this.isLiveTestAttempt = false, required this.attemptedAt, this.submittedAt}): super._();
   factory _TestAttemptDto.fromJson(Map<String, dynamic> json) => _$TestAttemptDtoFromJson(json);
 
 @override final  String id;
 @override final  String studentId;
 @override final  String testId;
-@override final  TestAttemptStatus status;
+// `unknownEnumValue` so a backend `status` string this DTO doesn't
+// recognize maps to `TestAttemptStatus.unknown` instead of throwing and
+// losing the whole attempt payload (see enum doc comment).
+@override@JsonKey(unknownEnumValue: TestAttemptStatus.unknown) final  TestAttemptStatus status;
 @override@JsonKey() final  List<SubmissionAnswerDto> answers;
 @override final  double? scorePercent;
 @override final  int? totalMarksAwarded;
@@ -273,7 +279,7 @@ abstract mixin class _$TestAttemptDtoCopyWith<$Res> implements $TestAttemptDtoCo
   factory _$TestAttemptDtoCopyWith(_TestAttemptDto value, $Res Function(_TestAttemptDto) _then) = __$TestAttemptDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String studentId, String testId, TestAttemptStatus status, List<SubmissionAnswerDto> answers, double? scorePercent, int? totalMarksAwarded, int? totalPossibleMarks, List<String>? weakChapterIds, List<String>? strongChapterIds, int? durationSeconds, bool isLiveTestAttempt, DateTime attemptedAt, DateTime? submittedAt
+ String id, String studentId, String testId,@JsonKey(unknownEnumValue: TestAttemptStatus.unknown) TestAttemptStatus status, List<SubmissionAnswerDto> answers, double? scorePercent, int? totalMarksAwarded, int? totalPossibleMarks, List<String>? weakChapterIds, List<String>? strongChapterIds, int? durationSeconds, bool isLiveTestAttempt, DateTime attemptedAt, DateTime? submittedAt
 });
 
 

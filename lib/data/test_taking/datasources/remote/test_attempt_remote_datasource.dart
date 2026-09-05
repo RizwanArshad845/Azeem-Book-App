@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_endpoints.dart';
-import '../../../../domain/common/failure.dart';
+import '../../../../core/network/result_guard.dart';
 import '../../../../domain/common/result.dart';
 import '../../models/test_attempt_dto.dart';
 import '../../models/test_attempt_session_dto.dart';
@@ -28,7 +28,7 @@ class TestAttemptRemoteDataSourceImpl implements TestAttemptRemoteDataSource {
 
   @override
   Future<Result<TestAttemptSessionDto>> startAttempt(String testId) {
-    return _guard(() async {
+    return guardRequest(() async {
       final response = await _dio.post<Map<String, dynamic>>(
         ApiEndpoints.testStartAttempt(testId),
       );
@@ -46,7 +46,7 @@ class TestAttemptRemoteDataSourceImpl implements TestAttemptRemoteDataSource {
     String attemptId,
     Map<String, Object> rawAnswers,
   ) {
-    return _guard(() async {
+    return guardRequest(() async {
       await _dio.post<void>(
         ApiEndpoints.attemptSubmit(attemptId),
         data: {
@@ -65,7 +65,7 @@ class TestAttemptRemoteDataSourceImpl implements TestAttemptRemoteDataSource {
 
   @override
   Future<Result<TestAttemptDto>> getAttempt(String attemptId) {
-    return _guard(() async {
+    return guardRequest(() async {
       final response = await _dio.get<Map<String, dynamic>>(
         ApiEndpoints.attemptById(attemptId),
       );
@@ -77,26 +77,18 @@ class TestAttemptRemoteDataSourceImpl implements TestAttemptRemoteDataSource {
   Future<Result<List<TestAttemptDto>>> getAttemptsForStudent(
     String studentId,
   ) {
-    return _guard(() async {
-      final response = await _dio.get<List<dynamic>>(
+    return guardRequest(() async {
+      // Paginated DRF envelope (`{count, next, previous, results}`), not a
+      // bare array — same shape as `StudentRemoteDataSourceImpl
+      // .getStudentsForTeacher`. Only the first page (default size) is
+      // fetched, matching that precedent.
+      final response = await _dio.get<Map<String, dynamic>>(
         ApiEndpoints.studentTestAttempts(studentId),
       );
-      return (response.data ?? const [])
+      final results = response.data?['results'] as List<dynamic>? ?? [];
+      return results
           .map((json) => TestAttemptDto.fromJson(json as Map<String, dynamic>))
           .toList();
     });
-  }
-
-  Future<Result<T>> _guard<T>(Future<T> Function() body) async {
-    try {
-      return Success(await body());
-    } on DioException catch (e) {
-      final failure = e.error;
-      return ResultFailure(
-        failure is Failure ? failure : UnknownFailure(e.message),
-      );
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
   }
 }

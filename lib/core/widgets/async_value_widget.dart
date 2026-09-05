@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../domain/common/failure.dart';
 import 'app_error_view.dart';
 import 'loading_indicator.dart';
 
@@ -27,7 +28,10 @@ class AsyncValueWidget<T> extends StatelessWidget {
     return value.when(
       data: data,
       loading: () => skeleton ?? loading?.call() ?? const LoadingIndicator(),
-      error: (error, _) => AppErrorView(message: error.toString(), onRetry: onRetry),
+      error: (error, _) => AppErrorView(
+        message: error is Failure ? error.message : error.toString(),
+        onRetry: onRetry,
+      ),
     );
   }
 }

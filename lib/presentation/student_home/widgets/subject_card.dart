@@ -30,7 +30,8 @@ class SubjectCard extends ConsumerWidget {
         cartItems != null && cartItems.any((i) => i.subjectId == subject.id);
 
     return AppCard(
-      onTap: () => context.push(_chapterListPath(subject.id)),
+      onTap: () =>
+          context.push(_chapterListPath(subject.id), extra: subject.name),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,

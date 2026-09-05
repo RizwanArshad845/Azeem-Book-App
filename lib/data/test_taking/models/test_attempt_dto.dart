@@ -14,6 +14,10 @@ abstract class TestAttemptDto with _$TestAttemptDto {
     required String id,
     required String studentId,
     required String testId,
+    // `unknownEnumValue` so a backend `status` string this DTO doesn't
+    // recognize maps to `TestAttemptStatus.unknown` instead of throwing and
+    // losing the whole attempt payload (see enum doc comment).
+    @JsonKey(unknownEnumValue: TestAttemptStatus.unknown)
     required TestAttemptStatus status,
     @Default(<SubmissionAnswerDto>[]) List<SubmissionAnswerDto> answers,
     double? scorePercent,

@@ -15,8 +15,7 @@ import '../../../domain/catalog/entities/subject.dart';
 /// Full campus directory for the campus dropdown.
 final teacherSignupCampusesProvider = FutureProvider.autoDispose<List<Campus>>(
   (ref) async {
-    final result = await ref.read(getCampusesUseCaseProvider)();
-    return result.when(success: (v) => v, failure: (f) => throw f);
+    return ref.watch(campusesProvider.future);
   },
 );
 
@@ -24,11 +23,8 @@ final teacherSignupCampusesProvider = FutureProvider.autoDispose<List<Campus>>(
 /// render as "coming soon" and shouldn't appear in this form at all).
 final teacherSignupBoardClassesProvider =
     FutureProvider.autoDispose<List<BoardClass>>((ref) async {
-      final result = await ref.read(getBoardClassesUseCaseProvider)();
-      return result.when(
-        success: (v) => v.where((b) => b.isEnabled).toList(),
-        failure: (f) => throw f,
-      );
+      final boardClasses = await ref.watch(boardClassesProvider.future);
+      return boardClasses.where((b) => b.isEnabled).toList();
     });
 
 /// A `BoardClass` display name shared by more than one underlying leaf,

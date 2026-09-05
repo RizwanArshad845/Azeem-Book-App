@@ -23,4 +23,12 @@ abstract class StudentRepository {
   /// Soft-deletes the student's account (`Student.isDeleted = true`),
   /// mirroring `§10.2` Profile "delete account". Never hard-deletes.
   Future<Result<void>> deleteAccount(String studentId);
+
+  /// Looks up the current student's own profile by id — the student
+  /// equivalent of `TeacherRepository.getTeacherByPhone`. Returns `null` if
+  /// no `Student` row exists yet (onboarding not completed), letting
+  /// `StudentOnboardingViewModel.build()` re-derive the current student
+  /// whenever the logged-in session changes instead of the previous user's
+  /// cached profile surviving a logout/relogin.
+  Future<Result<Student?>> getStudentById(String studentId);
 }
