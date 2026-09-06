@@ -50,7 +50,14 @@ class StudentProfileViewModel extends AsyncNotifier<void> {
     }
 
     final saved = (result as Success<Student>).data;
-    ref.read(studentOnboardingViewModelProvider.notifier).setStudent(saved);
+    ref.read(studentOnboardingViewModelProvider.notifier).setStudent(
+      saved.copyWith(
+        subjectEnrollments:
+            saved.subjectEnrollments ?? current.subjectEnrollments,
+        boardClassId: saved.boardClassId ?? current.boardClassId,
+        cartId: saved.cartId ?? current.cartId,
+      ),
+    );
     state = const AsyncData<void>(null);
     return true;
   }

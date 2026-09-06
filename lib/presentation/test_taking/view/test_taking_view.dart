@@ -53,7 +53,8 @@ class TestTakingView extends ConsumerWidget {
               TestTakingStatus.notPurchased => const NotPurchasedView(),
               TestTakingStatus.inProgress ||
               TestTakingStatus.submitting => QuestionBody(testId: testId),
-              TestTakingStatus.awaitingGrading => const GradingInProgressView(),
+              TestTakingStatus.awaitingGrading =>
+                GradingInProgressView(progress: state.gradingProgress),
               TestTakingStatus.submitted => TestResultsView(
                 testId: testId,
                 attempt: state.result!,

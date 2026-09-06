@@ -8,10 +8,20 @@ import '../../student_home/viewmodel/student_home_viewmodel.dart';
 import '../viewmodel/student_cart_viewmodel.dart';
 
 class CartItemCard extends ConsumerWidget {
-  const CartItemCard({super.key, required this.item, required this.onRemove});
+  const CartItemCard({
+    super.key,
+    required this.item,
+    required this.onRemove,
+    this.removing = false,
+  });
 
   final CartItem item;
   final VoidCallback onRemove;
+
+  /// True while a cart mutation (add or remove) is in flight anywhere in the
+  /// cart — disables every row's remove action so a second mutation can't
+  /// fire before the first one resolves.
+  final bool removing;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -73,11 +83,23 @@ class CartItemCard extends ConsumerWidget {
                 ),
         ],
       ),
-      trailing: IconButton(
-        icon: Icon(Icons.close, color: context.colors.textSecondary),
-        tooltip: context.l10n.cartRemoveTooltip,
-        onPressed: onRemove,
-      ),
+      trailing: removing
+          ? SizedBox(
+              width: context.dimens.iconMd,
+              height: context.dimens.iconMd,
+              child: Padding(
+                padding: EdgeInsets.all(context.dimens.xs),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: context.colors.textSecondary,
+                ),
+              ),
+            )
+          : IconButton(
+              icon: Icon(Icons.close, color: context.colors.textSecondary),
+              tooltip: context.l10n.cartRemoveTooltip,
+              onPressed: onRemove,
+            ),
     );
   }
 }

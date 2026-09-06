@@ -128,6 +128,18 @@ class AppLocalizationsUr extends AppLocalizations {
   String get otpTooManyAttempts => 'بہت سی کوششیں۔ دوبارہ شروع ہو رہا ہے...';
 
   @override
+  String otpResendIn(String time) {
+    return '$time میں کوڈ دوبارہ بھیجیں';
+  }
+
+  @override
+  String get otpResendCode => 'کوڈ دوبارہ بھیجیں';
+
+  @override
+  String get otpResendLimitWarning =>
+      'آپ اس سیشن کے لیے دوبارہ بھیجنے کی حد تک پہنچ چکے ہیں۔ براہ کرم کچھ دیر انتظار کریں۔';
+
+  @override
   String get personalInfoTitle => 'ذاتی معلومات';
 
   @override

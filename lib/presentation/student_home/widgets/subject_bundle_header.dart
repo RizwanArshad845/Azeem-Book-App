@@ -15,6 +15,7 @@ class SubjectBundleHeader extends StatelessWidget {
     required this.price,
     required this.onBuyNow,
     this.discountPercent = 20,
+    this.loading = false,
   });
 
   final String subjectName;
@@ -24,6 +25,11 @@ class SubjectBundleHeader extends StatelessWidget {
   final String? price;
   final VoidCallback onBuyNow;
   final int discountPercent;
+
+  /// True while the cart mutation this button triggered is in flight —
+  /// disables the button and shows its built-in spinner instead of letting
+  /// a double-tap fire a second `addSubjectBundle` call.
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +97,7 @@ class SubjectBundleHeader extends StatelessWidget {
           AppPrimaryButton(
             label: buttonLabel,
             icon: Icons.shopping_bag_outlined,
+            loading: loading,
             onPressed: onBuyNow,
           ),
         ],

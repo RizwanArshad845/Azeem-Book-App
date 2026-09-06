@@ -110,18 +110,27 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
     final subjectEnrollments =
         student?.subjectEnrollments ?? const <SubjectEnrollment>[];
 
-    state = const AsyncLoading<Cart>();
-    final result = await sl<AddSubjectBundleUseCase>()(
-      session.userId!,
-      subject,
-      tests,
-      subjectEnrollments: subjectEnrollments,
-    );
-    state = await result.when(
-      success: (cart) async => AsyncData<Cart>(await _enrichCart(cart)),
-      failure: (failure) async =>
-          AsyncError<Cart>(failure, StackTrace.current),
-    );
+    // Deliberately does NOT set `state = AsyncLoading()` here — the current
+    // cart stays visible on screen for the whole round trip instead of
+    // blanking to a skeleton (that blank-out, not real network latency, was
+    // what read as "delay"). `cartMutationInProgressProvider` drives the
+    // small in-place spinner/disabled-button affordance instead.
+    ref.read(cartMutationInProgressProvider.notifier).set(true);
+    try {
+      final result = await sl<AddSubjectBundleUseCase>()(
+        session.userId!,
+        subject,
+        tests,
+        subjectEnrollments: subjectEnrollments,
+      );
+      state = await result.when(
+        success: (cart) async => AsyncData<Cart>(await _enrichCart(cart)),
+        failure: (failure) async =>
+            AsyncError<Cart>(failure, StackTrace.current),
+      );
+    } finally {
+      ref.read(cartMutationInProgressProvider.notifier).set(false);
+    }
   }
 
   /// Convenience method to resolve subject and tests by [subjectId] and add
@@ -150,13 +159,20 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
     final session = ref.read(currentUserProvider);
     if (session == null) return;
 
-    state = const AsyncLoading<Cart>();
-    final result = await sl<RemoveFromCartUseCase>()(session.userId!, subjectId);
-    state = await result.when(
-      success: (cart) async => AsyncData<Cart>(await _enrichCart(cart)),
-      failure: (failure) async =>
-          AsyncError<Cart>(failure, StackTrace.current),
-    );
+    // See `addSubjectBundle`'s comment above — same reason for not touching
+    // `state` up front.
+    ref.read(cartMutationInProgressProvider.notifier).set(true);
+    try {
+      final result =
+          await sl<RemoveFromCartUseCase>()(session.userId!, subjectId);
+      state = await result.when(
+        success: (cart) async => AsyncData<Cart>(await _enrichCart(cart)),
+        failure: (failure) async =>
+            AsyncError<Cart>(failure, StackTrace.current),
+      );
+    } finally {
+      ref.read(cartMutationInProgressProvider.notifier).set(false);
+    }
   }
 
   /// Checks out the current cart, returning the resulting [Payment] (or
@@ -179,6 +195,11 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
         // the Cart tab) re-fetches the now-empty cart instead of showing
         // stale items.
         ref.invalidateSelf();
+        // Every subjectId in the checked-out cart is now purchased —
+        // without this, `ChapterListView`'s `isOwned` check kept reading the
+        // stale pre-purchase set and "Buy Now" stayed visible after a
+        // successful payment.
+        ref.invalidate(purchasedSubjectIdsProvider);
         return payment;
       },
       failure: (_) => null,
@@ -188,6 +209,23 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
 
 final studentCartViewModelProvider =
     AsyncNotifierProvider<StudentCartViewModel, Cart>(StudentCartViewModel.new);
+
+/// True while `addSubjectBundle`/`removeSubject` is in flight — drives the
+/// "Buy Now" button's spinner and the cart list's disabled remove icons.
+/// Deliberately separate from `studentCartViewModelProvider`'s own
+/// `AsyncValue` so those mutations never have to touch `state = AsyncLoading`
+/// (which would blank the currently-displayed cart) just to signal this.
+class CartMutationInProgressNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void set(bool value) => state = value;
+}
+
+final cartMutationInProgressProvider =
+    NotifierProvider<CartMutationInProgressNotifier, bool>(
+  CartMutationInProgressNotifier.new,
+);
 
 final checkoutPaymentProvider = FutureProvider<Payment?>((ref) async {
   return ref.read(studentCartViewModelProvider.notifier).checkout();

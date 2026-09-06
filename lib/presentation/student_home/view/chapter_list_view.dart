@@ -67,6 +67,7 @@ class ChapterListView extends ConsumerWidget {
     final tests = ref.watch(testsForSubjectProvider(subjectId)).value;
     final price = ref.watch(subjectBundlePriceProvider(subjectId));
     final hasAttempted = ref.watch(hasCompletedAnyTestAttemptProvider);
+    final cartIsMutating = ref.watch(cartMutationInProgressProvider);
     final resolvedSubject = ref.watch(subjectByIdProvider(subjectId)).value;
     final resolvedSubjectName = subjectName ?? resolvedSubject?.name;
 
@@ -151,6 +152,7 @@ class ChapterListView extends ConsumerWidget {
                 SubjectBundleHeader(
                   subjectName: resolvedSubjectName ?? title,
                   price: hasAttempted ? price?.toStringAsFixed(0) : null,
+                  loading: cartIsMutating,
                   onBuyNow: () =>
                       _buyNow(context, ref, fallbackName: resolvedSubjectName),
                 ),

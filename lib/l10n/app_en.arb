@@ -45,6 +45,12 @@
   "otpVerifyButton": "Verify",
   "otpIncorrect": "Incorrect code. Please try again.",
   "otpTooManyAttempts": "Too many attempts. Restarting...",
+  "otpResendIn": "Resend code in {time}",
+  "@otpResendIn": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "otpResendCode": "Resend Code",
+  "otpResendLimitWarning": "You've reached the resend limit for this session. Please wait before trying again.",
 
   "personalInfoTitle": "Personal Information",
   "personalInfoSubtitle": "Help us personalize your learning experience",

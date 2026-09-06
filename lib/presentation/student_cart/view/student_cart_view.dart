@@ -22,6 +22,7 @@ class StudentCartView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cartAsync = ref.watch(studentCartViewModelProvider);
+    final isMutating = ref.watch(cartMutationInProgressProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.cartTitle)),
@@ -51,6 +52,7 @@ class StudentCartView extends ConsumerWidget {
                         final item = items[index];
                         return CartItemCard(
                           item: item,
+                          removing: isMutating,
                           onRemove: () => ref
                               .read(studentCartViewModelProvider.notifier)
                               .removeSubject(item.subjectId),

@@ -320,6 +320,24 @@ abstract class AppLocalizations {
   /// **'Too many attempts. Restarting...'**
   String get otpTooManyAttempts;
 
+  /// No description provided for @otpResendIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code in {time}'**
+  String otpResendIn(String time);
+
+  /// No description provided for @otpResendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend Code'**
+  String get otpResendCode;
+
+  /// No description provided for @otpResendLimitWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached the resend limit for this session. Please wait before trying again.'**
+  String get otpResendLimitWarning;
+
   /// No description provided for @personalInfoTitle.
   ///
   /// In en, this message translates to:

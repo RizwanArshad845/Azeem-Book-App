@@ -106,13 +106,52 @@ class AppDropdown<T> extends StatelessWidget {
           ),
           popupProps: PopupProps.menu(
             showSearchBox: items.length > 5,
+            // `FlexFit.loose` (default is `tight`) lets the popup's item
+            // list shrink to its actual content height instead of always
+            // claiming the full `maxHeight` below — a short list (e.g. a
+            // handful of campuses) no longer forces the popup taller than
+            // it needs to be, which was fighting the vendor package's own
+            // screen-edge clamp (see `positionCallback` note below) and
+            // making it more likely to get shoved upward over the field.
+            fit: FlexFit.loose,
             constraints: BoxConstraints(
               minWidth: fieldWidth ?? 0.0,
               maxWidth: fieldWidth ?? double.infinity,
-              maxHeight: popupConstraints?.maxHeight ?? 300,
+              // Scale with the viewport instead of a flat 300 so the popup
+              // is less likely to exceed whatever space is actually below
+              // the field on a shorter screen.
+              maxHeight:
+                  popupConstraints?.maxHeight ??
+                  (MediaQuery.of(context).size.height * 0.45).clamp(
+                    200.0,
+                    300.0,
+                  ),
             ),
             menuProps: MenuProps(
               align: MenuAlign.bottomStart,
+              // `dropdown_search`'s default positioning for `bottomStart`
+              // only clamps to the screen edge if the popup doesn't fit —
+              // it can shove the menu upward far enough to overlap the
+              // field itself rather than ever repositioning above it
+              // cleanly. Pin the popup to open directly below the field's
+              // measured bottom edge instead, so it never starts above (or
+              // on top of) the field it belongs to.
+              positionCallback: (dropdownBox, overlay) {
+                const spacing = 4.0;
+                final origin = dropdownBox.localToGlobal(
+                  Offset.zero,
+                  ancestor: overlay,
+                );
+                final dx = origin.dx;
+                final dy = origin.dy + dropdownBox.size.height + spacing;
+                // Only `left`/`top` (and `right`, via the width below) feed
+                // into the vendor layout delegate's positioning — height
+                // here is a bookkeeping placeholder, not a size constraint.
+                return RelativeRect.fromSize(
+                  Offset(dx, dy) & Size(dropdownBox.size.width, 0),
+                  overlay.size,
+                );
+              },
               backgroundColor: context.colors.surface,
               elevation: 8,
               shape: RoundedRectangleBorder(

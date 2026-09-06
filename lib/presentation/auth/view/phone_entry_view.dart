@@ -11,6 +11,7 @@ import '../../../core/widgets/onboarding_step_header.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/common/failure.dart';
 import '../viewmodel/auth_viewmodel.dart';
+import '../viewmodel/otp_timer_viewmodel.dart';
 import 'otp_verify_view.dart';
 
 /// Second screen of the generic OTP auth flow (§10.2) — collects the phone
@@ -32,8 +33,18 @@ class _PhoneEntryViewState extends ConsumerState<PhoneEntryView> {
   }
 
   void _handleSubmit() {
-    final notifier = ref.read(authViewModelProvider.notifier);
     final phoneNumber = _controller.text.trim();
+
+    // If we already requested an OTP for this exact number and the resend
+    // cooldown hasn't expired, just reopen the sheet on the code the user
+    // was already sent instead of firing a duplicate SMS.
+    final timerState = ref.read(otpTimerViewModelProvider);
+    if (timerState.phoneNumber == phoneNumber && !timerState.canRequestNow) {
+      _openOtpSheet(phoneNumber);
+      return;
+    }
+
+    final notifier = ref.read(authViewModelProvider.notifier);
     notifier
         .submitPhoneNumber(
           phoneNumber,
@@ -43,15 +54,8 @@ class _PhoneEntryViewState extends ConsumerState<PhoneEntryView> {
         .then((success) {
       if (!mounted) return;
       if (success) {
-        AppBottomSheet.show(
-          context: context,
-          title: context.l10n.otpTitle,
-          subtitle: context.l10n.otpSubtitle(phoneNumber),
-          child: OtpVerifyView(
-            phone: phoneNumber,
-            isBottomSheet: true,
-          ),
-        );
+        ref.read(otpTimerViewModelProvider.notifier).startCooldown(phoneNumber);
+        _openOtpSheet(phoneNumber);
       } else {
         final failure = ref.read(authViewModelProvider).error;
         if (failure is! ValidationFailure) {
@@ -62,6 +66,18 @@ class _PhoneEntryViewState extends ConsumerState<PhoneEntryView> {
         }
       }
     });
+  }
+
+  void _openOtpSheet(String phoneNumber) {
+    AppBottomSheet.show(
+      context: context,
+      title: context.l10n.otpTitle,
+      subtitle: context.l10n.otpSubtitle(phoneNumber),
+      child: OtpVerifyView(
+        phone: phoneNumber,
+        isBottomSheet: true,
+      ),
+    );
   }
 
   @override

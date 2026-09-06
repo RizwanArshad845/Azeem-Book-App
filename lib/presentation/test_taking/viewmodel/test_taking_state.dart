@@ -42,6 +42,12 @@ abstract class TestTakingState with _$TestTakingState {
     @Default(<String, SubmissionAnswer>{}) Map<String, SubmissionAnswer> answers,
     @Default(0) int secondsRemaining,
     TestAttempt? result,
+    // Eased fake-progress for [TestTakingStatus.awaitingGrading]'s loader —
+    // real grading typically finishes in ~10s but the poll budget is ~80s,
+    // so this is deliberately not a literal `pollAttempt/maxAttempts`
+    // fraction (would show ~12% right when grading is actually about to
+    // finish). See `_pollUntilGraded`'s doc comment for the curve.
+    @Default(0.0) double gradingProgress,
   }) = _TestTakingState;
 
   /// True when the current question already has a recorded answer — mcq

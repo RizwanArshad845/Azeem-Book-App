@@ -79,11 +79,17 @@ class StudentProgressView extends ConsumerWidget {
             onRetry: () => ref.invalidate(studentTestAttemptsProvider),
             data: (attempts) {
               if (attempts.isEmpty) {
-                return ListView(
-                  padding: EdgeInsets.all(context.dimens.lg),
-                  children: [
-                    EmptyStateView(message: context.l10n.progressEmpty),
-                  ],
+                return LayoutBuilder(
+                  builder:
+                      (context, constraints) => SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: SizedBox(
+                          height: constraints.maxHeight,
+                          child: EmptyStateView(
+                            message: context.l10n.progressEmpty,
+                          ),
+                        ),
+                      ),
                 );
               }
 

@@ -79,13 +79,26 @@ class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
   /// Single PUT against `studentById` with the full DTO — unlike
   /// [completeOnboarding], profile edits never touch `subjectEnrollments`,
   /// so there's no need for the two-request dance that method uses.
+  ///
+  /// A profile-only PUT response from the backend can omit fields it didn't
+  /// touch (`subjectEnrollments`, `boardClassId`, `cartId`), which
+  /// `json_serializable` decodes as `null` — indistinguishable from
+  /// "genuinely none." Falling back to the request DTO's values for any of
+  /// these that come back `null` prevents a partial response from wiping
+  /// them out of the shared student state app-wide.
   @override
   Future<StudentDto> updateStudent(StudentDto student) async {
     final response = await _dio.put<Map<String, dynamic>>(
       ApiEndpoints.studentById(student.id),
       data: student.toJson(),
     );
-    return StudentDto.fromJson(response.data ?? student.toJson());
+    final updated = StudentDto.fromJson(response.data ?? student.toJson());
+    return updated.copyWith(
+      subjectEnrollments:
+          updated.subjectEnrollments ?? student.subjectEnrollments,
+      boardClassId: updated.boardClassId ?? student.boardClassId,
+      cartId: updated.cartId ?? student.cartId,
+    );
   }
 
   /// Soft-delete: the server is expected to set `isDeleted = true` rather

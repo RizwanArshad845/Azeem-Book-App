@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -236,7 +237,11 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
     if (graded == null) return null;
 
     state = AsyncData(
-      latest.copyWith(status: TestTakingStatus.submitted, result: graded),
+      latest.copyWith(
+        status: TestTakingStatus.submitted,
+        result: graded,
+        gradingProgress: 1.0,
+      ),
     );
     // So the Progress tab reflects this attempt immediately without a
     // manual pull-to-refresh — the other progress-derived providers
@@ -248,6 +253,15 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
   /// Polls `GET /attempts/{attemptId}` every 2s (bounded to ~80s total)
   /// until the server reports `status == graded`, or gives up and returns
   /// `null` if grading takes longer than that.
+  ///
+  /// Also publishes an eased fake-progress value into `state.gradingProgress`
+  /// each tick, for `GradingInProgressView`'s progress ring: real grading
+  /// finishes in ~10s (confirmed against backend timing data) but the poll
+  /// budget is ~80s, so `elapsed/maxElapsed` would sit around 12% right when
+  /// it's actually about to finish — worse than no percentage at all. The
+  /// `1 - exp(-elapsed/6)` curve instead ramps to ~87% by 12s and plateaus
+  /// (capped at 95% until the real `graded` result arrives), the standard
+  /// "upload bar" shape.
   Future<TestAttempt?> _pollUntilGraded(String attemptId) async {
     const maxAttempts = 40;
     const interval = Duration(seconds: 2);
@@ -260,6 +274,14 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
       if (!ref.mounted) return null;
       await Future<void>.delayed(interval);
       if (!ref.mounted) return null;
+
+      final elapsedSeconds = (i + 1) * interval.inSeconds;
+      final progress = math.min(0.95, 1 - math.exp(-elapsedSeconds / 6));
+      final current = state.value;
+      if (current != null) {
+        state = AsyncData(current.copyWith(gradingProgress: progress));
+      }
+
       final result = await sl<GetAttemptUseCase>()(attemptId);
       final attempt = result.when(
         success: (a) => a,

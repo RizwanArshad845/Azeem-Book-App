@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/config/app_config.dart';
-import '../../../core/di/riverpod_providers.dart';
+import '../../../domain/campus_directory/entities/campus.dart';
+import '../../../domain/catalog/entities/class_level.dart';
+import '../../../domain/catalog/entities/subject.dart';
+import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 
 class SplashViewModel extends Notifier<bool> {
   Timer? _splashTimer;
@@ -55,9 +58,17 @@ class SplashViewModel extends Notifier<bool> {
     try {
       await Future.any<dynamic>([
         Future.wait<dynamic>([
-          ref.read(campusesProvider.future),
-          ref.read(classLevelsProvider.future),
-          ref.read(boardClassesProvider.future),
+          ref.read(campusesProvider.future).catchError((_) => <Campus>[]),
+          ref.read(classLevelsProvider.future).catchError((_) => <ClassLevel>[]),
+          ref.read(boardClassesProvider.future).then((boardClasses) async {
+            await Future.wait(
+              boardClasses
+                  .where((b) => b.isEnabled)
+                  .map((b) => ref
+                      .read(subjectsForBoardClassProvider(b.id).future)
+                      .catchError((_) => <Subject>[])),
+            );
+          }).catchError((_) => null),
         ]),
         timeoutCompleter.future,
       ]);

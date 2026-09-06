@@ -310,6 +310,14 @@ class SubjectSelectionViewModel extends Notifier<Map<String, String?>> {
     if (!state.containsKey(subjectId)) return;
     state = {...state, subjectId: teacherId};
   }
+
+  /// Wipes every in-progress selection. Called whenever an upstream scope
+  /// change (class level or board class/group) makes the current selection
+  /// meaningless — without this, a subject id picked under a previously
+  /// viewed group survives into `replaceSubjectSelections` at Confirm time
+  /// and the Review screen renders it as an unresolved raw id (it's not
+  /// present in the new group's `subjectsForBoardClassProvider` list).
+  void clear() => state = const {};
 }
 
 final subjectSelectionViewModelProvider = NotifierProvider.autoDispose<
@@ -360,6 +368,7 @@ class SelectedClassLevelViewModel extends Notifier<String?> {
   void select(String? classLevelId) {
     state = classLevelId;
     ref.read(selectedBoardClassViewModelProvider.notifier).select(null);
+    ref.read(subjectSelectionViewModelProvider.notifier).clear();
   }
 }
 
@@ -376,7 +385,12 @@ class SelectedBoardClassViewModel extends Notifier<String?> {
   @override
   String? build() => null;
 
-  void select(String? boardClassId) => state = boardClassId;
+  void select(String? boardClassId) {
+    if (state != boardClassId) {
+      ref.read(subjectSelectionViewModelProvider.notifier).clear();
+    }
+    state = boardClassId;
+  }
 }
 
 final selectedBoardClassViewModelProvider =

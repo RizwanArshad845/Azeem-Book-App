@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../config/app_config.dart';
 import 'interceptors/auth_interceptor.dart';
+import 'interceptors/deduplication_interceptor.dart';
 import 'interceptors/error_interceptor.dart';
 import 'interceptors/logging_interceptor.dart';
 
@@ -17,6 +18,7 @@ class DioClient {
       ),
     );
     dio.interceptors.addAll([
+      DeduplicationInterceptor(),
       AuthInterceptor(),
       LoggingInterceptor(),
       ErrorInterceptor(),

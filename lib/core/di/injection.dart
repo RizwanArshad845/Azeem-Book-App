@@ -74,6 +74,7 @@ import '../../domain/test_taking/usecases/start_test_attempt_usecase.dart';
 import '../../domain/test_taking/usecases/submit_test_attempt_usecase.dart';
 import '../network/dio_client.dart';
 import '../services/logger.dart';
+import '../storage/local_cache_service.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -89,6 +90,7 @@ final GetIt sl = GetIt.instance;
 /// Each feature module appends its own registrations here as it's built.
 void setupLocator() {
   sl.registerLazySingleton<Logger>(ConsoleLogger.new);
+  sl.registerLazySingleton<LocalCacheService>(LocalCacheService.new);
   sl.registerLazySingleton<Dio>(DioClient.build);
 
   // catalog
@@ -96,7 +98,7 @@ void setupLocator() {
     () => CatalogRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<CatalogRepository>(
-    () => CatalogRepositoryImpl(remote: sl()),
+    () => CatalogRepositoryImpl(remote: sl(), cache: sl()),
   );
   sl.registerFactory(() => GetClassLevelsUseCase(sl()));
   sl.registerFactory(() => GetBoardClassesUseCase(sl()));
@@ -110,7 +112,7 @@ void setupLocator() {
     () => CampusRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<CampusRepository>(
-    () => CampusRepositoryImpl(remote: sl()),
+    () => CampusRepositoryImpl(remote: sl(), cache: sl()),
   );
   sl.registerLazySingleton<GetCampusesUseCase>(
     () => GetCampusesUseCase(sl()),

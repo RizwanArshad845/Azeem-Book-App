@@ -18,5 +18,12 @@ class AppConfig {
 
   static const int otpLength = 6;
 
+  /// Client-side-only cooldown between OTP requests for the same phone
+  /// number, and the number of resends after which a warning (not a hard
+  /// block — there's no backend enforcement to back one) is shown. See
+  /// `OtpTimerViewModel`.
+  static const int otpResendCooldownSeconds = 60;
+  static const int otpMaxResendAttempts = 3;
+
   static const int splashDelaySeconds = 2;
 }

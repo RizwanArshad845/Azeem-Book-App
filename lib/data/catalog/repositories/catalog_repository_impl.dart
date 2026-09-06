@@ -1,3 +1,4 @@
+import '../../../core/storage/local_cache_service.dart';
 import '../../../domain/catalog/entities/board_class.dart';
 import '../../../domain/catalog/entities/chapter.dart';
 import '../../../domain/catalog/entities/class_level.dart';
@@ -6,14 +7,23 @@ import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
 import '../../../domain/catalog/repositories/catalog_repository.dart';
 import '../../../domain/common/result.dart';
+import '../../common/swr_repository_mixin.dart';
 import '../datasources/remote/catalog_remote_datasource.dart';
+import '../models/board_class_dto.dart';
+import '../models/class_level_dto.dart';
 
-/// Maps [CatalogRemoteDataSource] DTOs to domain entities so nothing above
-/// this layer ever sees a DTO.
-class CatalogRepositoryImpl implements CatalogRepository {
-  CatalogRepositoryImpl({required this.remote});
+/// Maps [CatalogRemoteDataSource] DTOs to domain entities and implements
+/// local-first Stale-While-Revalidate (SWR) caching.
+class CatalogRepositoryImpl with SwrRepositoryMixin implements CatalogRepository {
+  CatalogRepositoryImpl({
+    required this.remote,
+    required this.cache,
+  });
 
   final CatalogRemoteDataSource remote;
+
+  @override
+  final LocalCacheService cache;
 
   List<ClassLevel>? _cachedClassLevels;
   List<BoardClass>? _cachedBoardClasses;
@@ -23,43 +33,48 @@ class CatalogRepositoryImpl implements CatalogRepository {
   final Map<String, List<Test>> _cachedTestsByChapter = {};
   final Map<String, List<Question>> _cachedQuestionsByTest = {};
 
+  static const _classLevelsKey = 'cached_class_levels';
+  static const _boardClassesKey = 'cached_board_classes';
+
   @override
   Future<Result<List<ClassLevel>>> getClassLevels({
     bool forceRefresh = false,
-  }) async {
-    if (_cachedClassLevels != null && !forceRefresh) {
-      return Success(_cachedClassLevels!);
-    }
-    final result = await remote.getClassLevels();
-    return result.when(
-      success: (dtos) {
-        final list = dtos.map((d) => d.toDomain()).toList();
-        _cachedClassLevels = list;
-        return Success(list);
+  }) {
+    return fetchListWithSwr<ClassLevel>(
+      cacheKey: _classLevelsKey,
+      fromJson: (json) => ClassLevelDto.fromJson(json).toDomain(),
+      toJson: (level) => ClassLevelDto.fromDomain(level).toJson(),
+      fetchRemote: () async {
+        final result = await remote.getClassLevels();
+        return result.when(
+          success: (dtos) => Success(dtos.map((d) => d.toDomain()).toList()),
+          failure: (f) => ResultFailure(f),
+        );
       },
-      failure: (f) => _cachedClassLevels != null
-          ? Success(_cachedClassLevels!)
-          : ResultFailure(f),
+      getMemory: () => _cachedClassLevels,
+      setMemory: (value) => _cachedClassLevels = value,
+      forceRefresh: forceRefresh,
     );
   }
 
   @override
   Future<Result<List<BoardClass>>> getBoardClasses({
     bool forceRefresh = false,
-  }) async {
-    if (_cachedBoardClasses != null && !forceRefresh) {
-      return Success(_cachedBoardClasses!);
-    }
-    final result = await remote.getBoardClasses();
-    return result.when(
-      success: (dtos) {
-        final list = dtos.map((d) => d.toDomain()).toList();
-        _cachedBoardClasses = list;
-        return Success(list);
+  }) {
+    return fetchListWithSwr<BoardClass>(
+      cacheKey: _boardClassesKey,
+      fromJson: (json) => BoardClassDto.fromJson(json).toDomain(),
+      toJson: (boardClass) => BoardClassDto.fromDomain(boardClass).toJson(),
+      fetchRemote: () async {
+        final result = await remote.getBoardClasses();
+        return result.when(
+          success: (dtos) => Success(dtos.map((d) => d.toDomain()).toList()),
+          failure: (f) => ResultFailure(f),
+        );
       },
-      failure: (f) => _cachedBoardClasses != null
-          ? Success(_cachedBoardClasses!)
-          : ResultFailure(f),
+      getMemory: () => _cachedBoardClasses,
+      setMemory: (value) => _cachedBoardClasses = value,
+      forceRefresh: forceRefresh,
     );
   }
 

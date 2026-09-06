@@ -14,7 +14,12 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TestTakingState {
 
- TestTakingStatus get status; Test? get test; String? get attemptId; List<AttemptQuestion> get questions; int get currentIndex; Map<String, SubmissionAnswer> get answers; int get secondsRemaining; TestAttempt? get result;
+ TestTakingStatus get status; Test? get test; String? get attemptId; List<AttemptQuestion> get questions; int get currentIndex; Map<String, SubmissionAnswer> get answers; int get secondsRemaining; TestAttempt? get result;// Eased fake-progress for [TestTakingStatus.awaitingGrading]'s loader —
+// real grading typically finishes in ~10s but the poll budget is ~80s,
+// so this is deliberately not a literal `pollAttempt/maxAttempts`
+// fraction (would show ~12% right when grading is actually about to
+// finish). See `_pollUntilGraded`'s doc comment for the curve.
+ double get gradingProgress;
 /// Create a copy of TestTakingState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +30,16 @@ $TestTakingStateCopyWith<TestTakingState> get copyWith => _$TestTakingStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TestTakingState&&(identical(other.status, status) || other.status == status)&&(identical(other.test, test) || other.test == test)&&(identical(other.attemptId, attemptId) || other.attemptId == attemptId)&&const DeepCollectionEquality().equals(other.questions, questions)&&(identical(other.currentIndex, currentIndex) || other.currentIndex == currentIndex)&&const DeepCollectionEquality().equals(other.answers, answers)&&(identical(other.secondsRemaining, secondsRemaining) || other.secondsRemaining == secondsRemaining)&&(identical(other.result, result) || other.result == result));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TestTakingState&&(identical(other.status, status) || other.status == status)&&(identical(other.test, test) || other.test == test)&&(identical(other.attemptId, attemptId) || other.attemptId == attemptId)&&const DeepCollectionEquality().equals(other.questions, questions)&&(identical(other.currentIndex, currentIndex) || other.currentIndex == currentIndex)&&const DeepCollectionEquality().equals(other.answers, answers)&&(identical(other.secondsRemaining, secondsRemaining) || other.secondsRemaining == secondsRemaining)&&(identical(other.result, result) || other.result == result)&&(identical(other.gradingProgress, gradingProgress) || other.gradingProgress == gradingProgress));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,test,attemptId,const DeepCollectionEquality().hash(questions),currentIndex,const DeepCollectionEquality().hash(answers),secondsRemaining,result);
+int get hashCode => Object.hash(runtimeType,status,test,attemptId,const DeepCollectionEquality().hash(questions),currentIndex,const DeepCollectionEquality().hash(answers),secondsRemaining,result,gradingProgress);
 
 @override
 String toString() {
-  return 'TestTakingState(status: $status, test: $test, attemptId: $attemptId, questions: $questions, currentIndex: $currentIndex, answers: $answers, secondsRemaining: $secondsRemaining, result: $result)';
+  return 'TestTakingState(status: $status, test: $test, attemptId: $attemptId, questions: $questions, currentIndex: $currentIndex, answers: $answers, secondsRemaining: $secondsRemaining, result: $result, gradingProgress: $gradingProgress)';
 }
 
 
@@ -45,7 +50,7 @@ abstract mixin class $TestTakingStateCopyWith<$Res>  {
   factory $TestTakingStateCopyWith(TestTakingState value, $Res Function(TestTakingState) _then) = _$TestTakingStateCopyWithImpl;
 @useResult
 $Res call({
- TestTakingStatus status, Test? test, String? attemptId, List<AttemptQuestion> questions, int currentIndex, Map<String, SubmissionAnswer> answers, int secondsRemaining, TestAttempt? result
+ TestTakingStatus status, Test? test, String? attemptId, List<AttemptQuestion> questions, int currentIndex, Map<String, SubmissionAnswer> answers, int secondsRemaining, TestAttempt? result, double gradingProgress
 });
 
 
@@ -62,7 +67,7 @@ class _$TestTakingStateCopyWithImpl<$Res>
 
 /// Create a copy of TestTakingState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? test = freezed,Object? attemptId = freezed,Object? questions = null,Object? currentIndex = null,Object? answers = null,Object? secondsRemaining = null,Object? result = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? test = freezed,Object? attemptId = freezed,Object? questions = null,Object? currentIndex = null,Object? answers = null,Object? secondsRemaining = null,Object? result = freezed,Object? gradingProgress = null,}) {
   return _then(_self.copyWith(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as TestTakingStatus,test: freezed == test ? _self.test : test // ignore: cast_nullable_to_non_nullable
@@ -72,7 +77,8 @@ as List<AttemptQuestion>,currentIndex: null == currentIndex ? _self.currentIndex
 as int,answers: null == answers ? _self.answers : answers // ignore: cast_nullable_to_non_nullable
 as Map<String, SubmissionAnswer>,secondsRemaining: null == secondsRemaining ? _self.secondsRemaining : secondsRemaining // ignore: cast_nullable_to_non_nullable
 as int,result: freezed == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
-as TestAttempt?,
+as TestAttempt?,gradingProgress: null == gradingProgress ? _self.gradingProgress : gradingProgress // ignore: cast_nullable_to_non_nullable
+as double,
   ));
 }
 /// Create a copy of TestTakingState
@@ -181,10 +187,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TestTakingStatus status,  Test? test,  String? attemptId,  List<AttemptQuestion> questions,  int currentIndex,  Map<String, SubmissionAnswer> answers,  int secondsRemaining,  TestAttempt? result)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( TestTakingStatus status,  Test? test,  String? attemptId,  List<AttemptQuestion> questions,  int currentIndex,  Map<String, SubmissionAnswer> answers,  int secondsRemaining,  TestAttempt? result,  double gradingProgress)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TestTakingState() when $default != null:
-return $default(_that.status,_that.test,_that.attemptId,_that.questions,_that.currentIndex,_that.answers,_that.secondsRemaining,_that.result);case _:
+return $default(_that.status,_that.test,_that.attemptId,_that.questions,_that.currentIndex,_that.answers,_that.secondsRemaining,_that.result,_that.gradingProgress);case _:
   return orElse();
 
 }
@@ -202,10 +208,10 @@ return $default(_that.status,_that.test,_that.attemptId,_that.questions,_that.cu
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TestTakingStatus status,  Test? test,  String? attemptId,  List<AttemptQuestion> questions,  int currentIndex,  Map<String, SubmissionAnswer> answers,  int secondsRemaining,  TestAttempt? result)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( TestTakingStatus status,  Test? test,  String? attemptId,  List<AttemptQuestion> questions,  int currentIndex,  Map<String, SubmissionAnswer> answers,  int secondsRemaining,  TestAttempt? result,  double gradingProgress)  $default,) {final _that = this;
 switch (_that) {
 case _TestTakingState():
-return $default(_that.status,_that.test,_that.attemptId,_that.questions,_that.currentIndex,_that.answers,_that.secondsRemaining,_that.result);case _:
+return $default(_that.status,_that.test,_that.attemptId,_that.questions,_that.currentIndex,_that.answers,_that.secondsRemaining,_that.result,_that.gradingProgress);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -222,10 +228,10 @@ return $default(_that.status,_that.test,_that.attemptId,_that.questions,_that.cu
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TestTakingStatus status,  Test? test,  String? attemptId,  List<AttemptQuestion> questions,  int currentIndex,  Map<String, SubmissionAnswer> answers,  int secondsRemaining,  TestAttempt? result)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( TestTakingStatus status,  Test? test,  String? attemptId,  List<AttemptQuestion> questions,  int currentIndex,  Map<String, SubmissionAnswer> answers,  int secondsRemaining,  TestAttempt? result,  double gradingProgress)?  $default,) {final _that = this;
 switch (_that) {
 case _TestTakingState() when $default != null:
-return $default(_that.status,_that.test,_that.attemptId,_that.questions,_that.currentIndex,_that.answers,_that.secondsRemaining,_that.result);case _:
+return $default(_that.status,_that.test,_that.attemptId,_that.questions,_that.currentIndex,_that.answers,_that.secondsRemaining,_that.result,_that.gradingProgress);case _:
   return null;
 
 }
@@ -237,7 +243,7 @@ return $default(_that.status,_that.test,_that.attemptId,_that.questions,_that.cu
 
 
 class _TestTakingState extends TestTakingState {
-  const _TestTakingState({required this.status, this.test, this.attemptId, this.questions = const <AttemptQuestion>[], this.currentIndex = 0, this.answers = const <String, SubmissionAnswer>{}, this.secondsRemaining = 0, this.result}): super._();
+  const _TestTakingState({required this.status, this.test, this.attemptId, this.questions = const <AttemptQuestion>[], this.currentIndex = 0, this.answers = const <String, SubmissionAnswer>{}, this.secondsRemaining = 0, this.result, this.gradingProgress = 0.0}): super._();
   
 
 @override final  TestTakingStatus status;
@@ -248,6 +254,12 @@ class _TestTakingState extends TestTakingState {
 @override@JsonKey() final  Map<String, SubmissionAnswer> answers;
 @override@JsonKey() final  int secondsRemaining;
 @override final  TestAttempt? result;
+// Eased fake-progress for [TestTakingStatus.awaitingGrading]'s loader —
+// real grading typically finishes in ~10s but the poll budget is ~80s,
+// so this is deliberately not a literal `pollAttempt/maxAttempts`
+// fraction (would show ~12% right when grading is actually about to
+// finish). See `_pollUntilGraded`'s doc comment for the curve.
+@override@JsonKey() final  double gradingProgress;
 
 /// Create a copy of TestTakingState
 /// with the given fields replaced by the non-null parameter values.
@@ -259,16 +271,16 @@ _$TestTakingStateCopyWith<_TestTakingState> get copyWith => __$TestTakingStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TestTakingState&&(identical(other.status, status) || other.status == status)&&(identical(other.test, test) || other.test == test)&&(identical(other.attemptId, attemptId) || other.attemptId == attemptId)&&const DeepCollectionEquality().equals(other.questions, questions)&&(identical(other.currentIndex, currentIndex) || other.currentIndex == currentIndex)&&const DeepCollectionEquality().equals(other.answers, answers)&&(identical(other.secondsRemaining, secondsRemaining) || other.secondsRemaining == secondsRemaining)&&(identical(other.result, result) || other.result == result));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TestTakingState&&(identical(other.status, status) || other.status == status)&&(identical(other.test, test) || other.test == test)&&(identical(other.attemptId, attemptId) || other.attemptId == attemptId)&&const DeepCollectionEquality().equals(other.questions, questions)&&(identical(other.currentIndex, currentIndex) || other.currentIndex == currentIndex)&&const DeepCollectionEquality().equals(other.answers, answers)&&(identical(other.secondsRemaining, secondsRemaining) || other.secondsRemaining == secondsRemaining)&&(identical(other.result, result) || other.result == result)&&(identical(other.gradingProgress, gradingProgress) || other.gradingProgress == gradingProgress));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status,test,attemptId,const DeepCollectionEquality().hash(questions),currentIndex,const DeepCollectionEquality().hash(answers),secondsRemaining,result);
+int get hashCode => Object.hash(runtimeType,status,test,attemptId,const DeepCollectionEquality().hash(questions),currentIndex,const DeepCollectionEquality().hash(answers),secondsRemaining,result,gradingProgress);
 
 @override
 String toString() {
-  return 'TestTakingState(status: $status, test: $test, attemptId: $attemptId, questions: $questions, currentIndex: $currentIndex, answers: $answers, secondsRemaining: $secondsRemaining, result: $result)';
+  return 'TestTakingState(status: $status, test: $test, attemptId: $attemptId, questions: $questions, currentIndex: $currentIndex, answers: $answers, secondsRemaining: $secondsRemaining, result: $result, gradingProgress: $gradingProgress)';
 }
 
 
@@ -279,7 +291,7 @@ abstract mixin class _$TestTakingStateCopyWith<$Res> implements $TestTakingState
   factory _$TestTakingStateCopyWith(_TestTakingState value, $Res Function(_TestTakingState) _then) = __$TestTakingStateCopyWithImpl;
 @override @useResult
 $Res call({
- TestTakingStatus status, Test? test, String? attemptId, List<AttemptQuestion> questions, int currentIndex, Map<String, SubmissionAnswer> answers, int secondsRemaining, TestAttempt? result
+ TestTakingStatus status, Test? test, String? attemptId, List<AttemptQuestion> questions, int currentIndex, Map<String, SubmissionAnswer> answers, int secondsRemaining, TestAttempt? result, double gradingProgress
 });
 
 
@@ -296,7 +308,7 @@ class __$TestTakingStateCopyWithImpl<$Res>
 
 /// Create a copy of TestTakingState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? test = freezed,Object? attemptId = freezed,Object? questions = null,Object? currentIndex = null,Object? answers = null,Object? secondsRemaining = null,Object? result = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? test = freezed,Object? attemptId = freezed,Object? questions = null,Object? currentIndex = null,Object? answers = null,Object? secondsRemaining = null,Object? result = freezed,Object? gradingProgress = null,}) {
   return _then(_TestTakingState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as TestTakingStatus,test: freezed == test ? _self.test : test // ignore: cast_nullable_to_non_nullable
@@ -306,7 +318,8 @@ as List<AttemptQuestion>,currentIndex: null == currentIndex ? _self.currentIndex
 as int,answers: null == answers ? _self.answers : answers // ignore: cast_nullable_to_non_nullable
 as Map<String, SubmissionAnswer>,secondsRemaining: null == secondsRemaining ? _self.secondsRemaining : secondsRemaining // ignore: cast_nullable_to_non_nullable
 as int,result: freezed == result ? _self.result : result // ignore: cast_nullable_to_non_nullable
-as TestAttempt?,
+as TestAttempt?,gradingProgress: null == gradingProgress ? _self.gradingProgress : gradingProgress // ignore: cast_nullable_to_non_nullable
+as double,
   ));
 }
 

@@ -126,6 +126,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get otpTooManyAttempts => 'Too many attempts. Restarting...';
 
   @override
+  String otpResendIn(String time) {
+    return 'Resend code in $time';
+  }
+
+  @override
+  String get otpResendCode => 'Resend Code';
+
+  @override
+  String get otpResendLimitWarning =>
+      'You\'ve reached the resend limit for this session. Please wait before trying again.';
+
+  @override
   String get personalInfoTitle => 'Personal Information';
 
   @override

@@ -43,6 +43,9 @@
   "otpVerifyButton": "تصدیق کریں",
   "otpIncorrect": "غلط کوڈ۔ براہ کرم دوبارہ کوشش کریں۔",
   "otpTooManyAttempts": "بہت سی کوششیں۔ دوبارہ شروع ہو رہا ہے...",
+  "otpResendIn": "{time} میں کوڈ دوبارہ بھیجیں",
+  "otpResendCode": "کوڈ دوبارہ بھیجیں",
+  "otpResendLimitWarning": "آپ اس سیشن کے لیے دوبارہ بھیجنے کی حد تک پہنچ چکے ہیں۔ براہ کرم کچھ دیر انتظار کریں۔",
 
   "personalInfoTitle": "ذاتی معلومات",
   "personalInfoSubtitle": "اپنے تعلیمی تجربے کو بہتر بنانے میں ہماری مدد کریں",

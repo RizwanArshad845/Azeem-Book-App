@@ -5,9 +5,11 @@ import '../../../core/config/app_config.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_error_view.dart';
 import '../../../core/widgets/app_snackbar.dart';
+import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../domain/common/failure.dart';
 import '../viewmodel/auth_viewmodel.dart';
+import '../viewmodel/otp_timer_viewmodel.dart';
 import '../widgets/otp_digit_box.dart';
 
 
@@ -21,9 +23,27 @@ class OtpVerifyView extends ConsumerWidget {
   final String phone;
   final bool isBottomSheet;
 
+  String _formatCooldown(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainder = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainder.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> _handleResend(BuildContext context, WidgetRef ref) async {
+    final success = await ref
+        .read(authViewModelProvider.notifier)
+        .requestOtp(phone, roleRequiredMessage: context.l10n.roleSelectRequired);
+    if (success) {
+      ref.read(otpTimerViewModelProvider.notifier).startCooldown(phone);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authViewModelProvider);
+    final timerState = ref.watch(otpTimerViewModelProvider);
+    final isOnCooldownForThisNumber =
+        timerState.phoneNumber == phone && !timerState.canRequestNow;
 
     ref.listen(authViewModelProvider, (previous, next) {
       final err = next.error;
@@ -89,6 +109,35 @@ class OtpVerifyView extends ConsumerWidget {
               padding: EdgeInsets.only(top: context.dimens.md),
               child: AppErrorView(message: failure.message),
             ),
+          if (!isLoading) ...[
+            SizedBox(height: context.dimens.md),
+            if (isOnCooldownForThisNumber)
+              Text(
+                context.l10n.otpResendIn(
+                  _formatCooldown(timerState.secondsRemaining),
+                ),
+                style: context.textStyles.bodySmall?.copyWith(
+                  color: context.colors.textSecondary,
+                ),
+              )
+            else
+              AppButton(
+                label: context.l10n.otpResendCode,
+                variant: AppButtonVariant.text,
+                onPressed: () => _handleResend(context, ref),
+              ),
+            if (timerState.attemptLimitReached)
+              Padding(
+                padding: EdgeInsets.only(top: context.dimens.sm),
+                child: Text(
+                  context.l10n.otpResendLimitWarning,
+                  textAlign: TextAlign.center,
+                  style: context.textStyles.bodySmall?.copyWith(
+                    color: context.colors.error,
+                  ),
+                ),
+              ),
+          ],
         ],
       ],
     );

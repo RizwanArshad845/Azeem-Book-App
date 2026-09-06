@@ -54,6 +54,18 @@ class StudentOnboardingReviewView extends ConsumerWidget {
         ?.where((c) => c.id == campusId)
         .firstOrNull;
 
+    // Defensive: a subject id can only be stale (left over from a since-
+    // abandoned class-level/board-class selection) if the subjects list for
+    // the *current* boardClassId has already loaded and doesn't contain it.
+    // While that list is still loading (`subjectsAsync?.value == null`),
+    // show every selected id rather than blanking the section.
+    final loadedSubjects = subjectsAsync?.value;
+    final visibleSubjectIds = loadedSubjects == null
+        ? selectedSubjectIds
+        : selectedSubjectIds
+              .where((id) => loadedSubjects.any((s) => s.id == id))
+              .toSet();
+
     return OnboardingScaffold(
       appBarTitle: context.l10n.onboardingReviewTitle,
       role: OnboardingRole.student,
@@ -85,13 +97,13 @@ class StudentOnboardingReviewView extends ConsumerWidget {
               ),
             ],
           ),
-          if (selectedSubjectIds.isNotEmpty) ...[
+          if (visibleSubjectIds.isNotEmpty) ...[
             SizedBox(height: context.dimens.lg),
             _SectionLabel(context.l10n.subjectSelectionTitle),
             SizedBox(height: context.dimens.sm),
             OnboardingSummaryList(
               children: [
-                for (final subjectId in selectedSubjectIds)
+                for (final subjectId in visibleSubjectIds)
                   _SubjectSummaryItem(
                     subjectId: subjectId,
                     teacherId: teacherIdBySubjectId[subjectId],
