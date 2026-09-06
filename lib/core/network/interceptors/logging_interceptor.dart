@@ -35,7 +35,17 @@ class LoggingInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    _logger.e('<-- ERROR ${err.requestOptions.uri}', err);
+    // The response body on an error (typically a DRF field-validation
+    // object, e.g. `{"phone_number": ["This field is required."]}`) is the
+    // single most useful piece of information for diagnosing a 400/422 —
+    // without it, only DioException's generic status-code description was
+    // ever visible in logs, which never says *which* field the backend
+    // rejected or why.
+    final body = err.response?.data;
+    _logger.e(
+      '<-- ERROR ${err.requestOptions.uri}${body != null ? ' | body: $body' : ''}',
+      err,
+    );
     handler.next(err);
   }
 }

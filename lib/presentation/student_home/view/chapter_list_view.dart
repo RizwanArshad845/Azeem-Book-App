@@ -43,7 +43,8 @@ class ChapterListView extends ConsumerWidget {
     WidgetRef ref, {
     String? fallbackName,
   }) async {
-    var subject = await ref.read(subjectByIdProvider(subjectId).future);
+    var subject = ref.read(subjectByIdProvider(subjectId)).value ??
+        await ref.read(subjectByIdProvider(subjectId).future);
     if (subject == null && fallbackName != null) {
       subject = Subject(id: subjectId, boardClassId: '', name: fallbackName);
     }
@@ -55,7 +56,7 @@ class ChapterListView extends ConsumerWidget {
           .addSubjectBundle(subject, tests);
     }
     if (context.mounted) {
-      context.push(AppRoutes.studentCart);
+      context.go(AppRoutes.studentCart);
     }
   }
 

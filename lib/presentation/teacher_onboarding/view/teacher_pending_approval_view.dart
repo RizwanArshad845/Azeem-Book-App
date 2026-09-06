@@ -7,6 +7,7 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
+import '../../auth/widgets/onboarding_logout_action.dart';
 import '../viewmodel/teacher_onboarding_viewmodel.dart';
 import '../widgets/teacher_info_row.dart';
 
@@ -21,7 +22,16 @@ class TeacherPendingApprovalView extends ConsumerWidget {
     final onboarding = ref.watch(teacherOnboardingViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.teacherPendingTitle)),
+      appBar: AppBar(
+        title: Text(context.l10n.teacherPendingTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Log out',
+            onPressed: () => confirmOnboardingLogout(context, ref),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: AsyncValueWidget<Teacher?>(
           value: onboarding,

@@ -20,16 +20,24 @@ class OnboardingScaffold extends StatelessWidget {
     required this.child,
     this.currentStep,
     this.totalSteps,
-    this.appBarTitle = 'Onboarding',
+    this.appBarTitle,
     this.onBack,
+    this.onLogout,
     this.role = OnboardingRole.student,
   });
 
   final Widget child;
   final int? currentStep;
   final int? totalSteps;
-  final String appBarTitle;
+  final String? appBarTitle;
   final VoidCallback? onBack;
+
+  /// Escape hatch for a session that's authenticated (verified OTP) but
+  /// hasn't finished onboarding — without this, that session has no
+  /// self-service way to log out or switch accounts, since the router
+  /// always sends it back to onboarding on every launch. Opt-in like
+  /// [onBack]; omitted (no icon shown) when null.
+  final VoidCallback? onLogout;
 
   /// Which onboarding flow this is — switches the generated icon pattern
   /// vocabulary so student vs teacher onboarding don't feel like palette
@@ -42,7 +50,7 @@ class OnboardingScaffold extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       backgroundColor: context.colors.background,
       appBar: AppBar(
-        title: Text(appBarTitle),
+        title: Text(appBarTitle ?? context.l10n.onboardingTitle),
         centerTitle: true,
         leading: onBack != null
             ? IconButton(
@@ -52,36 +60,25 @@ class OnboardingScaffold extends StatelessWidget {
             : null,
         actions: [
           const AppLanguageToggleButton(),
-          if (currentStep != null && totalSteps != null)
-            Padding(
-              padding: EdgeInsets.only(right: context.dimens.sm),
-              child: Center(
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.dimens.sm,
-                    vertical: context.dimens.xs / 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: context.colors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(context.dimens.pillRadius),
-                  ),
-                  child: Text(
-                    'Step $currentStep of $totalSteps',
-                    style: context.textStyles.labelSmall?.copyWith(
-                      color: context.colors.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
+          if (onLogout != null)
+            IconButton(
+              icon: const Icon(Icons.logout),
+              tooltip: 'Log out',
+              onPressed: onLogout,
             ),
         ],
         bottom: (currentStep != null && totalSteps != null)
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(6.0),
-                child: SectionProgressIndicator(
-                  currentStep: currentStep!,
-                  totalSteps: totalSteps!,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.dimens.sm,
+                    vertical: context.dimens.xs / 2,
+                  ),
+                  child: SectionProgressIndicator(
+                    currentStep: currentStep!,
+                    totalSteps: totalSteps!,
+                  ),
                 ),
               )
             : null,

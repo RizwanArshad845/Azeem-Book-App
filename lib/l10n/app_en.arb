@@ -20,7 +20,7 @@
   "commonSearch": "Search",
   "commonViewAll": "View All",
 
-  "roleSelectionTitle": "Welcome to Azeem Publications",
+  "roleSelectionTitle": "Welcome",
   "roleSelectionSubtitle": "Please select your role to continue",
   "roleStudent": "Student",
   "roleStudentDesc": "Prepare for exams, take tests, track progress",
@@ -29,7 +29,8 @@
   "roleSelectRequired": "Please select a role before requesting an OTP.",
   "otpRequestRequired": "Please request an OTP before verifying.",
 
-  "phoneTitle": "Enter your phone number",
+  "onboardingTitle": "Onboarding",
+  "phoneTitle": "Phone Number",
   "phoneWelcomeTitle": "Welcome to Azeem Books!",
   "phoneSubtitle": "We'll send a verification code to this number",
   "phoneLabel": "Phone number",
@@ -294,6 +295,7 @@
   "checkoutPendingStatus": "Payment pending",
   "commonDone": "Done",
   "testTakingTitle": "Test",
+  "testLoadingMessage": "Loading test...",
   "testExitDialogStay": "Stay",
   "testNotPurchasedMessage": "You need to purchase this test before you can attempt it. Add it to your cart from the test list to unlock it.",
   "testNoQuestionsFound": "No questions found for this test.",

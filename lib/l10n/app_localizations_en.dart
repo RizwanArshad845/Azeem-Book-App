@@ -61,7 +61,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonViewAll => 'View All';
 
   @override
-  String get roleSelectionTitle => 'Welcome to Azeem Publications';
+  String get roleSelectionTitle => 'Welcome';
 
   @override
   String get roleSelectionSubtitle => 'Please select your role to continue';
@@ -87,7 +87,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get otpRequestRequired => 'Please request an OTP before verifying.';
 
   @override
-  String get phoneTitle => 'Enter your phone number';
+  String get onboardingTitle => 'Onboarding';
+
+  @override
+  String get phoneTitle => 'Phone Number';
 
   @override
   String get phoneWelcomeTitle => 'Welcome to Azeem Books!';
@@ -751,6 +754,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get testTakingTitle => 'Test';
+
+  @override
+  String get testLoadingMessage => 'Loading test...';
 
   @override
   String get testExitDialogStay => 'Stay';

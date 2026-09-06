@@ -11,6 +11,7 @@ import '../../../core/widgets/campus_dropdown_card.dart';
 import '../../../core/widgets/onboarding_scaffold.dart';
 import '../../../core/widgets/onboarding_step_header.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
+import '../../auth/widgets/onboarding_logout_action.dart';
 import '../viewmodel/student_onboarding_viewmodel.dart';
 
 class StudentBasicInfoView extends ConsumerStatefulWidget {
@@ -56,6 +57,7 @@ class _StudentBasicInfoViewState extends ConsumerState<StudentBasicInfoView> {
       currentStep: 1,
       totalSteps: 3,
       role: OnboardingRole.student,
+      onLogout: () => confirmOnboardingLogout(context, ref),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

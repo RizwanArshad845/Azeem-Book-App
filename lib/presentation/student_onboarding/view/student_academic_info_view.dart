@@ -15,6 +15,7 @@ import '../../../domain/catalog/entities/board_class.dart';
 import '../../../domain/catalog/entities/class_level.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/student_onboarding/entities/teacher_option.dart';
+import '../../auth/widgets/onboarding_logout_action.dart';
 import '../viewmodel/student_onboarding_viewmodel.dart';
 import '../widgets/catalog_option_row.dart';
 import '../widgets/subject_row.dart';
@@ -57,6 +58,7 @@ class StudentAcademicInfoView extends ConsumerWidget {
       currentStep: 2,
       totalSteps: 3,
       role: OnboardingRole.student,
+      onLogout: () => confirmOnboardingLogout(context, ref),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,

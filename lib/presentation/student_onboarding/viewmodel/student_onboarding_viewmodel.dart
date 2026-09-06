@@ -55,7 +55,17 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
     // before this provider settles.
     if (session.status == 'NOT_REGISTERED') return null;
 
-    final result = await sl<GetStudentByIdUseCase>()(session.userId!);
+    var result = await sl<GetStudentByIdUseCase>()(session.userId!);
+    if (!result.isSuccess) {
+      // Absorb a single transient blip (e.g. a fresh login racing a
+      // still-settling connection) with one retry before giving up. The
+      // router has no self-healing path for a terminal `AsyncError` on
+      // this provider (it just holds on splash — see `app_router.dart`),
+      // so a failure here would otherwise be a dead end for a genuinely
+      // registered student.
+      await Future.delayed(const Duration(milliseconds: 800));
+      result = await sl<GetStudentByIdUseCase>()(session.userId!);
+    }
     return result.when(
       success: (student) => student,
       failure: (failure) => throw failure,

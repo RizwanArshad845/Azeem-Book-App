@@ -119,7 +119,7 @@ class _PromoSection extends ConsumerWidget {
             const Color(0xFF1E6B52),
             context.colors.secondary,
           ],
-          onTap: () => context.push(AppRoutes.studentCart),
+          onTap: () => context.go(AppRoutes.studentCart),
         ),
       );
     }

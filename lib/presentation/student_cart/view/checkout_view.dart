@@ -14,11 +14,31 @@ import '../viewmodel/student_cart_viewmodel.dart';
 /// (simulated) checkout once on entry, then renders a single result state:
 /// a "redirecting..." loading state, a success confirmation, or a failure
 /// state — each with exactly one primary action (§10.1).
-class CheckoutView extends ConsumerWidget {
+class CheckoutView extends ConsumerStatefulWidget {
   const CheckoutView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CheckoutView> createState() => _CheckoutViewState();
+}
+
+class _CheckoutViewState extends ConsumerState<CheckoutView> {
+  @override
+  void initState() {
+    super.initState();
+    // `checkoutPaymentProvider` is a plain (non-autoDispose) provider so a
+    // real payment call is never unintentionally re-run by widget-tree
+    // churn — this explicit invalidate-on-mount is what guarantees each
+    // fresh visit to this screen starts its own checkout instead of
+    // replaying a previous session's cached `Payment`. Must run
+    // synchronously here, before `build()`'s first `ref.watch` below —
+    // deferring it (e.g. to a microtask) would let that first watch create
+    // and start the provider, and the later invalidate would then discard
+    // that in-flight call and fire checkout() a second time.
+    ref.invalidate(checkoutPaymentProvider);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final checkoutAsync = ref.watch(checkoutPaymentProvider);
 
     return Scaffold(

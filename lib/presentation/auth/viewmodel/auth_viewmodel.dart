@@ -4,6 +4,7 @@ import '../../../core/di/injection.dart';
 import '../../../core/utils/validators.dart';
 import '../../../domain/auth/entities/auth_session.dart';
 import '../../../domain/auth/entities/user_role.dart';
+import '../../../domain/auth/usecases/get_stored_session_usecase.dart';
 import '../../../domain/auth/usecases/logout_usecase.dart';
 import '../../../domain/auth/usecases/request_otp_usecase.dart';
 import '../../../domain/auth/usecases/verify_otp_usecase.dart';
@@ -17,7 +18,13 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
   String? _phoneNumber;
 
   @override
-  Future<AuthSession?> build() async => null;
+  Future<AuthSession?> build() async {
+    final result = await sl<GetStoredSessionUseCase>()();
+    return result.when(
+      success: (session) => session,
+      failure: (_) => null,
+    );
+  }
 
   /// Records which role this phone number is acting as. Called from
   /// `RoleSelectView` before navigating to phone entry.

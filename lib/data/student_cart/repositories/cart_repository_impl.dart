@@ -152,13 +152,27 @@ class CartRepositoryImpl implements CartRepository {
     final result = await remote.checkout(studentId);
     return result.when(
       success: (dto) {
-        // Backend clears the cart's items and grants the purchased subjects
-        // on success, but doesn't hand either back here — clear rather than
-        // update so the next read (`StudentCartViewModel.checkout`'s
-        // `ref.invalidateSelf()`) actually goes to the network instead of
-        // replaying the pre-checkout cache.
-        _cachedCartByStudent.remove(studentId);
-        _cachedPurchasedIdsByStudent.remove(studentId);
+        final currentItems =
+            _cachedCartByStudent[studentId]?.items ?? const [];
+        final newPurchasedIds =
+            currentItems.map((i) => i.subjectId).toSet();
+
+        // Immediately update cart cache to empty cart for 0ms re-reads.
+        _cachedCartByStudent[studentId] = Cart(
+          id: studentId,
+          studentId: studentId,
+          items: const [],
+          totalAmount: 0,
+        );
+
+        // Immediately augment the cached purchased IDs.
+        final currentPurchased = _cachedPurchasedIdsByStudent[studentId];
+        if (currentPurchased != null) {
+          currentPurchased.addAll(newPurchasedIds);
+        } else if (newPurchasedIds.isNotEmpty) {
+          _cachedPurchasedIdsByStudent[studentId] = newPurchasedIds;
+        }
+
         return Success(dto.toDomain());
       },
       failure: (f) => ResultFailure(f),
