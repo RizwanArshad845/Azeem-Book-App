@@ -15,7 +15,6 @@ import '../../../domain/student_cart/usecases/checkout_usecase.dart';
 import '../../../domain/student_cart/usecases/get_cart_usecase.dart';
 import '../../../domain/student_cart/usecases/get_purchased_subject_ids_usecase.dart';
 import '../../../domain/student_cart/usecases/remove_from_cart_usecase.dart';
-import '../../../domain/student_onboarding/entities/subject_enrollment.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
 import '../../student_home/viewmodel/student_home_viewmodel.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
@@ -101,17 +100,11 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
     return cart.copyWith(items: enriched);
   }
 
-  /// Adds a whole [subject] bundle (all of [tests]) to the cart, reading the
-  /// current student's `subjectEnrollments` off
-  /// `studentOnboardingViewModelProvider`'s resolved `Student` to apply the
-  /// teacher-discount rule.
+  /// Adds a whole [subject] bundle (all of [tests]) to the cart. Pricing and
+  /// any teacher-discount are fully server-computed.
   Future<void> addSubjectBundle(Subject subject, List<Test> tests) async {
     final session = ref.read(currentUserProvider);
     if (session == null) return;
-
-    final student = ref.read(studentOnboardingViewModelProvider).value;
-    final subjectEnrollments =
-        student?.subjectEnrollments ?? const <SubjectEnrollment>[];
 
     // Deliberately does NOT set `state = AsyncLoading()` here — the current
     // cart stays visible on screen for the whole round trip instead of
@@ -124,7 +117,6 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
         session.userId!,
         subject,
         tests,
-        subjectEnrollments: subjectEnrollments,
       );
       state = await result.when(
         success: (cart) async => AsyncData<Cart>(await _enrichCart(cart)),
@@ -346,15 +338,3 @@ final testsForSubjectProvider =
         failure: (failure) => throw failure,
       );
     });
-
-/// Reads the authoritative `Subject.bundlePrice` off `subjectByIdProvider`
-/// behind a provider so presentation widgets (`SubjectCard`,
-/// `ChapterListView`) don't reach into the catalog provider directly for
-/// this — keyed by `subjectId`, null while the subject is still loading.
-final subjectBundlePriceProvider = Provider.family<double?, String>((
-  ref,
-  subjectId,
-) {
-  final subject = ref.watch(subjectByIdProvider(subjectId)).value;
-  return subject?.bundlePrice.toDouble();
-});

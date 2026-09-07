@@ -87,11 +87,20 @@ class ChapterListView extends ConsumerWidget {
     final remainingFree = ref.watch(remainingFreeAttemptsProvider).value ??
         AppConfig.freeAttemptsPerStudent;
     final tests = ref.watch(testsForSubjectProvider(subjectId)).value;
-    final price = ref.watch(subjectBundlePriceProvider(subjectId));
     final hasAttempted = ref.watch(hasCompletedAnyTestAttemptProvider);
     final cartIsMutating = ref.watch(cartMutationInProgressProvider);
     final resolvedSubject = ref.watch(subjectByIdProvider(subjectId)).value;
     final resolvedSubjectName = subjectName ?? resolvedSubject?.name;
+
+    final bundlePrice = resolvedSubject?.bundlePrice;
+    final subjectDiscountedPrice = resolvedSubject?.discountedPrice;
+    final hasDiscount = bundlePrice != null &&
+        subjectDiscountedPrice != null &&
+        subjectDiscountedPrice < bundlePrice;
+    final effectivePrice = subjectDiscountedPrice ?? bundlePrice;
+    final discountPercent = hasDiscount
+        ? (((bundlePrice - subjectDiscountedPrice) / bundlePrice) * 100).round()
+        : null;
 
     final student = ref.watch(currentStudentProvider);
     final campusId = student?.campusId;
@@ -260,7 +269,11 @@ class ChapterListView extends ConsumerWidget {
                 SizedBox(height: context.dimens.md),
                 SubjectBundleHeader(
                   subjectName: resolvedSubjectName ?? title,
-                  price: hasAttempted ? price?.toStringAsFixed(0) : null,
+                  price: hasAttempted ? effectivePrice?.toString() : null,
+                  originalPrice: hasAttempted && hasDiscount
+                      ? bundlePrice.toString()
+                      : null,
+                  discountPercent: hasAttempted ? discountPercent : null,
                   loading: cartIsMutating,
                   onBuyNow: () =>
                       _buyNow(context, ref, fallbackName: resolvedSubjectName),

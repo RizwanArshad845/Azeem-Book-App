@@ -14,7 +14,11 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Subject {
 
- String get id; String get name; String get boardClassId; int get bundlePrice;
+ String get id; String get name; String get boardClassId; int get bundlePrice;/// Bundle price minus the 10% teacher-selection discount, when the
+/// requesting student has a teacher assigned for this subject via a
+/// `SubjectEnrollment` — null otherwise (including always-null for
+/// teacher-role callers, per backend contract).
+ int? get discountedPrice;
 /// Create a copy of Subject
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +29,16 @@ $SubjectCopyWith<Subject> get copyWith => _$SubjectCopyWithImpl<Subject>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Subject&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.boardClassId, boardClassId) || other.boardClassId == boardClassId)&&(identical(other.bundlePrice, bundlePrice) || other.bundlePrice == bundlePrice));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Subject&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.boardClassId, boardClassId) || other.boardClassId == boardClassId)&&(identical(other.bundlePrice, bundlePrice) || other.bundlePrice == bundlePrice)&&(identical(other.discountedPrice, discountedPrice) || other.discountedPrice == discountedPrice));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,boardClassId,bundlePrice);
+int get hashCode => Object.hash(runtimeType,id,name,boardClassId,bundlePrice,discountedPrice);
 
 @override
 String toString() {
-  return 'Subject(id: $id, name: $name, boardClassId: $boardClassId, bundlePrice: $bundlePrice)';
+  return 'Subject(id: $id, name: $name, boardClassId: $boardClassId, bundlePrice: $bundlePrice, discountedPrice: $discountedPrice)';
 }
 
 
@@ -45,7 +49,7 @@ abstract mixin class $SubjectCopyWith<$Res>  {
   factory $SubjectCopyWith(Subject value, $Res Function(Subject) _then) = _$SubjectCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String boardClassId, int bundlePrice
+ String id, String name, String boardClassId, int bundlePrice, int? discountedPrice
 });
 
 
@@ -62,13 +66,14 @@ class _$SubjectCopyWithImpl<$Res>
 
 /// Create a copy of Subject
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? boardClassId = null,Object? bundlePrice = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? boardClassId = null,Object? bundlePrice = null,Object? discountedPrice = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,boardClassId: null == boardClassId ? _self.boardClassId : boardClassId // ignore: cast_nullable_to_non_nullable
 as String,bundlePrice: null == bundlePrice ? _self.bundlePrice : bundlePrice // ignore: cast_nullable_to_non_nullable
-as int,
+as int,discountedPrice: freezed == discountedPrice ? _self.discountedPrice : discountedPrice // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 
@@ -153,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String boardClassId,  int bundlePrice)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String boardClassId,  int bundlePrice,  int? discountedPrice)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Subject() when $default != null:
-return $default(_that.id,_that.name,_that.boardClassId,_that.bundlePrice);case _:
+return $default(_that.id,_that.name,_that.boardClassId,_that.bundlePrice,_that.discountedPrice);case _:
   return orElse();
 
 }
@@ -174,10 +179,10 @@ return $default(_that.id,_that.name,_that.boardClassId,_that.bundlePrice);case _
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String boardClassId,  int bundlePrice)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String boardClassId,  int bundlePrice,  int? discountedPrice)  $default,) {final _that = this;
 switch (_that) {
 case _Subject():
-return $default(_that.id,_that.name,_that.boardClassId,_that.bundlePrice);case _:
+return $default(_that.id,_that.name,_that.boardClassId,_that.bundlePrice,_that.discountedPrice);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +199,10 @@ return $default(_that.id,_that.name,_that.boardClassId,_that.bundlePrice);case _
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String boardClassId,  int bundlePrice)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String boardClassId,  int bundlePrice,  int? discountedPrice)?  $default,) {final _that = this;
 switch (_that) {
 case _Subject() when $default != null:
-return $default(_that.id,_that.name,_that.boardClassId,_that.bundlePrice);case _:
+return $default(_that.id,_that.name,_that.boardClassId,_that.bundlePrice,_that.discountedPrice);case _:
   return null;
 
 }
@@ -209,13 +214,18 @@ return $default(_that.id,_that.name,_that.boardClassId,_that.bundlePrice);case _
 
 
 class _Subject implements Subject {
-  const _Subject({required this.id, required this.name, required this.boardClassId, required this.bundlePrice});
+  const _Subject({required this.id, required this.name, required this.boardClassId, required this.bundlePrice, this.discountedPrice});
   
 
 @override final  String id;
 @override final  String name;
 @override final  String boardClassId;
 @override final  int bundlePrice;
+/// Bundle price minus the 10% teacher-selection discount, when the
+/// requesting student has a teacher assigned for this subject via a
+/// `SubjectEnrollment` — null otherwise (including always-null for
+/// teacher-role callers, per backend contract).
+@override final  int? discountedPrice;
 
 /// Create a copy of Subject
 /// with the given fields replaced by the non-null parameter values.
@@ -227,16 +237,16 @@ _$SubjectCopyWith<_Subject> get copyWith => __$SubjectCopyWithImpl<_Subject>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Subject&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.boardClassId, boardClassId) || other.boardClassId == boardClassId)&&(identical(other.bundlePrice, bundlePrice) || other.bundlePrice == bundlePrice));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Subject&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.boardClassId, boardClassId) || other.boardClassId == boardClassId)&&(identical(other.bundlePrice, bundlePrice) || other.bundlePrice == bundlePrice)&&(identical(other.discountedPrice, discountedPrice) || other.discountedPrice == discountedPrice));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,boardClassId,bundlePrice);
+int get hashCode => Object.hash(runtimeType,id,name,boardClassId,bundlePrice,discountedPrice);
 
 @override
 String toString() {
-  return 'Subject(id: $id, name: $name, boardClassId: $boardClassId, bundlePrice: $bundlePrice)';
+  return 'Subject(id: $id, name: $name, boardClassId: $boardClassId, bundlePrice: $bundlePrice, discountedPrice: $discountedPrice)';
 }
 
 
@@ -247,7 +257,7 @@ abstract mixin class _$SubjectCopyWith<$Res> implements $SubjectCopyWith<$Res> {
   factory _$SubjectCopyWith(_Subject value, $Res Function(_Subject) _then) = __$SubjectCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String boardClassId, int bundlePrice
+ String id, String name, String boardClassId, int bundlePrice, int? discountedPrice
 });
 
 
@@ -264,13 +274,14 @@ class __$SubjectCopyWithImpl<$Res>
 
 /// Create a copy of Subject
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? boardClassId = null,Object? bundlePrice = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? boardClassId = null,Object? bundlePrice = null,Object? discountedPrice = freezed,}) {
   return _then(_Subject(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,boardClassId: null == boardClassId ? _self.boardClassId : boardClassId // ignore: cast_nullable_to_non_nullable
 as String,bundlePrice: null == bundlePrice ? _self.bundlePrice : bundlePrice // ignore: cast_nullable_to_non_nullable
-as int,
+as int,discountedPrice: freezed == discountedPrice ? _self.discountedPrice : discountedPrice // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 

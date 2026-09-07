@@ -5,20 +5,12 @@ import '../../../domain/common/result.dart';
 import '../../../domain/student_cart/entities/cart.dart';
 import '../../../domain/student_cart/entities/payment.dart';
 import '../../../domain/student_cart/repositories/cart_repository.dart';
-import '../../../domain/student_onboarding/entities/subject_enrollment.dart';
 import '../datasources/remote/cart_remote_datasource.dart';
 import '../models/add_cart_item_request_dto.dart';
 import '../models/cart_dto.dart';
 
 /// Maps [CartRemoteDataSource] DTOs to domain entities so nothing above
 /// this layer ever sees a DTO.
-///
-/// Also owns the pricing/discount computation for [addSubjectBundle] (§9.2
-/// pricing note + teacher-discount rule) since `Test` has no price field and
-/// the discount depends on the student's `SubjectEnrollment`s passed in by
-/// the caller — see `CartRepository.addSubjectBundle` doc comment for why
-/// those are parameters instead of being looked up here via another
-/// repository.
 ///
 /// In-memory caches (mirroring `CampusRepositoryImpl`/`CatalogRepositoryImpl`)
 /// so `StudentOnboardingViewModel`'s post-submit dashboard preload actually
@@ -59,10 +51,6 @@ class CartRepositoryImpl implements CartRepository {
     return cart.copyWith(items: items, totalAmount: computedTotal);
   }
 
-  /// 20% off (arbitrary but consistent demo rate — §9.2 doesn't specify
-  /// one) applied when the student picked a teacher for the subject.
-  static const _teacherDiscountMultiplier = 0.8;
-
   @override
   Future<Result<Cart>> getCart(
     String studentId, {
@@ -101,29 +89,12 @@ class CartRepositoryImpl implements CartRepository {
   Future<Result<Cart>> addSubjectBundle(
     String studentId,
     Subject subject,
-    List<Test> tests, {
-    required List<SubjectEnrollment> subjectEnrollments,
-  }) async {
+    List<Test> tests,
+  ) async {
     _knownSubjectNames[subject.id] = subject.name;
     _knownTestCounts[subject.id] = tests.length;
 
-    final basePrice = subject.bundlePrice.toDouble();
-
-    SubjectEnrollment? enrollment;
-    for (final candidate in subjectEnrollments) {
-      if (candidate.subjectId == subject.id) {
-        enrollment = candidate;
-        break;
-      }
-    }
-    final discountedPrice = (enrollment?.discountApplied ?? false)
-        ? basePrice * _teacherDiscountMultiplier
-        : null;
-
-    final request = AddCartItemRequestDto(
-      subjectId: subject.id,
-      discountedPrice: discountedPrice,
-    );
+    final request = AddCartItemRequestDto(subjectId: subject.id);
 
     final result = await remote.addSubjectBundle(studentId, request);
     return result.when(

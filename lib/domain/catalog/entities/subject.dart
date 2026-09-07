@@ -12,5 +12,10 @@ abstract class Subject with _$Subject {
     required String name,
     required String boardClassId,
     required int bundlePrice,
+    /// Bundle price minus the 10% teacher-selection discount, when the
+    /// requesting student has a teacher assigned for this subject via a
+    /// `SubjectEnrollment` — null otherwise (including always-null for
+    /// teacher-role callers, per backend contract).
+    int? discountedPrice,
   }) = _Subject;
 }
