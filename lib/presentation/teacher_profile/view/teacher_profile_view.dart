@@ -207,53 +207,6 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
     });
   }
 
-  String _resolveClassName(
-    String classId,
-    Map<String, BoardClass> boardClassesById,
-    Map<String, ClassLevel> classLevelsById,
-  ) {
-    final boardClass = boardClassesById[classId];
-    if (boardClass != null) {
-      return boardClass.name;
-    }
-    final classLevel = classLevelsById[classId];
-    if (classLevel != null) {
-      return classLevel.name;
-    }
-    return classId;
-  }
-
-  String _resolveSubjectName(
-    String subjectId,
-    Map<String, Subject> subjectsById,
-    BuildContext context,
-  ) {
-    final subject = subjectsById[subjectId];
-    if (subject != null) {
-      return context.l10n.localizedSubjectName(subject.name);
-    }
-    final localized = context.l10n.localizedSubjectName(subjectId);
-    if (localized != subjectId) {
-      return localized;
-    }
-    final lower = subjectId.toLowerCase();
-    if (lower.contains('phy')) return context.l10n.subjectPhysics;
-    if (lower.contains('chem')) return context.l10n.subjectChemistry;
-    if (lower.contains('bio')) return context.l10n.subjectBiology;
-    if (lower.contains('math')) return context.l10n.subjectMathematics;
-    if (lower.contains('cs') || lower.contains('comp')) {
-      return context.l10n.subjectComputerScience;
-    }
-    if (lower.contains('eng')) return context.l10n.subjectEnglish;
-    if (lower.contains('urd')) return context.l10n.subjectUrdu;
-    if (lower.contains('sci')) return context.l10n.subjectScience;
-    if (lower.contains('acc')) return context.l10n.subjectAccounting;
-    if (lower.contains('econ')) return context.l10n.subjectEconomics;
-    if (lower.contains('civ')) return context.l10n.subjectCivics;
-    if (lower.contains('edu')) return context.l10n.subjectEducation;
-    return subjectId;
-  }
-
   @override
   Widget build(BuildContext context) {
     final teacher = ref.watch(
@@ -265,19 +218,6 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
     final isEnglish = ref.watch(
       localeProvider.select((l) => l == null || l.languageCode == 'en'),
     );
-
-    final campusesById =
-        ref.watch(teacherStudentsCampusesByIdProvider).value ??
-        const <String, Campus>{};
-    final boardClassesById =
-        ref.watch(teacherProfileBoardClassesByIdProvider).value ??
-        const <String, BoardClass>{};
-    final classLevelsById =
-        ref.watch(teacherProfileClassLevelsByIdProvider).value ??
-        const <String, ClassLevel>{};
-    final subjectsById =
-        ref.watch(teacherProfileResolvedSubjectsProvider).value ??
-        const <String, Subject>{};
 
     if (teacher != null) {
       _syncControllers(teacher);
@@ -389,109 +329,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                     SizedBox(height: context.dimens.lg),
 
                     // 2. Teaching Scope & Credentials Card
-                    AppFrostedCard(
-                      padding: EdgeInsets.all(context.dimens.lg),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            context.l10n.teacherProfileCampusesTaught,
-                            style: context.textStyles.bodySmall?.copyWith(
-                              color: context.colors.textSecondary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: context.dimens.xs),
-                          Wrap(
-                            spacing: context.dimens.xs,
-                            runSpacing: context.dimens.xs / 2,
-                            children: [
-                              if (campusesById.containsKey(teacher.campusId))
-                                _BadgeChip(
-                                  label: campusesById[teacher.campusId]!.name,
-                                  icon: Icons.account_balance_outlined,
-                                )
-                              else
-                                _BadgeChip(
-                                  label:
-                                      context.l10n.teacherDefaultCampusFallback,
-                                  icon: Icons.account_balance_outlined,
-                                ),
-                            ],
-                          ),
-                          if (teacher.classIds != null &&
-                              teacher.classIds!.isNotEmpty) ...[
-                            SizedBox(height: context.dimens.md),
-                            Text(
-                              context.l10n.teacherProfileClassesTaught,
-                              style: context.textStyles.bodySmall?.copyWith(
-                                color: context.colors.textSecondary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: context.dimens.xs),
-                            Wrap(
-                              spacing: context.dimens.xs,
-                              runSpacing: context.dimens.xs / 2,
-                              children: [
-                                for (final className in teacher.classIds!
-                                    .map((id) => _resolveClassName(
-                                          id,
-                                          boardClassesById,
-                                          classLevelsById,
-                                        ))
-                                    .toSet())
-                                  _BadgeChip(
-                                    label: className,
-                                    icon: Icons.school_outlined,
-                                  ),
-                              ],
-                            ),
-                          ],
-                          SizedBox(height: context.dimens.md),
-                          Text(
-                            context.l10n.teacherProfileSubjectsTaught,
-                            style: context.textStyles.bodySmall?.copyWith(
-                              color: context.colors.textSecondary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: context.dimens.xs),
-                          Wrap(
-                            spacing: context.dimens.xs,
-                            runSpacing: context.dimens.xs / 2,
-                            children: [
-                              for (final subjectName in teacher.subjectIds
-                                  .map((id) => _resolveSubjectName(
-                                        id,
-                                        subjectsById,
-                                        context,
-                                      ))
-                                  .toSet())
-                                _BadgeChip(
-                                  label: subjectName,
-                                  icon: Icons.menu_book_outlined,
-                                ),
-                            ],
-                          ),
-                          SizedBox(height: context.dimens.md),
-                          Text(
-                            context.l10n.teacherProfileDeclaredReach,
-                            style: context.textStyles.bodySmall?.copyWith(
-                              color: context.colors.textSecondary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: context.dimens.xs),
-                          _BadgeChip(
-                            label: context.l10n.teacherStudentsEnrolledCount(
-                              teacher.declaredStudentCount ?? 50,
-                            ),
-                            icon: Icons.groups_outlined,
-                          ),
-                        ],
-                      ),
-                    ),
+                    _TeachingScopeCard(teacher: teacher),
                     SizedBox(height: context.dimens.lg),
 
                     // 3. Edit Personal Information Card
@@ -556,6 +394,188 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                   ],
                 ),
               ),
+      ),
+    );
+  }
+}
+
+/// Teaching scope & credentials card (campuses/classes/subjects/declared
+/// reach). Watches the 4 catalog lookups itself so a catalog refetch only
+/// rebuilds this card, not the whole profile page.
+class _TeachingScopeCard extends ConsumerWidget {
+  const _TeachingScopeCard({required this.teacher});
+
+  final Teacher teacher;
+
+  static String _resolveClassName(
+    String classId,
+    Map<String, BoardClass> boardClassesById,
+    Map<String, ClassLevel> classLevelsById,
+  ) {
+    final boardClass = boardClassesById[classId];
+    if (boardClass != null) {
+      return boardClass.name;
+    }
+    final classLevel = classLevelsById[classId];
+    if (classLevel != null) {
+      return classLevel.name;
+    }
+    return classId;
+  }
+
+  static String _resolveSubjectName(
+    String subjectId,
+    Map<String, Subject> subjectsById,
+    BuildContext context,
+  ) {
+    final subject = subjectsById[subjectId];
+    if (subject != null) {
+      return context.l10n.localizedSubjectName(subject.name);
+    }
+    final localized = context.l10n.localizedSubjectName(subjectId);
+    if (localized != subjectId) {
+      return localized;
+    }
+    final lower = subjectId.toLowerCase();
+    if (lower.contains('phy')) return context.l10n.subjectPhysics;
+    if (lower.contains('chem')) return context.l10n.subjectChemistry;
+    if (lower.contains('bio')) return context.l10n.subjectBiology;
+    if (lower.contains('math')) return context.l10n.subjectMathematics;
+    if (lower.contains('cs') || lower.contains('comp')) {
+      return context.l10n.subjectComputerScience;
+    }
+    if (lower.contains('eng')) return context.l10n.subjectEnglish;
+    if (lower.contains('urd')) return context.l10n.subjectUrdu;
+    if (lower.contains('sci')) return context.l10n.subjectScience;
+    if (lower.contains('acc')) return context.l10n.subjectAccounting;
+    if (lower.contains('econ')) return context.l10n.subjectEconomics;
+    if (lower.contains('civ')) return context.l10n.subjectCivics;
+    if (lower.contains('edu')) return context.l10n.subjectEducation;
+    return subjectId;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final campusesById = ref.watch(
+      teacherStudentsCampusesByIdProvider.select(
+        (async) => async.value ?? const <String, Campus>{},
+      ),
+    );
+    final boardClassesById = ref.watch(
+      teacherProfileBoardClassesByIdProvider.select(
+        (async) => async.value ?? const <String, BoardClass>{},
+      ),
+    );
+    final classLevelsById = ref.watch(
+      teacherProfileClassLevelsByIdProvider.select(
+        (async) => async.value ?? const <String, ClassLevel>{},
+      ),
+    );
+    final subjectsById = ref.watch(
+      teacherProfileResolvedSubjectsProvider.select(
+        (async) => async.value ?? const <String, Subject>{},
+      ),
+    );
+
+    return AppFrostedCard(
+      padding: EdgeInsets.all(context.dimens.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            context.l10n.teacherProfileCampusesTaught,
+            style: context.textStyles.bodySmall?.copyWith(
+              color: context.colors.textSecondary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: context.dimens.xs),
+          Wrap(
+            spacing: context.dimens.xs,
+            runSpacing: context.dimens.xs / 2,
+            children: [
+              if (campusesById.containsKey(teacher.campusId))
+                _BadgeChip(
+                  label: campusesById[teacher.campusId]!.name,
+                  icon: Icons.account_balance_outlined,
+                )
+              else
+                _BadgeChip(
+                  label: context.l10n.teacherDefaultCampusFallback,
+                  icon: Icons.account_balance_outlined,
+                ),
+            ],
+          ),
+          if (teacher.classIds != null && teacher.classIds!.isNotEmpty) ...[
+            SizedBox(height: context.dimens.md),
+            Text(
+              context.l10n.teacherProfileClassesTaught,
+              style: context.textStyles.bodySmall?.copyWith(
+                color: context.colors.textSecondary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: context.dimens.xs),
+            Wrap(
+              spacing: context.dimens.xs,
+              runSpacing: context.dimens.xs / 2,
+              children: [
+                for (final className in teacher.classIds!
+                    .map((id) => _resolveClassName(
+                          id,
+                          boardClassesById,
+                          classLevelsById,
+                        ))
+                    .toSet())
+                  _BadgeChip(
+                    label: className,
+                    icon: Icons.school_outlined,
+                  ),
+              ],
+            ),
+          ],
+          SizedBox(height: context.dimens.md),
+          Text(
+            context.l10n.teacherProfileSubjectsTaught,
+            style: context.textStyles.bodySmall?.copyWith(
+              color: context.colors.textSecondary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: context.dimens.xs),
+          Wrap(
+            spacing: context.dimens.xs,
+            runSpacing: context.dimens.xs / 2,
+            children: [
+              for (final subjectName in teacher.subjectIds
+                  .map((id) => _resolveSubjectName(
+                        id,
+                        subjectsById,
+                        context,
+                      ))
+                  .toSet())
+                _BadgeChip(
+                  label: subjectName,
+                  icon: Icons.menu_book_outlined,
+                ),
+            ],
+          ),
+          SizedBox(height: context.dimens.md),
+          Text(
+            context.l10n.teacherProfileDeclaredReach,
+            style: context.textStyles.bodySmall?.copyWith(
+              color: context.colors.textSecondary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: context.dimens.xs),
+          _BadgeChip(
+            label: context.l10n.teacherStudentsEnrolledCount(
+              teacher.declaredStudentCount ?? 50,
+            ),
+            icon: Icons.groups_outlined,
+          ),
+        ],
       ),
     );
   }

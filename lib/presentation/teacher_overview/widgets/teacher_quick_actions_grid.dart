@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_routes.dart';
@@ -9,13 +10,19 @@ import '../../../core/widgets/app_snackbar.dart';
 import '../viewmodel/teacher_overview_viewmodel.dart';
 
 /// Quick interactive shortcut action cards on the Teacher Overview dashboard.
-class TeacherQuickActionsGrid extends StatelessWidget {
-  const TeacherQuickActionsGrid({super.key, required this.stats});
-
-  final TeacherOverviewStats stats;
+///
+/// Watches only the roster-count fields of [TeacherOverviewStats] so this
+/// grid doesn't rebuild when unrelated fields (e.g. actualEarnings) change.
+class TeacherQuickActionsGrid extends ConsumerWidget {
+  const TeacherQuickActionsGrid({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final (totalStudents, activePaidStudents, freeStudents) = ref.watch(
+      teacherOverviewStatsProvider.select(
+        (s) => (s.totalStudents, s.activePaidStudents, s.freeStudents),
+      ),
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -35,10 +42,10 @@ class TeacherQuickActionsGrid extends StatelessWidget {
                 icon: Icons.groups_rounded,
                 iconColor: context.colors.primary,
                 bgColor: context.colors.primary.withValues(alpha: 0.1),
-                title: context.l10n.teacherStudentsRoster(stats.totalStudents),
+                title: context.l10n.teacherStudentsRoster(totalStudents),
                 subtitle: context.l10n.teacherStudentsRosterSub(
-                  stats.activePaidStudents,
-                  stats.freeStudents,
+                  activePaidStudents,
+                  freeStudents,
                 ),
                 onTap: () => context.go(AppRoutes.teacherStudents),
               ),

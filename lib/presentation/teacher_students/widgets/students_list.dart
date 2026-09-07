@@ -45,15 +45,20 @@ class _StudentsListState extends ConsumerState<StudentsList> {
   Widget build(BuildContext context) {
     final filteredStudents = ref.watch(teacherStudentsFilteredListProvider);
     final currentPage = ref.watch(teacherStudentsCurrentPageProvider);
-    final currentTeacher = ref.watch(currentTeacherProvider);
+    final currentTeacherId = ref.watch(
+      currentTeacherProvider.select((t) => t?.id),
+    );
 
-    final subjectsByIdAsync = ref.watch(teacherStudentsSubjectsByIdProvider);
-    final campusesByIdAsync = ref.watch(teacherStudentsCampusesByIdProvider);
-
-    final subjectsById =
-        subjectsByIdAsync.value ?? const <String, Subject>{};
-    final campusesById =
-        campusesByIdAsync.value ?? const <String, Campus>{};
+    final subjectsById = ref.watch(
+      teacherStudentsSubjectsByIdProvider.select(
+        (async) => async.value ?? const <String, Subject>{},
+      ),
+    );
+    final campusesById = ref.watch(
+      teacherStudentsCampusesByIdProvider.select(
+        (async) => async.value ?? const <String, Campus>{},
+      ),
+    );
 
     if (filteredStudents.isEmpty) {
       return ListView(
@@ -125,10 +130,10 @@ class _StudentsListState extends ConsumerState<StudentsList> {
             child: StudentCard(
               student: student,
               subjectNames:
-                  currentTeacher == null
+                  currentTeacherId == null
                       ? const <String>[]
                       : (student.subjectEnrollments ?? [])
-                          .where((e) => e.teacherId == currentTeacher.id)
+                          .where((e) => e.teacherId == currentTeacherId)
                           .map(
                             (e) =>
                                 subjectsById[e.subjectId]?.name ?? e.subjectId,

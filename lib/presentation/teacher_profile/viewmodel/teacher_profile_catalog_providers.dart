@@ -37,10 +37,13 @@ final teacherProfileResolvedSubjectsProvider =
   final getSubjects = ref.read(getSubjectsUseCaseProvider);
   final subjectsById = <String, Subject>{};
 
-  // 1. Fetch subjects for the teacher's declared classes
+  // 1. Fetch subjects for the teacher's declared classes concurrently
+  // (independent requests — no reason to serialize them).
   final classIds = teacher.classIds ?? const [];
-  for (final classId in classIds) {
-    final result = await getSubjects(classId);
+  final classResults = await Future.wait(
+    classIds.map((classId) => getSubjects(classId)),
+  );
+  for (final result in classResults) {
     result.when(
       success: (subjects) {
         for (final subject in subjects) {
@@ -51,7 +54,10 @@ final teacherProfileResolvedSubjectsProvider =
     );
   }
 
-  // 2. If any declared subjectId is not yet in subjectsById, search all board classes
+  // 2. If any declared subjectId is not yet in subjectsById, search all board
+  // classes. Kept sequential (unlike step 1) since it early-exits as soon as
+  // every missing id is resolved, which bounds the rare-fallback request
+  // count better than fetching every remaining board class concurrently.
   final missingIds = teacher.subjectIds
       .where((id) => !subjectsById.containsKey(id))
       .toList();

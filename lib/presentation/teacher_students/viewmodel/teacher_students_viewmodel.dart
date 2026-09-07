@@ -48,6 +48,15 @@ final teacherStudentsSubjectsByIdProvider =
       return subjectsById;
     });
 
+/// Student names mapped by ID, memoized so consumers (e.g. the Earnings
+/// ledger) can watch it directly instead of rebuilding this map inline in a
+/// `.select` callback (which would allocate a new Map every evaluation and
+/// defeat `.select`'s equality check).
+final teacherStudentNamesByIdProvider = Provider<Map<String, String>>((ref) {
+  final students = ref.watch(teacherStudentsProvider).value ?? const [];
+  return {for (final s in students) s.id: s.name};
+});
+
 /// Catalog campuses mapped by ID for student campus name resolution.
 final teacherStudentsCampusesByIdProvider =
     FutureProvider<Map<String, Campus>>((ref) async {

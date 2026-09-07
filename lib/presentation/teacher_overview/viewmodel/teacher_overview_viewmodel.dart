@@ -34,6 +34,32 @@ class TeacherOverviewStats {
   final int remainingStudents;
   final double projectedPotential;
   final double goalProgressPercent;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is TeacherOverviewStats &&
+        other.totalStudents == totalStudents &&
+        other.activePaidStudents == activePaidStudents &&
+        other.freeStudents == freeStudents &&
+        other.actualEarnings == actualEarnings &&
+        other.declaredStudents == declaredStudents &&
+        other.remainingStudents == remainingStudents &&
+        other.projectedPotential == projectedPotential &&
+        other.goalProgressPercent == goalProgressPercent;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        totalStudents,
+        activePaidStudents,
+        freeStudents,
+        actualEarnings,
+        declaredStudents,
+        remainingStudents,
+        projectedPotential,
+        goalProgressPercent,
+      );
 }
 
 /// Computes live metrics across enrolled students, earnings, and declared potential.

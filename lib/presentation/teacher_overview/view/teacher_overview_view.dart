@@ -40,8 +40,6 @@ class TeacherOverviewView extends ConsumerWidget {
       );
     }
 
-    final stats = ref.watch(teacherOverviewStatsProvider);
-
     return Scaffold(
       appBar: AppBar(
         title: AppBarTitle(context.l10n.teacherHomeTitle),
@@ -53,9 +51,9 @@ class TeacherOverviewView extends ConsumerWidget {
           children: [
             WelcomeHeader(teacher: teacher),
             SizedBox(height: context.dimens.xl),
-            ProjectedEarningsHeroCard(stats: stats),
+            const ProjectedEarningsHeroCard(),
             SizedBox(height: context.dimens.xl),
-            TeacherQuickActionsGrid(stats: stats),
+            const TeacherQuickActionsGrid(),
             SizedBox(height: context.dimens.xl),
             const TeacherRecentActivitySection(),
           ],

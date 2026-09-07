@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/extensions/context_extensions.dart';
@@ -6,10 +7,11 @@ import '../viewmodel/teacher_overview_viewmodel.dart';
 
 /// Hero visual earnings card on the Teacher Overview tab.
 /// Highlights actual commission earned vs projected earning potential based on declared students.
-class ProjectedEarningsHeroCard extends StatelessWidget {
-  const ProjectedEarningsHeroCard({super.key, required this.stats});
-
-  final TeacherOverviewStats stats;
+///
+/// Watches only the earnings-related fields of [TeacherOverviewStats] so this
+/// card doesn't rebuild when unrelated fields (e.g. activePaidStudents) change.
+class ProjectedEarningsHeroCard extends ConsumerWidget {
+  const ProjectedEarningsHeroCard({super.key});
 
   static final NumberFormat _currencyFormatter = NumberFormat.currency(
     symbol: 'Rs. ',
@@ -17,7 +19,26 @@ class ProjectedEarningsHeroCard extends StatelessWidget {
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final (
+      actualEarnings,
+      projectedPotential,
+      declaredStudents,
+      totalStudents,
+      remainingStudents,
+      goalProgressPercent,
+    ) = ref.watch(
+      teacherOverviewStatsProvider.select(
+        (s) => (
+          s.actualEarnings,
+          s.projectedPotential,
+          s.declaredStudents,
+          s.totalStudents,
+          s.remainingStudents,
+          s.goalProgressPercent,
+        ),
+      ),
+    );
     final currencyFormatter = _currencyFormatter;
 
     return Container(
@@ -122,7 +143,7 @@ class ProjectedEarningsHeroCard extends StatelessWidget {
           ),
           SizedBox(height: context.dimens.xs / 2),
           Text(
-            currencyFormatter.format(stats.actualEarnings),
+            currencyFormatter.format(actualEarnings),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 32,
@@ -158,7 +179,7 @@ class ProjectedEarningsHeroCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         context.l10n.teacherUnlockUpTo(
-                          currencyFormatter.format(stats.projectedPotential),
+                          currencyFormatter.format(projectedPotential),
                         ),
                         style: const TextStyle(
                           color: Colors.white,
@@ -172,9 +193,9 @@ class ProjectedEarningsHeroCard extends StatelessWidget {
                 SizedBox(height: context.dimens.xs),
                 Text(
                   context.l10n.teacherDeclaredStudentsDesc(
-                    stats.declaredStudents,
-                    stats.totalStudents,
-                    stats.remainingStudents,
+                    declaredStudents,
+                    totalStudents,
+                    remainingStudents,
                   ),
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.85),
@@ -187,7 +208,7 @@ class ProjectedEarningsHeroCard extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(context.dimens.radiusSm),
                   child: LinearProgressIndicator(
-                    value: stats.goalProgressPercent,
+                    value: goalProgressPercent,
                     minHeight: 6,
                     backgroundColor: Colors.white.withValues(alpha: 0.2),
                     valueColor: const AlwaysStoppedAnimation<Color>(
@@ -202,8 +223,8 @@ class ProjectedEarningsHeroCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         context.l10n.teacherGoalOnboarded(
-                          stats.totalStudents,
-                          stats.declaredStudents,
+                          totalStudents,
+                          declaredStudents,
                         ),
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.75),
@@ -213,7 +234,7 @@ class ProjectedEarningsHeroCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${(stats.goalProgressPercent * 100).toInt()}%',
+                      '${(goalProgressPercent * 100).toInt()}%',
                       style: const TextStyle(
                         color: Colors.amberAccent,
                         fontSize: 11,

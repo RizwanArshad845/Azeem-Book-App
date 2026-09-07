@@ -52,14 +52,7 @@ class TeacherEarningsView extends ConsumerWidget {
     final remainingStudents = ref.watch(
       teacherOverviewStatsProvider.select((s) => s.remainingStudents),
     );
-    final studentsById = ref.watch(
-      teacherStudentsProvider.select(
-        (studentsAsync) => {
-          for (final s in studentsAsync.value ?? const [])
-            s.id: s.name,
-        },
-      ),
-    );
+    final studentsById = ref.watch(teacherStudentNamesByIdProvider);
     final currentPage = ref.watch(_teacherEarningsCurrentPageProvider);
 
     return Scaffold(
