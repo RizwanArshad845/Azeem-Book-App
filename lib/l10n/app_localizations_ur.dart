@@ -115,7 +115,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String otpSubtitle(String phone) {
-    return '$phone پر بھیجا گیا 4 ہندسوں کا کوڈ درج کریں';
+    return '$phone پر بھیجا گیا 6 ہندسوں کا کوڈ درج کریں';
   }
 
   @override
@@ -671,6 +671,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get teacherPendingCheckStatus => 'سٹیٹس چیک کریں';
 
   @override
+  String get teacherPendingStillPendingMessage =>
+      'آپ کی رجسٹریشن منظوری کی منتظر ہے۔';
+
+  @override
+  String get backToLogin => 'لاگ ان پر واپس جائیں';
+
+  @override
   String get chapterListTitle => 'ابواب';
 
   @override
@@ -1102,13 +1109,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get subjectBiology => 'بائیولوجی';
 
   @override
-  String get subjectMathematics => 'ریاضی';
+  String get subjectMathematics => 'میتھ';
 
   @override
-  String get subjectMath => 'ریاضی';
+  String get subjectMath => 'میتھ';
 
   @override
-  String get subjectEnglish => 'انگریزی';
+  String get subjectEnglish => 'انگلش';
 
   @override
   String get subjectUrdu => 'اردو';
@@ -1120,7 +1127,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get subjectAccounting => 'اصولِ محاسبہ';
 
   @override
-  String get subjectBusinessMath => 'کاروباری ریاضی';
+  String get subjectBusinessMath => 'بزنس میتھ';
 
   @override
   String get subjectEconomics => 'معاشیات';
@@ -1326,11 +1333,11 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String teacherVerifyPhoneOtpSentMessage(String phone) {
-    return '$phone پر 4 ہندسوں کا تصدیقی کوڈ بھیج دیا گیا ہے۔';
+    return '$phone پر 6 ہندسوں کا تصدیقی کوڈ بھیج دیا گیا ہے۔';
   }
 
   @override
-  String get teacherOtpCodeLabel => '4 ہندسوں کا کوڈ';
+  String get teacherOtpCodeLabel => '6 ہندسوں کا کوڈ';
 
   @override
   String get teacherOtpTestHint => 'بھیجا گیا کوڈ درج کریں';

@@ -2,26 +2,77 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
+import '../../auth/viewmodel/auth_viewmodel.dart';
 import '../viewmodel/teacher_onboarding_viewmodel.dart';
 import '../widgets/teacher_info_row.dart';
 
 /// Shown once a self-signup Teacher is created and awaiting Admin approval
-/// (`approvalStatus: pendingAdminApproval`, §9.1). One primary action per
-/// §10.1: re-check status, since nothing in dummy mode auto-approves it.
-class TeacherPendingApprovalView extends ConsumerWidget {
+/// (`approvalStatus: pendingAdminApproval`, §9.1).
+class TeacherPendingApprovalView extends ConsumerStatefulWidget {
   const TeacherPendingApprovalView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TeacherPendingApprovalView> createState() =>
+      _TeacherPendingApprovalViewState();
+}
+
+class _TeacherPendingApprovalViewState
+    extends ConsumerState<TeacherPendingApprovalView> {
+  bool _isChecking = false;
+  bool _isLoggingOut = false;
+
+  Future<void> _handleCheckStatus() async {
+    setState(() => _isChecking = true);
+    try {
+      ref.invalidate(teacherOnboardingViewModelProvider);
+      final updatedTeacher =
+          await ref.read(teacherOnboardingViewModelProvider.future);
+      if (!mounted) return;
+      if (updatedTeacher == null ||
+          teacherOnboardingStageOf(updatedTeacher) ==
+              TeacherOnboardingStage.pendingApproval) {
+        AppSnackbar.show(
+          context,
+          context.l10n.teacherPendingStillPendingMessage,
+        );
+      }
+    } catch (_) {
+      if (!mounted) return;
+      AppSnackbar.show(
+        context,
+        context.l10n.teacherPendingStillPendingMessage,
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isChecking = false);
+      }
+    }
+  }
+
+  Future<void> _handleLogout() async {
+    setState(() => _isLoggingOut = true);
+    try {
+      await ref.read(authViewModelProvider.notifier).logout();
+    } finally {
+      if (mounted) {
+        setState(() => _isLoggingOut = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final onboarding = ref.watch(teacherOnboardingViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.teacherPendingTitle)),
+      appBar: AppBar(title: AppBarTitle(context.l10n.teacherPendingTitle)),
       body: SafeArea(
         child: AsyncValueWidget<Teacher?>(
           value: onboarding,
@@ -96,15 +147,19 @@ class TeacherPendingApprovalView extends ConsumerWidget {
                       SizedBox(height: context.dimens.xl),
                       AppButton(
                         label: context.l10n.teacherPendingCheckStatus,
-                        loading: onboarding.isLoading,
-                        onPressed: onboarding.isLoading
+                        loading: _isChecking || onboarding.isLoading,
+                        onPressed: (_isChecking || onboarding.isLoading || _isLoggingOut)
                             ? null
-                            : () => ref
-                                  .read(
-                                    teacherOnboardingViewModelProvider
-                                        .notifier,
-                                  )
-                                  .refresh(),
+                            : _handleCheckStatus,
+                      ),
+                      SizedBox(height: context.dimens.sm),
+                      AppButton(
+                        label: context.l10n.backToLogin,
+                        variant: AppButtonVariant.outlined,
+                        loading: _isLoggingOut,
+                        onPressed: (_isChecking || onboarding.isLoading || _isLoggingOut)
+                            ? null
+                            : _handleLogout,
                       ),
                     ],
                   ),

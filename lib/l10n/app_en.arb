@@ -38,7 +38,7 @@
   "phoneContinueButton": "Send code",
 
   "otpTitle": "Verify your number",
-  "otpSubtitle": "Enter the 4-digit code sent to {phone}",
+  "otpSubtitle": "Enter the 6-digit code sent to {phone}",
   "@otpSubtitle": {
     "placeholders": { "phone": { "type": "String" } }
   },
@@ -259,6 +259,8 @@
     "placeholders": { "name": { "type": "String" } }
   },
   "teacherPendingCheckStatus": "Check status",
+  "teacherPendingStillPendingMessage": "Your registration is pending approval.",
+  "backToLogin": "Back to login",
   "chapterListTitle": "Chapters",
   "chapterListEmpty": "No chapters are available for this subject yet.",
   "chapterOrderLabel": "Chapter {order}",
@@ -561,13 +563,13 @@
   "homeNavNotifications": "Notifications",
 
   "teacherVerifyNewPhoneTitle": "Verify New Phone Number",
-  "teacherVerifyPhoneOtpSentMessage": "A 4-digit verification code has been sent to {phone}.",
+  "teacherVerifyPhoneOtpSentMessage": "A 6-digit verification code has been sent to {phone}.",
   "@teacherVerifyPhoneOtpSentMessage": {
     "placeholders": {
       "phone": { "type": "String" }
     }
   },
-  "teacherOtpCodeLabel": "4-Digit OTP Code",
+  "teacherOtpCodeLabel": "6-Digit OTP Code",
   "teacherOtpTestHint": "Enter the code we sent you",
   "teacherOtpEnterCodeError": "Please enter the verification code.",
   "teacherOtpInvalidCodeError": "Invalid verification code. Please try again.",
