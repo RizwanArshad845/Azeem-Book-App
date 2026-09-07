@@ -70,3 +70,18 @@ abstract class Notification with _$Notification {
     required DateTime createdAt,
   }) = _Notification;
 }
+
+extension NotificationDisplayExtension on Notification {
+  /// Strips trailing redundant zeroes from raw decimals (e.g. 64.0000 -> 64).
+  String get displayMessage {
+    return message.replaceAllMapped(
+      RegExp(r'(\d+)\.(\d{2,})'),
+      (match) {
+        final whole = match[1]!;
+        final decimals = match[2]!;
+        final trimmed = decimals.replaceAll(RegExp(r'0+$'), '');
+        return trimmed.isEmpty ? whole : '$whole.$trimmed';
+      },
+    );
+  }
+}

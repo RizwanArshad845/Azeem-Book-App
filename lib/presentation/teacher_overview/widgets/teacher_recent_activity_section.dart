@@ -116,7 +116,7 @@ class _ActivityRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  notification.message,
+                  notification.displayMessage,
                   style: context.textStyles.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                     color: context.colors.textPrimary,
