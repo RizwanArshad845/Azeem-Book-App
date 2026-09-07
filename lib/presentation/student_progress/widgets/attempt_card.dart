@@ -34,9 +34,16 @@ class AttemptCard extends StatelessWidget {
           Text(
             '${(attempt.scorePercent ?? 0).toStringAsFixed(0)}% score',
             style: secondaryStyle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           SizedBox(height: context.dimens.xs / 2),
-          Text(_submittedAtFormat.format(attempt.attemptedAt), style: secondaryStyle),
+          Text(
+            _submittedAtFormat.format(attempt.attemptedAt),
+            style: secondaryStyle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
       trailing: _ScoreBandBadge(scorePercent: attempt.scorePercent ?? 0),

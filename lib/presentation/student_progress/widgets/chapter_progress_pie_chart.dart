@@ -123,9 +123,13 @@ class _Legend extends StatelessWidget {
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         SizedBox(width: context.dimens.sm),
-        Text(
-          '$label ($count)',
-          style: context.textStyles.bodyMedium,
+        Expanded(
+          child: Text(
+            '$label ($count)',
+            style: context.textStyles.bodyMedium,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );

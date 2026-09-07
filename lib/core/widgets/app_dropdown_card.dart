@@ -54,8 +54,8 @@ class AppDropdownCard<T> extends StatelessWidget {
       dropdownBuilder: (context, selected) {
         return Container(
           padding: EdgeInsets.symmetric(
-            horizontal: context.dimens.md,
-            vertical: context.dimens.sm,
+            horizontal: context.dimens.sm,
+            vertical: context.dimens.sm - 2,
           ),
           decoration: BoxDecoration(
             color: context.colors.surface,
@@ -66,7 +66,7 @@ class AppDropdownCard<T> extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: context.colors.primary.withValues(alpha: 0.10),
                   borderRadius: BorderRadius.circular(context.dimens.radiusMd),
@@ -74,10 +74,10 @@ class AppDropdownCard<T> extends StatelessWidget {
                 child: Icon(
                   icon,
                   color: context.colors.primary,
-                  size: context.dimens.iconMd,
+                  size: context.dimens.iconSm + 2,
                 ),
               ),
-              SizedBox(width: context.dimens.sm + 4),
+              SizedBox(width: context.dimens.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,6 +104,7 @@ class AppDropdownCard<T> extends StatelessWidget {
                               : FontWeight.normal,
                         ),
                         maxLines: 1,
+                        softWrap: false,
                         overflow: TextOverflow.ellipsis,
                       ),
                   ],
@@ -129,7 +130,15 @@ class _Label extends StatelessWidget {
       color: context.colors.textSecondary,
       fontWeight: FontWeight.w600,
     );
-    if (!isRequired) return Text(label, style: style);
+    if (!isRequired) {
+      return Text(
+        label,
+        style: style,
+        maxLines: 1,
+        softWrap: false,
+        overflow: TextOverflow.ellipsis,
+      );
+    }
     return Text.rich(
       TextSpan(
         text: label,
@@ -144,6 +153,9 @@ class _Label extends StatelessWidget {
           ),
         ],
       ),
+      maxLines: 1,
+      softWrap: false,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }
