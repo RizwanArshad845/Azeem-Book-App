@@ -7,6 +7,7 @@ import '../../../core/widgets/app_snackbar.dart';
 import '../../../domain/student_onboarding/entities/subject_enrollment.dart';
 import '../../../domain/student_onboarding/usecases/update_student_subject_enrollments_usecase.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
+import 'student_home_viewmodel.dart';
 
 /// State for the assign-teacher bottom sheet.
 class AssignTeacherState {
@@ -37,9 +38,13 @@ class AssignTeacherState {
 /// correct pre-selection. [autoDispose] ensures the state is cleaned up when
 /// the sheet is dismissed.
 class AssignTeacherViewModel extends Notifier<AssignTeacherState> {
+  AssignTeacherViewModel(this._initialTeacherId);
+
+  final String? _initialTeacherId;
+
   @override
-  AssignTeacherState build(String? arg) =>
-      AssignTeacherState(selectedTeacherId: arg);
+  AssignTeacherState build() =>
+      AssignTeacherState(selectedTeacherId: _initialTeacherId);
 
   /// Selects (or clears) [teacherId].
   void select(String? teacherId) {
