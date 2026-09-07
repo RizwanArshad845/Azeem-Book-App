@@ -81,12 +81,10 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
         ApiEndpoints.paymentStatus,
         queryParameters: {'studentId': studentId},
       );
-      final ids =
-          (response.data?['purchasedSubjectIds'] as List<dynamic>? ?? [])
-              .map((e) => e as String)
-              .toSet();
+      final data = response.data;
+      final rawList = data?['purchasedSubjectIds'] as List<dynamic>? ?? [];
+      final ids = rawList.map((e) => e.toString()).toSet();
       return ids;
     });
   }
-
 }

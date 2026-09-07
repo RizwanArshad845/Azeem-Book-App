@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/fade_slide_in.dart';
@@ -56,9 +57,10 @@ class TestListView extends ConsumerWidget {
     final testsAsync = ref.watch(testsForChapterProvider(chapterId));
     final purchasedIds = ref.watch(purchasedSubjectIdsProvider).value;
     final isOwned = purchasedIds?.contains(subjectId) ?? false;
+    final attemptsExhausted = ref.watch(attemptsExhaustedProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.testListTitle)),
+      appBar: AppBar(title: AppBarTitle(context.l10n.testListTitle)),
       body: SafeArea(
         child: AsyncValueWidget<List<Test>>(
           value: testsAsync,
@@ -77,6 +79,8 @@ class TestListView extends ConsumerWidget {
                       delay: Duration(milliseconds: 40 * i),
                       child: _TestCard(
                         test: tests[i],
+                        isOwned: isOwned,
+                        attemptsExhausted: attemptsExhausted,
                         onTap: () => _openTest(context, ref, tests[i], isOwned),
                       ),
                     ),
@@ -91,18 +95,33 @@ class TestListView extends ConsumerWidget {
 }
 
 class _TestCard extends StatelessWidget {
-  const _TestCard({required this.test, required this.onTap});
+  const _TestCard({
+    required this.test,
+    required this.isOwned,
+    required this.attemptsExhausted,
+    required this.onTap,
+  });
 
   final Test test;
+  final bool isOwned;
+  final bool attemptsExhausted;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final lockItem = test.isFreeSample
-        ? MetaItem(context.l10n.testBadgeFree,
-            icon: Icons.lock_open, color: context.colors.success)
-        : MetaItem(context.l10n.testUnlock,
-            icon: Icons.lock_outline, color: context.colors.secondary);
+    final lockItem = !isOwned
+        ? (test.isFreeSample && !attemptsExhausted
+            ? MetaItem(
+                context.l10n.testBadgeFree,
+                icon: Icons.lock_open,
+                color: context.colors.success,
+              )
+            : MetaItem(
+                context.l10n.testUnlock,
+                icon: Icons.lock_outline,
+                color: context.colors.secondary,
+              ))
+        : null;
 
     return IllustratedListCard(
       title: test.title,
@@ -121,7 +140,7 @@ class _TestCard extends StatelessWidget {
       meta: MetaRow([
         MetaItem('${test.questionCount} ${context.l10n.metaQuestions}'),
         MetaItem('${test.durationMinutes} ${context.l10n.metaMinutes}'),
-        lockItem,
+        if (lockItem != null) lockItem,
       ]),
       onTap: onTap,
     );

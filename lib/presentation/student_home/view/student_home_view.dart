@@ -8,6 +8,7 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/utils/subject_icons.dart';
 import '../../../core/utils/subject_illustration.dart';
 import '../../../core/widgets/app_bar_actions.dart';
+import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/delayed_loader.dart';
 import '../../../core/widgets/empty_state_view.dart';
@@ -45,7 +46,7 @@ class StudentHomeView extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.homeNavHome),
+        title: AppBarTitle(context.l10n.homeNavHome),
         actions: const [AppBarActions(role: UserRole.student)],
       ),
       body: SafeArea(

@@ -116,7 +116,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String otpSubtitle(String phone) {
-    return 'Enter the 4-digit code sent to $phone';
+    return 'Enter the 6-digit code sent to $phone';
   }
 
   @override
@@ -667,6 +667,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get teacherPendingCheckStatus => 'Check status';
+
+  @override
+  String get teacherPendingStillPendingMessage =>
+      'Your registration is pending approval.';
+
+  @override
+  String get backToLogin => 'Back to login';
 
   @override
   String get chapterListTitle => 'Chapters';
@@ -1325,11 +1332,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String teacherVerifyPhoneOtpSentMessage(String phone) {
-    return 'A 4-digit verification code has been sent to $phone.';
+    return 'A 6-digit verification code has been sent to $phone.';
   }
 
   @override
-  String get teacherOtpCodeLabel => '4-Digit OTP Code';
+  String get teacherOtpCodeLabel => '6-Digit OTP Code';
 
   @override
   String get teacherOtpTestHint => 'Enter the code we sent you';

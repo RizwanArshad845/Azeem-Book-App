@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_dropdown_card.dart';
 import '../../../core/widgets/async_value_widget.dart';
@@ -57,7 +58,7 @@ class StudentProgressView extends ConsumerWidget {
         ref.watch(selectedProgressAttemptFilterProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.progressTitle)),
+      appBar: AppBar(title: AppBarTitle(context.l10n.progressTitle)),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
@@ -269,15 +270,21 @@ class _ChapterProgressCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                chapter.attemptsCount == 1
-                    ? context.l10n.progressAttemptSingular
-                    : context.l10n.progressAttemptPlural(chapter.attemptsCount),
-                style: context.textStyles.bodySmall?.copyWith(
-                  color: context.colors.textSecondary,
+              Expanded(
+                child: Text(
+                  chapter.attemptsCount == 1
+                      ? context.l10n.progressAttemptSingular
+                      : context.l10n.progressAttemptPlural(chapter.attemptsCount),
+                  style: context.textStyles.bodySmall?.copyWith(
+                    color: context.colors.textSecondary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     context.l10n.progressViewResult,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_error_view.dart';
 import '../../../core/widgets/async_value_widget.dart';
@@ -42,7 +43,7 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
     final checkoutAsync = ref.watch(checkoutPaymentProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.checkoutTitle)),
+      appBar: AppBar(title: AppBarTitle(context.l10n.checkoutTitle)),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(context.dimens.lg),

@@ -21,7 +21,7 @@ class RoleSelectView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return OnboardingScaffold(
-      appBarTitle: context.l10n.roleSelectionTitle,
+      appBarTitle: context.l10n.appTitle,
       role: OnboardingRole.student,
       child: Column(
         mainAxisSize: MainAxisSize.min,

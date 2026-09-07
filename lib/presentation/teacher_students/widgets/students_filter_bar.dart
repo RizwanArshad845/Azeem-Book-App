@@ -10,8 +10,6 @@ class StudentsFilterBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final campusesAsync = ref.watch(teacherStudentsCampusesByIdProvider);
-    final selectedCampusId = ref.watch(teacherStudentsCampusFilterProvider);
     final currentSort = ref.watch(teacherStudentsSortProvider);
 
     return Column(
@@ -121,54 +119,6 @@ class StudentsFilterBar extends ConsumerWidget {
                   ],
             ),
           ],
-        ),
-        SizedBox(height: context.dimens.sm),
-
-        // 2. Campus Filter Chips
-        campusesAsync.when(
-          data: (campusesMap) {
-            final campuses = campusesMap.values.toList();
-            if (campuses.isEmpty) return const SizedBox.shrink();
-
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              child: Row(
-                children: [
-                  ChoiceChip(
-                    label: Text(context.l10n.teacherAllCampuses),
-                    selected: selectedCampusId == null,
-                    onSelected: (_) {
-                      ref
-                          .read(teacherStudentsCampusFilterProvider.notifier)
-                          .setCampus(null);
-                      ref
-                          .read(teacherStudentsCurrentPageProvider.notifier)
-                          .setPage(1);
-                    },
-                  ),
-                  SizedBox(width: context.dimens.xs),
-                  for (final campus in campuses) ...[
-                    ChoiceChip(
-                      label: Text(campus.name),
-                      selected: selectedCampusId == campus.id,
-                      onSelected: (selected) {
-                        ref
-                            .read(teacherStudentsCampusFilterProvider.notifier)
-                            .setCampus(selected ? campus.id : null);
-                        ref
-                            .read(teacherStudentsCurrentPageProvider.notifier)
-                            .setPage(1);
-                      },
-                    ),
-                    SizedBox(width: context.dimens.xs),
-                  ],
-                ],
-              ),
-            );
-          },
-          loading: () => const SizedBox.shrink(),
-          error: (_, _) => const SizedBox.shrink(),
         ),
       ],
     );

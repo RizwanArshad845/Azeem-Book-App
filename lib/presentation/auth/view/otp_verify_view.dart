@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/config/app_config.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_error_view.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_button.dart';
@@ -12,16 +13,44 @@ import '../viewmodel/auth_viewmodel.dart';
 import '../viewmodel/otp_timer_viewmodel.dart';
 import '../widgets/otp_digit_box.dart';
 
-
-class OtpVerifyView extends ConsumerWidget {
+/// Shared 6-digit OTP verification UI. By default (`onVerifyCode`/`onResend`
+/// left null) it drives itself entirely off `authViewModelProvider`, exactly
+/// as the login flow always has. Passing `onVerifyCode`/`onResend` swaps the
+/// verify/resend actions *and* the loading/success/error state they drive —
+/// e.g. Teacher Profile phone-number change plugs in
+/// `TeacherProfileViewModel.verifyPhoneChangeOtp`/`requestPhoneChangeOtp` so
+/// the exact same `OtpDigitBox`/timer/error UI reacts to the real backend
+/// call for that flow instead of the login one.
+class OtpVerifyView extends ConsumerStatefulWidget {
   const OtpVerifyView({
     super.key,
     this.phone = '',
     this.isBottomSheet = false,
+    this.onVerifyCode,
+    this.onResend,
   });
 
   final String phone;
   final bool isBottomSheet;
+
+  /// Returns `null` on success, or the `Failure` to display on rejection.
+  final Future<Failure?> Function(String code)? onVerifyCode;
+
+  /// Returns `null` on success (starts the resend cooldown), or the
+  /// `Failure` to display on rejection.
+  final Future<Failure?> Function()? onResend;
+
+  @override
+  ConsumerState<OtpVerifyView> createState() => _OtpVerifyViewState();
+}
+
+class _OtpVerifyViewState extends ConsumerState<OtpVerifyView> {
+  bool _isLoading = false;
+  bool _verified = false;
+  Failure? _failure;
+  int _resetToken = 0;
+
+  bool get _isCustom => widget.onVerifyCode != null;
 
   String _formatCooldown(int seconds) {
     final minutes = seconds ~/ 60;
@@ -29,44 +58,99 @@ class OtpVerifyView extends ConsumerWidget {
     return '${minutes.toString().padLeft(2, '0')}:${remainder.toString().padLeft(2, '0')}';
   }
 
-  Future<void> _handleResend(BuildContext context, WidgetRef ref) async {
+  Future<void> _handleCustomVerify(String code) async {
+    setState(() {
+      _isLoading = true;
+      _failure = null;
+    });
+    final failure = await widget.onVerifyCode!(code);
+    if (!mounted) return;
+    if (failure == null) {
+      setState(() {
+        _isLoading = false;
+        _verified = true;
+      });
+      if (widget.isBottomSheet && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+    } else {
+      setState(() {
+        _isLoading = false;
+        _failure = failure;
+        _resetToken++;
+      });
+    }
+  }
+
+  Future<void> _handleResend(WidgetRef ref) async {
+    if (widget.onResend != null) {
+      setState(() => _isLoading = true);
+      final failure = await widget.onResend!();
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      if (failure == null) {
+        ref.read(otpTimerViewModelProvider.notifier).startCooldown(widget.phone);
+      } else {
+        AppSnackbar.show(context, failure.message);
+      }
+      return;
+    }
+
     final success = await ref
         .read(authViewModelProvider.notifier)
-        .requestOtp(phone, roleRequiredMessage: context.l10n.roleSelectRequired);
+        .requestOtp(
+          widget.phone,
+          roleRequiredMessage: context.l10n.roleSelectRequired,
+        );
     if (success) {
-      ref.read(otpTimerViewModelProvider.notifier).startCooldown(phone);
+      ref.read(otpTimerViewModelProvider.notifier).startCooldown(widget.phone);
     }
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authViewModelProvider);
+  Widget build(BuildContext context) {
     final timerState = ref.watch(otpTimerViewModelProvider);
     final isOnCooldownForThisNumber =
-        timerState.phoneNumber == phone && !timerState.canRequestNow;
+        timerState.phoneNumber == widget.phone && !timerState.canRequestNow;
 
-    ref.listen(authViewModelProvider, (previous, next) {
-      final err = next.error;
-      if (err is Failure && previous?.error != err) {
-        AppSnackbar.show(context, err.message);
-      }
-      if (next.hasValue && next.value != null && (previous?.value == null)) {
-        if (isBottomSheet && Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
+    final bool isVerified;
+    final bool isLoading;
+    final Failure? failure;
+    final Object? resetToken;
+
+    if (_isCustom) {
+      isVerified = _verified;
+      isLoading = _isLoading;
+      failure = _failure;
+      resetToken = _resetToken;
+    } else {
+      final authState = ref.watch(authViewModelProvider);
+
+      ref.listen(authViewModelProvider, (previous, next) {
+        final err = next.error;
+        if (err is Failure && previous?.error != err) {
+          AppSnackbar.show(context, err.message);
         }
-      }
-    });
+        if (next.hasValue && next.value != null && (previous?.value == null)) {
+          if (widget.isBottomSheet && Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          }
+        }
+      });
 
-    final failure = authState.error;
-    final isVerified = authState.hasValue && authState.value != null;
-    final isLoading = authState.isLoading;
+      final authFailure = authState.error;
+      failure = authFailure is Failure ? authFailure : null;
+      isVerified = authState.hasValue && authState.value != null;
+      isLoading = authState.isLoading;
+      resetToken = failure;
+    }
 
     final content = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (!isBottomSheet) ...[
+        if (!widget.isBottomSheet) ...[
           Text(
-            context.l10n.otpSubtitle(phone),
+            context.l10n.otpSubtitle(widget.phone),
             style: context.textStyles.bodyMedium?.copyWith(
               color: context.colors.textSecondary,
             ),
@@ -94,13 +178,15 @@ class OtpVerifyView extends ConsumerWidget {
           OtpDigitBox(
             length: AppConfig.otpLength,
             enabled: !isLoading,
-            resetToken: failure,
-            onCompleted: (code) => ref
-                .read(authViewModelProvider.notifier)
-                .verifyOtp(
-                  code,
-                  otpRequiredMessage: context.l10n.otpRequestRequired,
-                ),
+            resetToken: resetToken,
+            onCompleted: (code) => _isCustom
+                ? _handleCustomVerify(code)
+                : ref
+                    .read(authViewModelProvider.notifier)
+                    .verifyOtp(
+                      code,
+                      otpRequiredMessage: context.l10n.otpRequestRequired,
+                    ),
           ),
           SizedBox(height: context.dimens.xl),
           if (isLoading) const LoadingIndicator(),
@@ -124,7 +210,7 @@ class OtpVerifyView extends ConsumerWidget {
               AppButton(
                 label: context.l10n.otpResendCode,
                 variant: AppButtonVariant.text,
-                onPressed: () => _handleResend(context, ref),
+                onPressed: () => _handleResend(ref),
               ),
             if (timerState.attemptLimitReached)
               Padding(
@@ -142,12 +228,12 @@ class OtpVerifyView extends ConsumerWidget {
       ],
     );
 
-    if (isBottomSheet) {
+    if (widget.isBottomSheet) {
       return content;
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.otpTitle)),
+      appBar: AppBar(title: AppBarTitle(context.l10n.otpTitle)),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(

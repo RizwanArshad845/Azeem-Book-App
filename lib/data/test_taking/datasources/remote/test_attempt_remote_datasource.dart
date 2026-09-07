@@ -82,11 +82,19 @@ class TestAttemptRemoteDataSourceImpl implements TestAttemptRemoteDataSource {
       // bare array — same shape as `StudentRemoteDataSourceImpl
       // .getStudentsForTeacher`. Only the first page (default size) is
       // fetched, matching that precedent.
-      final response = await _dio.get<Map<String, dynamic>>(
+      final response = await _dio.get<dynamic>(
         ApiEndpoints.studentTestAttempts(studentId),
       );
-      final results = response.data?['results'] as List<dynamic>? ?? [];
-      return results
+      final dynamic data = response.data;
+      final List<dynamic> items;
+      if (data is List) {
+        items = data;
+      } else if (data is Map<String, dynamic> && data['results'] is List) {
+        items = data['results'] as List<dynamic>;
+      } else {
+        items = const [];
+      }
+      return items
           .map((json) => TestAttemptDto.fromJson(json as Map<String, dynamic>))
           .toList();
     });

@@ -2,23 +2,25 @@ import '../../../domain/common/failure.dart';
 import '../../../domain/common/result.dart';
 import '../../../domain/student_onboarding/entities/teacher_option.dart';
 import '../../../domain/student_onboarding/repositories/teacher_directory_repository.dart';
-import '../datasources/local/teacher_directory_dummy_datasource.dart';
+import '../datasources/remote/teacher_directory_remote_datasource.dart';
 
-/// THROWAWAY repository — see the doc comment on [TeacherOption]. Only
-/// wires a dummy datasource (no real endpoint exists for this stand-in
-/// yet), but keeps the same interface/error-handling shape as every other
-/// repository so it drops in cleanly once a real datasource replaces it.
+/// Repository providing approved teachers at a given campus for student onboarding
+/// and post-onboarding teacher selection. Backed by [TeacherDirectoryRemoteDataSource].
 class TeacherDirectoryRepositoryImpl implements TeacherDirectoryRepository {
-  TeacherDirectoryRepositoryImpl({required this.dummy});
+  TeacherDirectoryRepositoryImpl({required this.remote});
 
-  final TeacherDirectoryDummyDataSource dummy;
+  final TeacherDirectoryRemoteDataSource remote;
 
   @override
   Future<Result<List<TeacherOption>>> getTeachersForCampus(
-    String campusId,
-  ) async {
+    String campusId, {
+    String? subjectId,
+  }) async {
     try {
-      final dtos = await dummy.getTeachersForCampus(campusId);
+      final dtos = await remote.getTeachersForCampus(
+        campusId,
+        subjectId: subjectId,
+      );
       return Success(dtos.map((d) => d.toDomain()).toList());
     } catch (e) {
       return ResultFailure(UnknownFailure(e.toString()));

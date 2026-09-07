@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_frosted_card.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/blurred_logo_backdrop.dart';
@@ -23,12 +24,7 @@ class NotificationsView extends ConsumerWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(
-          context.l10n.notificationsTitle,
-          style: context.textStyles.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: AppBarTitle(context.l10n.notificationsTitle),
         elevation: 0,
         backgroundColor: Colors.transparent,
         actions: [
@@ -198,7 +194,7 @@ class _NotificationCard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  notification.message,
+                  notification.displayMessage,
                   style: context.textStyles.bodyMedium?.copyWith(
                     fontWeight: isUnread ? FontWeight.bold : FontWeight.normal,
                     color:

@@ -305,7 +305,7 @@ abstract class AppLocalizations {
   /// No description provided for @otpSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Enter the 4-digit code sent to {phone}'**
+  /// **'Enter the 6-digit code sent to {phone}'**
   String otpSubtitle(String phone);
 
   /// No description provided for @otpVerifyButton.
@@ -1309,6 +1309,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check status'**
   String get teacherPendingCheckStatus;
+
+  /// No description provided for @teacherPendingStillPendingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your registration is pending approval.'**
+  String get teacherPendingStillPendingMessage;
+
+  /// No description provided for @backToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to login'**
+  String get backToLogin;
 
   /// No description provided for @chapterListTitle.
   ///
@@ -2481,13 +2493,13 @@ abstract class AppLocalizations {
   /// No description provided for @teacherVerifyPhoneOtpSentMessage.
   ///
   /// In en, this message translates to:
-  /// **'A 4-digit verification code has been sent to {phone}.'**
+  /// **'A 6-digit verification code has been sent to {phone}.'**
   String teacherVerifyPhoneOtpSentMessage(String phone);
 
   /// No description provided for @teacherOtpCodeLabel.
   ///
   /// In en, this message translates to:
-  /// **'4-Digit OTP Code'**
+  /// **'6-Digit OTP Code'**
   String get teacherOtpCodeLabel;
 
   /// No description provided for @teacherOtpTestHint.

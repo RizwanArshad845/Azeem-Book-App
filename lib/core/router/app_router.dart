@@ -236,20 +236,7 @@ String? _redirectFor(Ref ref, String location) {
     };
 
     final teacherAsync = ref.read(teacherOnboardingViewModelProvider);
-    if (teacherAsync.hasError || teacherAsync.isLoading) {
-      // Already mid-flow on a teacher-onboarding screen (most commonly:
-      // `submitSignUp()` sets a fresh `AsyncLoading` the instant Submit is
-      // tapped, before its network calls even resolve) — let that screen
-      // show its own loading/error UI instead of detouring through splash.
-      // The splash-hold below exists to avoid a wrong *first guess* right
-      // after login, not to interrupt a step the user is already on.
-      if (teacherPreSubmitRoutes.contains(location)) return null;
-      // A terminal fetch failure (after `TeacherOnboardingViewModel.build()`'s
-      // own single retry) has no self-healing path here — hold on splash
-      // rather than falling through to `teacherAsync.value == null` below,
-      // which would misroute an already-registered teacher into signup.
-      return location == AppRoutes.splash ? null : AppRoutes.splash;
-    }
+    if (teacherAsync.isLoading) return null;
 
     // Check the resolved onboarding record *before* trusting
     // `session.status == 'NOT_REGISTERED'`: that status is a snapshot from
@@ -292,23 +279,7 @@ String? _redirectFor(Ref ref, String location) {
   }
 
   final studentAsync = ref.read(studentOnboardingViewModelProvider);
-  if (studentAsync.hasError || studentAsync.isLoading) {
-    // Already mid-flow on a student-onboarding screen (most commonly:
-    // `submit()` sets a fresh `AsyncLoading` the instant Submit is tapped
-    // on Review, before its network calls even resolve) — let that screen
-    // show its own loading/error UI instead of detouring through splash.
-    // The splash-hold below exists to avoid a wrong *first guess* right
-    // after login, not to interrupt a step the user is already on.
-    if (_studentOnboardingRoutes.contains(location)) return null;
-    // Hold on splash while the student profile loads — prevents the
-    // onboarding BasicInfo screen from flashing before the redirect
-    // re-evaluates with a settled value. Also covers a terminal fetch
-    // failure (after `StudentOnboardingViewModel.build()`'s own single
-    // retry): `studentAsync.value` is `null` for a fresh `AsyncError`,
-    // which would otherwise misroute an already-registered student into
-    // onboarding with no way to self-correct.
-    return location == AppRoutes.splash ? null : AppRoutes.splash;
-  }
+  if (studentAsync.isLoading) return null;
 
   // Check the resolved onboarding record *before* trusting
   // `session.status == 'NOT_REGISTERED'`: that status is a snapshot from

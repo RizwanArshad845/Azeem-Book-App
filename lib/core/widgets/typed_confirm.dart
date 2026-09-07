@@ -16,6 +16,8 @@ Future<bool?> showTypedConfirmDialog(
   required String fieldLabel,
   required String confirmLabel,
   required String cancelLabel,
+  int? maxLength,
+  TextInputType? keyboardType,
 }) {
   return showDialog<bool>(
     context: context,
@@ -26,6 +28,8 @@ Future<bool?> showTypedConfirmDialog(
       fieldLabel: fieldLabel,
       confirmLabel: confirmLabel,
       cancelLabel: cancelLabel,
+      maxLength: maxLength,
+      keyboardType: keyboardType,
     ),
   );
 }
@@ -38,6 +42,8 @@ class _TypedConfirmDialog extends StatefulWidget {
     required this.fieldLabel,
     required this.confirmLabel,
     required this.cancelLabel,
+    this.maxLength,
+    this.keyboardType,
   });
 
   final String title;
@@ -46,6 +52,8 @@ class _TypedConfirmDialog extends StatefulWidget {
   final String fieldLabel;
   final String confirmLabel;
   final String cancelLabel;
+  final int? maxLength;
+  final TextInputType? keyboardType;
 
   @override
   State<_TypedConfirmDialog> createState() => _TypedConfirmDialogState();
@@ -104,6 +112,8 @@ class _TypedConfirmDialogState extends State<_TypedConfirmDialog> {
             AppTextField(
               label: widget.fieldLabel,
               controller: _controller,
+              maxLength: widget.maxLength,
+              keyboardType: widget.keyboardType,
             ),
             SizedBox(height: context.dimens.lg),
             AppDangerButton(

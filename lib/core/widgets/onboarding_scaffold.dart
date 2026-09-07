@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../constants/app_assets.dart';
 import '../extensions/context_extensions.dart';
+import 'app_bar_title.dart';
 import 'app_language_toggle_button.dart';
 import 'app_logo.dart';
 import 'onboarding_card.dart';
@@ -50,7 +51,7 @@ class OnboardingScaffold extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       backgroundColor: context.colors.background,
       appBar: AppBar(
-        title: Text(appBarTitle ?? context.l10n.onboardingTitle),
+        title: AppBarTitle(appBarTitle),
         centerTitle: true,
         leading: onBack != null
             ? IconButton(

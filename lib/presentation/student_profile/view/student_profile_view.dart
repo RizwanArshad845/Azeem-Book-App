@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/providers/locale_provider.dart';
+import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
@@ -96,6 +97,8 @@ class _StudentProfileViewState extends ConsumerState<StudentProfileView> {
       fieldLabel: context.l10n.profileDeleteConfirmField(student.phoneNumber),
       confirmLabel: context.l10n.profileDeleteAccount,
       cancelLabel: context.l10n.commonCancel,
+      maxLength: 11,
+      keyboardType: TextInputType.phone,
     ).then((confirmed) {
       if (confirmed != true || !mounted) return;
       ref
@@ -130,7 +133,7 @@ class _StudentProfileViewState extends ConsumerState<StudentProfileView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.profileTitle),
+        title: AppBarTitle(context.l10n.profileTitle),
         leading: IconButton(
           icon: Icon(Icons.adaptive.arrow_back),
           onPressed: () {

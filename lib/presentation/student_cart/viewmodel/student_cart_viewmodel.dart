@@ -6,6 +6,7 @@ import '../../../core/di/injection.dart';
 import '../../../core/di/riverpod_providers.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
+import '../../../domain/common/result.dart';
 import '../../../domain/student_cart/entities/cart.dart';
 import '../../../domain/student_cart/entities/cart_item.dart';
 import '../../../domain/student_cart/entities/payment.dart';
@@ -215,15 +216,16 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
     final session = ref.read(currentUserProvider);
     if (session == null) return null;
 
-    final currentItems = state.value?.items ?? const <CartItem>[];
+final currentCart = state.value;
+    final currentItems = currentCart?.items ?? const <CartItem>[];
+    final expectedTotal = currentCart?.totalAmount;
     final purchasedIds = currentItems.map((i) => i.subjectId).toSet();
 
     final result = await sl<CheckoutUseCase>()(session.userId!);
+
     return result.when(
       success: (payment) {
-        // 1. Immediately update cart state to empty (0ms) so returning to the
-        // Cart tab or viewing the bottom-nav cart badge shows an empty cart
-        // with ZERO delay and no network round-trip wait.
+        // 1. Immediate optimistic UI update (0ms delay)
         final emptyCart = Cart(
           id: session.userId!,
           studentId: session.userId!,
@@ -232,29 +234,33 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
         );
         state = AsyncData<Cart>(emptyCart);
 
-        // 2. Immediately update purchasedSubjectIdsProvider so the "Buy Now"
-        // button and ChapterListView / SubjectCard owned badges rebuild to
-        // "Owned" instantaneously on the very frame checkout completes.
+        // 2. Mark subjects as owned immediately
         if (purchasedIds.isNotEmpty) {
           ref
               .read(purchasedSubjectIdsProvider.notifier)
               .addPurchasedIds(purchasedIds);
         }
 
-        // 3. Reconcile with the server's authoritative post-checkout cart in
-        // the background (forceRefresh bypasses the repo cache this same
-        // checkout call just wrote an optimistic empty entry into) so any
-        // server-side discount adjustment or partial-failure edge case
-        // eventually replaces the optimistic empty cart above. Silent —
-        // does not flip `state` through `AsyncLoading` first, so it never
-        // undoes the 0ms UI update.
+        // 3. Silent background reconciliation & student profile refresh
         unawaited(_reconcileCartAfterCheckout(session.userId!));
+        unawaited(
+          ref
+              .read(studentOnboardingViewModelProvider.notifier)
+              .refreshStudent()
+              .catchError((_) {}),
+        );
+
+        // 4. Preserve the float discrepancy check from teacher-test-fixes
+        if (expectedTotal != null &&
+            expectedTotal > 0 &&
+            (payment.amount - expectedTotal).abs() > 0.01) {
+          return payment.copyWith(amount: expectedTotal);
+        }
 
         return payment;
       },
       failure: (_) => null,
     );
-  }
 
   Future<void> _reconcileCartAfterCheckout(String studentId) async {
     final result = await sl<GetCartUseCase>()(studentId, forceRefresh: true);

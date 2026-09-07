@@ -225,6 +225,10 @@ class TestTakingViewModel extends AsyncNotifier<TestTakingState> {
       return null;
     }
 
+    // Invalidate immediately so free attempt count and progress update as soon
+    // as the attempt is submitted, even before grading poll finishes.
+    ref.invalidate(studentTestAttemptsProvider);
+
     _timer?.cancel();
     final awaitingState = state.value ?? current;
     state = AsyncData(

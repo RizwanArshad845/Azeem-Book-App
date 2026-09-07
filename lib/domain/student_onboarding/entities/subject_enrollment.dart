@@ -22,18 +22,17 @@ abstract class SubjectEnrollment with _$SubjectEnrollment {
     @Default(false) bool discountApplied,
   }) = _SubjectEnrollment;
 
-  /// Preferred construction path: enforces the teacher-discount business
-  /// rule (§9.2 note: "discountApplied true only if teacherId set") at
-  /// construction time rather than leaving it to the caller to set
-  /// `discountApplied` correctly by hand.
+  /// Preferred construction path: defaults discountApplied to false at
+  /// onboarding time, as the discount is only applied and paid at checkout time.
   factory SubjectEnrollment.create({
     required String studentId,
     required String subjectId,
     String? teacherId,
+    bool discountApplied = false,
   }) => SubjectEnrollment(
     studentId: studentId,
     subjectId: subjectId,
     teacherId: teacherId,
-    discountApplied: teacherId != null,
+    discountApplied: discountApplied,
   );
 }

@@ -63,6 +63,8 @@ class SubjectProgressCard extends StatelessWidget {
                       style: context.textStyles.bodySmall?.copyWith(
                         color: context.colors.textSecondary,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),

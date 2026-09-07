@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/blurred_logo_backdrop.dart';
 import '../../../core/widgets/empty_state_view.dart';
@@ -21,7 +22,7 @@ class TeacherStudentsView extends ConsumerWidget {
     final studentsAsync = ref.watch(teacherStudentsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.teacherStudentsTitle)),
+      appBar: AppBar(title: AppBarTitle(context.l10n.teacherStudentsTitle)),
       body: BlurredLogoBackdrop(
         child: SafeArea(
           child: RefreshIndicator(

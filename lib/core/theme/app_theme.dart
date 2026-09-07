@@ -63,7 +63,7 @@ class AppTheme {
         centerTitle: true,
         titleTextStyle: GoogleFonts.plusJakartaSans(
           color: colors.textPrimary,
-          fontSize: AppDimens.fontXl,
+          fontSize: AppDimens.fontLg,
           fontWeight: FontWeight.w700,
         ),
       ),
