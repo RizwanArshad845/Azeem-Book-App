@@ -22,7 +22,7 @@ import '../../domain/catalog/usecases/get_class_levels_usecase.dart';
 import '../../domain/catalog/usecases/get_questions_usecase.dart';
 import '../../domain/catalog/usecases/get_subjects_usecase.dart';
 import '../../domain/catalog/usecases/get_tests_usecase.dart';
-import '../../data/student_onboarding/datasources/local/teacher_directory_dummy_datasource.dart';
+import '../../data/student_onboarding/datasources/remote/teacher_directory_remote_datasource.dart';
 import '../../data/student_onboarding/datasources/remote/student_remote_datasource.dart';
 import '../../data/student_onboarding/repositories/student_repository_impl.dart';
 import '../../data/student_onboarding/repositories/teacher_directory_repository_impl.dart';
@@ -36,6 +36,7 @@ import '../../domain/student_onboarding/usecases/get_student_by_id_usecase.dart'
 import '../../domain/student_onboarding/usecases/update_student_usecase.dart';
 import '../../domain/student_onboarding/usecases/get_students_for_teacher_usecase.dart';
 import '../../domain/student_onboarding/usecases/get_teachers_for_campus_usecase.dart';
+import '../../domain/student_onboarding/usecases/update_student_subject_enrollments_usecase.dart';
 import '../../domain/teacher_onboarding/repositories/teacher_repository.dart';
 import '../../domain/teacher_onboarding/usecases/delete_teacher_account_usecase.dart';
 import '../../domain/teacher_onboarding/usecases/get_teacher_by_phone_usecase.dart';
@@ -114,9 +115,7 @@ void setupLocator() {
   sl.registerLazySingleton<CampusRepository>(
     () => CampusRepositoryImpl(remote: sl(), cache: sl()),
   );
-  sl.registerLazySingleton<GetCampusesUseCase>(
-    () => GetCampusesUseCase(sl()),
-  );
+  sl.registerLazySingleton<GetCampusesUseCase>(() => GetCampusesUseCase(sl()));
 
   // auth
   sl.registerLazySingleton<AuthRemoteDataSource>(
@@ -155,13 +154,14 @@ void setupLocator() {
   sl.registerFactory(() => UpdateStudentUseCase(sl()));
   sl.registerFactory(() => DeleteStudentAccountUseCase(sl()));
   sl.registerFactory(() => GetStudentByIdUseCase(sl()));
-  sl.registerLazySingleton<TeacherDirectoryDummyDataSource>(
-    TeacherDirectoryDummyDataSourceImpl.new,
+  sl.registerLazySingleton<TeacherDirectoryRemoteDataSource>(
+    () => TeacherDirectoryRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<TeacherDirectoryRepository>(
-    () => TeacherDirectoryRepositoryImpl(dummy: sl()),
+    () => TeacherDirectoryRepositoryImpl(remote: sl()),
   );
   sl.registerFactory(() => GetTeachersForCampusUseCase(sl()));
+  sl.registerFactory(() => UpdateStudentSubjectEnrollmentsUseCase(sl()));
 
   // notifications
   sl.registerLazySingleton<NotificationRemoteDataSource>(

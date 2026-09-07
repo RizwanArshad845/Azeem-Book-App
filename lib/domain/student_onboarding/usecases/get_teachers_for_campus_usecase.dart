@@ -9,6 +9,9 @@ class GetTeachersForCampusUseCase {
 
   final TeacherDirectoryRepository _repository;
 
-  Future<Result<List<TeacherOption>>> call(String campusId) =>
-      _repository.getTeachersForCampus(campusId);
+  Future<Result<List<TeacherOption>>> call(
+    String campusId, {
+    String? subjectId,
+  }) =>
+      _repository.getTeachersForCampus(campusId, subjectId: subjectId);
 }

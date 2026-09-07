@@ -1,5 +1,6 @@
 import '../../common/result.dart';
 import '../entities/student.dart';
+import '../entities/subject_enrollment.dart';
 
 /// Zero Flutter/Riverpod/package dependencies per §2 Clean Architecture
 /// rules.
@@ -31,4 +32,15 @@ abstract class StudentRepository {
   /// whenever the logged-in session changes instead of the previous user's
   /// cached profile surviving a logout/relogin.
   Future<Result<Student?>> getStudentById(String studentId);
+
+  /// Updates the student's subject enrollments and assigned teachers.
+  Future<Result<List<SubjectEnrollment>>> updateSubjectEnrollments(
+    String studentId,
+    List<SubjectEnrollment> enrollments,
+  );
+
+  /// Reads the current student's subject enrollments from backend.
+  Future<Result<List<SubjectEnrollment>>> getSubjectEnrollments(
+    String studentId,
+  );
 }

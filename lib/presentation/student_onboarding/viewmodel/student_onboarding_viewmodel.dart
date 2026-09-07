@@ -226,6 +226,21 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
   void setStudent(Student student) {
     state = AsyncData<Student?>(student);
   }
+
+  /// Re-fetches the current student's profile from the backend and updates state.
+  Future<Student?> refreshStudent() async {
+    final session = ref.read(currentUserProvider);
+    if (session == null || session.userId == null) return null;
+    final result = await sl<GetStudentByIdUseCase>()(session.userId!);
+    final fresh = result.when(
+      success: (s) => s,
+      failure: (_) => null,
+    );
+    if (fresh != null) {
+      state = AsyncData<Student?>(fresh);
+    }
+    return fresh;
+  }
 }
 
 final studentOnboardingViewModelProvider =

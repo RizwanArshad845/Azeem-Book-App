@@ -20,6 +20,15 @@ abstract class StudentRemoteDataSource {
   /// row exists yet (backend 404s before onboarding completes, mirroring
   /// the `completeOnboarding` doc comment above).
   Future<StudentDto?> getStudentById(String studentId);
+
+  /// Updates the student's subject enrollments and assigned teachers.
+  Future<List<SubjectEnrollmentDto>> updateSubjectEnrollments(
+    String studentId,
+    List<SubjectEnrollmentDto> enrollments,
+  );
+
+  /// Reads the current student's subject enrollments from backend.
+  Future<List<SubjectEnrollmentDto>> getSubjectEnrollments(String studentId);
 }
 
 class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
@@ -57,6 +66,55 @@ class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
     return StudentDto.fromJson(
       savedProfile,
     ).copyWith(subjectEnrollments: savedEnrollments);
+  }
+
+  @override
+  Future<List<SubjectEnrollmentDto>> updateSubjectEnrollments(
+    String studentId,
+    List<SubjectEnrollmentDto> enrollments,
+  ) async {
+    final response = await _dio.put<dynamic>(
+      ApiEndpoints.studentSubjectEnrollments(studentId),
+      data: enrollments
+          .map((e) => {
+                'subjectId': e.subjectId,
+                'teacherId': e.teacherId,
+              })
+          .toList(),
+    );
+    final dynamic data = response.data;
+    final List<dynamic> items;
+    if (data is List) {
+      items = data;
+    } else if (data is Map<String, dynamic> && data['results'] is List) {
+      items = data['results'] as List<dynamic>;
+    } else {
+      items = const [];
+    }
+    return items
+        .map((e) => SubjectEnrollmentDto.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<List<SubjectEnrollmentDto>> getSubjectEnrollments(
+    String studentId,
+  ) async {
+    final response = await _dio.get<dynamic>(
+      ApiEndpoints.studentSubjectEnrollments(studentId),
+    );
+    final dynamic data = response.data;
+    final List<dynamic> items;
+    if (data is List) {
+      items = data;
+    } else if (data is Map<String, dynamic> && data['results'] is List) {
+      items = data['results'] as List<dynamic>;
+    } else {
+      items = const [];
+    }
+    return items
+        .map((e) => SubjectEnrollmentDto.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   /// Backs the `teacher-students` Students tab — the `ApiEndpoints`
