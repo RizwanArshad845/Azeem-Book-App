@@ -42,8 +42,16 @@ class AsyncValueWidget<T> extends StatelessWidget {
     }
 
     return value.when(
-      skipLoadingOnRefresh: skipLoadingOnRefresh,
-      skipLoadingOnReload: skipLoadingOnReload,
+      // Only honor the skip-loading flags when there's cached data worth
+      // not flickering away from. Riverpod's `ref.invalidate`/`ref.refresh`
+      // produce a still-`AsyncError` (not `AsyncLoading`) state with
+      // `isRefreshing: true` — if there's no data to fall back to instead
+      // (the `keepPreviousDataOnError` branch above didn't apply), skipping
+      // `loading()` here means a Retry tap re-renders the identical error
+      // with zero visible change, making a genuine retry indistinguishable
+      // from a dead button.
+      skipLoadingOnRefresh: skipLoadingOnRefresh && value.hasValue,
+      skipLoadingOnReload: skipLoadingOnReload && value.hasValue,
       data: data,
       loading: () =>
           skeleton ??

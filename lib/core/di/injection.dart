@@ -8,6 +8,7 @@ import '../../data/campus_directory/repositories/campus_repository_impl.dart';
 import '../../data/catalog/datasources/remote/catalog_remote_datasource.dart';
 import '../../data/catalog/repositories/catalog_repository_impl.dart';
 import '../../domain/auth/repositories/auth_repository.dart';
+import '../../domain/auth/usecases/get_stored_session_usecase.dart';
 import '../../domain/auth/usecases/logout_usecase.dart';
 import '../../domain/auth/usecases/request_otp_usecase.dart';
 import '../../domain/auth/usecases/request_phone_change_otp_usecase.dart';
@@ -127,6 +128,7 @@ void setupLocator() {
   sl.registerFactory(() => RequestOtpUseCase(sl()));
   sl.registerFactory(() => VerifyOtpUseCase(sl()));
   sl.registerFactory(() => LogoutUseCase(sl()));
+  sl.registerFactory(() => GetStoredSessionUseCase(sl()));
   sl.registerFactory(() => RequestPhoneChangeOtpUseCase(sl()));
   sl.registerFactory(() => VerifyPhoneChangeOtpUseCase(sl()));
 

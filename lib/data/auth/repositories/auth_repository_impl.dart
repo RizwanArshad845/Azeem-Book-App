@@ -77,4 +77,22 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Result<void>> verifyPhoneChangeOtp(String newPhone, String otp) {
     return guardRequest(() => remote.verifyPhoneChangeOtp(newPhone, otp));
   }
+
+  @override
+  Future<Result<AuthSession?>> getStoredSession() {
+    return guardRequest(() async {
+      final raw = await _secureStorage.read(key: _sessionKey);
+      if (raw == null) return null;
+      final dto = AuthSessionDto.fromJson(
+        jsonDecode(raw) as Map<String, dynamic>,
+      );
+      final session = dto.toDomain();
+      // Re-stamp the interceptor token so every subsequent request is
+      // authenticated without requiring another OTP round-trip.
+      if (session.token != null) {
+        AuthInterceptor.currentToken = session.token;
+      }
+      return session;
+    });
+  }
 }

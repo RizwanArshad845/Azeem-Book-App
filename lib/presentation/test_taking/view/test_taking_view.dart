@@ -48,6 +48,7 @@ class TestTakingView extends ConsumerWidget {
         body: SafeArea(
           child: AsyncValueWidget<TestTakingState>(
             value: asyncState,
+            loading: () => const LoadingGate(),
             onRetry: () => ref.invalidate(testTakingViewModelProvider(testId)),
             data: (state) => switch (state.status) {
               TestTakingStatus.loadingGate => const LoadingGate(),

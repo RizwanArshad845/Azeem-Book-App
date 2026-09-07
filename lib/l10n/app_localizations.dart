@@ -203,7 +203,7 @@ abstract class AppLocalizations {
   /// No description provided for @roleSelectionTitle.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Azeem Publications'**
+  /// **'Welcome'**
   String get roleSelectionTitle;
 
   /// No description provided for @roleSelectionSubtitle.
@@ -248,10 +248,16 @@ abstract class AppLocalizations {
   /// **'Please request an OTP before verifying.'**
   String get otpRequestRequired;
 
+  /// No description provided for @onboardingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Onboarding'**
+  String get onboardingTitle;
+
   /// No description provided for @phoneTitle.
   ///
   /// In en, this message translates to:
-  /// **'Enter your phone number'**
+  /// **'Phone Number'**
   String get phoneTitle;
 
   /// No description provided for @phoneWelcomeTitle.
@@ -1471,6 +1477,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Test'**
   String get testTakingTitle;
+
+  /// No description provided for @testLoadingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading test...'**
+  String get testLoadingMessage;
 
   /// No description provided for @testExitDialogStay.
   ///

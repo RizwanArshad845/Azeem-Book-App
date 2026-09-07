@@ -6,6 +6,7 @@ import '../../../core/config/app_config.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
 import '../../../domain/catalog/entities/class_level.dart';
 import '../../../domain/catalog/entities/subject.dart';
+import '../../auth/viewmodel/auth_viewmodel.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 
 class SplashViewModel extends Notifier<bool> {
@@ -48,6 +49,16 @@ class SplashViewModel extends Notifier<bool> {
   }
 
   Future<void> _preloadIndependentData() async {
+    // Catalog endpoints (campuses/classLevels/boardClasses/subjects) require
+    // auth on the backend. Without a session yet, every one of these
+    // requests would 401 — and since they're plain (non-`.autoDispose`)
+    // `FutureProvider`s cached for the whole app-session lifetime, a
+    // pre-login 401 would permanently poison that cache entry (e.g. a
+    // specific board class's subjects) until something manually
+    // invalidates it. Defer the whole preload until a session exists
+    // instead of racing/guaranteeing a doomed first attempt.
+    if (ref.read(currentUserProvider) == null) return;
+
     final timeoutCompleter = Completer<void>();
     _timeoutTimer = Timer(const Duration(seconds: 4), () {
       if (!timeoutCompleter.isCompleted) {

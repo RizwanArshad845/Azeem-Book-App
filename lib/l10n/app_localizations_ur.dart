@@ -61,7 +61,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get commonViewAll => 'سب دیکھیں';
 
   @override
-  String get roleSelectionTitle => 'عظیم پبلیکیشنز میں خوش آمدید';
+  String get roleSelectionTitle => 'خوش آمدید';
 
   @override
   String get roleSelectionSubtitle =>
@@ -89,7 +89,10 @@ class AppLocalizationsUr extends AppLocalizations {
   String get otpRequestRequired => 'تصدیق سے پہلے تصدیقی کوڈ کی درخواست کریں۔';
 
   @override
-  String get phoneTitle => 'اپنا فون نمبر درج کریں';
+  String get onboardingTitle => 'آن بورڈنگ';
+
+  @override
+  String get phoneTitle => 'فون نمبر';
 
   @override
   String get phoneWelcomeTitle => 'عظیم بکس میں خوش آمدید!';
@@ -764,6 +767,9 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get testTakingTitle => 'ٹیسٹ';
+
+  @override
+  String get testLoadingMessage => 'ٹیسٹ لوڈ ہو رہا ہے...';
 
   @override
   String get testExitDialogStay => 'ٹھہریں';

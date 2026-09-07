@@ -6,6 +6,7 @@ import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/onboarding_scaffold.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
+import '../../auth/widgets/onboarding_logout_action.dart';
 import '../viewmodel/teacher_onboarding_viewmodel.dart';
 import '../viewmodel/teacher_signup_form_state.dart';
 import '../widgets/teacher_signup_form.dart';
@@ -28,6 +29,7 @@ class TeacherSignupView extends ConsumerWidget {
       onBack: formState.currentStep == 2
           ? () => notifier.setStep(1)
           : null,
+      onLogout: () => confirmOnboardingLogout(context, ref),
       child: AsyncValueWidget<Teacher?>(
         value: onboarding,
         onRetry: () => ref.invalidate(teacherOnboardingViewModelProvider),

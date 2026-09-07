@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
@@ -6,6 +8,7 @@ import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
 import '../../../domain/common/result.dart';
 import '../../../domain/student_cart/entities/cart.dart';
+import '../../../domain/student_cart/entities/cart_item.dart';
 import '../../../domain/student_cart/entities/payment.dart';
 import '../../../domain/student_cart/usecases/add_subject_bundle_usecase.dart';
 import '../../../domain/student_cart/usecases/checkout_usecase.dart';
@@ -21,10 +24,10 @@ import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 /// Student Cart tab (§10.2 "Add-to-cart summary, checkout -> payment
 /// gateway redirect"). `build()` loads the current student's cart;
 /// `addSubjectBundle`/`removeSubject` mutate it; `checkout` is a one-off
-/// action that returns the resulting `Payment` without touching this
-/// notifier's own `AsyncValue<Cart>` state directly on success — it
-/// invalidates itself so the next read re-fetches the now-cleared cart from
-/// the repository.
+/// action that returns the resulting `Payment` and, on success, optimistically
+/// sets this notifier's `AsyncValue<Cart>` state to an empty cart for a 0ms
+/// UI update, then silently reconciles with the server's authoritative
+/// post-checkout cart in the background (see `_reconcileCartAfterCheckout`).
 ///
 /// Note: this project's `pubspec.yaml` does not include `riverpod_generator`
 /// / `riverpod_annotation` (only `flutter_riverpod`), so — consistent with
@@ -136,40 +139,65 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
 
   /// Convenience method to resolve subject and tests by [subjectId] and add
   /// the bundle to cart.
+  ///
+  /// Sets [cartMutationInProgressProvider] immediately so the UI disables
+  /// "Buy Now" during the subject/test resolution phase (before the HTTP
+  /// round-trip in [addSubjectBundle]) — prevents a double-tap race.
   Future<void> addSubjectBundleById(String subjectId) async {
-    final tests = await ref.read(testsForSubjectProvider(subjectId).future);
-    var subject = await ref.read(subjectByIdProvider(subjectId).future);
-    if (subject == null) {
-      final subjects = await ref.read(enrolledSubjectsProvider.future);
-      for (final s in subjects) {
-        if (s.id == subjectId) {
-          subject = s;
-          break;
+    ref.read(cartMutationInProgressProvider.notifier).set(true);
+    try {
+      final tests = await ref.read(testsForSubjectProvider(subjectId).future);
+      var subject = await ref.read(subjectByIdProvider(subjectId).future);
+      if (subject == null) {
+        final subjects = await ref.read(enrolledSubjectsProvider.future);
+        for (final s in subjects) {
+          if (s.id == subjectId) {
+            subject = s;
+            break;
+          }
         }
       }
+      subject ??= Subject(
+        id: subjectId,
+        boardClassId: '',
+        name: 'Subject',
+      );
+      await addSubjectBundle(subject, tests);
+    } finally {
+      // addSubjectBundle clears the flag itself, but guard here too so an
+      // early-return exception never leaves the button permanently disabled.
+      ref.read(cartMutationInProgressProvider.notifier).set(false);
     }
-    subject ??= Subject(
-      id: subjectId,
-      boardClassId: '',
-      name: 'Subject',
-    );
-    await addSubjectBundle(subject, tests);
   }
 
   Future<void> removeSubject(String subjectId) async {
     final session = ref.read(currentUserProvider);
     if (session == null) return;
 
-    // See `addSubjectBundle`'s comment above — same reason for not touching
-    // `state` up front.
+    // Optimistic removal for instant 0ms UI response
+    final previousCart = state.value;
+    if (previousCart != null && previousCart.items != null) {
+      final updatedItems = previousCart.items!
+          .where((i) => i.subjectId != subjectId)
+          .toList();
+      final updatedTotal = updatedItems.fold<double>(
+        0,
+        (sum, i) => sum + (i.discountedPrice ?? i.price),
+      );
+      state = AsyncData<Cart>(
+        previousCart.copyWith(items: updatedItems, totalAmount: updatedTotal),
+      );
+    }
+
     ref.read(cartMutationInProgressProvider.notifier).set(true);
     try {
       final result =
           await sl<RemoveFromCartUseCase>()(session.userId!, subjectId);
       state = await result.when(
         success: (cart) async => AsyncData<Cart>(await _enrichCart(cart)),
-        failure: (failure) async =>
-            AsyncError<Cart>(failure, StackTrace.current),
+        failure: (failure) async => previousCart != null
+            ? AsyncData<Cart>(previousCart)
+            : AsyncError<Cart>(failure, StackTrace.current),
       );
     } finally {
       ref.read(cartMutationInProgressProvider.notifier).set(false);
@@ -188,41 +216,57 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
     final session = ref.read(currentUserProvider);
     if (session == null) return null;
 
-    final currentCart = state.value;
+final currentCart = state.value;
+    final currentItems = currentCart?.items ?? const <CartItem>[];
     final expectedTotal = currentCart?.totalAmount;
+    final purchasedIds = currentItems.map((i) => i.subjectId).toSet();
 
     final result = await sl<CheckoutUseCase>()(session.userId!);
 
-    // NOTE: Do NOT use result.when() with an async callback here.
-    // Result.when() is synchronous — passing an async lambda makes it return
-    // Future<Payment?> immediately without awaiting the body, so all the
-    // invalidations below would fire in an unawaited future and the backend
-    // state would never actually update before the checkout screen renders.
-    if (result is ResultFailure<Payment>) return null;
+    return result.when(
+      success: (payment) {
+        // 1. Immediate optimistic UI update (0ms delay)
+        final emptyCart = Cart(
+          id: session.userId!,
+          studentId: session.userId!,
+          items: const [],
+          totalAmount: 0,
+        );
+        state = AsyncData<Cart>(emptyCart);
 
-    final payment = (result as Success<Payment>).data;
+        // 2. Mark subjects as owned immediately
+        if (purchasedIds.isNotEmpty) {
+          ref
+              .read(purchasedSubjectIdsProvider.notifier)
+              .addPurchasedIds(purchasedIds);
+        }
 
-    // Clear cart and invalidate self so the next read re-fetches from network.
-    ref.invalidateSelf();
-    // Eagerly re-fetch purchasedSubjectIds so isOwned becomes true immediately.
-    ref.invalidate(purchasedSubjectIdsProvider);
-    try {
-      // ignore: unused_result — we are awaiting the returned Future directly.
-      await ref.refresh(purchasedSubjectIdsProvider.future);
-    } catch (_) {}
-    // Refresh the student's profile (subjectEnrollments, etc.)
-    try {
-      await ref
-          .read(studentOnboardingViewModelProvider.notifier)
-          .refreshStudent();
-    } catch (_) {}
+        // 3. Silent background reconciliation & student profile refresh
+        unawaited(_reconcileCartAfterCheckout(session.userId!));
+        unawaited(
+          ref
+              .read(studentOnboardingViewModelProvider.notifier)
+              .refreshStudent()
+              .catchError((_) {}),
+        );
 
-    if (expectedTotal != null &&
-        expectedTotal > 0 &&
-        (payment.amount - expectedTotal).abs() > 0.01) {
-      return payment.copyWith(amount: expectedTotal);
-    }
-    return payment;
+        // 4. Preserve the float discrepancy check from teacher-test-fixes
+        if (expectedTotal != null &&
+            expectedTotal > 0 &&
+            (payment.amount - expectedTotal).abs() > 0.01) {
+          return payment.copyWith(amount: expectedTotal);
+        }
+
+        return payment;
+      },
+      failure: (_) => null,
+    );
+
+  Future<void> _reconcileCartAfterCheckout(String studentId) async {
+    final result = await sl<GetCartUseCase>()(studentId, forceRefresh: true);
+    final cart = result.when(success: (cart) => cart, failure: (_) => null);
+    if (cart == null) return;
+    state = AsyncData<Cart>(await _enrichCart(cart));
   }
 }
 
@@ -246,6 +290,14 @@ final cartMutationInProgressProvider =
   CartMutationInProgressNotifier.new,
 );
 
+// Deliberately NOT `.autoDispose`: an autoDispose provider re-runs `checkout()`
+// (a real payment call, not idempotent) if its listener count ever
+// transiently drops to zero — e.g. a route-transition rebuild — risking a
+// duplicate charge. Freshness (a new `CheckoutView` must not replay a
+// previous session's cached `Payment`) is instead handled explicitly by
+// `CheckoutView.initState` invalidating this provider exactly once per
+// screen mount, which is deterministic and independent of widget-tree
+// churn.
 final checkoutPaymentProvider = FutureProvider<Payment?>((ref) async {
   return ref.read(studentCartViewModelProvider.notifier).checkout();
 });
@@ -255,16 +307,31 @@ final checkoutPaymentProvider = FutureProvider<Payment?>((ref) async {
 /// "Purchased"/"Add to cart" toggle on `ChapterListView` and the
 /// owned-state indicator on `SubjectCard`, and — separately — the
 /// `test-taking` purchase gate via `GetPurchasedSubjectIdsUseCase` directly.
-final purchasedSubjectIdsProvider = FutureProvider<Set<String>>((ref) async {
-  final session = ref.watch(currentUserProvider);
-  if (session == null) return const <String>{};
+class PurchasedSubjectIdsViewModel extends AsyncNotifier<Set<String>> {
+  @override
+  Future<Set<String>> build() async {
+    final session = ref.watch(currentUserProvider);
+    if (session == null || session.userId == null) return const <String>{};
 
-  final result = await sl<GetPurchasedSubjectIdsUseCase>()(session.userId!);
-  return result.when(
-    success: (ids) => ids,
-    failure: (failure) => throw failure,
-  );
-});
+    final result = await sl<GetPurchasedSubjectIdsUseCase>()(session.userId!);
+    return result.when(
+      success: (ids) => ids,
+      failure: (failure) => throw failure,
+    );
+  }
+
+  /// Instantly incorporates newly purchased subject IDs for 0ms rebuilds
+  /// without waiting for remote server round-trips.
+  void addPurchasedIds(Iterable<String> newIds) {
+    final current = state.value ?? const <String>{};
+    state = AsyncData<Set<String>>({...current, ...newIds});
+  }
+}
+
+final purchasedSubjectIdsProvider =
+    AsyncNotifierProvider<PurchasedSubjectIdsViewModel, Set<String>>(
+  PurchasedSubjectIdsViewModel.new,
+);
 
 /// All tests for a single subject (`ChapterListView`'s bundle-purchase
 /// header needs the full test list to compute bundle price/count), keyed by

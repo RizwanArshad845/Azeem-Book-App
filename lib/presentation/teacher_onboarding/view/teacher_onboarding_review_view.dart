@@ -9,6 +9,7 @@ import '../../../core/widgets/onboarding_step_header.dart';
 import '../../../core/widgets/onboarding_summary_item.dart';
 import '../../../domain/common/failure.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
+import '../../auth/widgets/onboarding_logout_action.dart';
 import '../viewmodel/teacher_onboarding_viewmodel.dart';
 import '../viewmodel/teacher_signup_form_providers.dart';
 import '../viewmodel/teacher_signup_form_state.dart';
@@ -90,6 +91,7 @@ class TeacherOnboardingReviewView extends ConsumerWidget {
       currentStep: 3,
       totalSteps: 3,
       onBack: () => Navigator.of(context).pop(),
+      onLogout: () => confirmOnboardingLogout(context, ref),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,

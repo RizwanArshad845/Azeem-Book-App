@@ -8,5 +8,6 @@ class GetCartUseCase {
 
   final CartRepository _repository;
 
-  Future<Result<Cart>> call(String studentId) => _repository.getCart(studentId);
+  Future<Result<Cart>> call(String studentId, {bool forceRefresh = false}) =>
+      _repository.getCart(studentId, forceRefresh: forceRefresh);
 }

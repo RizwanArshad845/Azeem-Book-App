@@ -119,8 +119,12 @@ final chapterProgressSummaryProvider = FutureProvider<ChapterProgressSummary>((
   final getQuestions = ref.read(getQuestionsUseCaseProvider);
   final allChapterIds = <String>{};
   final uniqueTestIds = attempts.map((a) => a.testId).toSet();
-  for (final testId in uniqueTestIds) {
-    final result = await getQuestions(testId);
+  // One lookup per distinct test, fired in parallel — see
+  // `perSubjectProgressProvider`'s `getSubjects` batch for why.
+  final questionResults = await Future.wait(
+    uniqueTestIds.map(getQuestions.call),
+  );
+  for (final result in questionResults) {
     result.when(
       success: (questions) =>
           allChapterIds.addAll(questions.map((q) => q.chapterId)),
@@ -197,10 +201,16 @@ class SubjectProgressSummary {
 /// re-deriving the weak/strong threshold logic here.
 final perSubjectProgressProvider =
     FutureProvider<List<SubjectProgressSummary>>((ref) async {
-      final attempts = await ref.watch(studentTestAttemptsProvider.future);
+      // See `filteredAttemptsProvider` for why these are read eagerly
+      // before either is awaited (lets the independent tests fetch run
+      // concurrently with the attempts fetch).
+      final attemptsFuture = ref.watch(studentTestAttemptsProvider.future);
+      final testsByIdFuture = ref.watch(progressTestsByIdProvider.future);
+
+      final attempts = await attemptsFuture;
       if (attempts.isEmpty) return const <SubjectProgressSummary>[];
 
-      final testsById = await ref.watch(progressTestsByIdProvider.future);
+      final testsById = await testsByIdFuture;
 
       final attemptsBySubject = <String, List<TestAttempt>>{};
       final boardClassIdBySubject = <String, String>{};
@@ -218,8 +228,15 @@ final perSubjectProgressProvider =
       final getSubjects = ref.read(getSubjectsUseCaseProvider);
       final subjectNameById = <String, String>{};
       final distinctBoardClassIds = boardClassIdBySubject.values.toSet();
-      for (final boardClassId in distinctBoardClassIds) {
-        final result = await getSubjects(boardClassId);
+      // One lookup per distinct board class, fired in parallel rather than
+      // sequentially — `CatalogRepositoryImpl.getSubjects` already caches
+      // by `boardClassId` in memory, so repeat calls elsewhere are cheap,
+      // but a *cold* Progress load with several distinct board classes was
+      // paying for each round-trip one after another.
+      final subjectResults = await Future.wait(
+        distinctBoardClassIds.map(getSubjects.call),
+      );
+      for (final result in subjectResults) {
         result.when(
           success: (subjects) {
             for (final subject in subjects) {
@@ -346,10 +363,17 @@ final availableAttemptFiltersProvider = FutureProvider<List<String>>((ref) async
 
 /// Returns attempts filtered by both selected subject and selected attempt filter.
 final filteredAttemptsProvider = FutureProvider<List<TestAttempt>>((ref) async {
-  final attempts = await ref.watch(studentTestAttemptsProvider.future);
+  // Read both futures before awaiting either, so the (independent) tests
+  // fetch starts concurrently with the attempts fetch instead of only
+  // starting once attempts resolves — halves the network-bound latency on
+  // a cold load versus sequential `await`s.
+  final attemptsFuture = ref.watch(studentTestAttemptsProvider.future);
+  final testsByIdFuture = ref.watch(progressTestsByIdProvider.future);
+
+  final attempts = await attemptsFuture;
   if (attempts.isEmpty) return const <TestAttempt>[];
 
-  final testsById = await ref.watch(progressTestsByIdProvider.future);
+  final testsById = await testsByIdFuture;
   final selectedSubjectId = ref.watch(selectedProgressSubjectProvider);
   final selectedAttemptFilter = ref.watch(selectedProgressAttemptFilterProvider);
 
@@ -439,24 +463,34 @@ final filteredChapterProgressListProvider =
     attemptsByTest.putIfAbsent(attempt.testId, () => []).add(attempt);
   }
 
-  final chaptersCache = <String, List<Chapter>>{};
+  // Resolve every distinct subject's chapters up front, in parallel,
+  // instead of one-at-a-time inside the loop below — same reasoning as
+  // `perSubjectProgressProvider`'s `getSubjects` batch: this only pays a
+  // real network cost per subject not already in `CatalogRepositoryImpl`'s
+  // in-memory cache, but a cold load with several distinct subjects was
+  // still serializing all of those round-trips.
+  final distinctSubjectIds = {
+    for (final entry in attemptsByTest.entries)
+      if (testsById[entry.key] case final test?) test.subjectId,
+  };
+  final chapterResults = await Future.wait(
+    distinctSubjectIds.map(getChapters.call),
+  );
+  final chaptersBySubject = <String, List<Chapter>>{
+    for (final (i, subjectId) in distinctSubjectIds.indexed)
+      subjectId: chapterResults[i].when(
+        success: (c) => c,
+        failure: (_) => const <Chapter>[],
+      ),
+  };
+
   final chapterProgressList = <ChapterProgressData>[];
 
   for (final entry in attemptsByTest.entries) {
     final test = testsById[entry.key];
     if (test == null) continue;
 
-    List<Chapter> chapters;
-    if (chaptersCache.containsKey(test.subjectId)) {
-      chapters = chaptersCache[test.subjectId]!;
-    } else {
-      final chaptersRes = await getChapters(test.subjectId);
-      chapters = chaptersRes.when(
-        success: (c) => c,
-        failure: (_) => const <Chapter>[],
-      );
-      chaptersCache[test.subjectId] = chapters;
-    }
+    final chapters = chaptersBySubject[test.subjectId] ?? const <Chapter>[];
 
     final chapter = test.chapterId != null
         ? chapters.where((c) => c.id == test.chapterId).firstOrNull
@@ -504,8 +538,12 @@ final filteredChapterProgressSummaryProvider =
   final getQuestions = ref.read(getQuestionsUseCaseProvider);
   final allChapterIds = <String>{};
   final uniqueTestIds = attempts.map((a) => a.testId).toSet();
-  for (final testId in uniqueTestIds) {
-    final result = await getQuestions(testId);
+  // One lookup per distinct test, fired in parallel — see
+  // `perSubjectProgressProvider`'s `getSubjects` batch for why.
+  final questionResults = await Future.wait(
+    uniqueTestIds.map(getQuestions.call),
+  );
+  for (final result in questionResults) {
     result.when(
       success: (questions) =>
           allChapterIds.addAll(questions.map((q) => q.chapterId)),

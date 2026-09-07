@@ -52,7 +52,14 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
     final session = ref.watch(currentUserProvider);
     if (session == null) return null;
 
-    final result = await sl<GetTeacherByPhoneUseCase>()(session.phoneNumber);
+    var result = await sl<GetTeacherByPhoneUseCase>()(session.phoneNumber);
+    if (!result.isSuccess) {
+      // Absorb a single transient blip (e.g. a fresh login racing a
+      // still-settling connection) with one retry before giving up — see
+      // the matching comment on `StudentOnboardingViewModel.build()`.
+      await Future.delayed(const Duration(milliseconds: 800));
+      result = await sl<GetTeacherByPhoneUseCase>()(session.phoneNumber);
+    }
     return result.when(
       success: (teacher) => teacher,
       failure: (failure) => throw failure,

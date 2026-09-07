@@ -33,4 +33,10 @@ abstract class AuthRepository {
   /// Verifies the OTP sent to [newPhone] before the caller commits the
   /// phone-number edit.
   Future<Result<void>> verifyPhoneChangeOtp(String newPhone, String otp);
+
+  /// Reads the session that was persisted to secure storage on the last
+  /// successful OTP verify. Returns `null` inside the [Result] if no session
+  /// is stored (first install, or after logout). Also restores
+  /// [AuthInterceptor.currentToken] so subsequent API calls are authenticated.
+  Future<Result<AuthSession?>> getStoredSession();
 }

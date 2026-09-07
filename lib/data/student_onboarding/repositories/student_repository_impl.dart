@@ -12,13 +12,15 @@ class StudentRepositoryImpl implements StudentRepository {
   StudentRepositoryImpl({required this.remote});
 
   final StudentRemoteDataSource remote;
+  final Map<String, Student> _studentCache = {};
 
   @override
   Future<Result<Student>> completeOnboarding(Student student) {
     return guardRequest(() async {
       final dto = StudentDto.fromDomain(student);
-      final saved = await remote.completeOnboarding(dto);
-      return saved.toDomain();
+      final saved = (await remote.completeOnboarding(dto)).toDomain();
+      _studentCache[saved.id] = saved;
+      return saved;
     });
   }
 
@@ -40,21 +42,31 @@ class StudentRepositoryImpl implements StudentRepository {
   Future<Result<Student>> updateStudent(Student student) {
     return guardRequest(() async {
       final dto = StudentDto.fromDomain(student);
-      final saved = await remote.updateStudent(dto);
-      return saved.toDomain();
+      final saved = (await remote.updateStudent(dto)).toDomain();
+      _studentCache[saved.id] = saved;
+      return saved;
     });
   }
 
   @override
   Future<Result<void>> deleteAccount(String studentId) {
+    _studentCache.remove(studentId);
     return guardRequest(() => remote.deleteAccount(studentId));
   }
 
   @override
   Future<Result<Student?>> getStudentById(String studentId) {
+    final cached = _studentCache[studentId];
+    if (cached != null) {
+      return Future.value(Success(cached));
+    }
     return guardRequest(() async {
       final dto = await remote.getStudentById(studentId);
-      return dto?.toDomain();
+      final student = dto?.toDomain();
+      if (student != null) {
+        _studentCache[studentId] = student;
+      }
+      return student;
     });
   }
 

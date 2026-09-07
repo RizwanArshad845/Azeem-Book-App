@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
-import '../viewmodel/splash_viewmodel.dart';
 import '../widgets/splash_ambient_glow.dart';
 import '../widgets/splash_animated_logo.dart';
 import '../widgets/splash_pulse_dots.dart';
+
 
 class SplashView extends ConsumerStatefulWidget {
   const SplashView({super.key});
@@ -53,9 +51,12 @@ class _SplashViewState extends ConsumerState<SplashView>
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    ref.listen(splashViewModelProvider, (previous, isReady) {
-      if (isReady) context.go(AppRoutes.authRoleSelect);
-    });
+    // Navigation is owned entirely by the GoRouter redirect in app_router.dart.
+    // When splashViewModelProvider emits `true`, _RouterRefreshNotifier fires
+    // GoRouter.refresh() which re-runs _redirectFor and routes to the correct
+    // first screen based on session + onboarding state — no hardcoded
+    // destination here.
+
 
     return Scaffold(
       body: DecoratedBox(

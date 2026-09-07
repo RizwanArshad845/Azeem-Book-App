@@ -11,6 +11,7 @@ import '../../presentation/auth/view/role_select_view.dart';
 import '../../presentation/auth/viewmodel/auth_viewmodel.dart';
 import '../../presentation/notifications/view/notifications_view.dart';
 import '../../presentation/splash/view/splash_view.dart';
+import '../../presentation/splash/viewmodel/splash_viewmodel.dart';
 import '../../presentation/student_cart/view/checkout_view.dart';
 import '../../presentation/student_cart/view/student_cart_view.dart';
 import '../../presentation/student_cart/viewmodel/student_cart_viewmodel.dart';
@@ -198,6 +199,7 @@ bool _isOutsideShellRoute(String location) =>
 /// (§10.2: redirect owns "where does an authenticated user belong").
 class _RouterRefreshNotifier extends ChangeNotifier {
   _RouterRefreshNotifier(Ref ref) {
+    ref.listen(splashViewModelProvider, (_, _) => notifyListeners());
     ref.listen(currentUserProvider, (_, _) => notifyListeners());
     ref.listen(teacherOnboardingViewModelProvider, (_, _) => notifyListeners());
     ref.listen(studentOnboardingViewModelProvider, (_, _) => notifyListeners());
@@ -208,7 +210,14 @@ class _RouterRefreshNotifier extends ChangeNotifier {
 /// given the current auth session and (role-specific) onboarding progress.
 /// Returns `null` to allow the requested [location] as-is.
 String? _redirectFor(Ref ref, String location) {
-  if (location == AppRoutes.splash) return null;
+  if (location == AppRoutes.splash) {
+    // Keep the user on splash while the logo animation / preload is running.
+    // Once splashViewModelProvider emits `true` (ready), fall through to
+    // normal session + onboarding routing below so the redirect picks the
+    // correct first screen rather than always going to authRoleSelect.
+    final splashReady = ref.read(splashViewModelProvider);
+    if (!splashReady) return null;
+  }
 
   final session = ref.read(currentUserProvider);
   if (session == null) {
@@ -216,47 +225,82 @@ String? _redirectFor(Ref ref, String location) {
   }
 
   if (session.role == UserRole.teacher) {
+    if (session.status == 'DASHBOARD') {
+      final allowed =
+          _teacherShellRoutes.contains(location) || _isOutsideShellRoute(location);
+      return allowed ? null : AppRoutes.teacherOverview;
+    }
+    const teacherPreSubmitRoutes = {
+      AppRoutes.teacherOnboardingSignup,
+      AppRoutes.teacherOnboardingReview,
+    };
+
     final teacherAsync = ref.read(teacherOnboardingViewModelProvider);
     if (teacherAsync.isLoading) return null;
 
+    // Check the resolved onboarding record *before* trusting
+    // `session.status == 'NOT_REGISTERED'`: that status is a snapshot from
+    // OTP-verify time that nothing ever refreshes — `submitSignUp()` sets
+    // this provider's state directly on success without touching
+    // `AuthViewModel`'s session, so `status` stays stale forever after a
+    // real Teacher record starts existing. Trusting the stale status first
+    // would leave a freshly-submitted teacher stuck on the review screen
+    // indefinitely (still "allowed" there, never advanced to Home/Pending).
     final teacher = teacherAsync.value;
-    if (teacher == null) {
-      const teacherPreSubmitRoutes = {
-        AppRoutes.teacherOnboardingSignup,
-        AppRoutes.teacherOnboardingReview,
-      };
+    if (teacher != null) {
+      if (teacherOnboardingStageOf(teacher) ==
+          TeacherOnboardingStage.pendingApproval) {
+        return location == AppRoutes.teacherOnboardingPending
+            ? null
+            : AppRoutes.teacherOnboardingPending;
+      }
+      final allowed =
+          _teacherShellRoutes.contains(location) || _isOutsideShellRoute(location);
+      return allowed ? null : AppRoutes.teacherOverview;
+    }
+
+    if (session.status == 'NOT_REGISTERED') {
       return teacherPreSubmitRoutes.contains(location)
           ? null
           : AppRoutes.teacherOnboardingSignup;
     }
 
-    if (teacherOnboardingStageOf(teacher) ==
-        TeacherOnboardingStage.pendingApproval) {
-      return location == AppRoutes.teacherOnboardingPending
-          ? null
-          : AppRoutes.teacherOnboardingPending;
-    }
+    return teacherPreSubmitRoutes.contains(location)
+        ? null
+        : AppRoutes.teacherOnboardingSignup;
+  }
 
+  if (session.status == 'DASHBOARD') {
     final allowed =
-        _teacherShellRoutes.contains(location) || _isOutsideShellRoute(location);
-    return allowed ? null : AppRoutes.teacherOverview;
+        _studentShellRoutes.contains(location) ||
+        _isOutsideShellRoute(location) ||
+        location.startsWith('${AppRoutes.studentHome}/');
+    return allowed ? null : AppRoutes.studentHome;
   }
 
   final studentAsync = ref.read(studentOnboardingViewModelProvider);
   if (studentAsync.isLoading) return null;
 
+  // Check the resolved onboarding record *before* trusting
+  // `session.status == 'NOT_REGISTERED'`: that status is a snapshot from
+  // OTP-verify time that nothing ever refreshes — `submit()` sets this
+  // provider's state directly on success without touching
+  // `AuthViewModel`'s session, so `status` stays stale forever after a
+  // real Student record starts existing. Trusting the stale status first
+  // would leave a freshly-submitted student stuck on the review screen
+  // indefinitely (still "allowed" there, never advanced to Home).
   final student = studentAsync.value;
-  if (student == null) {
-    return _studentOnboardingRoutes.contains(location)
-        ? null
-        : AppRoutes.studentOnboardingBasicInfo;
+  if (student != null) {
+    final allowed =
+        _studentShellRoutes.contains(location) ||
+        _isOutsideShellRoute(location) ||
+        location.startsWith('${AppRoutes.studentHome}/');
+    return allowed ? null : AppRoutes.studentHome;
   }
 
-  final allowed =
-      _studentShellRoutes.contains(location) ||
-      _isOutsideShellRoute(location) ||
-      location.startsWith('${AppRoutes.studentHome}/');
-  return allowed ? null : AppRoutes.studentHome;
+  return _studentOnboardingRoutes.contains(location)
+      ? null
+      : AppRoutes.studentOnboardingBasicInfo;
 }
 
 final goRouterProvider = Provider<GoRouter>((ref) {

@@ -12,6 +12,7 @@ import '../../../core/widgets/onboarding_summary_item.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/student_onboarding/entities/teacher_option.dart';
+import '../../auth/widgets/onboarding_logout_action.dart';
 import '../viewmodel/student_onboarding_viewmodel.dart';
 
 /// Final onboarding step — shows everything collected across the basic-info
@@ -72,6 +73,7 @@ class StudentOnboardingReviewView extends ConsumerWidget {
       currentStep: 3,
       totalSteps: 3,
       onBack: () => context.pop(),
+      onLogout: () => confirmOnboardingLogout(context, ref),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,

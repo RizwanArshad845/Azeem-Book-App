@@ -20,7 +20,7 @@
   "commonSearch": "تلاش کریں",
   "commonViewAll": "سب دیکھیں",
 
-  "roleSelectionTitle": "عظیم پبلیکیشنز میں خوش آمدید",
+  "roleSelectionTitle": "خوش آمدید",
   "roleSelectionSubtitle": "براہ کرم جاری رکھنے کے لیے اپنا کردار منتخب کریں",
   "roleStudent": "طالب علم",
   "roleStudentDesc": "امتحانات کی تیاری کریں، ٹیسٹ دیں، پیشرفت دیکھیں",
@@ -29,7 +29,8 @@
   "roleSelectRequired": "کوڈ کی درخواست سے پہلے اپنا کردار منتخب کریں۔",
   "otpRequestRequired": "تصدیق سے پہلے تصدیقی کوڈ کی درخواست کریں۔",
 
-  "phoneTitle": "اپنا فون نمبر درج کریں",
+  "onboardingTitle": "آن بورڈنگ",
+  "phoneTitle": "فون نمبر",
   "phoneWelcomeTitle": "عظیم بکس میں خوش آمدید!",
   "phoneSubtitle": "ہم اس نمبر پر تصدیقی کوڈ بھیجیں گے",
   "phoneLabel": "فون نمبر",
@@ -273,6 +274,7 @@
   "checkoutPendingStatus": "ادائیگی التواء میں ہے",
   "commonDone": "مکمل",
   "testTakingTitle": "ٹیسٹ",
+  "testLoadingMessage": "ٹیسٹ لوڈ ہو رہا ہے...",
   "testExitDialogStay": "ٹھہریں",
   "testNotPurchasedMessage": "ٹیسٹ شروع کرنے کے لیے آپ کو اسے خریدنا ہوگا۔ اسے انلاک کرنے کے لیے کارٹ میں شامل کریں۔",
   "testNoQuestionsFound": "اس ٹیسٹ کے لیے کوئی سوال نہیں ملا۔",
