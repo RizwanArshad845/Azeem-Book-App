@@ -51,7 +51,13 @@ class CartRepositoryImpl implements CartRepository {
         testCount: count,
       );
     }).toList();
-    return cart.copyWith(items: items);
+    final computedTotal = (items != null && items.isNotEmpty)
+        ? items.fold<double>(
+            0.0,
+            (sum, item) => sum + (item.discountedPrice ?? item.price),
+          )
+        : dto.totalAmount;
+    return cart.copyWith(items: items, totalAmount: computedTotal);
   }
 
   /// 20% off (arbitrary but consistent demo rate — §9.2 doesn't specify
