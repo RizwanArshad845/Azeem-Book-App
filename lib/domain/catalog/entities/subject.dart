@@ -11,5 +11,6 @@ abstract class Subject with _$Subject {
     required String id,
     required String name,
     required String boardClassId,
+    required int bundlePrice,
   }) = _Subject;
 }

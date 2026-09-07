@@ -13,17 +13,23 @@ abstract class SubjectDto with _$SubjectDto {
     required String id,
     required String name,
     required String boardClassId,
+    required int bundlePrice,
   }) = _SubjectDto;
 
   factory SubjectDto.fromJson(Map<String, dynamic> json) =>
       _$SubjectDtoFromJson(json);
 
-  Subject toDomain() =>
-      Subject(id: id, name: name, boardClassId: boardClassId);
+  Subject toDomain() => Subject(
+    id: id,
+    name: name,
+    boardClassId: boardClassId,
+    bundlePrice: bundlePrice,
+  );
 
   factory SubjectDto.fromDomain(Subject entity) => SubjectDto(
     id: entity.id,
     name: entity.name,
     boardClassId: entity.boardClassId,
+    bundlePrice: entity.bundlePrice,
   );
 }

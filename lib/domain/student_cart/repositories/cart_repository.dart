@@ -11,15 +11,17 @@ import '../entities/payment.dart';
 /// Concrete implementation calls the remote datasource directly — never
 /// called directly from a viewmodel.
 ///
-/// [addSubjectBundle] takes a [Subject] and its [Test]s (and the student's
-/// current [SubjectEnrollment]s) directly rather than just a `subjectId`,
-/// because §9.2's `Test` entity has no price field — pricing/discount must
-/// be computed here from the subject's tests themselves (see
-/// `price_for_subject_bundle.dart`) and the student's teacher-discount
-/// eligibility for that subject. Passing both in keeps this repository free
-/// of a cross-feature dependency on the catalog/student_onboarding
-/// *repositories* — the caller (viewmodel, which already has both via
-/// existing providers) supplies the entities.
+/// [addSubjectBundle] takes a [Subject] (and the student's current
+/// [SubjectEnrollment]s) directly rather than just a `subjectId`: pricing
+/// comes from `Subject.bundlePrice` (the server's authoritative price —
+/// the server derives the cart item's actual price from it independently,
+/// this is only used to compute the discounted price sent alongside it),
+/// and the discount depends on the student's teacher-discount eligibility
+/// for that subject. Passing the entity in keeps this repository free of a
+/// cross-feature dependency on the catalog/student_onboarding
+/// *repositories* — the caller (viewmodel, which already has it via an
+/// existing provider) supplies it. [tests] is still required to report the
+/// bundle's test count for display.
 abstract class CartRepository {
   /// Returns the student's cart, creating an empty one on first access.
   Future<Result<Cart>> getCart(String studentId, {bool forceRefresh = false});
@@ -27,10 +29,11 @@ abstract class CartRepository {
   /// Adds a whole-[subject] bundle (all of [tests], purchased together — see
   /// `CartItem` doc comment for why bundle-only) to [studentId]'s cart.
   /// No-ops (returns the cart unchanged) if the subject is already present.
-  /// Computes `CartItem.price` via `priceForSubjectBundle(tests)` and
-  /// `CartItem.discountedPrice` per the teacher-discount rule: 20% off when
-  /// [subjectEnrollments] contains a `SubjectEnrollment` for `subject.id`
-  /// with `discountApplied == true`.
+  /// `CartItem.price` is set server-side from `Subject.bundlePrice`;
+  /// `CartItem.discountedPrice` is computed here off `subject.bundlePrice`
+  /// per the teacher-discount rule: 20% off when [subjectEnrollments]
+  /// contains a `SubjectEnrollment` for `subject.id` with
+  /// `discountApplied == true`.
   Future<Result<Cart>> addSubjectBundle(
     String studentId,
     Subject subject,

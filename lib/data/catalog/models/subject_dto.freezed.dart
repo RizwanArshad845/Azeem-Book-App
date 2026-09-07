@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SubjectDto {
 
- String get id; String get name; String get boardClassId;
+ String get id; String get name; String get boardClassId; int get bundlePrice;
 /// Create a copy of SubjectDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $SubjectDtoCopyWith<SubjectDto> get copyWith => _$SubjectDtoCopyWithImpl<Subject
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubjectDto&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.boardClassId, boardClassId) || other.boardClassId == boardClassId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubjectDto&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.boardClassId, boardClassId) || other.boardClassId == boardClassId)&&(identical(other.bundlePrice, bundlePrice) || other.bundlePrice == bundlePrice));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,boardClassId);
+int get hashCode => Object.hash(runtimeType,id,name,boardClassId,bundlePrice);
 
 @override
 String toString() {
-  return 'SubjectDto(id: $id, name: $name, boardClassId: $boardClassId)';
+  return 'SubjectDto(id: $id, name: $name, boardClassId: $boardClassId, bundlePrice: $bundlePrice)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $SubjectDtoCopyWith<$Res>  {
   factory $SubjectDtoCopyWith(SubjectDto value, $Res Function(SubjectDto) _then) = _$SubjectDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String boardClassId
+ String id, String name, String boardClassId, int bundlePrice
 });
 
 
@@ -65,12 +65,13 @@ class _$SubjectDtoCopyWithImpl<$Res>
 
 /// Create a copy of SubjectDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? boardClassId = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? boardClassId = null,Object? bundlePrice = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,boardClassId: null == boardClassId ? _self.boardClassId : boardClassId // ignore: cast_nullable_to_non_nullable
-as String,
+as String,bundlePrice: null == bundlePrice ? _self.bundlePrice : bundlePrice // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -155,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String boardClassId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String boardClassId,  int bundlePrice)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SubjectDto() when $default != null:
-return $default(_that.id,_that.name,_that.boardClassId);case _:
+return $default(_that.id,_that.name,_that.boardClassId,_that.bundlePrice);case _:
   return orElse();
 
 }
@@ -176,10 +177,10 @@ return $default(_that.id,_that.name,_that.boardClassId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String boardClassId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String boardClassId,  int bundlePrice)  $default,) {final _that = this;
 switch (_that) {
 case _SubjectDto():
-return $default(_that.id,_that.name,_that.boardClassId);case _:
+return $default(_that.id,_that.name,_that.boardClassId,_that.bundlePrice);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +197,10 @@ return $default(_that.id,_that.name,_that.boardClassId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String boardClassId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String boardClassId,  int bundlePrice)?  $default,) {final _that = this;
 switch (_that) {
 case _SubjectDto() when $default != null:
-return $default(_that.id,_that.name,_that.boardClassId);case _:
+return $default(_that.id,_that.name,_that.boardClassId,_that.bundlePrice);case _:
   return null;
 
 }
@@ -211,12 +212,13 @@ return $default(_that.id,_that.name,_that.boardClassId);case _:
 @JsonSerializable()
 
 class _SubjectDto extends SubjectDto {
-  const _SubjectDto({required this.id, required this.name, required this.boardClassId}): super._();
+  const _SubjectDto({required this.id, required this.name, required this.boardClassId, required this.bundlePrice}): super._();
   factory _SubjectDto.fromJson(Map<String, dynamic> json) => _$SubjectDtoFromJson(json);
 
 @override final  String id;
 @override final  String name;
 @override final  String boardClassId;
+@override final  int bundlePrice;
 
 /// Create a copy of SubjectDto
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +233,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubjectDto&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.boardClassId, boardClassId) || other.boardClassId == boardClassId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubjectDto&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.boardClassId, boardClassId) || other.boardClassId == boardClassId)&&(identical(other.bundlePrice, bundlePrice) || other.bundlePrice == bundlePrice));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,boardClassId);
+int get hashCode => Object.hash(runtimeType,id,name,boardClassId,bundlePrice);
 
 @override
 String toString() {
-  return 'SubjectDto(id: $id, name: $name, boardClassId: $boardClassId)';
+  return 'SubjectDto(id: $id, name: $name, boardClassId: $boardClassId, bundlePrice: $bundlePrice)';
 }
 
 
@@ -251,7 +253,7 @@ abstract mixin class _$SubjectDtoCopyWith<$Res> implements $SubjectDtoCopyWith<$
   factory _$SubjectDtoCopyWith(_SubjectDto value, $Res Function(_SubjectDto) _then) = __$SubjectDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String boardClassId
+ String id, String name, String boardClassId, int bundlePrice
 });
 
 
@@ -268,12 +270,13 @@ class __$SubjectDtoCopyWithImpl<$Res>
 
 /// Create a copy of SubjectDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? boardClassId = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? boardClassId = null,Object? bundlePrice = null,}) {
   return _then(_SubjectDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,boardClassId: null == boardClassId ? _self.boardClassId : boardClassId // ignore: cast_nullable_to_non_nullable
-as String,
+as String,bundlePrice: null == bundlePrice ? _self.bundlePrice : bundlePrice // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

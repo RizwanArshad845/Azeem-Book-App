@@ -56,7 +56,15 @@ class ChapterListView extends ConsumerWidget {
     var subject = ref.read(subjectByIdProvider(subjectId)).value ??
         await ref.read(subjectByIdProvider(subjectId).future);
     if (subject == null && fallbackName != null) {
-      subject = Subject(id: subjectId, boardClassId: '', name: fallbackName);
+      // bundlePrice: 0 is a placeholder only — the server looks up the real
+      // Subject.bundlePrice from subjectId, this fallback object's price
+      // never reaches it (see AddCartItemRequestDto, which has no price field).
+      subject = Subject(
+        id: subjectId,
+        boardClassId: '',
+        name: fallbackName,
+        bundlePrice: 0,
+      );
     }
     final tests =
         ref.read(testsForSubjectProvider(subjectId)).value ??

@@ -14,7 +14,6 @@ import '../../../domain/student_cart/usecases/add_subject_bundle_usecase.dart';
 import '../../../domain/student_cart/usecases/checkout_usecase.dart';
 import '../../../domain/student_cart/usecases/get_cart_usecase.dart';
 import '../../../domain/student_cart/usecases/get_purchased_subject_ids_usecase.dart';
-import '../../../domain/student_cart/usecases/price_for_subject_bundle.dart';
 import '../../../domain/student_cart/usecases/remove_from_cart_usecase.dart';
 import '../../../domain/student_onboarding/entities/subject_enrollment.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
@@ -161,6 +160,7 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
         id: subjectId,
         boardClassId: '',
         name: 'Subject',
+        bundlePrice: 0,
       );
       await addSubjectBundle(subject, tests);
     } finally {
@@ -261,6 +261,7 @@ final currentCart = state.value;
       },
       failure: (_) => null,
     );
+  }
 
   Future<void> _reconcileCartAfterCheckout(String studentId) async {
     final result = await sl<GetCartUseCase>()(studentId, forceRefresh: true);
@@ -346,16 +347,14 @@ final testsForSubjectProvider =
       );
     });
 
-/// Wraps `priceForSubjectBundle` behind a provider so presentation widgets
-/// (`SubjectCard`, `ChapterListView`) don't import the domain usecase
-/// directly (audit C1) — keyed by `subjectId`, null while tests are still
-/// loading or the subject has no tests yet.
+/// Reads the authoritative `Subject.bundlePrice` off `subjectByIdProvider`
+/// behind a provider so presentation widgets (`SubjectCard`,
+/// `ChapterListView`) don't reach into the catalog provider directly for
+/// this — keyed by `subjectId`, null while the subject is still loading.
 final subjectBundlePriceProvider = Provider.family<double?, String>((
   ref,
   subjectId,
 ) {
-  final tests = ref.watch(testsForSubjectProvider(subjectId)).value;
-  return (tests != null && tests.isNotEmpty)
-      ? priceForSubjectBundle(tests)
-      : null;
+  final subject = ref.watch(subjectByIdProvider(subjectId)).value;
+  return subject?.bundlePrice.toDouble();
 });

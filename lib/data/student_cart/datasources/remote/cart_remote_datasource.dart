@@ -3,8 +3,8 @@ import 'package:dio/dio.dart';
 import '../../../../core/network/api_endpoints.dart';
 import '../../../../core/network/result_guard.dart';
 import '../../../../domain/common/result.dart';
+import '../../models/add_cart_item_request_dto.dart';
 import '../../models/cart_dto.dart';
-import '../../models/cart_item_dto.dart';
 import '../../models/payment_dto.dart';
 
 /// Dio-backed cart/checkout datasource.
@@ -18,7 +18,10 @@ import '../../models/payment_dto.dart';
 abstract class CartRemoteDataSource {
   Future<Result<CartDto>> getCart(String studentId);
 
-  Future<Result<CartDto>> addSubjectBundle(String studentId, CartItemDto item);
+  Future<Result<CartDto>> addSubjectBundle(
+    String studentId,
+    AddCartItemRequestDto request,
+  );
 
   Future<Result<CartDto>> removeItem(String studentId, String subjectId);
 
@@ -43,11 +46,14 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   }
 
   @override
-  Future<Result<CartDto>> addSubjectBundle(String studentId, CartItemDto item) {
+  Future<Result<CartDto>> addSubjectBundle(
+    String studentId,
+    AddCartItemRequestDto request,
+  ) {
     return guardRequest(() async {
       final response = await _dio.post<Map<String, dynamic>>(
         ApiEndpoints.studentCart(studentId),
-        data: item.toJson(),
+        data: request.toJson(),
       );
       return CartDto.fromJson(response.data!);
     });

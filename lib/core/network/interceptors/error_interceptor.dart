@@ -73,6 +73,12 @@ class ErrorInterceptor extends Interceptor {
   /// The real backend always errors as `{"error": {"code", "message"}}`
   /// (`FRONTEND_INTEGRATION.md` §4) — surface that `message` instead of a
   /// generic one whenever the response body actually has this shape.
+  ///
+  /// One documented exception: invalid `subjectId` on add-to-cart returns a
+  /// bare DRF field-error body, `{"subjectId": "Subject not found."}`
+  /// (`MOBILE_CHANGES.md` §3), not wrapped in the `error` envelope above —
+  /// special-cased narrowly rather than surfacing arbitrary field-error
+  /// values so unrelated server internals never leak into the UI.
   String? _serverMessage(DioException err) {
     final data = err.response?.data;
     if (data is Map<String, dynamic>) {
@@ -80,6 +86,10 @@ class ErrorInterceptor extends Interceptor {
       if (error is Map<String, dynamic>) {
         final message = error['message'];
         if (message is String && message.isNotEmpty) return message;
+      }
+      final subjectIdError = data['subjectId'];
+      if (subjectIdError is String && subjectIdError.isNotEmpty) {
+        return subjectIdError;
       }
     }
     return null;

@@ -10,6 +10,7 @@ _SubjectDto _$SubjectDtoFromJson(Map<String, dynamic> json) => _SubjectDto(
   id: json['id'] as String,
   name: json['name'] as String,
   boardClassId: json['boardClassId'] as String,
+  bundlePrice: (json['bundlePrice'] as num).toInt(),
 );
 
 Map<String, dynamic> _$SubjectDtoToJson(_SubjectDto instance) =>
@@ -17,4 +18,5 @@ Map<String, dynamic> _$SubjectDtoToJson(_SubjectDto instance) =>
       'id': instance.id,
       'name': instance.name,
       'boardClassId': instance.boardClassId,
+      'bundlePrice': instance.bundlePrice,
     };

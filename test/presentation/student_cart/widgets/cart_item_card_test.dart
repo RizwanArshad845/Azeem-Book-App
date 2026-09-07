@@ -76,6 +76,7 @@ void main() {
                 id: 'subj_cs_101',
                 boardClassId: 'bc_1',
                 name: 'Computer Science',
+                bundlePrice: 1500,
               ),
             ),
           ),

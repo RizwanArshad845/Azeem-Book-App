@@ -5,11 +5,10 @@ import '../../../domain/common/result.dart';
 import '../../../domain/student_cart/entities/cart.dart';
 import '../../../domain/student_cart/entities/payment.dart';
 import '../../../domain/student_cart/repositories/cart_repository.dart';
-import '../../../domain/student_cart/usecases/price_for_subject_bundle.dart';
 import '../../../domain/student_onboarding/entities/subject_enrollment.dart';
 import '../datasources/remote/cart_remote_datasource.dart';
+import '../models/add_cart_item_request_dto.dart';
 import '../models/cart_dto.dart';
-import '../models/cart_item_dto.dart';
 
 /// Maps [CartRemoteDataSource] DTOs to domain entities so nothing above
 /// this layer ever sees a DTO.
@@ -108,7 +107,7 @@ class CartRepositoryImpl implements CartRepository {
     _knownSubjectNames[subject.id] = subject.name;
     _knownTestCounts[subject.id] = tests.length;
 
-    final basePrice = priceForSubjectBundle(tests);
+    final basePrice = subject.bundlePrice.toDouble();
 
     SubjectEnrollment? enrollment;
     for (final candidate in subjectEnrollments) {
@@ -121,15 +120,12 @@ class CartRepositoryImpl implements CartRepository {
         ? basePrice * _teacherDiscountMultiplier
         : null;
 
-    final item = CartItemDto(
+    final request = AddCartItemRequestDto(
       subjectId: subject.id,
-      subjectName: subject.name,
-      testCount: tests.length,
-      price: basePrice,
       discountedPrice: discountedPrice,
     );
 
-    final result = await remote.addSubjectBundle(studentId, item);
+    final result = await remote.addSubjectBundle(studentId, request);
     return result.when(
       success: (dto) {
         final cart = _toCart(dto);
