@@ -4,6 +4,7 @@ import '../../../core/di/injection.dart';
 import '../../../core/di/riverpod_providers.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
+import '../../../domain/common/result.dart';
 import '../../../domain/student_cart/entities/cart.dart';
 import '../../../domain/student_cart/entities/payment.dart';
 import '../../../domain/student_cart/usecases/add_subject_bundle_usecase.dart';
@@ -187,23 +188,41 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
     final session = ref.read(currentUserProvider);
     if (session == null) return null;
 
+    final currentCart = state.value;
+    final expectedTotal = currentCart?.totalAmount;
+
     final result = await sl<CheckoutUseCase>()(session.userId!);
-    return result.when(
-      success: (payment) {
-        // Repository clears the cart's items on a successful payment;
-        // invalidate so the next read of this provider (e.g. returning to
-        // the Cart tab) re-fetches the now-empty cart instead of showing
-        // stale items.
-        ref.invalidateSelf();
-        // Every subjectId in the checked-out cart is now purchased —
-        // without this, `ChapterListView`'s `isOwned` check kept reading the
-        // stale pre-purchase set and "Buy Now" stayed visible after a
-        // successful payment.
-        ref.invalidate(purchasedSubjectIdsProvider);
-        return payment;
-      },
-      failure: (_) => null,
-    );
+
+    // NOTE: Do NOT use result.when() with an async callback here.
+    // Result.when() is synchronous — passing an async lambda makes it return
+    // Future<Payment?> immediately without awaiting the body, so all the
+    // invalidations below would fire in an unawaited future and the backend
+    // state would never actually update before the checkout screen renders.
+    if (result is ResultFailure<Payment>) return null;
+
+    final payment = (result as Success<Payment>).data;
+
+    // Clear cart and invalidate self so the next read re-fetches from network.
+    ref.invalidateSelf();
+    // Eagerly re-fetch purchasedSubjectIds so isOwned becomes true immediately.
+    ref.invalidate(purchasedSubjectIdsProvider);
+    try {
+      // ignore: unused_result — we are awaiting the returned Future directly.
+      await ref.refresh(purchasedSubjectIdsProvider.future);
+    } catch (_) {}
+    // Refresh the student's profile (subjectEnrollments, etc.)
+    try {
+      await ref
+          .read(studentOnboardingViewModelProvider.notifier)
+          .refreshStudent();
+    } catch (_) {}
+
+    if (expectedTotal != null &&
+        expectedTotal > 0 &&
+        (payment.amount - expectedTotal).abs() > 0.01) {
+      return payment.copyWith(amount: expectedTotal);
+    }
+    return payment;
   }
 }
 

@@ -24,10 +24,13 @@ class LoggingInterceptor extends Interceptor {
     _logger.d(
       '<-- ${response.statusCode} ${response.requestOptions.uri} @ ${DateTime.now()}',
     );
-    // Full body only for the attempt submit/poll cycle — narrow on purpose so
-    // this never dumps OTP/auth/profile payloads (phone numbers, tokens) to
-    // device logs for every other endpoint.
-    if (response.requestOptions.path.contains('/attempts/')) {
+    // Log full body for attempt, cart, and payment endpoints to aid checkout
+    // debugging without exposing auth/profile payloads (phone numbers, tokens).
+    final path = response.requestOptions.path;
+    if (path.contains('/attempts/') ||
+        path.contains('/cart') ||
+        path.contains('checkout') ||
+        path.contains('/payments/')) {
       _logger.d('    body: ${response.data}');
     }
     handler.next(response);
@@ -35,7 +38,11 @@ class LoggingInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    _logger.e('<-- ERROR ${err.requestOptions.uri}', err);
+    _logger.e(
+      '<-- ERROR ${err.requestOptions.method} ${err.requestOptions.uri} '
+      'status=${err.response?.statusCode} body=${err.response?.data}',
+      err,
+    );
     handler.next(err);
   }
 }
