@@ -6,7 +6,6 @@ import '../../../core/di/injection.dart';
 import '../../../core/di/riverpod_providers.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
-import '../../../domain/common/result.dart';
 import '../../../domain/student_cart/entities/cart.dart';
 import '../../../domain/student_cart/entities/cart_item.dart';
 import '../../../domain/student_cart/entities/payment.dart';
@@ -239,7 +238,7 @@ final currentCart = state.value;
           ref
               .read(studentOnboardingViewModelProvider.notifier)
               .refreshStudent()
-              .catchError((_) {}),
+              .catchError((_) => null),
         );
 
         // 4. Preserve the float discrepancy check from teacher-test-fixes

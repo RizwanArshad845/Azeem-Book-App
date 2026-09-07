@@ -10,7 +10,6 @@ import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
-import '../../auth/widgets/onboarding_logout_action.dart';
 import '../viewmodel/teacher_onboarding_viewmodel.dart';
 import '../widgets/teacher_info_row.dart';
 

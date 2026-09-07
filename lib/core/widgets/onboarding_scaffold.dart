@@ -51,7 +51,7 @@ class OnboardingScaffold extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       backgroundColor: context.colors.background,
       appBar: AppBar(
-        title: AppBarTitle(appBarTitle),
+        title: AppBarTitle(appBarTitle ?? context.l10n.onboardingTitle),
         centerTitle: true,
         leading: onBack != null
             ? IconButton(
