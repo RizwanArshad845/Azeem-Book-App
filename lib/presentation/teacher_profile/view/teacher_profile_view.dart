@@ -5,16 +5,14 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/providers/locale_provider.dart';
-import '../../../core/utils/name_initials.dart';
-import '../../../core/utils/validators.dart';
 import '../../../core/widgets/app_bar_title.dart';
-import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_frosted_card.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/confirm_dialog.dart';
 import '../../../core/widgets/loading_indicator.dart';
+import '../../../core/widgets/profile_header_card.dart';
 import '../../../core/widgets/typed_confirm.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
 import '../../../domain/catalog/entities/board_class.dart';
@@ -22,7 +20,6 @@ import '../../../domain/catalog/entities/class_level.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
-import '../../auth/view/otp_verify_view.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
 import '../../teacher_onboarding/viewmodel/teacher_onboarding_viewmodel.dart';
 import '../../teacher_students/viewmodel/teacher_students_viewmodel.dart'
@@ -62,53 +59,13 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
 
   void _handleSave(Teacher currentTeacher) {
     final name = _nameController.text.trim();
-    final phoneNumber = _phoneController.text.trim();
-    if (name.isEmpty || phoneNumber.isEmpty) {
+    final phoneNumber = currentTeacher.phoneNumber;
+    if (name.isEmpty) {
       AppSnackbar.show(context, context.l10n.profileEmptyFields);
       return;
     }
 
-    if (!Validators.isValidPhoneLocal(phoneNumber)) {
-      AppSnackbar.show(context, context.l10n.phoneInvalid);
-      return;
-    }
-
-    // If phone number changed, require OTP verification sheet first
-    if (phoneNumber != currentTeacher.phoneNumber) {
-      _requestPhoneChangeOtp(
-        currentPhone: currentTeacher.phoneNumber,
-        newPhone: phoneNumber,
-        onSent: () => _showPhoneOtpVerificationSheet(
-          currentPhone: currentTeacher.phoneNumber,
-          newPhone: phoneNumber,
-          onVerified: () => _commitUpdate(name: name, phoneNumber: phoneNumber),
-        ),
-      );
-      return;
-    }
-
     _commitUpdate(name: name, phoneNumber: phoneNumber);
-  }
-
-  void _requestPhoneChangeOtp({
-    required String currentPhone,
-    required String newPhone,
-    required VoidCallback onSent,
-  }) {
-    ref
-        .read(teacherProfileViewModelProvider.notifier)
-        .requestPhoneChangeOtp(currentPhone, newPhone)
-        .then((sent) {
-      if (!mounted) return;
-      if (sent) {
-        onSent();
-        return;
-      }
-      final error = ref.read(teacherProfileViewModelProvider).error;
-      final msg =
-          error is Failure ? error.message : context.l10n.commonErrorGeneric;
-      AppSnackbar.show(context, msg);
-    });
   }
 
   void _commitUpdate({required String name, required String phoneNumber}) {
@@ -126,41 +83,6 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
         AppSnackbar.show(context, msg);
       }
     });
-  }
-
-  void _showPhoneOtpVerificationSheet({
-    required String currentPhone,
-    required String newPhone,
-    required VoidCallback onVerified,
-  }) {
-    AppBottomSheet.show(
-      context: context,
-      title: context.l10n.otpTitle,
-      subtitle: context.l10n.otpSubtitle(newPhone),
-      child: OtpVerifyView(
-        phone: newPhone,
-        isBottomSheet: true,
-        onVerifyCode: (code) async {
-          final ok = await ref
-              .read(teacherProfileViewModelProvider.notifier)
-              .verifyPhoneChangeOtp(newPhone, code);
-          if (ok) {
-            onVerified();
-            return null;
-          }
-          final error = ref.read(teacherProfileViewModelProvider).error;
-          return error is Failure ? error : const UnknownFailure();
-        },
-        onResend: () async {
-          final ok = await ref
-              .read(teacherProfileViewModelProvider.notifier)
-              .requestPhoneChangeOtp(currentPhone, newPhone);
-          if (ok) return null;
-          final error = ref.read(teacherProfileViewModelProvider).error;
-          return error is Failure ? error : const UnknownFailure();
-        },
-      ),
-    );
   }
 
   void _handleLogout() {
@@ -245,86 +167,11 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // 1. Enriched Verified Faculty Card
-                    AppFrostedCard(
-                      padding: EdgeInsets.all(context.dimens.lg),
-                      child: Column(
-                        children: [
-                          Container(
-                            width: context.dimens.avatarLg,
-                            height: context.dimens.avatarLg,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  context.colors.primary,
-                                  context.colors.secondary,
-                                ],
-                              ),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Text(
-                              nameInitials(teacher.name),
-                              style: context.textStyles.headlineSmall?.copyWith(
-                                color: context.colors.onPrimary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: context.dimens.sm),
-                          Text(
-                            teacher.name,
-                            style: context.textStyles.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: context.dimens.xs / 3),
-                          Text(
-                            teacher.phoneNumber,
-                            style: context.textStyles.bodySmall?.copyWith(
-                              color: context.colors.textSecondary,
-                            ),
-                          ),
-                          SizedBox(height: context.dimens.sm),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: context.dimens.md,
-                              vertical: context.dimens.xs / 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: context.colors.success
-                                  .withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(
-                                context.dimens.radiusLg,
-                              ),
-                              border: Border.all(
-                                color: context.colors.success
-                                    .withValues(alpha: 0.3),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.verified_rounded,
-                                  color: context.colors.success,
-                                  size: context.dimens.iconSm,
-                                ),
-                                SizedBox(width: context.dimens.xs),
-                                Text(
-                                  context.l10n.teacherVerifiedBadge,
-                                  style: context.textStyles.labelSmall?.copyWith(
-                                    color: context.colors.success,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                    // 1. Verified Faculty Header Card
+                    ProfileHeaderCard(
+                      name: teacher.name,
+                      phoneNumber: teacher.phoneNumber,
+                      badgeLabel: context.l10n.teacherVerifiedBadge,
                     ),
                     SizedBox(height: context.dimens.lg),
 
@@ -339,7 +186,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Text(
-                            'Personal Information',
+                            context.l10n.personalInfoTitle,
                             style: context.textStyles.titleSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -356,6 +203,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                             controller: _phoneController,
                             keyboardType: TextInputType.phone,
                             maxLength: 11,
+                            enabled: false,
                           ),
                           SizedBox(height: context.dimens.lg),
                           AppPrimaryButton(

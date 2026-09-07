@@ -17,6 +17,7 @@ class AppTextField extends StatelessWidget {
     this.prefixIcon,
     this.textCapitalization = TextCapitalization.none,
     this.isRequired = false,
+    this.enabled = true,
   });
 
   final String label;
@@ -41,6 +42,10 @@ class AppTextField extends StatelessWidget {
   /// required-ness; callers still validate via [errorText].
   final bool isRequired;
 
+  /// When `false`, renders the field greyed-out and non-interactive (e.g.
+  /// a phone number that can't be edited from a profile screen).
+  final bool enabled;
+
   @override
   Widget build(BuildContext context) {
     return TextField(
@@ -50,6 +55,7 @@ class AppTextField extends StatelessWidget {
       maxLines: maxLines,
       maxLength: maxLength,
       textCapitalization: textCapitalization,
+      enabled: enabled,
       decoration: InputDecoration(
         label: isRequired
             ? Text.rich(

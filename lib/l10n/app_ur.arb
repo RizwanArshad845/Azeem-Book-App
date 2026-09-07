@@ -493,6 +493,7 @@
   "teacherOtpEnterCodeError": "براہ کرم تصدیقی کوڈ درج کریں۔",
   "teacherOtpInvalidCodeError": "غلط تصدیقی کوڈ۔ براہ کرم دوبارہ کوشش کریں۔",
   "teacherVerifiedBadge": "عظیم تصدیق شدہ فیکلٹی",
+  "studentVerifiedBadge": "عظیم تصدیق شدہ طالب علم",
   "teacherDefaultCampusFallback": "بہاولپور کیمپس",
   "teacherStudentsEnrolledCount": "~{count} طلباء داخل شدہ",
 

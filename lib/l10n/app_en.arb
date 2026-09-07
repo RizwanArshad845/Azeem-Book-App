@@ -585,6 +585,7 @@
   "teacherOtpEnterCodeError": "Please enter the verification code.",
   "teacherOtpInvalidCodeError": "Invalid verification code. Please try again.",
   "teacherVerifiedBadge": "Azeem Verified Faculty",
+  "studentVerifiedBadge": "Azeem Verified Student",
   "teacherDefaultCampusFallback": "Bahawalpur Campus",
   "teacherStudentsEnrolledCount": "~{count} Students Enrolled",
   "@teacherStudentsEnrolledCount": {

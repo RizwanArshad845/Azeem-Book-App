@@ -7,10 +7,12 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/app_frosted_card.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/confirm_dialog.dart';
 import '../../../core/widgets/loading_indicator.dart';
+import '../../../core/widgets/profile_header_card.dart';
 import '../../../core/widgets/typed_confirm.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/student_onboarding/entities/student.dart';
@@ -52,7 +54,7 @@ class _StudentProfileViewState extends ConsumerState<StudentProfileView> {
   void _handleSave() {
     final name = _nameController.text.trim();
     final phoneNumber = _phoneController.text.trim();
-    if (name.isEmpty || phoneNumber.isEmpty) {
+    if (name.isEmpty) {
       AppSnackbar.show(context, context.l10n.profileEmptyFields);
       return;
     }
@@ -153,32 +155,63 @@ class _StudentProfileViewState extends ConsumerState<StudentProfileView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    AppTextField(
-                      label: context.l10n.nameLabel,
-                      controller: _nameController,
-                      textCapitalization: TextCapitalization.words,
-                    ),
-                    SizedBox(height: context.dimens.md),
-                    AppTextField(
-                      label: context.l10n.phoneLabel,
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
+                    // 1. Verified Student Header Card
+                    ProfileHeaderCard(
+                      name: student.name,
+                      phoneNumber: student.phoneNumber,
+                      badgeLabel: context.l10n.studentVerifiedBadge,
                     ),
                     SizedBox(height: context.dimens.lg),
-                    AppPrimaryButton(
-                      label: context.l10n.commonSave,
-                      loading: isSaving,
-                      onPressed: _handleSave,
+
+                    // 2. Edit Personal Information Card
+                    AppFrostedCard(
+                      padding: EdgeInsets.all(context.dimens.lg),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            context.l10n.personalInfoTitle,
+                            style: context.textStyles.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: context.dimens.md),
+                          AppTextField(
+                            label: context.l10n.nameLabel,
+                            controller: _nameController,
+                            textCapitalization: TextCapitalization.words,
+                          ),
+                          SizedBox(height: context.dimens.md),
+                          AppTextField(
+                            label: context.l10n.phoneLabel,
+                            controller: _phoneController,
+                            keyboardType: TextInputType.phone,
+                            enabled: false,
+                          ),
+                          SizedBox(height: context.dimens.lg),
+                          AppPrimaryButton(
+                            label: context.l10n.commonSave,
+                            loading: isSaving,
+                            onPressed: _handleSave,
+                          ),
+                        ],
+                      ),
                     ),
-                    SizedBox(height: context.dimens.xxl),
+                    SizedBox(height: context.dimens.lg),
+
+                    // 3. Language Selector Card
                     StudentLanguageCard(isEnglish: isEnglish),
                     SizedBox(height: context.dimens.lg),
+
+                    // 4. Logout Button
                     AppOutlinedButton(
                       label: context.l10n.profileLogout,
                       icon: Icons.logout,
                       onPressed: isSaving ? null : _handleLogout,
                     ),
-                    SizedBox(height: context.dimens.xxl),
+                    SizedBox(height: context.dimens.xl),
+
+                    // 5. Delete Account Destructive Action
                     Center(
                       child: AppDangerButton(
                         label: context.l10n.profileDeleteAccount,
@@ -186,6 +219,7 @@ class _StudentProfileViewState extends ConsumerState<StudentProfileView> {
                         onPressed: isSaving ? null : () => _handleDeleteAccount(student),
                       ),
                     ),
+                    SizedBox(height: context.dimens.lg),
                   ],
                 ),
               ),

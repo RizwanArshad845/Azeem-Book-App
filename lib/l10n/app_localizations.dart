@@ -2580,6 +2580,12 @@ abstract class AppLocalizations {
   /// **'Azeem Verified Faculty'**
   String get teacherVerifiedBadge;
 
+  /// No description provided for @studentVerifiedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Azeem Verified Student'**
+  String get studentVerifiedBadge;
+
   /// No description provided for @teacherDefaultCampusFallback.
   ///
   /// In en, this message translates to:

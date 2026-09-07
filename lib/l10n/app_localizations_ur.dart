@@ -1387,6 +1387,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get teacherVerifiedBadge => 'عظیم تصدیق شدہ فیکلٹی';
 
   @override
+  String get studentVerifiedBadge => 'عظیم تصدیق شدہ طالب علم';
+
+  @override
   String get teacherDefaultCampusFallback => 'بہاولپور کیمپس';
 
   @override

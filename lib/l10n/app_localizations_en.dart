@@ -1380,6 +1380,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teacherVerifiedBadge => 'Azeem Verified Faculty';
 
   @override
+  String get studentVerifiedBadge => 'Azeem Verified Student';
+
+  @override
   String get teacherDefaultCampusFallback => 'Bahawalpur Campus';
 
   @override

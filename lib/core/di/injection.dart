@@ -11,9 +11,7 @@ import '../../domain/auth/repositories/auth_repository.dart';
 import '../../domain/auth/usecases/get_stored_session_usecase.dart';
 import '../../domain/auth/usecases/logout_usecase.dart';
 import '../../domain/auth/usecases/request_otp_usecase.dart';
-import '../../domain/auth/usecases/request_phone_change_otp_usecase.dart';
 import '../../domain/auth/usecases/verify_otp_usecase.dart';
-import '../../domain/auth/usecases/verify_phone_change_otp_usecase.dart';
 import '../../domain/campus_directory/repositories/campus_repository.dart';
 import '../../domain/campus_directory/usecases/get_campuses_usecase.dart';
 import '../../domain/catalog/repositories/catalog_repository.dart';
@@ -129,8 +127,6 @@ void setupLocator() {
   sl.registerFactory(() => VerifyOtpUseCase(sl()));
   sl.registerFactory(() => LogoutUseCase(sl()));
   sl.registerFactory(() => GetStoredSessionUseCase(sl()));
-  sl.registerFactory(() => RequestPhoneChangeOtpUseCase(sl()));
-  sl.registerFactory(() => VerifyPhoneChangeOtpUseCase(sl()));
 
   // teacher-onboarding
   sl.registerLazySingleton<TeacherRemoteDataSource>(
