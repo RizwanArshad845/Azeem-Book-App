@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_bar_actions.dart';
+import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../viewmodel/teacher_overview_viewmodel.dart';
@@ -29,7 +30,7 @@ class TeacherOverviewView extends ConsumerWidget {
       // crashes if that invariant is ever violated.
       return Scaffold(
         appBar: AppBar(
-          title: Text(context.l10n.teacherHomeTitle),
+          title: AppBarTitle(context.l10n.teacherHomeTitle),
           actions: const [AppBarActions(role: UserRole.teacher)],
         ),
         body: EmptyStateView(
@@ -43,7 +44,7 @@ class TeacherOverviewView extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.teacherHomeTitle),
+        title: AppBarTitle(context.l10n.teacherHomeTitle),
         actions: const [AppBarActions(role: UserRole.teacher)],
       ),
       body: SafeArea(

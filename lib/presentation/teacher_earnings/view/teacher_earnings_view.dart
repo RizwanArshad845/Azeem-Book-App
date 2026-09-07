@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_frosted_card.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/blurred_logo_backdrop.dart';
@@ -62,7 +63,7 @@ class TeacherEarningsView extends ConsumerWidget {
     final currentPage = ref.watch(_teacherEarningsCurrentPageProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.teacherEarningsTitle)),
+      appBar: AppBar(title: AppBarTitle(context.l10n.teacherEarningsTitle)),
       body: BlurredLogoBackdrop(
         child: SafeArea(
           child: RefreshIndicator(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
@@ -25,7 +26,7 @@ class StudentCartView extends ConsumerWidget {
     final isMutating = ref.watch(cartMutationInProgressProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.cartTitle)),
+      appBar: AppBar(title: AppBarTitle(context.l10n.cartTitle)),
       body: SafeArea(
         child: AsyncValueWidget<Cart>(
           value: cartAsync,

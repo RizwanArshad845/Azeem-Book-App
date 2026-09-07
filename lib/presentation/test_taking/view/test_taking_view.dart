@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/confirm_dialog.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
@@ -43,7 +44,7 @@ class TestTakingView extends ConsumerWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text(context.l10n.testTakingTitle)),
+        appBar: AppBar(title: AppBarTitle(context.l10n.testTakingTitle)),
         body: SafeArea(
           child: AsyncValueWidget<TestTakingState>(
             value: asyncState,

@@ -217,7 +217,7 @@ String? _redirectFor(Ref ref, String location) {
 
   if (session.role == UserRole.teacher) {
     final teacherAsync = ref.read(teacherOnboardingViewModelProvider);
-    if (teacherAsync.isLoading && !teacherAsync.hasValue) return null;
+    if (teacherAsync.isLoading) return null;
 
     final teacher = teacherAsync.value;
     if (teacher == null) {
@@ -243,7 +243,7 @@ String? _redirectFor(Ref ref, String location) {
   }
 
   final studentAsync = ref.read(studentOnboardingViewModelProvider);
-  if (studentAsync.isLoading && !studentAsync.hasValue) return null;
+  if (studentAsync.isLoading) return null;
 
   final student = studentAsync.value;
   if (student == null) {
