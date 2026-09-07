@@ -73,19 +73,6 @@ final teacherStudentsSearchQueryProvider =
       TeacherStudentsSearchQueryNotifier.new,
     );
 
-/// Campus filter ID notifier (null for All).
-class TeacherStudentsCampusFilterNotifier extends Notifier<String?> {
-  @override
-  String? build() => null;
-
-  void setCampus(String? campusId) => state = campusId;
-}
-
-final teacherStudentsCampusFilterProvider =
-    NotifierProvider<TeacherStudentsCampusFilterNotifier, String?>(
-      TeacherStudentsCampusFilterNotifier.new,
-    );
-
 /// Status filter notifier: 'all' | 'active' | 'free'.
 class TeacherStudentsStatusFilterNotifier extends Notifier<String> {
   @override
@@ -131,7 +118,6 @@ final teacherStudentsCurrentPageProvider =
 final teacherStudentsFilteredListProvider = Provider<List<Student>>((ref) {
   final students = ref.watch(teacherStudentsProvider).value ?? [];
   final query = ref.watch(teacherStudentsSearchQueryProvider).trim().toLowerCase();
-  final campusFilter = ref.watch(teacherStudentsCampusFilterProvider);
   final statusFilter = ref.watch(teacherStudentsStatusFilterProvider);
   final sort = ref.watch(teacherStudentsSortProvider);
 
@@ -143,12 +129,7 @@ final teacherStudentsFilteredListProvider = Provider<List<Student>>((ref) {
       if (!nameMatches && !phoneMatches) return false;
     }
 
-    // 2. Campus Filter
-    if (campusFilter != null && s.campusId != campusFilter) {
-      return false;
-    }
-
-    // 3. Status Filter (Active / Free)
+    // 2. Status Filter (Active / Free)
     final isPaid = (s.subjectEnrollments ?? []).any((e) => e.discountApplied);
     if (statusFilter == 'active' && !isPaid) return false;
     if (statusFilter == 'free' && isPaid) return false;

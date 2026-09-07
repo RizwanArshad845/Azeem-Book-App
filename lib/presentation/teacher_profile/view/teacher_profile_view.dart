@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/config/app_config.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../../../core/utils/name_initials.dart';
 import '../../../core/utils/validators.dart';
+import '../../../core/widgets/app_bar_title.dart';
+import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_frosted_card.dart';
 import '../../../core/widgets/app_snackbar.dart';
@@ -16,12 +17,17 @@ import '../../../core/widgets/confirm_dialog.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../core/widgets/typed_confirm.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
+import '../../../domain/catalog/entities/board_class.dart';
+import '../../../domain/catalog/entities/class_level.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
+import '../../auth/view/otp_verify_view.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
 import '../../teacher_onboarding/viewmodel/teacher_onboarding_viewmodel.dart';
-import '../../teacher_students/viewmodel/teacher_students_viewmodel.dart';
+import '../../teacher_students/viewmodel/teacher_students_viewmodel.dart'
+    show teacherStudentsCampusesByIdProvider;
+import '../viewmodel/teacher_profile_catalog_providers.dart';
 import '../viewmodel/teacher_profile_viewmodel.dart';
 import '../widgets/language_card.dart';
 
@@ -73,6 +79,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
         currentPhone: currentTeacher.phoneNumber,
         newPhone: phoneNumber,
         onSent: () => _showPhoneOtpVerificationSheet(
+          currentPhone: currentTeacher.phoneNumber,
           newPhone: phoneNumber,
           onVerified: () => _commitUpdate(name: name, phoneNumber: phoneNumber),
         ),
@@ -122,16 +129,36 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
   }
 
   void _showPhoneOtpVerificationSheet({
+    required String currentPhone,
     required String newPhone,
     required VoidCallback onVerified,
   }) {
-    showModalBottomSheet(
+    AppBottomSheet.show(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) => _PhoneOtpVerificationSheet(
-        newPhone: newPhone,
-        onVerified: onVerified,
+      title: context.l10n.otpTitle,
+      subtitle: context.l10n.otpSubtitle(newPhone),
+      child: OtpVerifyView(
+        phone: newPhone,
+        isBottomSheet: true,
+        onVerifyCode: (code) async {
+          final ok = await ref
+              .read(teacherProfileViewModelProvider.notifier)
+              .verifyPhoneChangeOtp(newPhone, code);
+          if (ok) {
+            onVerified();
+            return null;
+          }
+          final error = ref.read(teacherProfileViewModelProvider).error;
+          return error is Failure ? error : const UnknownFailure();
+        },
+        onResend: () async {
+          final ok = await ref
+              .read(teacherProfileViewModelProvider.notifier)
+              .requestPhoneChangeOtp(currentPhone, newPhone);
+          if (ok) return null;
+          final error = ref.read(teacherProfileViewModelProvider).error;
+          return error is Failure ? error : const UnknownFailure();
+        },
       ),
     );
   }
@@ -160,6 +187,8 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
       fieldLabel: context.l10n.profileDeleteConfirmField(teacher.phoneNumber),
       confirmLabel: context.l10n.profileDeleteAccount,
       cancelLabel: context.l10n.commonCancel,
+      maxLength: 11,
+      keyboardType: TextInputType.phone,
     ).then((confirmed) {
       if (confirmed != true || !mounted) return;
       ref
@@ -178,6 +207,53 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
     });
   }
 
+  String _resolveClassName(
+    String classId,
+    Map<String, BoardClass> boardClassesById,
+    Map<String, ClassLevel> classLevelsById,
+  ) {
+    final boardClass = boardClassesById[classId];
+    if (boardClass != null) {
+      return boardClass.name;
+    }
+    final classLevel = classLevelsById[classId];
+    if (classLevel != null) {
+      return classLevel.name;
+    }
+    return classId;
+  }
+
+  String _resolveSubjectName(
+    String subjectId,
+    Map<String, Subject> subjectsById,
+    BuildContext context,
+  ) {
+    final subject = subjectsById[subjectId];
+    if (subject != null) {
+      return context.l10n.localizedSubjectName(subject.name);
+    }
+    final localized = context.l10n.localizedSubjectName(subjectId);
+    if (localized != subjectId) {
+      return localized;
+    }
+    final lower = subjectId.toLowerCase();
+    if (lower.contains('phy')) return context.l10n.subjectPhysics;
+    if (lower.contains('chem')) return context.l10n.subjectChemistry;
+    if (lower.contains('bio')) return context.l10n.subjectBiology;
+    if (lower.contains('math')) return context.l10n.subjectMathematics;
+    if (lower.contains('cs') || lower.contains('comp')) {
+      return context.l10n.subjectComputerScience;
+    }
+    if (lower.contains('eng')) return context.l10n.subjectEnglish;
+    if (lower.contains('urd')) return context.l10n.subjectUrdu;
+    if (lower.contains('sci')) return context.l10n.subjectScience;
+    if (lower.contains('acc')) return context.l10n.subjectAccounting;
+    if (lower.contains('econ')) return context.l10n.subjectEconomics;
+    if (lower.contains('civ')) return context.l10n.subjectCivics;
+    if (lower.contains('edu')) return context.l10n.subjectEducation;
+    return subjectId;
+  }
+
   @override
   Widget build(BuildContext context) {
     final teacher = ref.watch(
@@ -193,8 +269,14 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
     final campusesById =
         ref.watch(teacherStudentsCampusesByIdProvider).value ??
         const <String, Campus>{};
+    final boardClassesById =
+        ref.watch(teacherProfileBoardClassesByIdProvider).value ??
+        const <String, BoardClass>{};
+    final classLevelsById =
+        ref.watch(teacherProfileClassLevelsByIdProvider).value ??
+        const <String, ClassLevel>{};
     final subjectsById =
-        ref.watch(teacherStudentsSubjectsByIdProvider).value ??
+        ref.watch(teacherProfileResolvedSubjectsProvider).value ??
         const <String, Subject>{};
 
     if (teacher != null) {
@@ -203,7 +285,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.profileTitle),
+        title: AppBarTitle(context.l10n.profileTitle),
         leading: IconButton(
           icon: Icon(Icons.adaptive.arrow_back),
           onPressed: () {
@@ -352,7 +434,13 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                               spacing: context.dimens.xs,
                               runSpacing: context.dimens.xs / 2,
                               children: [
-                                for (final className in teacher.classIds!)
+                                for (final className in teacher.classIds!
+                                    .map((id) => _resolveClassName(
+                                          id,
+                                          boardClassesById,
+                                          classLevelsById,
+                                        ))
+                                    .toSet())
                                   _BadgeChip(
                                     label: className,
                                     icon: Icons.school_outlined,
@@ -373,10 +461,15 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
                             spacing: context.dimens.xs,
                             runSpacing: context.dimens.xs / 2,
                             children: [
-                              for (final subjectId in teacher.subjectIds)
+                              for (final subjectName in teacher.subjectIds
+                                  .map((id) => _resolveSubjectName(
+                                        id,
+                                        subjectsById,
+                                        context,
+                                      ))
+                                  .toSet())
                                 _BadgeChip(
-                                  label: subjectsById[subjectId]?.name ??
-                                      subjectId,
+                                  label: subjectName,
                                   icon: Icons.menu_book_outlined,
                                 ),
                             ],
@@ -468,123 +561,6 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
   }
 }
 
-/// Self-contained modal bottom sheet for verifying new phone numbers via OTP.
-class _PhoneOtpVerificationSheet extends ConsumerStatefulWidget {
-  const _PhoneOtpVerificationSheet({
-    required this.newPhone,
-    required this.onVerified,
-  });
-
-  final String newPhone;
-  final VoidCallback onVerified;
-
-  @override
-  ConsumerState<_PhoneOtpVerificationSheet> createState() =>
-      _PhoneOtpVerificationSheetState();
-}
-
-class _PhoneOtpVerificationSheetState
-    extends ConsumerState<_PhoneOtpVerificationSheet> {
-  late final TextEditingController _otpController;
-  bool _isVerifying = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _otpController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _otpController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handleVerify() async {
-    final otp = _otpController.text.trim();
-    if (otp.isEmpty) {
-      AppSnackbar.show(context, context.l10n.teacherOtpEnterCodeError);
-      return;
-    }
-
-    setState(() => _isVerifying = true);
-    final isValid = await ref
-        .read(teacherProfileViewModelProvider.notifier)
-        .verifyPhoneChangeOtp(widget.newPhone, otp);
-    if (!mounted) return;
-    setState(() => _isVerifying = false);
-
-    if (isValid) {
-      Navigator.pop(context);
-      widget.onVerified();
-    } else {
-      final error = ref.read(teacherProfileViewModelProvider).error;
-      final msg = error is Failure
-          ? error.message
-          : context.l10n.teacherOtpInvalidCodeError;
-      AppSnackbar.show(context, msg);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: AppFrostedCard(
-        padding: EdgeInsets.all(context.dimens.lg),
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(context.dimens.radiusXl),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  context.l10n.teacherVerifyNewPhoneTitle,
-                  style: context.textStyles.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close_rounded),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-            SizedBox(height: context.dimens.xs),
-            Text(
-              context.l10n.teacherVerifyPhoneOtpSentMessage(widget.newPhone),
-              style: context.textStyles.bodySmall?.copyWith(
-                color: context.colors.textSecondary,
-              ),
-            ),
-            SizedBox(height: context.dimens.md),
-            AppTextField(
-              label: context.l10n.teacherOtpCodeLabel,
-              hint: context.l10n.teacherOtpTestHint,
-              controller: _otpController,
-              keyboardType: TextInputType.number,
-              maxLength: AppConfig.otpLength,
-            ),
-            SizedBox(height: context.dimens.md),
-            AppPrimaryButton(
-              label: context.l10n.otpVerifyButton,
-              loading: _isVerifying,
-              onPressed: _isVerifying ? null : _handleVerify,
-            ),
-            SizedBox(height: context.dimens.sm),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _BadgeChip extends StatelessWidget {
   const _BadgeChip({required this.label, required this.icon});
 
@@ -593,30 +569,43 @@ class _BadgeChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.dimens.sm,
-        vertical: context.dimens.xs / 2,
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width * 0.7,
       ),
-      decoration: BoxDecoration(
-        color: context.colors.surfaceVariant.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(context.dimens.radiusSm),
-        border: Border.all(
-          color: context.colors.divider.withValues(alpha: 0.5),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.dimens.sm,
+          vertical: context.dimens.xs / 2,
         ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: context.dimens.iconSm, color: context.colors.primary),
-          SizedBox(width: context.dimens.xs / 2),
-          Text(
-            label,
-            style: context.textStyles.bodySmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+        decoration: BoxDecoration(
+          color: context.colors.surfaceVariant.withValues(alpha: 0.6),
+          borderRadius: BorderRadius.circular(context.dimens.radiusSm),
+          border: Border.all(
+            color: context.colors.divider.withValues(alpha: 0.5),
           ),
-        ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: context.dimens.iconSm,
+              color: context.colors.primary,
+            ),
+            SizedBox(width: context.dimens.xs / 2),
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: context.textStyles.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
