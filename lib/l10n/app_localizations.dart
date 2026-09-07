@@ -188,6 +188,18 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get commonSave;
 
+  /// No description provided for @commonChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get commonChange;
+
+  /// No description provided for @commonAssign.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign'**
+  String get commonAssign;
+
   /// No description provided for @commonSearch.
   ///
   /// In en, this message translates to:
@@ -1213,6 +1225,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Discount applied'**
   String get subjectTeacherSelectDiscountApplied;
+
+  /// No description provided for @assignTeacherSelfStudyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-study (No Teacher)'**
+  String get assignTeacherSelfStudyTitle;
+
+  /// No description provided for @assignTeacherSelfStudySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Study independently without campus teacher discount'**
+  String get assignTeacherSelfStudySubtitle;
+
+  /// No description provided for @assignTeacherCampusTeacherLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Campus Teacher'**
+  String get assignTeacherCampusTeacherLabel;
+
+  /// No description provided for @assignTeacherSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Teacher assigned successfully'**
+  String get assignTeacherSavedSuccess;
+
+  /// No description provided for @assignTeacherSetSelfStudy.
+  ///
+  /// In en, this message translates to:
+  /// **'Set to self-study'**
+  String get assignTeacherSetSelfStudy;
+
+  /// No description provided for @chapterAssignedTeacherFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned Teacher'**
+  String get chapterAssignedTeacherFallback;
+
+  /// No description provided for @chapterSelfStudyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-study (No teacher)'**
+  String get chapterSelfStudyLabel;
 
   /// No description provided for @teacherAccountAlreadySetUp.
   ///

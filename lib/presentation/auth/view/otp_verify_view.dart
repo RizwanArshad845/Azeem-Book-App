@@ -11,6 +11,7 @@ import '../../../core/widgets/loading_indicator.dart';
 import '../../../domain/common/failure.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import '../viewmodel/otp_timer_viewmodel.dart';
+import '../viewmodel/otp_verify_viewmodel.dart';
 import '../widgets/otp_digit_box.dart';
 
 /// Shared 6-digit OTP verification UI. By default (`onVerifyCode`/`onResend`
@@ -21,7 +22,7 @@ import '../widgets/otp_digit_box.dart';
 /// `TeacherProfileViewModel.verifyPhoneChangeOtp`/`requestPhoneChangeOtp` so
 /// the exact same `OtpDigitBox`/timer/error UI reacts to the real backend
 /// call for that flow instead of the login one.
-class OtpVerifyView extends ConsumerStatefulWidget {
+class OtpVerifyView extends ConsumerWidget {
   const OtpVerifyView({
     super.key,
     this.phone = '',
@@ -40,17 +41,7 @@ class OtpVerifyView extends ConsumerStatefulWidget {
   /// `Failure` to display on rejection.
   final Future<Failure?> Function()? onResend;
 
-  @override
-  ConsumerState<OtpVerifyView> createState() => _OtpVerifyViewState();
-}
-
-class _OtpVerifyViewState extends ConsumerState<OtpVerifyView> {
-  bool _isLoading = false;
-  bool _verified = false;
-  Failure? _failure;
-  int _resetToken = 0;
-
-  bool get _isCustom => widget.onVerifyCode != null;
+  bool get _isCustom => onVerifyCode != null;
 
   String _formatCooldown(int seconds) {
     final minutes = seconds ~/ 60;
@@ -58,60 +49,46 @@ class _OtpVerifyViewState extends ConsumerState<OtpVerifyView> {
     return '${minutes.toString().padLeft(2, '0')}:${remainder.toString().padLeft(2, '0')}';
   }
 
-  Future<void> _handleCustomVerify(String code) async {
-    setState(() {
-      _isLoading = true;
-      _failure = null;
-    });
-    final failure = await widget.onVerifyCode!(code);
-    if (!mounted) return;
-    if (failure == null) {
-      setState(() {
-        _isLoading = false;
-        _verified = true;
-      });
-      if (widget.isBottomSheet && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-    } else {
-      setState(() {
-        _isLoading = false;
-        _failure = failure;
-        _resetToken++;
-      });
-    }
+  void _handleCustomVerify(
+    String code,
+    WidgetRef ref,
+  ) {
+    ref.read(otpVerifyViewModelProvider.notifier).verify(code, onVerifyCode!);
+    // Navigation on success is handled by ref.listen in build().
   }
 
-  Future<void> _handleResend(WidgetRef ref) async {
-    if (widget.onResend != null) {
-      setState(() => _isLoading = true);
-      final failure = await widget.onResend!();
-      if (!mounted) return;
-      setState(() => _isLoading = false);
+  void _handleResend(BuildContext context, WidgetRef ref) {
+    _doResend(context, ref);
+  }
+
+  Future<void> _doResend(BuildContext context, WidgetRef ref) async {
+    if (onResend != null) {
+      ref.read(otpVerifyViewModelProvider.notifier).setResendLoading(value: true);
+      final failure = await onResend!();
+      ref
+          .read(otpVerifyViewModelProvider.notifier)
+          .setResendLoading(value: false);
       if (failure == null) {
-        ref.read(otpTimerViewModelProvider.notifier).startCooldown(widget.phone);
+        ref.read(otpTimerViewModelProvider.notifier).startCooldown(phone);
       } else {
-        AppSnackbar.show(context, failure.message);
+        if (context.mounted) AppSnackbar.show(context, failure.message);
       }
       return;
     }
 
     final success = await ref
         .read(authViewModelProvider.notifier)
-        .requestOtp(
-          widget.phone,
-          roleRequiredMessage: context.l10n.roleSelectRequired,
-        );
+        .requestOtp(phone, roleRequiredMessage: context.l10n.roleSelectRequired);
     if (success) {
-      ref.read(otpTimerViewModelProvider.notifier).startCooldown(widget.phone);
+      ref.read(otpTimerViewModelProvider.notifier).startCooldown(phone);
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final timerState = ref.watch(otpTimerViewModelProvider);
     final isOnCooldownForThisNumber =
-        timerState.phoneNumber == widget.phone && !timerState.canRequestNow;
+        timerState.phoneNumber == phone && !timerState.canRequestNow;
 
     final bool isVerified;
     final bool isLoading;
@@ -119,10 +96,22 @@ class _OtpVerifyViewState extends ConsumerState<OtpVerifyView> {
     final Object? resetToken;
 
     if (_isCustom) {
-      isVerified = _verified;
-      isLoading = _isLoading;
-      failure = _failure;
-      resetToken = _resetToken;
+      final otpState = ref.watch(otpVerifyViewModelProvider);
+
+      // Navigate on verification success.
+      ref.listen(otpVerifyViewModelProvider, (previous, next) {
+        if (next.isVerified &&
+            !(previous?.isVerified ?? false) &&
+            isBottomSheet &&
+            Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
+      });
+
+      isVerified = otpState.isVerified;
+      isLoading = otpState.isLoading;
+      failure = otpState.failure;
+      resetToken = otpState.resetToken;
     } else {
       final authState = ref.watch(authViewModelProvider);
 
@@ -131,8 +120,10 @@ class _OtpVerifyViewState extends ConsumerState<OtpVerifyView> {
         if (err is Failure && previous?.error != err) {
           AppSnackbar.show(context, err.message);
         }
-        if (next.hasValue && next.value != null && (previous?.value == null)) {
-          if (widget.isBottomSheet && Navigator.of(context).canPop()) {
+        if (next.hasValue &&
+            next.value != null &&
+            (previous?.value == null)) {
+          if (isBottomSheet && Navigator.of(context).canPop()) {
             Navigator.of(context).pop();
           }
         }
@@ -148,9 +139,9 @@ class _OtpVerifyViewState extends ConsumerState<OtpVerifyView> {
     final content = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (!widget.isBottomSheet) ...[
+        if (!isBottomSheet) ...[
           Text(
-            context.l10n.otpSubtitle(widget.phone),
+            context.l10n.otpSubtitle(phone),
             style: context.textStyles.bodyMedium?.copyWith(
               color: context.colors.textSecondary,
             ),
@@ -180,7 +171,7 @@ class _OtpVerifyViewState extends ConsumerState<OtpVerifyView> {
             enabled: !isLoading,
             resetToken: resetToken,
             onCompleted: (code) => _isCustom
-                ? _handleCustomVerify(code)
+                ? _handleCustomVerify(code, ref)
                 : ref
                     .read(authViewModelProvider.notifier)
                     .verifyOtp(
@@ -210,7 +201,7 @@ class _OtpVerifyViewState extends ConsumerState<OtpVerifyView> {
               AppButton(
                 label: context.l10n.otpResendCode,
                 variant: AppButtonVariant.text,
-                onPressed: () => _handleResend(ref),
+                onPressed: () => _handleResend(context, ref),
               ),
             if (timerState.attemptLimitReached)
               Padding(
@@ -228,7 +219,7 @@ class _OtpVerifyViewState extends ConsumerState<OtpVerifyView> {
       ],
     );
 
-    if (widget.isBottomSheet) {
+    if (isBottomSheet) {
       return content;
     }
 

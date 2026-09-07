@@ -40,7 +40,15 @@ class ChapterListView extends ConsumerWidget {
   final String subjectId;
   final String? subjectName;
 
-  Future<void> _buyNow(
+  void _buyNow(
+    BuildContext context,
+    WidgetRef ref, {
+    String? fallbackName,
+  }) {
+    _doBuyNow(context, ref, fallbackName: fallbackName);
+  }
+
+  Future<void> _doBuyNow(
     BuildContext context,
     WidgetRef ref, {
     String? fallbackName,
@@ -138,8 +146,8 @@ class ChapterListView extends ConsumerWidget {
                             Text(
                               assignedTeacher?.name ??
                                   (assignedTeacherId != null
-                                      ? 'Assigned Teacher'
-                                      : 'Self-study (No teacher)'),
+                                      ? context.l10n.chapterAssignedTeacherFallback
+                                      : context.l10n.chapterSelfStudyLabel),
                               style: context.textStyles.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
                               ),
@@ -163,7 +171,7 @@ class ChapterListView extends ConsumerWidget {
                           size: 16,
                         ),
                         label: Text(
-                          assignedTeacherId != null ? 'Change' : 'Assign',
+                          assignedTeacherId != null ? context.l10n.commonChange : context.l10n.commonAssign,
                           style: context.textStyles.labelMedium?.copyWith(
                             color: context.colors.primary,
                             fontWeight: FontWeight.w600,

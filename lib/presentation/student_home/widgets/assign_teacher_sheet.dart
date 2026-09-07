@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/di/injection.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
-import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_badge.dart';
-import '../../../domain/student_onboarding/entities/subject_enrollment.dart';
 import '../../../domain/student_onboarding/entities/teacher_option.dart';
-import '../../../domain/student_onboarding/usecases/update_student_subject_enrollments_usecase.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
+import '../viewmodel/assign_teacher_viewmodel.dart';
 import '../viewmodel/student_home_viewmodel.dart';
 
 /// Bottom sheet allowing a student to assign or change their teacher for an
 /// enrolled subject after onboarding.
-class AssignTeacherSheet extends ConsumerStatefulWidget {
+class AssignTeacherSheet extends ConsumerWidget {
   const AssignTeacherSheet({
     super.key,
     required this.subjectId,
@@ -31,13 +28,13 @@ class AssignTeacherSheet extends ConsumerStatefulWidget {
   final String? initialTeacherId;
 
   /// Utility method to present [AssignTeacherSheet] in an [AppBottomSheet].
-  static Future<void> show({
+  static void show({
     required BuildContext context,
     required String subjectId,
     required String subjectName,
     String? currentTeacherId,
   }) {
-    return AppBottomSheet.show<void>(
+    AppBottomSheet.show<void>(
       context: context,
       title: context.l10n.subjectTeacherSelectTeacherLabel,
       subtitle: subjectName,
@@ -50,95 +47,17 @@ class AssignTeacherSheet extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<AssignTeacherSheet> createState() => _AssignTeacherSheetState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vm = ref.read(assignTeacherViewModelProvider(initialTeacherId).notifier);
+    final vmState = ref.watch(assignTeacherViewModelProvider(initialTeacherId));
 
-class _AssignTeacherSheetState extends ConsumerState<AssignTeacherSheet> {
-  late String? _selectedTeacherId;
-  bool _isSaving = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedTeacherId = widget.initialTeacherId;
-  }
-
-  Future<void> _handleSave() async {
-    final student = ref.read(currentStudentProvider);
-    if (student == null) return;
-
-    setState(() => _isSaving = true);
-
-    final currentEnrollments = student.subjectEnrollments ?? <SubjectEnrollment>[];
-    final updatedEnrollments = <SubjectEnrollment>[];
-    var found = false;
-
-    for (final enrollment in currentEnrollments) {
-      if (enrollment.subjectId == widget.subjectId) {
-        found = true;
-        updatedEnrollments.add(
-          enrollment.copyWith(
-            teacherId: _selectedTeacherId,
-            discountApplied: _selectedTeacherId != null,
-          ),
-        );
-      } else {
-        updatedEnrollments.add(enrollment);
-      }
-    }
-
-    if (!found) {
-      updatedEnrollments.add(
-        SubjectEnrollment.create(
-          studentId: student.id,
-          subjectId: widget.subjectId,
-          teacherId: _selectedTeacherId,
-          discountApplied: _selectedTeacherId != null,
-        ),
-      );
-    }
-
-    final result = await sl<UpdateStudentSubjectEnrollmentsUseCase>()(
-      student.id,
-      updatedEnrollments,
-    );
-
-    if (!mounted) return;
-    setState(() => _isSaving = false);
-
-    result.when(
-      success: (savedEnrollments) {
-        ref.read(studentOnboardingViewModelProvider.notifier).setStudent(
-              student.copyWith(subjectEnrollments: savedEnrollments),
-            );
-        Navigator.of(context).pop();
-        AppSnackbar.show(
-          context,
-          _selectedTeacherId != null
-              ? 'Teacher assigned successfully'
-              : 'Set to self-study',
-        );
-      },
-      failure: (failure) {
-        AppSnackbar.show(
-          context,
-          failure.message.isNotEmpty
-              ? failure.message
-              : context.l10n.commonErrorGeneric,
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
     final student = ref.watch(currentStudentProvider);
     final campusId = student?.campusId ?? '';
     final teachersAsync = campusId.isNotEmpty
         ? ref.watch(teachersForCampusProvider(campusId))
         : null;
 
-    final hasChanged = _selectedTeacherId != widget.initialTeacherId;
+    final hasChanged = vmState.selectedTeacherId != initialTeacherId;
 
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(
@@ -151,13 +70,13 @@ class _AssignTeacherSheetState extends ConsumerState<AssignTeacherSheet> {
         children: [
           // Option: Self-study (No teacher)
           AppCard(
-            onTap: () => setState(() => _selectedTeacherId = null),
+            onTap: () => vm.select(null),
             child: Row(
               children: [
                 Radio<String?>(
                   value: null,
-                  groupValue: _selectedTeacherId,
-                  onChanged: (val) => setState(() => _selectedTeacherId = val),
+                  groupValue: vmState.selectedTeacherId,
+                  onChanged: vm.select,
                   activeColor: context.colors.primary,
                 ),
                 SizedBox(width: context.dimens.xs),
@@ -166,14 +85,14 @@ class _AssignTeacherSheetState extends ConsumerState<AssignTeacherSheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Self-study (No Teacher)',
+                        context.l10n.assignTeacherSelfStudyTitle,
                         style: context.textStyles.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       SizedBox(height: context.dimens.xs / 2),
                       Text(
-                        'Study independently without campus teacher discount',
+                        context.l10n.assignTeacherSelfStudySubtitle,
                         style: context.textStyles.bodySmall?.copyWith(
                           color: context.colors.textSecondary,
                         ),
@@ -194,7 +113,7 @@ class _AssignTeacherSheetState extends ConsumerState<AssignTeacherSheet> {
               onRetry: () => ref.invalidate(teachersForCampusProvider(campusId)),
               data: (teachers) {
                 final subjectTeachers = teachers
-                    .where((t) => t.subjectIds.contains(widget.subjectId))
+                    .where((t) => t.subjectIds.contains(subjectId))
                     .toList();
 
                 if (subjectTeachers.isEmpty) {
@@ -216,14 +135,13 @@ class _AssignTeacherSheetState extends ConsumerState<AssignTeacherSheet> {
                   children: [
                     for (final teacher in subjectTeachers) ...[
                       AppCard(
-                        onTap: () => setState(() => _selectedTeacherId = teacher.id),
+                        onTap: () => vm.select(teacher.id),
                         child: Row(
                           children: [
                             Radio<String?>(
                               value: teacher.id,
-                              groupValue: _selectedTeacherId,
-                              onChanged: (val) =>
-                                  setState(() => _selectedTeacherId = val),
+                              groupValue: vmState.selectedTeacherId,
+                              onChanged: vm.select,
                               activeColor: context.colors.primary,
                             ),
                             SizedBox(width: context.dimens.xs),
@@ -239,7 +157,7 @@ class _AssignTeacherSheetState extends ConsumerState<AssignTeacherSheet> {
                                   ),
                                   SizedBox(height: context.dimens.xs / 2),
                                   Text(
-                                    'Campus Teacher',
+                                    context.l10n.assignTeacherCampusTeacherLabel,
                                     style: context.textStyles.bodySmall?.copyWith(
                                       color: context.colors.textSecondary,
                                     ),
@@ -264,8 +182,14 @@ class _AssignTeacherSheetState extends ConsumerState<AssignTeacherSheet> {
           SizedBox(height: context.dimens.md),
           AppPrimaryButton(
             label: context.l10n.commonSave,
-            loading: _isSaving,
-            onPressed: hasChanged && !_isSaving ? _handleSave : null,
+            loading: vmState.isSaving,
+            onPressed: hasChanged && !vmState.isSaving
+                ? () => vm.save(
+                      ref: ref,
+                      context: context,
+                      subjectId: subjectId,
+                    )
+                : null,
           ),
           SizedBox(height: context.dimens.sm),
         ],

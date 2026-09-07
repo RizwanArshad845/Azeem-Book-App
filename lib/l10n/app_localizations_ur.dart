@@ -55,6 +55,12 @@ class AppLocalizationsUr extends AppLocalizations {
   String get commonSave => 'محفوظ کریں';
 
   @override
+  String get commonChange => 'تبدیل کریں';
+
+  @override
+  String get commonAssign => 'تفویض کریں';
+
+  @override
   String get commonSearch => 'تلاش کریں';
 
   @override
@@ -614,6 +620,28 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get subjectTeacherSelectDiscountApplied => 'رعایت لاگو ہو گئی';
+
+  @override
+  String get assignTeacherSelfStudyTitle => 'خود مطالعہ (کوئی ٹیچر نہیں)';
+
+  @override
+  String get assignTeacherSelfStudySubtitle =>
+      'کیمپس ٹیچر کی رعایت کے بغیر خود مطالعہ کریں';
+
+  @override
+  String get assignTeacherCampusTeacherLabel => 'کیمپس ٹیچر';
+
+  @override
+  String get assignTeacherSavedSuccess => 'ٹیچر کامیابی سے تفویض کیا گیا';
+
+  @override
+  String get assignTeacherSetSelfStudy => 'خود مطالعہ پر سیٹ کیا گیا';
+
+  @override
+  String get chapterAssignedTeacherFallback => 'تفویض شدہ ٹیچر';
+
+  @override
+  String get chapterSelfStudyLabel => 'خود مطالعہ (کوئی ٹیچر نہیں)';
 
   @override
   String get teacherAccountAlreadySetUp =>

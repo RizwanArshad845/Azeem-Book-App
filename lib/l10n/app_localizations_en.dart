@@ -55,6 +55,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonSave => 'Save';
 
   @override
+  String get commonChange => 'Change';
+
+  @override
+  String get commonAssign => 'Assign';
+
+  @override
   String get commonSearch => 'Search';
 
   @override
@@ -610,6 +616,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subjectTeacherSelectDiscountApplied => 'Discount applied';
+
+  @override
+  String get assignTeacherSelfStudyTitle => 'Self-study (No Teacher)';
+
+  @override
+  String get assignTeacherSelfStudySubtitle =>
+      'Study independently without campus teacher discount';
+
+  @override
+  String get assignTeacherCampusTeacherLabel => 'Campus Teacher';
+
+  @override
+  String get assignTeacherSavedSuccess => 'Teacher assigned successfully';
+
+  @override
+  String get assignTeacherSetSelfStudy => 'Set to self-study';
+
+  @override
+  String get chapterAssignedTeacherFallback => 'Assigned Teacher';
+
+  @override
+  String get chapterSelfStudyLabel => 'Self-study (No teacher)';
 
   @override
   String get teacherAccountAlreadySetUp =>
