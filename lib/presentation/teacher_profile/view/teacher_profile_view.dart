@@ -11,8 +11,10 @@ import '../../../core/widgets/app_frosted_card.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/confirm_dialog.dart';
+import '../../../core/widgets/delayed_loader.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../core/widgets/profile_header_card.dart';
+import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/typed_confirm.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
 import '../../../domain/catalog/entities/board_class.dart';
@@ -161,7 +163,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
       ),
       body: SafeArea(
         child: teacher == null
-            ? const LoadingIndicator()
+            ? const DelayedLoader(child: LoadingIndicator())
             : SingleChildScrollView(
                 padding: EdgeInsets.all(context.dimens.lg),
                 child: Column(
@@ -304,26 +306,35 @@ class _TeachingScopeCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final campusesById = ref.watch(
-      teacherStudentsCampusesByIdProvider.select(
-        (async) => async.value ?? const <String, Campus>{},
-      ),
-    );
-    final boardClassesById = ref.watch(
-      teacherProfileBoardClassesByIdProvider.select(
-        (async) => async.value ?? const <String, BoardClass>{},
-      ),
-    );
-    final classLevelsById = ref.watch(
-      teacherProfileClassLevelsByIdProvider.select(
-        (async) => async.value ?? const <String, ClassLevel>{},
-      ),
-    );
-    final subjectsById = ref.watch(
-      teacherProfileResolvedSubjectsProvider.select(
-        (async) => async.value ?? const <String, Subject>{},
-      ),
-    );
+    final campusesAsync = ref.watch(teacherStudentsCampusesByIdProvider);
+    final boardClassesAsync = ref.watch(teacherProfileBoardClassesByIdProvider);
+    final classLevelsAsync = ref.watch(teacherProfileClassLevelsByIdProvider);
+    final subjectsAsync = ref.watch(teacherProfileResolvedSubjectsProvider);
+
+    // Gate the whole card on ONE combined signal instead of letting each of
+    // the 4 lookups reveal itself independently — the 4 `FutureProvider`s
+    // resolve at different wall-clock times with no coordination between
+    // them, so watching them individually caused the card to visibly
+    // rebuild up to 4 times in quick succession (raw ids -> partial names
+    // -> more names -> final). Showing one skeleton until all are ready
+    // means the card only ever renders once, fully resolved.
+    final anyLoading = [
+      campusesAsync,
+      boardClassesAsync,
+      classLevelsAsync,
+      subjectsAsync,
+    ].any((async) => async.isLoading && !async.hasValue);
+
+    if (anyLoading) {
+      return const _TeachingScopeCardSkeleton();
+    }
+
+    final campusesById = campusesAsync.value ?? const <String, Campus>{};
+    final boardClassesById =
+        boardClassesAsync.value ?? const <String, BoardClass>{};
+    final classLevelsById =
+        classLevelsAsync.value ?? const <String, ClassLevel>{};
+    final subjectsById = subjectsAsync.value ?? const <String, Subject>{};
 
     return AppFrostedCard(
       padding: EdgeInsets.all(context.dimens.lg),
@@ -422,6 +433,57 @@ class _TeachingScopeCard extends ConsumerWidget {
               teacher.declaredStudentCount ?? 50,
             ),
             icon: Icons.groups_outlined,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Placeholder matching `_TeachingScopeCard`'s footprint while any of its 4
+/// catalog lookups is still resolving.
+class _TeachingScopeCardSkeleton extends StatelessWidget {
+  const _TeachingScopeCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return AppFrostedCard(
+      padding: EdgeInsets.all(context.dimens.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Skeleton(width: 140, height: 12),
+          SizedBox(height: context.dimens.xs),
+          Skeleton(
+            width: 160,
+            height: 28,
+            radius: context.dimens.radiusSm,
+          ),
+          SizedBox(height: context.dimens.md),
+          const Skeleton(width: 120, height: 12),
+          SizedBox(height: context.dimens.xs),
+          Row(
+            children: [
+              Skeleton(
+                width: 90,
+                height: 28,
+                radius: context.dimens.radiusSm,
+              ),
+              SizedBox(width: context.dimens.xs),
+              Skeleton(
+                width: 90,
+                height: 28,
+                radius: context.dimens.radiusSm,
+              ),
+            ],
+          ),
+          SizedBox(height: context.dimens.md),
+          const Skeleton(width: 130, height: 12),
+          SizedBox(height: context.dimens.xs),
+          Skeleton(
+            width: 180,
+            height: 28,
+            radius: context.dimens.radiusSm,
           ),
         ],
       ),

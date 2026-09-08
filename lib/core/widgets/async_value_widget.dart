@@ -60,6 +60,7 @@ class AsyncValueWidget<T> extends StatelessWidget {
       error: (error, _) => AppErrorView(
         message: error is Failure ? error.message : error.toString(),
         onRetry: onRetry,
+        isOffline: error is NetworkFailure,
       ),
     );
   }

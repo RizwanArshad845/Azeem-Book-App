@@ -248,29 +248,38 @@ class _InfoChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.dimens.xs * 1.5,
-        vertical: context.dimens.xs / 3,
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width * 0.6,
       ),
-      decoration: BoxDecoration(
-        color: context.colors.surfaceVariant.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(context.dimens.radiusSm),
-        border: Border.all(color: context.colors.divider.withValues(alpha: 0.5)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: context.colors.textSecondary),
-          SizedBox(width: context.dimens.xs / 2),
-          Text(
-            label,
-            style: context.textStyles.bodySmall?.copyWith(
-              color: context.colors.textSecondary,
-              fontSize: 11,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.dimens.xs * 1.5,
+          vertical: context.dimens.xs / 3,
+        ),
+        decoration: BoxDecoration(
+          color: context.colors.surfaceVariant.withValues(alpha: 0.6),
+          borderRadius: BorderRadius.circular(context.dimens.radiusSm),
+          border: Border.all(color: context.colors.divider.withValues(alpha: 0.5)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 12, color: context.colors.textSecondary),
+            SizedBox(width: context.dimens.xs / 2),
+            Flexible(
+              child: Text(
+                label,
+                style: context.textStyles.bodySmall?.copyWith(
+                  color: context.colors.textSecondary,
+                  fontSize: 11,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

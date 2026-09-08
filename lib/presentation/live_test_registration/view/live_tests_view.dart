@@ -5,6 +5,7 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/skeleton.dart';
 import '../../../domain/catalog/entities/test.dart';
 import '../../student_home/viewmodel/student_home_viewmodel.dart';
 import '../viewmodel/live_test_registration_viewmodel.dart';
@@ -41,6 +42,10 @@ class LiveTestsView extends ConsumerWidget {
           child: AsyncValueWidget<List<Test>>(
             value: liveTestsAsync,
             onRetry: () => ref.invalidate(liveTestsProvider),
+            skeleton: Padding(
+              padding: EdgeInsets.all(context.dimens.lg),
+              child: const SkeletonList(itemCount: 3),
+            ),
             data: (liveTests) {
               if (liveTests.isEmpty) {
                 return ListView(

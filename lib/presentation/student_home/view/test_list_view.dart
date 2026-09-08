@@ -11,6 +11,7 @@ import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/fade_slide_in.dart';
 import '../../../core/widgets/illustrated_list_card.dart';
 import '../../../core/widgets/meta_row.dart';
+import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../../domain/catalog/entities/test.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
@@ -65,6 +66,10 @@ class TestListView extends ConsumerWidget {
         child: AsyncValueWidget<List<Test>>(
           value: testsAsync,
           onRetry: () => ref.invalidate(testsForChapterProvider(chapterId)),
+          skeleton: Padding(
+            padding: EdgeInsets.all(context.dimens.lg),
+            child: const SkeletonList(itemCount: 5),
+          ),
           data: (tests) {
             if (tests.isEmpty) {
               return EmptyStateView(message: context.l10n.testListEmpty);

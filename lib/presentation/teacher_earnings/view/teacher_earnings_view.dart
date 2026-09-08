@@ -8,6 +8,7 @@ import '../../../core/widgets/app_frosted_card.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/blurred_logo_backdrop.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/skeleton.dart';
 import '../../../domain/earnings/entities/earnings_record.dart';
 import '../../teacher_overview/viewmodel/teacher_overview_viewmodel.dart';
 import '../../teacher_students/viewmodel/teacher_students_viewmodel.dart';
@@ -54,6 +55,7 @@ class TeacherEarningsView extends ConsumerWidget {
     );
     final studentsById = ref.watch(teacherStudentNamesByIdProvider);
     final currentPage = ref.watch(_teacherEarningsCurrentPageProvider);
+    final studentsLoadingForCalc = ref.watch(teacherStudentsLoadingProvider);
 
     return Scaffold(
       appBar: AppBar(title: AppBarTitle(context.l10n.teacherEarningsTitle)),
@@ -68,6 +70,26 @@ class TeacherEarningsView extends ConsumerWidget {
             child: AsyncValueWidget<List<EarningsRecord>>(
               value: earningsAsync,
               onRetry: () => ref.invalidate(teacherEarningsProvider),
+              skeleton: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.dimens.lg,
+                  vertical: context.dimens.sm,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Skeleton(
+                      width: double.infinity,
+                      height: 90,
+                      radius: context.dimens.radiusMd,
+                    ),
+                    SizedBox(height: context.dimens.lg),
+                    const _EarningsCalculatorSkeleton(),
+                    SizedBox(height: context.dimens.xl),
+                    const SkeletonList(itemCount: 4, itemHeight: 70),
+                  ],
+                ),
+              ),
               data: (records) {
                 final total = records.fold<double>(
                   0,
@@ -165,10 +187,12 @@ class TeacherEarningsView extends ConsumerWidget {
                     SizedBox(height: context.dimens.lg),
 
                     // 2. Interactive Projected Earnings Simulator Card
-                    EarningsProjectedCalculatorCard(
-                      actualEarnings: actualEarnings,
-                      remainingStudents: remainingStudents,
-                    ),
+                    studentsLoadingForCalc
+                        ? _EarningsCalculatorSkeleton()
+                        : EarningsProjectedCalculatorCard(
+                          actualEarnings: actualEarnings,
+                          remainingStudents: remainingStudents,
+                        ),
                     SizedBox(height: context.dimens.xl),
 
                     // 3. Transactions History Title
@@ -242,6 +266,40 @@ class TeacherEarningsView extends ConsumerWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Placeholder matching [EarningsProjectedCalculatorCard]'s footprint while
+/// [teacherStudentsProvider] (which the real card's `remainingStudents` value
+/// depends on) hasn't resolved yet.
+class _EarningsCalculatorSkeleton extends StatelessWidget {
+  const _EarningsCalculatorSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(context.dimens.lg),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E293B),
+        borderRadius: BorderRadius.circular(context.dimens.radiusXl),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Skeleton(width: 120, height: 14),
+          SizedBox(height: context.dimens.md),
+          Skeleton(width: 200, height: 28),
+          SizedBox(height: context.dimens.sm),
+          Skeleton(width: double.infinity, height: 12),
+          SizedBox(height: context.dimens.md),
+          Skeleton(
+            width: double.infinity,
+            height: 20,
+            radius: context.dimens.radiusSm,
+          ),
+        ],
       ),
     );
   }

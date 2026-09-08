@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/skeleton.dart';
+import '../../teacher_overview/viewmodel/teacher_overview_viewmodel.dart';
 import '../viewmodel/teacher_students_viewmodel.dart';
 
 /// Top summary counters strip for filtering students by Active (Paid) vs Free status.
@@ -12,6 +14,7 @@ class StudentsSummaryStrip extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final allStudents = ref.watch(teacherStudentsProvider).value ?? [];
     final activeFilter = ref.watch(teacherStudentsStatusFilterProvider);
+    final studentsLoading = ref.watch(teacherStudentsLoadingProvider);
 
     final total = allStudents.length;
     final active =
@@ -19,6 +22,22 @@ class StudentsSummaryStrip extends ConsumerWidget {
           return (s.subjectEnrollments ?? []).any((e) => e.discountApplied);
         }).length;
     final free = total - active;
+
+    if (studentsLoading) {
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        child: Row(
+          children: [
+            Skeleton(width: 90, height: 32, radius: context.dimens.radiusLg),
+            SizedBox(width: context.dimens.sm),
+            Skeleton(width: 90, height: 32, radius: context.dimens.radiusLg),
+            SizedBox(width: context.dimens.sm),
+            Skeleton(width: 90, height: 32, radius: context.dimens.radiusLg),
+          ],
+        ),
+      );
+    }
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,

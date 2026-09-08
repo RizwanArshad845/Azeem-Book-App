@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
 import '../../../core/di/riverpod_providers.dart';
+import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
 import '../../../domain/catalog/entities/board_class.dart';
 import '../../../domain/catalog/entities/subject.dart';
@@ -46,6 +47,13 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
     final session = ref.watch(currentUserProvider);
     if (session == null || session.userId == null) return null;
 
+    // A teacher session has no row in the students table by definition —
+    // resolve to null immediately instead of firing a guaranteed-404
+    // `GET /students/{teacherId}` (this was happening on every single
+    // teacher login, confirmed via device logs, since nothing here checked
+    // role before calling `GetStudentByIdUseCase`).
+    if (session.role != UserRole.student) return null;
+
     // Backend commit cb7deb0: `status` is already known synchronously from
     // the OTP-verify response — a `NOT_REGISTERED` session has no `Student`
     // row yet by definition, so resolving to `null` here immediately (no
@@ -56,13 +64,16 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
     if (session.status == 'NOT_REGISTERED') return null;
 
     var result = await sl<GetStudentByIdUseCase>()(session.userId!);
-    if (!result.isSuccess) {
-      // Absorb a single transient blip (e.g. a fresh login racing a
-      // still-settling connection) with one retry before giving up. The
-      // router has no self-healing path for a terminal `AsyncError` on
-      // this provider (it just holds on splash — see `app_router.dart`),
-      // so a failure here would otherwise be a dead end for a genuinely
-      // registered student.
+    if (result is ResultFailure<Student> && result.failure is NetworkFailure) {
+      // Absorb a single transient *network* blip (e.g. a fresh login
+      // racing a still-settling connection) with one retry before giving
+      // up. The router has no self-healing path for a terminal
+      // `AsyncError` on this provider (it just holds on splash — see
+      // `app_router.dart`), so a failure here would otherwise be a dead
+      // end for a genuinely registered student. Deliberately scoped to
+      // `NetworkFailure`: a 404/401/500 won't be fixed by waiting 800ms
+      // and retrying, so don't pay that cost for failures a retry can't
+      // help.
       await Future.delayed(const Duration(milliseconds: 800));
       result = await sl<GetStudentByIdUseCase>()(session.userId!);
     }

@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
+import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/common/failure.dart';
+import '../../../domain/common/result.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
 import '../../../domain/teacher_onboarding/usecases/get_teacher_by_phone_usecase.dart';
 import '../../../domain/teacher_onboarding/usecases/sign_up_teacher_usecase.dart';
@@ -52,11 +54,20 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
     final session = ref.watch(currentUserProvider);
     if (session == null) return null;
 
+    // A student session has no row in the teachers table by definition —
+    // resolve to null immediately instead of firing a guaranteed-404/
+    // not-found `GET /teachers?phoneNumber=...` (mirrors the same fix on
+    // `StudentOnboardingViewModel.build()`).
+    if (session.role != UserRole.teacher) return null;
+
     var result = await sl<GetTeacherByPhoneUseCase>()(session.phoneNumber);
-    if (!result.isSuccess) {
-      // Absorb a single transient blip (e.g. a fresh login racing a
-      // still-settling connection) with one retry before giving up — see
-      // the matching comment on `StudentOnboardingViewModel.build()`.
+    if (result is ResultFailure<Teacher> && result.failure is NetworkFailure) {
+      // Absorb a single transient *network* blip (e.g. a fresh login
+      // racing a still-settling connection) with one retry before giving
+      // up — see the matching comment on `StudentOnboardingViewModel.build()`.
+      // Deliberately scoped to `NetworkFailure`: a 404/401/500 won't be
+      // fixed by waiting 800ms and retrying, so don't pay that cost for
+      // failures a retry can't help.
       await Future.delayed(const Duration(milliseconds: 800));
       result = await sl<GetTeacherByPhoneUseCase>()(session.phoneNumber);
     }

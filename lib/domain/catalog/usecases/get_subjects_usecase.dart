@@ -8,6 +8,9 @@ class GetSubjectsUseCase {
 
   final CatalogRepository _repository;
 
-  Future<Result<List<Subject>>> call(String boardClassId) =>
-      _repository.getSubjects(boardClassId);
+  Future<Result<List<Subject>>> call(
+    String boardClassId, {
+    bool forceRefresh = false,
+  }) =>
+      _repository.getSubjects(boardClassId, forceRefresh: forceRefresh);
 }

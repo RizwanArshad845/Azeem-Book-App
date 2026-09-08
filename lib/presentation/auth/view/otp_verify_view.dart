@@ -7,6 +7,7 @@ import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_error_view.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/delayed_loader.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../domain/common/failure.dart';
 import '../viewmodel/auth_viewmodel.dart';
@@ -180,11 +181,14 @@ class OtpVerifyView extends ConsumerWidget {
                     ),
           ),
           SizedBox(height: context.dimens.xl),
-          if (isLoading) const LoadingIndicator(),
+          if (isLoading) const DelayedLoader(child: LoadingIndicator()),
           if (!isLoading && failure is Failure)
             Padding(
               padding: EdgeInsets.only(top: context.dimens.md),
-              child: AppErrorView(message: failure.message),
+              child: AppErrorView(
+                message: failure.message,
+                isOffline: failure is NetworkFailure,
+              ),
             ),
           if (!isLoading) ...[
             SizedBox(height: context.dimens.md),

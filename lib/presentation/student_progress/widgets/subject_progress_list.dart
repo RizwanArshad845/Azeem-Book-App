@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/skeleton.dart';
 import '../viewmodel/student_progress_viewmodel.dart';
 import 'subject_progress_card.dart';
 
@@ -23,6 +24,7 @@ class SubjectProgressList extends ConsumerWidget {
     return AsyncValueWidget<List<SubjectProgressSummary>>(
       value: summariesAsync,
       onRetry: () => ref.invalidate(perSubjectProgressProvider),
+      skeleton: const SkeletonList(itemCount: 4),
       data: (summaries) {
         if (summaries.isEmpty) {
           return EmptyStateView(

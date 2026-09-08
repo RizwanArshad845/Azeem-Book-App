@@ -12,6 +12,7 @@ import '../../domain/catalog/usecases/get_class_levels_usecase.dart';
 import '../../domain/catalog/usecases/get_questions_usecase.dart';
 import '../../domain/catalog/usecases/get_subjects_usecase.dart';
 import '../../domain/catalog/usecases/get_tests_usecase.dart';
+import '../../domain/notifications/repositories/notification_repository.dart';
 import '../services/logger.dart';
 import 'injection.dart';
 
@@ -62,6 +63,10 @@ final campusesProvider = FutureProvider<List<Campus>>((ref) async {
     failure: (failure) => throw failure,
   );
 });
+
+// notifications
+final notificationRepositoryProvider =
+    Provider<NotificationRepository>((ref) => sl<NotificationRepository>());
 
 // auth: authViewModelProvider / currentUserProvider live in
 // presentation/auth/viewmodel/auth_viewmodel.dart (self-contained, same

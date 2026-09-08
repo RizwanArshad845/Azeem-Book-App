@@ -12,6 +12,14 @@ void main() async {
   setupLocator();
   await sl<LocalCacheService>().init();
   final container = ProviderContainer();
+  // Registered so code that must read providers from OUTSIDE the provider
+  // graph (e.g. `preloadTeacherProfileLookups`, which needs
+  // `teacherOnboardingViewModelProvider` but is triggered from
+  // `AuthViewModel` — reading it via `AuthViewModel`'s own `ref` creates a
+  // real cycle back to `authViewModelProvider` via `currentUserProvider`)
+  // can use `container.read(...)` instead, which isn't tied to any single
+  // provider's dependency scope.
+  sl.registerSingleton<ProviderContainer>(container);
   // Composition root: the only place allowed to wire core/network state
   // (a 401 came back) to a presentation/auth action (log the session out).
   SessionExpiryNotifier.onUnauthorized =

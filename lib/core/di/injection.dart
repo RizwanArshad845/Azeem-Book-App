@@ -145,7 +145,7 @@ void setupLocator() {
     () => StudentRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<StudentRepository>(
-    () => StudentRepositoryImpl(remote: sl()),
+    () => StudentRepositoryImpl(remote: sl(), cache: sl()),
   );
   sl.registerFactory(() => CompleteStudentOnboardingUseCase(sl()));
   sl.registerFactory(() => GetStudentsForTeacherUseCase(sl()));
@@ -166,7 +166,7 @@ void setupLocator() {
     () => NotificationRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<NotificationRepository>(
-    () => NotificationRepositoryImpl(remote: sl()),
+    () => NotificationRepositoryImpl(remote: sl(), cache: sl()),
   );
   sl.registerFactory(() => GetNotificationsUseCase(sl()));
   sl.registerFactory(() => MarkNotificationReadUseCase(sl()));
@@ -178,7 +178,7 @@ void setupLocator() {
     () => EarningsRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<EarningsRepository>(
-    () => EarningsRepositoryImpl(remote: sl()),
+    () => EarningsRepositoryImpl(remote: sl(), cache: sl()),
   );
   sl.registerFactory(() => GetEarningsForTeacherUseCase(sl()));
 

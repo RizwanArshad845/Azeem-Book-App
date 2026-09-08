@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/extensions/context_extensions.dart';
+import '../../../core/widgets/skeleton.dart';
 import '../viewmodel/teacher_overview_viewmodel.dart';
 
 /// Hero visual earnings card on the Teacher Overview tab.
@@ -39,6 +40,8 @@ class ProjectedEarningsHeroCard extends ConsumerWidget {
         ),
       ),
     );
+    final earningsLoading = ref.watch(teacherEarningsLoadingProvider);
+    final studentsLoading = ref.watch(teacherStudentsLoadingProvider);
     final currencyFormatter = _currencyFormatter;
 
     return Container(
@@ -142,15 +145,17 @@ class ProjectedEarningsHeroCard extends ConsumerWidget {
             ),
           ),
           SizedBox(height: context.dimens.xs / 2),
-          Text(
-            currencyFormatter.format(actualEarnings),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              letterSpacing: -0.5,
-            ),
-          ),
+          earningsLoading
+              ? const Skeleton(width: 140, height: 32)
+              : Text(
+                  currencyFormatter.format(actualEarnings),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
+                  ),
+                ),
           SizedBox(height: context.dimens.md),
 
           // Motivating Projected Section Card
@@ -166,7 +171,21 @@ class ProjectedEarningsHeroCard extends ConsumerWidget {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: studentsLoading
+                  ? [
+                      const Skeleton(width: 220, height: 14),
+                      SizedBox(height: context.dimens.sm),
+                      const Skeleton(width: double.infinity, height: 11.5),
+                      SizedBox(height: context.dimens.sm),
+                      Skeleton(
+                        width: double.infinity,
+                        height: 6,
+                        radius: context.dimens.radiusSm,
+                      ),
+                      SizedBox(height: context.dimens.xs / 2),
+                      const Skeleton(width: 140, height: 11),
+                    ]
+                  : [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [

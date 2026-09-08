@@ -8,6 +8,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_frosted_card.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/skeleton.dart';
 import '../../../domain/notifications/entities/notification.dart' as entity;
 import '../../notifications/viewmodel/notifications_viewmodel.dart';
 
@@ -43,6 +44,7 @@ class TeacherRecentActivitySection extends ConsumerWidget {
         AsyncValueWidget<List<entity.Notification>>(
           value: notifsAsync,
           onRetry: () => ref.invalidate(notificationsViewModelProvider),
+          skeleton: const SkeletonList(itemCount: 3, itemHeight: 60),
           data: (notifications) {
             if (notifications.isEmpty) {
               return EmptyStateView(

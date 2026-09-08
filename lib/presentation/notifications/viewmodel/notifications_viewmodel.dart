@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
+import '../../../core/di/riverpod_providers.dart';
 import '../../../domain/notifications/entities/notification.dart';
 import '../../../domain/notifications/usecases/clear_all_notifications_usecase.dart';
 import '../../../domain/notifications/usecases/get_notifications_usecase.dart';
@@ -44,7 +45,9 @@ class NotificationsViewModel extends AsyncNotifier<List<Notification>> {
 
     final result = await sl<MarkNotificationReadUseCase>()(notificationId);
     result.when(
-      success: (_) {},
+      success: (_) => ref
+          .read(notificationRepositoryProvider)
+          .clearCache(current.first.recipientId),
       failure: (_) {
         state = AsyncData<List<Notification>>(current);
       },
@@ -63,7 +66,8 @@ class NotificationsViewModel extends AsyncNotifier<List<Notification>> {
 
     final result = await sl<MarkAllNotificationsReadUseCase>()(recipientId);
     result.when(
-      success: (_) {},
+      success: (_) =>
+          ref.read(notificationRepositoryProvider).clearCache(recipientId),
       failure: (_) {
         state = AsyncData<List<Notification>>(current);
       },
@@ -80,7 +84,8 @@ class NotificationsViewModel extends AsyncNotifier<List<Notification>> {
 
     final result = await sl<ClearAllNotificationsUseCase>()(recipientId);
     result.when(
-      success: (_) {},
+      success: (_) =>
+          ref.read(notificationRepositoryProvider).clearCache(recipientId),
       failure: (_) {
         if (current != null) {
           state = AsyncData<List<Notification>>(current);

@@ -7,6 +7,7 @@ import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/app_frosted_card.dart';
 import '../../../core/widgets/blurred_logo_backdrop.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/skeleton.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/student_onboarding/entities/student.dart';
@@ -53,6 +54,35 @@ class StudentProgressDetailView extends ConsumerWidget {
               value: studentAsync,
               onRetry:
                   () => ref.invalidate(teacherViewedStudentProvider(studentId)),
+              skeleton: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.dimens.lg,
+                  vertical: context.dimens.md,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Skeleton.circle(size: 48),
+                        SizedBox(width: context.dimens.md),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Skeleton(width: 140, height: 16),
+                              SizedBox(height: context.dimens.sm),
+                              Skeleton(width: 100, height: 12),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: context.dimens.xl),
+                    const SkeletonList(itemCount: 4),
+                  ],
+                ),
+              ),
               data: (student) {
                 if (student == null) {
                   return EmptyStateView(
@@ -85,6 +115,7 @@ class StudentProgressDetailView extends ConsumerWidget {
                       () => ref.invalidate(
                         teacherStudentAttemptsProvider(studentId),
                       ),
+                  skeleton: const SkeletonList(itemCount: 4),
                   data: (attempts) {
                     return ListView(
                       padding: EdgeInsets.symmetric(

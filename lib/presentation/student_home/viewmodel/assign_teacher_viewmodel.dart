@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
+import '../../../core/di/riverpod_providers.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../domain/student_onboarding/entities/subject_enrollment.dart';
 import '../../../domain/student_onboarding/usecases/update_student_subject_enrollments_usecase.dart';
+import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 import 'student_home_viewmodel.dart';
 
@@ -116,6 +118,8 @@ class AssignTeacherViewModel extends Notifier<AssignTeacherState> {
         ref.read(studentOnboardingViewModelProvider.notifier).setStudent(
               student.copyWith(subjectEnrollments: savedEnrollments),
             );
+        _refreshCatalogForBoardClass(ref, student.boardClassId);
+        ref.invalidate(studentCartViewModelProvider);
         Navigator.of(context).pop();
         AppSnackbar.show(
           context,
@@ -133,6 +137,19 @@ class AssignTeacherViewModel extends Notifier<AssignTeacherState> {
         );
       },
     );
+  }
+
+  /// Force-refetches just [boardClassId]'s subjects (so the newly
+  /// backend-applied teacher discount is reflected) instead of wiping the
+  /// entire catalog cache — every other board class's subjects, chapters,
+  /// tests, and questions — for an unrelated change. Fire-and-forget: the
+  /// sheet has already popped and confirmed the save; this only needs to
+  /// land before the student next opens the chapters/home screen.
+  void _refreshCatalogForBoardClass(WidgetRef ref, String? boardClassId) {
+    if (boardClassId == null) return;
+    ref
+        .read(getSubjectsUseCaseProvider)(boardClassId, forceRefresh: true)
+        .then((_) => ref.invalidate(enrolledSubjectsProvider));
   }
 }
 

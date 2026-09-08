@@ -7,6 +7,7 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/async_value_widget.dart';
+import '../../../core/widgets/skeleton.dart';
 import '../../../domain/student_cart/entities/cart.dart';
 import '../../../domain/student_cart/entities/cart_item.dart';
 import '../viewmodel/student_cart_viewmodel.dart';
@@ -35,6 +36,7 @@ class CheckoutReviewSheet extends ConsumerWidget {
     return AsyncValueWidget<Cart>(
       value: cartAsync,
       onRetry: () => ref.invalidate(studentCartViewModelProvider),
+      skeleton: const SkeletonList(itemCount: 2, itemHeight: 76),
       data: (cart) {
         final items = cart.items ?? const <CartItem>[];
         return Column(

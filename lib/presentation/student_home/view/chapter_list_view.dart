@@ -27,6 +27,13 @@ String _testListPath(String subjectId, String chapterId) => AppRoutes
     .replaceFirst(':subjectId', subjectId)
     .replaceFirst(':chapterId', chapterId);
 
+/// Client-side fallback discount rate, only used when the backend hasn't
+/// yet returned `Subject.discountedPrice` for a teacher-assigned enrollment
+/// (e.g. immediately after assignment, before the catalog cache refreshes).
+/// Must match the backend's `apply_teacher_discount` rate — if that ever
+/// changes, update this constant too.
+const double _teacherDiscountRate = 0.10;
+
 /// Chapters for a tapped subject (§10.2 subject -> chapter drill-down),
 /// ordered by `Chapter.order`. The `order == 1` chapter carries a "2 free"
 /// badge since that's where the 2 seeded `isFreeSample` tests per subject
@@ -92,8 +99,27 @@ class ChapterListView extends ConsumerWidget {
     final resolvedSubject = ref.watch(subjectByIdProvider(subjectId)).value;
     final resolvedSubjectName = subjectName ?? resolvedSubject?.name;
 
+    final student = ref.watch(currentStudentProvider);
+    final campusId = student?.campusId;
+    final enrollment = student?.subjectEnrollments
+        ?.where((e) => e.subjectId == subjectId)
+        .firstOrNull;
+    final assignedTeacherId = enrollment?.teacherId;
+    final hasTeacherAssigned =
+        assignedTeacherId != null && assignedTeacherId.isNotEmpty;
+
     final bundlePrice = resolvedSubject?.bundlePrice;
-    final subjectDiscountedPrice = resolvedSubject?.discountedPrice;
+    final int? subjectDiscountedPrice;
+    if (bundlePrice == null) {
+      subjectDiscountedPrice = null;
+    } else if (hasTeacherAssigned) {
+      subjectDiscountedPrice = resolvedSubject?.discountedPrice ??
+          (bundlePrice - (bundlePrice * _teacherDiscountRate).round());
+    } else {
+      // Teacher unassigned / self-study -> No discount
+      subjectDiscountedPrice = null;
+    }
+
     final hasDiscount = bundlePrice != null &&
         subjectDiscountedPrice != null &&
         subjectDiscountedPrice < bundlePrice;
@@ -102,12 +128,6 @@ class ChapterListView extends ConsumerWidget {
         ? (((bundlePrice - subjectDiscountedPrice) / bundlePrice) * 100).round()
         : null;
 
-    final student = ref.watch(currentStudentProvider);
-    final campusId = student?.campusId;
-    final enrollment = student?.subjectEnrollments
-        ?.where((e) => e.subjectId == subjectId)
-        .firstOrNull;
-    final assignedTeacherId = enrollment?.teacherId;
     final teachersAsync = campusId != null && campusId.isNotEmpty
         ? ref.watch(teachersForCampusProvider(campusId))
         : null;

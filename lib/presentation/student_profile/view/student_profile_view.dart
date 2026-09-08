@@ -11,6 +11,7 @@ import '../../../core/widgets/app_frosted_card.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/confirm_dialog.dart';
+import '../../../core/widgets/delayed_loader.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../core/widgets/profile_header_card.dart';
 import '../../../core/widgets/typed_confirm.dart';
@@ -149,7 +150,7 @@ class _StudentProfileViewState extends ConsumerState<StudentProfileView> {
       ),
       body: SafeArea(
         child: student == null
-            ? const LoadingIndicator()
+            ? const DelayedLoader(child: LoadingIndicator())
             : SingleChildScrollView(
                 padding: EdgeInsets.all(context.dimens.lg),
                 child: Column(

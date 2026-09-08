@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/extensions/context_extensions.dart';
-import '../../../core/utils/name_initials.dart';
-import '../../../domain/student_onboarding/entities/student.dart';
+import '../extensions/context_extensions.dart';
+import '../utils/name_initials.dart';
 
-/// Student Home tab's signature greeting — a full branded hero card
-/// (brandGradient fill, white text/avatar chip) matching the app's
-/// onboarding "floating card" brand identity, rather than bare text sitting
-/// directly on the page background.
-class StudentWelcomeHeader extends StatelessWidget {
-  const StudentWelcomeHeader({super.key, required this.student});
+/// Shared branded greeting hero card (brandGradient fill, white text/avatar
+/// chip) matching the app's onboarding "floating card" brand identity.
+/// Used by both the Student Home and Teacher Overview dashboards so the two
+/// greetings stay visually identical.
+class GreetingHeroCard extends StatelessWidget {
+  const GreetingHeroCard({
+    super.key,
+    required this.name,
+    required this.greeting,
+    this.subtitle,
+  });
 
-  final Student student;
+  /// Full name, used only to derive the avatar initials.
+  final String name;
+
+  /// Fully localized greeting line, e.g. "Hi, John! 👋".
+  final String greeting;
+
+  /// Optional line shown under the greeting.
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +50,7 @@ class StudentWelcomeHeader extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Text(
-              nameInitials(student.name),
+              nameInitials(name),
               style: context.textStyles.titleLarge?.copyWith(
                 color: context.colors.onPrimary,
                 fontWeight: FontWeight.bold,
@@ -52,19 +63,21 @@ class StudentWelcomeHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  context.l10n.studentHomeWelcomeName(student.name),
+                  greeting,
                   style: context.textStyles.titleLarge?.copyWith(
                     color: context.colors.onPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: context.dimens.xs / 2),
-                Text(
-                  context.l10n.studentHomeWelcomeSubtitle,
-                  style: context.textStyles.bodySmall?.copyWith(
-                    color: context.colors.onPrimary.withValues(alpha: 0.85),
+                if (subtitle != null) ...[
+                  SizedBox(height: context.dimens.xs / 2),
+                  Text(
+                    subtitle!,
+                    style: context.textStyles.bodySmall?.copyWith(
+                      color: context.colors.onPrimary.withValues(alpha: 0.85),
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

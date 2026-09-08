@@ -6,6 +6,7 @@ import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/blurred_logo_backdrop.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/skeleton.dart';
 import '../../../domain/student_onboarding/entities/student.dart';
 import '../viewmodel/teacher_students_viewmodel.dart';
 import '../widgets/students_filter_bar.dart';
@@ -34,6 +35,10 @@ class TeacherStudentsView extends ConsumerWidget {
             child: AsyncValueWidget<List<Student>>(
               value: studentsAsync,
               onRetry: () => ref.invalidate(teacherStudentsProvider),
+              skeleton: Padding(
+                padding: EdgeInsets.all(context.dimens.lg),
+                child: const SkeletonList(itemCount: 5, itemHeight: 96),
+              ),
               data: (students) {
                 if (students.isEmpty) {
                   return ListView(

@@ -6,6 +6,7 @@ import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/skeleton.dart';
 import '../../../domain/student_cart/entities/cart.dart';
 import '../../../domain/student_cart/entities/cart_item.dart';
 import '../viewmodel/student_cart_viewmodel.dart';
@@ -31,6 +32,10 @@ class StudentCartView extends ConsumerWidget {
         child: AsyncValueWidget<Cart>(
           value: cartAsync,
           onRetry: () => ref.invalidate(studentCartViewModelProvider),
+          skeleton: Padding(
+            padding: EdgeInsets.all(context.dimens.lg),
+            child: const SkeletonList(itemCount: 3, itemHeight: 76),
+          ),
           data: (cart) {
             final items = cart.items ?? const <CartItem>[];
             if (items.isEmpty) {

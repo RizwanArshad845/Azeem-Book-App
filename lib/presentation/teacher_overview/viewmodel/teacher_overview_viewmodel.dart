@@ -104,6 +104,21 @@ final teacherOverviewStatsProvider = Provider<TeacherOverviewStats>((ref) {
   );
 });
 
+/// True only while [teacherStudentsProvider] has never resolved a value yet
+/// (i.e. the very first load) — used to gate stat displays that would
+/// otherwise flash 0 before real data arrives. A later background refresh
+/// keeps showing the stale value instead of flipping this back to true.
+final teacherStudentsLoadingProvider = Provider<bool>((ref) {
+  final async = ref.watch(teacherStudentsProvider);
+  return async.isLoading && !async.hasValue;
+});
+
+/// True only while [teacherEarningsProvider] has never resolved a value yet.
+final teacherEarningsLoadingProvider = Provider<bool>((ref) {
+  final async = ref.watch(teacherEarningsProvider);
+  return async.isLoading && !async.hasValue;
+});
+
 /// Unread notification count for the top utility bar.
 final teacherUnreadNotificationsCountProvider = Provider<int>((ref) {
   final notifs = ref.watch(notificationsViewModelProvider).value ?? [];

@@ -54,18 +54,25 @@ final teacherProfileResolvedSubjectsProvider =
     );
   }
 
-  // 2. If any declared subjectId is not yet in subjectsById, search all board
-  // classes. Kept sequential (unlike step 1) since it early-exits as soon as
-  // every missing id is resolved, which bounds the rare-fallback request
-  // count better than fetching every remaining board class concurrently.
+  // 2. If any declared subjectId is not yet in subjectsById, search the
+  // remaining board classes CONCURRENTLY (unlike the old sequential
+  // early-exit version). This is a rare fallback path — only fires when a
+  // teacher's subjectIds span a class they didn't explicitly declare — but
+  // network latency dominates cost far more than request count: firing all
+  // remaining lookups at once resolves in roughly one round-trip's worth of
+  // wall-clock time instead of up to N sequential ones (catalog has ~12
+  // board classes today).
   final missingIds = teacher.subjectIds
       .where((id) => !subjectsById.containsKey(id))
       .toList();
   if (missingIds.isNotEmpty) {
     final allClasses = await ref.watch(boardClassesProvider.future);
-    for (final bc in allClasses) {
-      if (classIds.contains(bc.id)) continue;
-      final result = await getSubjects(bc.id);
+    final remainingClasses =
+        allClasses.where((bc) => !classIds.contains(bc.id)).toList();
+    final fallbackResults = await Future.wait(
+      remainingClasses.map((bc) => getSubjects(bc.id)),
+    );
+    for (final result in fallbackResults) {
       result.when(
         success: (subjects) {
           for (final s in subjects) {
@@ -74,9 +81,6 @@ final teacherProfileResolvedSubjectsProvider =
         },
         failure: (_) {},
       );
-      if (missingIds.every((id) => subjectsById.containsKey(id))) {
-        break;
-      }
     }
   }
 

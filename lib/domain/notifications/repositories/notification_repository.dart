@@ -16,4 +16,8 @@ abstract class NotificationRepository {
 
   /// Removes/archives every notification addressed to [recipientId].
   Future<Result<void>> clearAll(String recipientId);
+
+  /// Clears any cached notification list for [recipientId] so a mutation
+  /// (mark-as-read/clear-all) can't be shadowed by a stale cached snapshot.
+  void clearCache(String recipientId);
 }

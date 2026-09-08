@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
@@ -11,6 +13,9 @@ import '../../../domain/auth/usecases/verify_otp_usecase.dart';
 import '../../../domain/common/failure.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 import '../../teacher_onboarding/viewmodel/teacher_onboarding_viewmodel.dart';
+import '../../teacher_profile/viewmodel/teacher_profile_catalog_providers.dart';
+import '../../teacher_students/viewmodel/teacher_students_viewmodel.dart'
+    show teacherStudentsCampusesByIdProvider;
 
 
 class AuthViewModel extends AsyncNotifier<AuthSession?> {
@@ -105,11 +110,47 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
     }
 
     state = const AsyncLoading<AuthSession?>();
+
     final result = await sl<VerifyOtpUseCase>()(phoneNumber, otp, role);
     state = result.when(
       success: (session) => AsyncData<AuthSession?>(session),
       failure: (failure) => AsyncError<AuthSession?>(failure, StackTrace.current),
     );
+
+    if (result.isSuccess) {
+      // Fire the role-agnostic catalog lookups (campus/board-class/
+      // class-level) immediately after login succeeds, instead of only
+      // starting them once a screen first watches them. Deliberately NOT
+      // fired before `VerifyOtpUseCase` resolves: these endpoints require
+      // an auth token, so calling them any earlier than this guarantees a
+      // 401 — and since they're plain (non-`.autoDispose`) `FutureProvider`s
+      // with no prior cache on a fresh login, a pre-auth 401 permanently
+      // poisons them into `AsyncError` for the rest of the app session
+      // (confirmed via a real device log capture: this exact 401 storm was
+      // the actual root cause of the Teacher Profile card's raw-id flash —
+      // its lookups depend on these same providers, which never recovered
+      // after being poisoned).
+      unawaited(_prefetchLoginCatalogData());
+      if (role == UserRole.teacher) {
+        unawaited(preloadTeacherProfileLookups());
+      }
+    }
+  }
+
+  /// Kicks off the role-agnostic catalog lookups (campus/board-class/
+  /// class-level) right after login succeeds, so they have a head start
+  /// before any screen first watches them.
+  Future<void> _prefetchLoginCatalogData() async {
+    try {
+      await Future.wait([
+        ref.read(campusesProvider.future),
+        ref.read(boardClassesProvider.future),
+        ref.read(classLevelsProvider.future),
+      ]);
+    } catch (_) {
+      // Ignore — this is only a head start; consumers fetch normally on
+      // first watch if this failed.
+    }
   }
 
   /// Clears the current session, and force-resets every other provider that
@@ -117,6 +158,17 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
   /// a previous user's cached `Student`/`Teacher` survives in this
   /// process-lifetime `ProviderContainer` (`lib/main.dart`) and gets shown
   /// to the next different user who logs in.
+  ///
+  /// Uses `sl<ProviderContainer>()`, NOT `ref.invalidate(...)` on this
+  /// Notifier's own `ref` — confirmed via a real device log that the latter
+  /// throws `CircularDependencyError` every time (same root cause as
+  /// `preloadTeacherProfileLookups`'s fix above: both
+  /// `studentOnboardingViewModelProvider` and `teacherOnboardingViewModelProvider`
+  /// watch `currentUserProvider`, which watches `authViewModelProvider`, so
+  /// invalidating them from `authViewModelProvider`'s own element is a real
+  /// graph cycle). This means logout has never actually cleared this cache
+  /// until now — a stale previous session's Teacher/Student data was
+  /// silently surviving every logout.
   Future<void> logout() async {
     state = const AsyncLoading<AuthSession?>();
     final result = await sl<LogoutUseCase>()();
@@ -125,8 +177,9 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
       failure: (failure) => AsyncError<AuthSession?>(failure, StackTrace.current),
     );
     if (state.hasValue && state.value == null) {
-      ref.invalidate(studentOnboardingViewModelProvider);
-      ref.invalidate(teacherOnboardingViewModelProvider);
+      final container = sl<ProviderContainer>();
+      container.invalidate(studentOnboardingViewModelProvider);
+      container.invalidate(teacherOnboardingViewModelProvider);
     }
   }
 }
@@ -140,3 +193,39 @@ final authViewModelProvider =
 final currentUserProvider = Provider<AuthSession?>((ref) {
   return ref.watch(authViewModelProvider.select((async) => async.value));
 });
+
+/// Warms the Teacher Profile "Teaching Scope" card's catalog lookups so the
+/// card never renders raw subject/campus ids before rebuilding with
+/// resolved names. Called from `AuthViewModel.verifyOtp()` right after a
+/// fresh teacher login succeeds.
+///
+/// Uses `sl<ProviderContainer>()` (registered in `main.dart`) instead of
+/// `AuthViewModel`'s own `ref`. This is not optional: `AuthViewModel`'s
+/// `ref` stays scoped to `authViewModelProvider` for the Notifier's entire
+/// lifetime (not just during `build()`), so reading
+/// `teacherOnboardingViewModelProvider` through it — which itself watches
+/// `currentUserProvider`, which watches `authViewModelProvider` — creates a
+/// real graph cycle: `authViewModelProvider` -> `teacherOnboardingViewModelProvider`
+/// -> `currentUserProvider` -> back to `authViewModelProvider`. Confirmed via
+/// a real device log: this threw `CircularDependencyError` immediately (10ms
+/// in) on every call, silently no-opping the entire prefetch. A
+/// `ProviderContainer.read()` isn't tied to any single provider's dependency
+/// scope, so it can read this chain without triggering the cycle detector.
+Future<void> preloadTeacherProfileLookups() async {
+  final container = sl<ProviderContainer>();
+  try {
+    final teacher = await container
+        .read(teacherOnboardingViewModelProvider.future)
+        .timeout(const Duration(seconds: 4));
+    if (teacher == null) return;
+    await Future.wait([
+      container.read(teacherProfileBoardClassesByIdProvider.future),
+      container.read(teacherProfileClassLevelsByIdProvider.future),
+      container.read(teacherProfileResolvedSubjectsProvider.future),
+      container.read(teacherStudentsCampusesByIdProvider.future),
+    ]).timeout(const Duration(seconds: 4));
+  } catch (_) {
+    // Graceful fallback: a slow/failed prefetch shouldn't affect login —
+    // the card just falls back to resolving lookups on first watch.
+  }
+}

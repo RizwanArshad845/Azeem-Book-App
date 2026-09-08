@@ -12,6 +12,7 @@ import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/delayed_loader.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/greeting_hero_card.dart';
 import '../../../core/widgets/illustrated_list_card.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../core/widgets/promo_carousel.dart';
@@ -23,7 +24,6 @@ import '../../../domain/catalog/entities/subject.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
 import '../../test_taking/widgets/practice_question_bank_sheet.dart';
 import '../viewmodel/student_home_viewmodel.dart';
-import '../widgets/student_welcome_header.dart';
 import '../widgets/subject_card.dart';
 
 String _chapterListPath(String subjectId) =>
@@ -67,7 +67,13 @@ class StudentHomeView extends ConsumerWidget {
                       padding: EdgeInsets.symmetric(
                         horizontal: context.dimens.lg,
                       ),
-                      child: StudentWelcomeHeader(student: student),
+                      child: GreetingHeroCard(
+                        name: student.name,
+                        greeting: context.l10n.studentHomeWelcomeName(
+                          student.name,
+                        ),
+                        subtitle: context.l10n.studentHomeWelcomeSubtitle,
+                      ),
                     ),
                     const _PromoSection(),
                     SizedBox(height: context.dimens.xl),

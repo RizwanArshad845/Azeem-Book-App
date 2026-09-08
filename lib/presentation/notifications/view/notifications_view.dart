@@ -9,6 +9,7 @@ import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/blurred_logo_backdrop.dart';
 import '../../../core/widgets/confirm_dialog.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/skeleton.dart';
 import '../../../domain/notifications/entities/notification.dart';
 import '../viewmodel/notifications_viewmodel.dart';
 
@@ -65,6 +66,13 @@ class NotificationsView extends ConsumerWidget {
             child: AsyncValueWidget<List<Notification>>(
               value: notificationsAsync,
               onRetry: () => ref.invalidate(notificationsViewModelProvider),
+              skeleton: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.dimens.lg,
+                  vertical: context.dimens.md,
+                ),
+                child: const SkeletonList(itemCount: 6, itemHeight: 70),
+              ),
               data: (notifications) {
                 if (notifications.isEmpty) {
                   return LayoutBuilder(
