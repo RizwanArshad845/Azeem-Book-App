@@ -57,20 +57,24 @@ class _EarningsProjectedCalculatorCardState
 
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        // Same emerald gradient as the actual-earnings hero card on the
+        // Teacher Overview tab (ProjectedEarningsHeroCard), so the simulator
+        // reads as part of the same earnings surface.
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF1E293B), // Deep slate
-            const Color(0xFF0F172A),
+            Color(0xFF0D5C3A), // Deep Emerald
+            Color(0xFF13774D),
+            Color(0xFF1E824C),
           ],
         ),
         borderRadius: BorderRadius.circular(context.dimens.radiusXl),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
+            color: context.colors.primary.withValues(alpha: 0.28),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
