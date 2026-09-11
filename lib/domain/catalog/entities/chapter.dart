@@ -13,5 +13,6 @@ abstract class Chapter with _$Chapter {
     required String title,
     required int order,
     @Default(false) bool isFreeSample,
+    String? youtubeUrl,
   }) = _Chapter;
 }

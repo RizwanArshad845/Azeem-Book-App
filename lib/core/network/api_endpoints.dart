@@ -16,6 +16,10 @@ class ApiEndpoints {
   static const String catalogCampuses = '/catalog/campuses';
   static const String catalogTests = '/catalog/tests';
   static const String catalogQuestions = '/catalog/questions';
+  static String catalogSubjectEbook(String subjectId) =>
+      '/catalog/subjects/$subjectId/ebook';
+  static String catalogSubjectEbookPages(String subjectId) =>
+      '/catalog/subjects/$subjectId/ebook/pages';
 
   static const String teachers = '/teachers';
   static const String teacherSignUp = '/teachers/signup';

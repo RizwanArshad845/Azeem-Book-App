@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChapterDto {
 
- String get id; String get subjectId; String get title; int get order; bool get isFreeSample;
+ String get id; String get subjectId; String get title; int get order; bool get isFreeSample; String? get youtubeUrl;
 /// Create a copy of ChapterDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ChapterDtoCopyWith<ChapterDto> get copyWith => _$ChapterDtoCopyWithImpl<Chapter
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChapterDto&&(identical(other.id, id) || other.id == id)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.title, title) || other.title == title)&&(identical(other.order, order) || other.order == order)&&(identical(other.isFreeSample, isFreeSample) || other.isFreeSample == isFreeSample));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChapterDto&&(identical(other.id, id) || other.id == id)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.title, title) || other.title == title)&&(identical(other.order, order) || other.order == order)&&(identical(other.isFreeSample, isFreeSample) || other.isFreeSample == isFreeSample)&&(identical(other.youtubeUrl, youtubeUrl) || other.youtubeUrl == youtubeUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,subjectId,title,order,isFreeSample);
+int get hashCode => Object.hash(runtimeType,id,subjectId,title,order,isFreeSample,youtubeUrl);
 
 @override
 String toString() {
-  return 'ChapterDto(id: $id, subjectId: $subjectId, title: $title, order: $order, isFreeSample: $isFreeSample)';
+  return 'ChapterDto(id: $id, subjectId: $subjectId, title: $title, order: $order, isFreeSample: $isFreeSample, youtubeUrl: $youtubeUrl)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ChapterDtoCopyWith<$Res>  {
   factory $ChapterDtoCopyWith(ChapterDto value, $Res Function(ChapterDto) _then) = _$ChapterDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String subjectId, String title, int order, bool isFreeSample
+ String id, String subjectId, String title, int order, bool isFreeSample, String? youtubeUrl
 });
 
 
@@ -65,14 +65,15 @@ class _$ChapterDtoCopyWithImpl<$Res>
 
 /// Create a copy of ChapterDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? subjectId = null,Object? title = null,Object? order = null,Object? isFreeSample = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? subjectId = null,Object? title = null,Object? order = null,Object? isFreeSample = null,Object? youtubeUrl = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,subjectId: null == subjectId ? _self.subjectId : subjectId // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,order: null == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
 as int,isFreeSample: null == isFreeSample ? _self.isFreeSample : isFreeSample // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,youtubeUrl: freezed == youtubeUrl ? _self.youtubeUrl : youtubeUrl // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -157,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String subjectId,  String title,  int order,  bool isFreeSample)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String subjectId,  String title,  int order,  bool isFreeSample,  String? youtubeUrl)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChapterDto() when $default != null:
-return $default(_that.id,_that.subjectId,_that.title,_that.order,_that.isFreeSample);case _:
+return $default(_that.id,_that.subjectId,_that.title,_that.order,_that.isFreeSample,_that.youtubeUrl);case _:
   return orElse();
 
 }
@@ -178,10 +179,10 @@ return $default(_that.id,_that.subjectId,_that.title,_that.order,_that.isFreeSam
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String subjectId,  String title,  int order,  bool isFreeSample)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String subjectId,  String title,  int order,  bool isFreeSample,  String? youtubeUrl)  $default,) {final _that = this;
 switch (_that) {
 case _ChapterDto():
-return $default(_that.id,_that.subjectId,_that.title,_that.order,_that.isFreeSample);case _:
+return $default(_that.id,_that.subjectId,_that.title,_that.order,_that.isFreeSample,_that.youtubeUrl);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +199,10 @@ return $default(_that.id,_that.subjectId,_that.title,_that.order,_that.isFreeSam
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String subjectId,  String title,  int order,  bool isFreeSample)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String subjectId,  String title,  int order,  bool isFreeSample,  String? youtubeUrl)?  $default,) {final _that = this;
 switch (_that) {
 case _ChapterDto() when $default != null:
-return $default(_that.id,_that.subjectId,_that.title,_that.order,_that.isFreeSample);case _:
+return $default(_that.id,_that.subjectId,_that.title,_that.order,_that.isFreeSample,_that.youtubeUrl);case _:
   return null;
 
 }
@@ -213,7 +214,7 @@ return $default(_that.id,_that.subjectId,_that.title,_that.order,_that.isFreeSam
 @JsonSerializable()
 
 class _ChapterDto extends ChapterDto {
-  const _ChapterDto({required this.id, required this.subjectId, required this.title, required this.order, this.isFreeSample = false}): super._();
+  const _ChapterDto({required this.id, required this.subjectId, required this.title, required this.order, this.isFreeSample = false, this.youtubeUrl}): super._();
   factory _ChapterDto.fromJson(Map<String, dynamic> json) => _$ChapterDtoFromJson(json);
 
 @override final  String id;
@@ -221,6 +222,7 @@ class _ChapterDto extends ChapterDto {
 @override final  String title;
 @override final  int order;
 @override@JsonKey() final  bool isFreeSample;
+@override final  String? youtubeUrl;
 
 /// Create a copy of ChapterDto
 /// with the given fields replaced by the non-null parameter values.
@@ -235,16 +237,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChapterDto&&(identical(other.id, id) || other.id == id)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.title, title) || other.title == title)&&(identical(other.order, order) || other.order == order)&&(identical(other.isFreeSample, isFreeSample) || other.isFreeSample == isFreeSample));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChapterDto&&(identical(other.id, id) || other.id == id)&&(identical(other.subjectId, subjectId) || other.subjectId == subjectId)&&(identical(other.title, title) || other.title == title)&&(identical(other.order, order) || other.order == order)&&(identical(other.isFreeSample, isFreeSample) || other.isFreeSample == isFreeSample)&&(identical(other.youtubeUrl, youtubeUrl) || other.youtubeUrl == youtubeUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,subjectId,title,order,isFreeSample);
+int get hashCode => Object.hash(runtimeType,id,subjectId,title,order,isFreeSample,youtubeUrl);
 
 @override
 String toString() {
-  return 'ChapterDto(id: $id, subjectId: $subjectId, title: $title, order: $order, isFreeSample: $isFreeSample)';
+  return 'ChapterDto(id: $id, subjectId: $subjectId, title: $title, order: $order, isFreeSample: $isFreeSample, youtubeUrl: $youtubeUrl)';
 }
 
 
@@ -255,7 +257,7 @@ abstract mixin class _$ChapterDtoCopyWith<$Res> implements $ChapterDtoCopyWith<$
   factory _$ChapterDtoCopyWith(_ChapterDto value, $Res Function(_ChapterDto) _then) = __$ChapterDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String subjectId, String title, int order, bool isFreeSample
+ String id, String subjectId, String title, int order, bool isFreeSample, String? youtubeUrl
 });
 
 
@@ -272,14 +274,15 @@ class __$ChapterDtoCopyWithImpl<$Res>
 
 /// Create a copy of ChapterDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? subjectId = null,Object? title = null,Object? order = null,Object? isFreeSample = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? subjectId = null,Object? title = null,Object? order = null,Object? isFreeSample = null,Object? youtubeUrl = freezed,}) {
   return _then(_ChapterDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,subjectId: null == subjectId ? _self.subjectId : subjectId // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,order: null == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
 as int,isFreeSample: null == isFreeSample ? _self.isFreeSample : isFreeSample // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,youtubeUrl: freezed == youtubeUrl ? _self.youtubeUrl : youtubeUrl // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

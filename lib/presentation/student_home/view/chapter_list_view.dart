@@ -13,13 +13,11 @@ import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../../domain/catalog/entities/chapter.dart';
 import '../../../domain/catalog/entities/subject.dart';
-import '../../../domain/student_onboarding/entities/teacher_option.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
-import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 import '../../student_progress/viewmodel/student_progress_viewmodel.dart';
 import '../../test_taking/viewmodel/free_attempts_provider.dart';
 import '../viewmodel/student_home_viewmodel.dart';
-import '../widgets/assign_teacher_sheet.dart';
+import '../widgets/chapter_actions_sheet.dart';
 import '../widgets/subject_bundle_header.dart';
 
 String _testListPath(String subjectId, String chapterId) => AppRoutes
@@ -100,7 +98,6 @@ class ChapterListView extends ConsumerWidget {
     final resolvedSubjectName = subjectName ?? resolvedSubject?.name;
 
     final student = ref.watch(currentStudentProvider);
-    final campusId = student?.campusId;
     final enrollment = student?.subjectEnrollments
         ?.where((e) => e.subjectId == subjectId)
         .firstOrNull;
@@ -128,15 +125,6 @@ class ChapterListView extends ConsumerWidget {
         ? (((bundlePrice - subjectDiscountedPrice) / bundlePrice) * 100).round()
         : null;
 
-    final teachersAsync = campusId != null && campusId.isNotEmpty
-        ? ref.watch(teachersForCampusProvider(campusId))
-        : null;
-    final assignedTeacher = assignedTeacherId != null
-        ? (teachersAsync?.value ?? const <TeacherOption>[])
-            .where((t) => t.id == assignedTeacherId)
-            .firstOrNull
-        : null;
-
     final title = resolvedSubjectName != null
         ? context.l10n.localizedSubjectName(resolvedSubjectName)
         : context.l10n.chapterListTitle;
@@ -148,78 +136,6 @@ class ChapterListView extends ConsumerWidget {
           padding: EdgeInsets.all(context.dimens.lg),
           child: Column(
             children: [
-              if (student != null) ...[
-                AppCard(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.dimens.md,
-                    vertical: context.dimens.sm,
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(context.dimens.xs),
-                        decoration: BoxDecoration(
-                          color: context.colors.primary.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.person_outline,
-                          size: 20,
-                          color: context.colors.primary,
-                        ),
-                      ),
-                      SizedBox(width: context.dimens.sm),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              context.l10n.subjectTeacherSelectTeacherLabel,
-                              style: context.textStyles.labelSmall?.copyWith(
-                                color: context.colors.textSecondary,
-                              ),
-                            ),
-                            Text(
-                              assignedTeacher?.name ??
-                                  (assignedTeacherId != null
-                                      ? context.l10n.chapterAssignedTeacherFallback
-                                      : context.l10n.chapterSelfStudyLabel),
-                              style: context.textStyles.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                      TextButton.icon(
-                        onPressed: () => AssignTeacherSheet.show(
-                          context: context,
-                          subjectId: subjectId,
-                          subjectName: resolvedSubjectName ?? title,
-                          currentTeacherId: assignedTeacherId,
-                        ),
-                        icon: Icon(
-                          assignedTeacherId != null
-                              ? Icons.edit_outlined
-                              : Icons.add_circle_outline,
-                          size: 16,
-                        ),
-                        label: Text(
-                          assignedTeacherId != null ? context.l10n.commonChange : context.l10n.commonAssign,
-                          style: context.textStyles.labelMedium?.copyWith(
-                            color: context.colors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: context.dimens.md),
-              ],
               Expanded(
                 child: AsyncValueWidget<List<Chapter>>(
                   value: chaptersAsync,
@@ -240,8 +156,11 @@ class ChapterListView extends ConsumerWidget {
                         final chapter = chapters[index];
                         final isFirstChapter = chapter.order == 1;
                         return AppCard(
-                          onTap: () => context.push(
-                            _testListPath(subjectId, chapter.id),
+                          onTap: () => ChapterActionsSheet.show(
+                            context: context,
+                            chapter: chapter,
+                            testListPath:
+                                _testListPath(subjectId, chapter.id),
                           ),
                           child: Row(
                             children: [

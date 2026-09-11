@@ -42,6 +42,9 @@ class AppRoutes {
   // Outside-shell, pushed on top (no bottom nav during a focused task)
   static const String testTaking = '/test-taking/:testId';
   static String testTakingPath(String testId) => '/test-taking/$testId';
+  static const String ebookReader = '/ebook-reader/:subjectId';
+  static String ebookReaderPath(String subjectId) =>
+      '/ebook-reader/$subjectId';
   static const String cartCheckout = '/cart/checkout';
   static const String teacherStudentProgressDetail =
       '/teacher/students/:studentId/progress';

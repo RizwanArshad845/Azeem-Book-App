@@ -15,6 +15,7 @@ abstract class ChapterDto with _$ChapterDto {
     required String title,
     required int order,
     @Default(false) bool isFreeSample,
+    String? youtubeUrl,
   }) = _ChapterDto;
 
   factory ChapterDto.fromJson(Map<String, dynamic> json) =>
@@ -26,6 +27,7 @@ abstract class ChapterDto with _$ChapterDto {
     title: title,
     order: order,
     isFreeSample: isFreeSample,
+    youtubeUrl: youtubeUrl,
   );
 
   factory ChapterDto.fromDomain(Chapter entity) => ChapterDto(
@@ -34,5 +36,6 @@ abstract class ChapterDto with _$ChapterDto {
     title: entity.title,
     order: entity.order,
     isFreeSample: entity.isFreeSample,
+    youtubeUrl: entity.youtubeUrl,
   );
 }

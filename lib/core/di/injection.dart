@@ -18,6 +18,8 @@ import '../../domain/catalog/repositories/catalog_repository.dart';
 import '../../domain/catalog/usecases/get_board_classes_usecase.dart';
 import '../../domain/catalog/usecases/get_chapters_usecase.dart';
 import '../../domain/catalog/usecases/get_class_levels_usecase.dart';
+import '../../domain/catalog/usecases/get_ebook_pages_usecase.dart';
+import '../../domain/catalog/usecases/get_ebook_usecase.dart';
 import '../../domain/catalog/usecases/get_questions_usecase.dart';
 import '../../domain/catalog/usecases/get_subjects_usecase.dart';
 import '../../domain/catalog/usecases/get_tests_usecase.dart';
@@ -106,6 +108,8 @@ void setupLocator() {
   sl.registerFactory(() => GetChaptersUseCase(sl()));
   sl.registerFactory(() => GetTestsUseCase(sl()));
   sl.registerFactory(() => GetQuestionsUseCase(sl()));
+  sl.registerFactory(() => GetEbookUseCase(sl()));
+  sl.registerFactory(() => GetEbookPagesUseCase(sl()));
 
   // campus-directory
   sl.registerLazySingleton<CampusRemoteDataSource>(

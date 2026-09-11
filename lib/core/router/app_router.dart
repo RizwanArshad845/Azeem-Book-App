@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/auth/entities/user_role.dart';
 import '../../presentation/auth/view/otp_verify_view.dart';
+import '../../presentation/ebook_reader/view/ebook_reader_view.dart';
 import '../../presentation/auth/view/phone_entry_view.dart';
 import '../../presentation/auth/view/role_select_view.dart';
 import '../../presentation/auth/viewmodel/auth_viewmodel.dart';
@@ -174,9 +175,10 @@ const _teacherShellRoutes = {
 
 // Pushed on top of either shell (or before it) once a role/onboarding stage
 // is fully resolved — live tests, checkout, per-student detail. `testTaking`
-// is checked separately via a prefix match since it carries a `:testId`
-// path param, so `state.matchedLocation` is a concrete path like
-// `/test-taking/abc123`, never the literal `AppRoutes.testTaking` pattern.
+// and `ebookReader` are checked separately via a prefix match since they
+// carry a `:testId`/`:subjectId` path param, so `state.matchedLocation` is
+// a concrete path like `/test-taking/abc123`, never the literal
+// `AppRoutes.testTaking` pattern.
 const _outsideShellRoutes = {
   AppRoutes.cartCheckout,
   AppRoutes.studentProfile,
@@ -190,6 +192,7 @@ const _outsideShellRoutes = {
 bool _isOutsideShellRoute(String location) =>
     _outsideShellRoutes.contains(location) ||
     location.startsWith('/test-taking/') ||
+    location.startsWith('/ebook-reader/') ||
     (location.startsWith('/teacher/students/') &&
         location.endsWith('/progress'));
 
@@ -512,6 +515,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => _appPage(
           state,
           TestTakingView(testId: state.pathParameters['testId']!),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.ebookReader,
+        pageBuilder: (context, state) => _appPage(
+          state,
+          EbookReaderView(subjectId: state.pathParameters['subjectId']!),
         ),
       ),
       GoRoute(

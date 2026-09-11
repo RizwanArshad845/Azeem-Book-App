@@ -24,6 +24,7 @@ import '../../../domain/catalog/entities/subject.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
 import '../../test_taking/widgets/practice_question_bank_sheet.dart';
 import '../viewmodel/student_home_viewmodel.dart';
+import '../widgets/subject_actions_sheet.dart';
 import '../widgets/subject_card.dart';
 
 String _chapterListPath(String subjectId) =>
@@ -282,9 +283,11 @@ class _SubjectsSection extends ConsumerWidget {
                         color: context.colors.textSecondary,
                       ),
                     ),
-                    onTap: () => context.push(
-                      _chapterListPath(subject.id),
-                      extra: subject.name,
+                    onTap: () => SubjectActionsSheet.show(
+                      context: context,
+                      subjectId: subject.id,
+                      subjectName: subject.name,
+                      chapterListPath: _chapterListPath(subject.id),
                     ),
                   );
                 },

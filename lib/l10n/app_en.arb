@@ -278,6 +278,20 @@
     "placeholders": { "order": { "type": "int" } }
   },
   "chapterFreeBadge": "2 free",
+  "chapterActionAttemptTest": "Attempt Test",
+  "chapterActionWatchVideo": "Watch Video",
+  "chapterVideoOpenError": "Couldn't open the video. Please try again.",
+  "ebookBannerTitle": "Read Ebook",
+  "ebookBannerProcessing": "Ebook processing…",
+  "ebookLockedMessage": "Purchase this subject to access the ebook.",
+  "ebookReaderTitle": "Ebook",
+  "ebookGoToPageTitle": "Go to page",
+  "ebookGoToPageLabel": "Page number",
+  "ebookGoToPageButton": "Go",
+  "ebookGoToPageInvalid": "Enter a page between 1 and {total}",
+  "@ebookGoToPageInvalid": {
+    "placeholders": { "total": { "type": "int" } }
+  },
   "testKindGuessPaper": "Subject-wise guess paper",
   "testKindSimplePaper": "Subject-wise paper",
   "testKindChapterWise": "Chapter-wise test",

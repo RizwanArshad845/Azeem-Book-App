@@ -724,6 +724,42 @@ class AppLocalizationsUr extends AppLocalizations {
   String get chapterFreeBadge => '2 مفت';
 
   @override
+  String get chapterActionAttemptTest => 'ٹیسٹ دیں';
+
+  @override
+  String get chapterActionWatchVideo => 'ویڈیو دیکھیں';
+
+  @override
+  String get chapterVideoOpenError => 'ویڈیو نہیں کھل سکی۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String get ebookBannerTitle => 'ای بک پڑھیں';
+
+  @override
+  String get ebookBannerProcessing => 'ای بک تیار ہو رہی ہے…';
+
+  @override
+  String get ebookLockedMessage =>
+      'ای بک تک رسائی کے لیے پہلے یہ مضمون خریدیں۔';
+
+  @override
+  String get ebookReaderTitle => 'ای بک';
+
+  @override
+  String get ebookGoToPageTitle => 'صفحہ پر جائیں';
+
+  @override
+  String get ebookGoToPageLabel => 'صفحہ نمبر';
+
+  @override
+  String get ebookGoToPageButton => 'جائیں';
+
+  @override
+  String ebookGoToPageInvalid(int total) {
+    return '1 اور $total کے درمیان صفحہ درج کریں';
+  }
+
+  @override
   String get testKindGuessPaper => 'مضمون وار گیس پیپر';
 
   @override

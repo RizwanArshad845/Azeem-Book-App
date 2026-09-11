@@ -719,6 +719,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chapterFreeBadge => '2 free';
 
   @override
+  String get chapterActionAttemptTest => 'Attempt Test';
+
+  @override
+  String get chapterActionWatchVideo => 'Watch Video';
+
+  @override
+  String get chapterVideoOpenError =>
+      'Couldn\'t open the video. Please try again.';
+
+  @override
+  String get ebookBannerTitle => 'Read Ebook';
+
+  @override
+  String get ebookBannerProcessing => 'Ebook processing…';
+
+  @override
+  String get ebookLockedMessage => 'Purchase this subject to access the ebook.';
+
+  @override
+  String get ebookReaderTitle => 'Ebook';
+
+  @override
+  String get ebookGoToPageTitle => 'Go to page';
+
+  @override
+  String get ebookGoToPageLabel => 'Page number';
+
+  @override
+  String get ebookGoToPageButton => 'Go';
+
+  @override
+  String ebookGoToPageInvalid(int total) {
+    return 'Enter a page between 1 and $total';
+  }
+
+  @override
   String get testKindGuessPaper => 'Subject-wise guess paper';
 
   @override

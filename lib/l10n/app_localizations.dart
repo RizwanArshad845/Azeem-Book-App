@@ -1400,6 +1400,72 @@ abstract class AppLocalizations {
   /// **'2 free'**
   String get chapterFreeBadge;
 
+  /// No description provided for @chapterActionAttemptTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt Test'**
+  String get chapterActionAttemptTest;
+
+  /// No description provided for @chapterActionWatchVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch Video'**
+  String get chapterActionWatchVideo;
+
+  /// No description provided for @chapterVideoOpenError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the video. Please try again.'**
+  String get chapterVideoOpenError;
+
+  /// No description provided for @ebookBannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read Ebook'**
+  String get ebookBannerTitle;
+
+  /// No description provided for @ebookBannerProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Ebook processing…'**
+  String get ebookBannerProcessing;
+
+  /// No description provided for @ebookLockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase this subject to access the ebook.'**
+  String get ebookLockedMessage;
+
+  /// No description provided for @ebookReaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ebook'**
+  String get ebookReaderTitle;
+
+  /// No description provided for @ebookGoToPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to page'**
+  String get ebookGoToPageTitle;
+
+  /// No description provided for @ebookGoToPageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Page number'**
+  String get ebookGoToPageLabel;
+
+  /// No description provided for @ebookGoToPageButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Go'**
+  String get ebookGoToPageButton;
+
+  /// No description provided for @ebookGoToPageInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a page between 1 and {total}'**
+  String ebookGoToPageInvalid(int total);
+
   /// No description provided for @testKindGuessPaper.
   ///
   /// In en, this message translates to:

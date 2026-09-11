@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/riverpod_providers.dart';
 import '../../../core/widgets/subject_view_toggle.dart';
 import '../../../domain/catalog/entities/chapter.dart';
+import '../../../domain/catalog/entities/ebook.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
+import '../../../domain/common/failure.dart';
 import '../../../domain/student_onboarding/entities/student.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 
@@ -107,6 +109,47 @@ final chaptersForSubjectProvider = FutureProvider.family<List<Chapter>, String>(
         return sorted;
       },
       failure: (failure) => throw failure,
+    );
+  },
+);
+
+/// Outcome of resolving ebook access for a subject via
+/// [ebookForSubjectProvider] — distinguishes "nothing uploaded yet" from
+/// "exists, but you haven't purchased it", both of which are expected,
+/// non-error states rather than something to throw/log.
+sealed class EbookAccess {
+  const EbookAccess();
+}
+
+/// Ebook exists and the subject is purchased — `ebook.status` drives the
+/// ready/processing distinction.
+class EbookAvailable extends EbookAccess {
+  const EbookAvailable(this.ebook);
+  final Ebook ebook;
+}
+
+/// No ebook has been uploaded/converted for this subject yet (404).
+class EbookNotUploaded extends EbookAccess {
+  const EbookNotUploaded();
+}
+
+/// Ebook exists but the subject hasn't been purchased (403, mapped to
+/// [UnauthorizedFailure] by `ErrorInterceptor` alongside 401).
+class EbookLocked extends EbookAccess {
+  const EbookLocked();
+}
+
+/// Ebook metadata for a subject's actions sheet.
+final ebookForSubjectProvider = FutureProvider.family<EbookAccess, String>(
+  (ref, subjectId) async {
+    final result = await ref.read(getEbookUseCaseProvider)(subjectId);
+    return result.when(
+      success: EbookAvailable.new,
+      failure: (failure) => switch (failure) {
+        NotFoundFailure() => const EbookNotUploaded(),
+        UnauthorizedFailure() => const EbookLocked(),
+        _ => throw failure,
+      },
     );
   },
 );

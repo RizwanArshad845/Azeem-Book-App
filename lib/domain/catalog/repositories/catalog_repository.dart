@@ -2,6 +2,8 @@ import '../../common/result.dart';
 import '../entities/board_class.dart';
 import '../entities/chapter.dart';
 import '../entities/class_level.dart';
+import '../entities/ebook.dart';
+import '../entities/ebook_page.dart';
 import '../entities/question.dart';
 import '../entities/subject.dart';
 import '../entities/test.dart';
@@ -42,6 +44,19 @@ abstract class CatalogRepository {
   Future<Result<List<Question>>> getQuestions(
     String testId, {
     bool forceRefresh = false,
+  });
+
+  /// Ebook metadata (conversion status + page count) for a Subject's single
+  /// admin-uploaded PDF. Never cached — `status` transitions
+  /// pending -> processing -> ready server-side between calls.
+  Future<Result<Ebook>> getEbook(String subjectId);
+
+  /// A window of short-lived signed page-image URLs, `count` capped at 50
+  /// server-side. Never cached — URLs expire after `expiresInSeconds`.
+  Future<Result<EbookPageWindow>> getEbookPages(
+    String subjectId, {
+    int startPage = 1,
+    int count = 20,
   });
 
   void clearCache();

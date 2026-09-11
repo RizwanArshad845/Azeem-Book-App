@@ -6,6 +6,8 @@ import '../../../../domain/common/result.dart';
 import '../../models/board_class_dto.dart';
 import '../../models/chapter_dto.dart';
 import '../../models/class_level_dto.dart';
+import '../../models/ebook_dto.dart';
+import '../../models/ebook_page_dto.dart';
 import '../../models/question_dto.dart';
 import '../../models/subject_dto.dart';
 import '../../models/test_dto.dart';
@@ -23,6 +25,14 @@ abstract class CatalogRemoteDataSource {
   Future<Result<List<TestDto>>> getTests({String? subjectId, String? chapterId});
 
   Future<Result<List<QuestionDto>>> getQuestions(String testId);
+
+  Future<Result<EbookDto>> getEbook(String subjectId);
+
+  Future<Result<EbookPagesResponseDto>> getEbookPages(
+    String subjectId, {
+    int startPage = 1,
+    int count = 20,
+  });
 }
 
 class CatalogRemoteDataSourceImpl implements CatalogRemoteDataSource {
@@ -88,6 +98,27 @@ class CatalogRemoteDataSourceImpl implements CatalogRemoteDataSource {
     );
   }
 
+  @override
+  Future<Result<EbookDto>> getEbook(String subjectId) {
+    return _get(ApiEndpoints.catalogSubjectEbook(subjectId), EbookDto.fromJson);
+  }
+
+  @override
+  Future<Result<EbookPagesResponseDto>> getEbookPages(
+    String subjectId, {
+    int startPage = 1,
+    int count = 20,
+  }) {
+    return _get(
+      ApiEndpoints.catalogSubjectEbookPages(subjectId),
+      EbookPagesResponseDto.fromJson,
+      // Backend query params for this endpoint are snake_case
+      // (`start_page`/`count`), unlike every other camelCase param above —
+      // do not "normalize" these to camelCase.
+      queryParameters: {'start_page': startPage, 'count': count},
+    );
+  }
+
   Future<Result<List<T>>> _getList<T>(
     String path,
     T Function(Map<String, dynamic> json) fromJson, {
@@ -101,6 +132,20 @@ class CatalogRemoteDataSourceImpl implements CatalogRemoteDataSource {
       return (response.data ?? <dynamic>[])
           .map((e) => fromJson(e as Map<String, dynamic>))
           .toList();
+    });
+  }
+
+  Future<Result<T>> _get<T>(
+    String path,
+    T Function(Map<String, dynamic> json) fromJson, {
+    Map<String, dynamic>? queryParameters,
+  }) {
+    return guardRequest(() async {
+      final response = await _dio.get<Map<String, dynamic>>(
+        path,
+        queryParameters: queryParameters,
+      );
+      return fromJson(response.data!);
     });
   }
 }

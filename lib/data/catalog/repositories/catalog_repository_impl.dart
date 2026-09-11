@@ -2,6 +2,8 @@ import '../../../core/storage/local_cache_service.dart';
 import '../../../domain/catalog/entities/board_class.dart';
 import '../../../domain/catalog/entities/chapter.dart';
 import '../../../domain/catalog/entities/class_level.dart';
+import '../../../domain/catalog/entities/ebook.dart';
+import '../../../domain/catalog/entities/ebook_page.dart';
 import '../../../domain/catalog/entities/question.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
@@ -181,6 +183,32 @@ class CatalogRepositoryImpl with SwrRepositoryMixin implements CatalogRepository
       failure: (f) => _cachedQuestionsByTest.containsKey(testId)
           ? Success(_cachedQuestionsByTest[testId]!)
           : ResultFailure(f),
+    );
+  }
+
+  @override
+  Future<Result<Ebook>> getEbook(String subjectId) async {
+    final result = await remote.getEbook(subjectId);
+    return result.when(
+      success: (dto) => Success(dto.toDomain()),
+      failure: (f) => ResultFailure(f),
+    );
+  }
+
+  @override
+  Future<Result<EbookPageWindow>> getEbookPages(
+    String subjectId, {
+    int startPage = 1,
+    int count = 20,
+  }) async {
+    final result = await remote.getEbookPages(
+      subjectId,
+      startPage: startPage,
+      count: count,
+    );
+    return result.when(
+      success: (dto) => Success(dto.toDomain()),
+      failure: (f) => ResultFailure(f),
     );
   }
 

@@ -12,6 +12,7 @@ _ChapterDto _$ChapterDtoFromJson(Map<String, dynamic> json) => _ChapterDto(
   title: json['title'] as String,
   order: (json['order'] as num).toInt(),
   isFreeSample: json['isFreeSample'] as bool? ?? false,
+  youtubeUrl: json['youtubeUrl'] as String?,
 );
 
 Map<String, dynamic> _$ChapterDtoToJson(_ChapterDto instance) =>
@@ -21,4 +22,5 @@ Map<String, dynamic> _$ChapterDtoToJson(_ChapterDto instance) =>
       'title': instance.title,
       'order': instance.order,
       'isFreeSample': instance.isFreeSample,
+      'youtubeUrl': instance.youtubeUrl,
     };

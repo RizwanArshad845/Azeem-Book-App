@@ -9,6 +9,8 @@ import '../../domain/catalog/repositories/catalog_repository.dart';
 import '../../domain/catalog/usecases/get_board_classes_usecase.dart';
 import '../../domain/catalog/usecases/get_chapters_usecase.dart';
 import '../../domain/catalog/usecases/get_class_levels_usecase.dart';
+import '../../domain/catalog/usecases/get_ebook_pages_usecase.dart';
+import '../../domain/catalog/usecases/get_ebook_usecase.dart';
 import '../../domain/catalog/usecases/get_questions_usecase.dart';
 import '../../domain/catalog/usecases/get_subjects_usecase.dart';
 import '../../domain/catalog/usecases/get_tests_usecase.dart';
@@ -33,6 +35,10 @@ final getTestsUseCaseProvider =
     Provider<GetTestsUseCase>((ref) => sl<GetTestsUseCase>());
 final getQuestionsUseCaseProvider =
     Provider<GetQuestionsUseCase>((ref) => sl<GetQuestionsUseCase>());
+final getEbookUseCaseProvider =
+    Provider<GetEbookUseCase>((ref) => sl<GetEbookUseCase>());
+final getEbookPagesUseCaseProvider =
+    Provider<GetEbookPagesUseCase>((ref) => sl<GetEbookPagesUseCase>());
 
 final classLevelsProvider = FutureProvider<List<ClassLevel>>((ref) async {
   final result = await ref.read(getClassLevelsUseCaseProvider)();

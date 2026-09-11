@@ -5,6 +5,8 @@ import 'package:azeem_book_app/domain/campus_directory/repositories/campus_repos
 import 'package:azeem_book_app/domain/catalog/entities/board_class.dart';
 import 'package:azeem_book_app/domain/catalog/entities/chapter.dart';
 import 'package:azeem_book_app/domain/catalog/entities/class_level.dart';
+import 'package:azeem_book_app/domain/catalog/entities/ebook.dart';
+import 'package:azeem_book_app/domain/catalog/entities/ebook_page.dart';
 import 'package:azeem_book_app/domain/catalog/entities/question.dart';
 import 'package:azeem_book_app/domain/catalog/entities/subject.dart';
 import 'package:azeem_book_app/domain/catalog/entities/test.dart' as catalog;
@@ -74,6 +76,24 @@ class _FakeCatalogRepository implements CatalogRepository {
     bool forceRefresh = false,
   }) async {
     return const Success(<Question>[]);
+  }
+
+  @override
+  Future<Result<Ebook>> getEbook(String subjectId) async {
+    return const Success(
+      Ebook(subjectId: '', status: EbookStatus.pending),
+    );
+  }
+
+  @override
+  Future<Result<EbookPageWindow>> getEbookPages(
+    String subjectId, {
+    int startPage = 1,
+    int count = 20,
+  }) async {
+    return const Success(
+      EbookPageWindow(pages: <EbookPage>[], expiresInSeconds: 3600),
+    );
   }
 
   @override

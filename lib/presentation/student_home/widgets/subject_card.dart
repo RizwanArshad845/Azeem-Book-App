@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
@@ -11,6 +10,7 @@ import '../../../core/widgets/illustration_thumbnail.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
+import 'subject_actions_sheet.dart';
 
 String _chapterListPath(String subjectId) =>
     AppRoutes.studentHomeSubjectChapters.replaceFirst(':subjectId', subjectId);
@@ -30,8 +30,12 @@ class SubjectCard extends ConsumerWidget {
         cartItems != null && cartItems.any((i) => i.subjectId == subject.id);
 
     return AppCard(
-      onTap: () =>
-          context.push(_chapterListPath(subject.id), extra: subject.name),
+      onTap: () => SubjectActionsSheet.show(
+        context: context,
+        subjectId: subject.id,
+        subjectName: subject.name,
+        chapterListPath: _chapterListPath(subject.id),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
