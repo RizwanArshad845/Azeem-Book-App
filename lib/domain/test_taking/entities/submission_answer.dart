@@ -14,7 +14,9 @@ part 'submission_answer.freezed.dart';
 /// `expectedAnswer`/`marksAwarded`/`possibleMarks`/`justification`/
 /// `tokenJudgements` — so this entity is fully self-describing for the
 /// results/review screens without needing the original question list
-/// cross-referenced by id.
+/// cross-referenced by id. `correctOptionText` is populated for mcq
+/// questions specifically, giving the answer-key text (not just the
+/// index) for the review screen.
 @freezed
 abstract class SubmissionAnswer with _$SubmissionAnswer {
   const SubmissionAnswer._();
@@ -26,6 +28,7 @@ abstract class SubmissionAnswer with _$SubmissionAnswer {
     String? answerText,
     int? selectedOptionIndex,
     int? correctOptionIndex,
+    String? correctOptionText,
     String? expectedAnswer,
     int? marksAwarded,
     int? possibleMarks,

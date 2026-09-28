@@ -55,10 +55,11 @@ class ReviewAnswersSheet extends StatelessWidget {
       questionText: answer.questionText ?? '',
       scoreLabel: '$earned/$marks',
       correctAnswerLabel: context.l10n.reviewCorrectAnswerLabel,
-      // `expectedAnswer` covers short/long-answer questions; mcq questions
-      // only get a `correctOptionIndex` back (no answer-key text) per
-      // `FRONTEND_INTEGRATION.md` §6.6 — fall back to an option label.
+      // `expectedAnswer` covers short/long-answer questions; `correctOptionText`
+      // covers mcq questions. Fall back to an index-based label only if
+      // neither is present (e.g. against an older backend response).
       correctAnswer: answer.expectedAnswer ??
+          answer.correctOptionText ??
           (answer.correctOptionIndex != null
               ? 'Option ${answer.correctOptionIndex! + 1}'
               : null),
