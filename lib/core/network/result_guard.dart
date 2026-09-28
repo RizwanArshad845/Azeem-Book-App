@@ -31,13 +31,11 @@ Future<Result<T>> guardRequest<T>(Future<T> Function() body) async {
         st,
       );
     }
-    return ResultFailure(
-      failure is Failure ? failure : UnknownFailure(e.message ?? e.toString()),
-    );
+    return ResultFailure(failure is Failure ? failure : const UnknownFailure());
   } catch (e, st) {
     // Not a network error at all — thrown while processing an already-
     // successful response (decode/cast/format exceptions live here).
     sl<Logger>().e('Unhandled exception processing a request', e, st);
-    return ResultFailure(UnknownFailure(e.toString()));
+    return const ResultFailure(UnknownFailure());
   }
 }

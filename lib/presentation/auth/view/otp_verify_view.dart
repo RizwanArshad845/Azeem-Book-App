@@ -119,7 +119,7 @@ class OtpVerifyView extends ConsumerWidget {
       ref.listen(authViewModelProvider, (previous, next) {
         final err = next.error;
         if (err is Failure && previous?.error != err) {
-          AppSnackbar.show(context, err.message);
+          AppSnackbar.show(context, err.localizedMessage(context));
         }
         if (next.hasValue &&
             next.value != null &&

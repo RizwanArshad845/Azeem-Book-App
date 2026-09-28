@@ -61,7 +61,9 @@ class _PhoneEntryViewState extends ConsumerState<PhoneEntryView> {
         if (failure is! ValidationFailure) {
           AppSnackbar.show(
             context,
-            failure is Failure ? failure.message : context.l10n.commonErrorGeneric,
+            failure is Failure
+                ? failure.localizedMessage(context)
+                : context.l10n.commonErrorGeneric,
           );
         }
       }

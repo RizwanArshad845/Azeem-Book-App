@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 
 import '../../../domain/common/failure.dart';
+import '../../di/injection.dart';
+import '../../services/logger.dart';
 import '../session/session_expiry_notifier.dart';
 import 'auth_interceptor.dart';
 
@@ -67,7 +69,15 @@ class ErrorInterceptor extends Interceptor {
     if (statusCode != null && statusCode >= 500) {
       return ServerFailure(serverMessage);
     }
-    return UnknownFailure(serverMessage ?? err.message);
+    if (serverMessage != null) return UnknownFailure(serverMessage);
+    sl<Logger>().e(
+      'Unmapped error status on ${err.requestOptions.method} '
+      '${err.requestOptions.path}: type=${err.type}, status=$statusCode, '
+      'message=${err.message}',
+      err,
+      err.stackTrace,
+    );
+    return const UnknownFailure();
   }
 
   /// The real backend always errors as `{"error": {"code", "message"}}`

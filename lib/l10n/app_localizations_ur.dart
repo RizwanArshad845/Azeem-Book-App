@@ -52,6 +52,32 @@ class AppLocalizationsUr extends AppLocalizations {
   String get commonErrorGeneric => 'کچھ غلط ہو گیا۔ براہ کرم دوبارہ کوشش کریں۔';
 
   @override
+  String get commonErrorNetwork =>
+      'انٹرنیٹ کنکشن نہیں ہے۔ براہ کرم اپنا کنکشن چیک کریں اور دوبارہ کوشش کریں۔';
+
+  @override
+  String get commonErrorServer =>
+      'ہماری طرف سے کچھ غلط ہو گیا۔ براہ کرم تھوڑی دیر بعد دوبارہ کوشش کریں۔';
+
+  @override
+  String get commonErrorUnauthorized => 'آپ کو یہ کرنے کی اجازت نہیں ہے۔';
+
+  @override
+  String get commonErrorNotFound => 'ہمیں وہ نہیں ملا جو آپ ڈھونڈ رہے تھے۔';
+
+  @override
+  String get commonErrorAssetLoad =>
+      'مطلوبہ ڈیٹا لوڈ نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get commonErrorParsing =>
+      'ڈیٹا پراسیس کرتے ہوئے کچھ غلط ہو گیا۔ براہ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get appCrashMessage =>
+      'کچھ غلط ہو گیا۔ براہ کرم ایپ دوبارہ شروع کریں۔';
+
+  @override
   String get commonSave => 'محفوظ کریں';
 
   @override

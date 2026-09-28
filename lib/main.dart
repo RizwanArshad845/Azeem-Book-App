@@ -1,15 +1,40 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
 import 'core/di/injection.dart';
 import 'core/network/session/session_expiry_notifier.dart';
+import 'core/services/logger.dart';
 import 'core/storage/local_cache_service.dart';
+import 'core/widgets/app_crash_fallback.dart';
 import 'presentation/auth/viewmodel/auth_viewmodel.dart';
 
-void main() async {
+void main() {
+  runZonedGuarded(_runApp, (error, stack) {
+    if (sl.isRegistered<Logger>()) {
+      sl<Logger>().e('Uncaught zone error', error, stack);
+    }
+  });
+}
+
+Future<void> _runApp() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
+
+  // Friendly fallback instead of Flutter's default red/grey error screen
+  // for any uncaught widget build error — only in release, so debug builds
+  // keep the default screen (stack trace visible to developers).
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    sl<Logger>().e('Uncaught Flutter framework error', details.exception, details.stack);
+  };
+  if (kReleaseMode) {
+    ErrorWidget.builder = (details) => const AppCrashFallback();
+  }
+
   await sl<LocalCacheService>().init();
   final container = ProviderContainer();
   // Registered so code that must read providers from OUTSIDE the provider

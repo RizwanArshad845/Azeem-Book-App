@@ -182,6 +182,48 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Please try again.'**
   String get commonErrorGeneric;
 
+  /// No description provided for @commonErrorNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Please check your connection and try again.'**
+  String get commonErrorNetwork;
+
+  /// No description provided for @commonErrorServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong on our end. Please try again in a moment.'**
+  String get commonErrorServer;
+
+  /// No description provided for @commonErrorUnauthorized.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re not authorized to do this.'**
+  String get commonErrorUnauthorized;
+
+  /// No description provided for @commonErrorNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find what you were looking for.'**
+  String get commonErrorNotFound;
+
+  /// No description provided for @commonErrorAssetLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load the required data. Please try again.'**
+  String get commonErrorAssetLoad;
+
+  /// No description provided for @commonErrorParsing.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong while processing the data. Please try again.'**
+  String get commonErrorParsing;
+
+  /// No description provided for @appCrashMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please restart the app.'**
+  String get appCrashMessage;
+
   /// No description provided for @commonSave.
   ///
   /// In en, this message translates to:

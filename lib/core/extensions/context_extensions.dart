@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../domain/common/failure.dart';
 import '../../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_dimensions.dart';
@@ -48,6 +49,30 @@ class AppDimensType {
   double get fontMd => AppDimens.fontMd;
   double get fontLg => AppDimens.fontLg;
   double get fontXl => AppDimens.fontXl;
+}
+
+/// Turns a [Failure] into copy a student/teacher can actually read — never
+/// the raw Dio/Dart exception text that ends up in [Failure.message] for
+/// unmapped errors. Server-provided messages (already user-facing per
+/// `FRONTEND_INTEGRATION.md`) are preferred as-is when present since they
+/// can't be translated client-side; only the client-controlled fallback
+/// copy is localized here.
+extension FailureLocalization on Failure {
+  String localizedMessage(BuildContext context) {
+    final l10n = context.l10n;
+    return switch (this) {
+      NetworkFailure(:final details) => details ?? l10n.commonErrorNetwork,
+      ServerFailure(:final details) => details ?? l10n.commonErrorServer,
+      UnauthorizedFailure(:final details) =>
+        details ?? l10n.commonErrorUnauthorized,
+      NotFoundFailure(:final details) => details ?? l10n.commonErrorNotFound,
+      AssetLoadFailure(:final details) =>
+        details ?? l10n.commonErrorAssetLoad,
+      ParsingFailure(:final details) => details ?? l10n.commonErrorParsing,
+      ValidationFailure(:final message) => message,
+      UnknownFailure(:final details) => details ?? l10n.commonErrorGeneric,
+    };
+  }
 }
 
 extension LocalizedSubjectName on AppLocalizations {

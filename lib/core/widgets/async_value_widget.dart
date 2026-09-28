@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/common/failure.dart';
+import '../extensions/context_extensions.dart';
 import 'app_error_view.dart';
 import 'delayed_loader.dart';
 import 'loading_indicator.dart';
@@ -58,7 +59,9 @@ class AsyncValueWidget<T> extends StatelessWidget {
           loading?.call() ??
           const DelayedLoader(child: LoadingIndicator()),
       error: (error, _) => AppErrorView(
-        message: error is Failure ? error.message : error.toString(),
+        message: error is Failure
+            ? error.localizedMessage(context)
+            : context.l10n.commonErrorGeneric,
         onRetry: onRetry,
         isOffline: error is NetworkFailure,
       ),

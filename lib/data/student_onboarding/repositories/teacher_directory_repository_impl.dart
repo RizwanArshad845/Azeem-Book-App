@@ -1,4 +1,4 @@
-import '../../../domain/common/failure.dart';
+import '../../../core/network/result_guard.dart';
 import '../../../domain/common/result.dart';
 import '../../../domain/student_onboarding/entities/teacher_option.dart';
 import '../../../domain/student_onboarding/repositories/teacher_directory_repository.dart';
@@ -15,15 +15,13 @@ class TeacherDirectoryRepositoryImpl implements TeacherDirectoryRepository {
   Future<Result<List<TeacherOption>>> getTeachersForCampus(
     String campusId, {
     String? subjectId,
-  }) async {
-    try {
+  }) {
+    return guardRequest(() async {
       final dtos = await remote.getTeachersForCampus(
         campusId,
         subjectId: subjectId,
       );
-      return Success(dtos.map((d) => d.toDomain()).toList());
-    } catch (e) {
-      return ResultFailure(UnknownFailure(e.toString()));
-    }
+      return dtos.map((d) => d.toDomain()).toList();
+    });
   }
 }

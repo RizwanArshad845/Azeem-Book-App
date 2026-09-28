@@ -52,6 +52,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonErrorGeneric => 'Something went wrong. Please try again.';
 
   @override
+  String get commonErrorNetwork =>
+      'No internet connection. Please check your connection and try again.';
+
+  @override
+  String get commonErrorServer =>
+      'Something went wrong on our end. Please try again in a moment.';
+
+  @override
+  String get commonErrorUnauthorized => 'You\'re not authorized to do this.';
+
+  @override
+  String get commonErrorNotFound =>
+      'We couldn\'t find what you were looking for.';
+
+  @override
+  String get commonErrorAssetLoad =>
+      'We couldn\'t load the required data. Please try again.';
+
+  @override
+  String get commonErrorParsing =>
+      'Something went wrong while processing the data. Please try again.';
+
+  @override
+  String get appCrashMessage => 'Something went wrong. Please restart the app.';
+
+  @override
   String get commonSave => 'Save';
 
   @override

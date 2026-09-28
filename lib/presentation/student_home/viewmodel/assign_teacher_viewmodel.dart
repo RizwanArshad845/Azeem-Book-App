@@ -129,12 +129,7 @@ class AssignTeacherViewModel extends Notifier<AssignTeacherState> {
         );
       },
       failure: (failure) {
-        AppSnackbar.show(
-          context,
-          failure.message.isNotEmpty
-              ? failure.message
-              : context.l10n.commonErrorGeneric,
-        );
+        AppSnackbar.show(context, failure.localizedMessage(context));
       },
     );
   }

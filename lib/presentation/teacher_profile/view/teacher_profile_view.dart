@@ -80,8 +80,9 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
         AppSnackbar.show(context, context.l10n.profileUpdatedSuccess);
       } else {
         final error = ref.read(teacherProfileViewModelProvider).error;
-        final msg =
-            error is Failure ? error.message : context.l10n.profileUpdateFailed;
+        final msg = error is Failure
+            ? error.localizedMessage(context)
+            : context.l10n.profileUpdateFailed;
         AppSnackbar.show(context, msg);
       }
     });
@@ -123,7 +124,7 @@ class _TeacherProfileViewState extends ConsumerState<TeacherProfileView> {
         if (!ok) {
           final error = ref.read(teacherProfileViewModelProvider).error;
           final msg = error is Failure
-              ? error.message
+              ? error.localizedMessage(context)
               : context.l10n.profileDeleteFailed;
           AppSnackbar.show(context, msg);
         }

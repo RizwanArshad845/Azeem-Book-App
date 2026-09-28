@@ -46,7 +46,9 @@ class StudentOnboardingReviewView extends ConsumerWidget {
     ) {
       final error = next.error;
       if (error != null) {
-        final message = error is Failure ? error.message : error.toString();
+        final message = error is Failure
+            ? error.localizedMessage(context)
+            : context.l10n.commonErrorGeneric;
         AppSnackbar.show(context, message);
       }
     });
