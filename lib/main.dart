@@ -10,6 +10,7 @@ import 'core/network/session/session_expiry_notifier.dart';
 import 'core/services/logger.dart';
 import 'core/storage/local_cache_service.dart';
 import 'core/widgets/app_crash_fallback.dart';
+import 'presentation/auth/viewmodel/account_deleted_viewmodel.dart';
 import 'presentation/auth/viewmodel/auth_viewmodel.dart';
 
 void main() {
@@ -49,5 +50,15 @@ Future<void> _runApp() async {
   // (a 401 came back) to a presentation/auth action (log the session out).
   SessionExpiryNotifier.onUnauthorized =
       () => container.read(authViewModelProvider.notifier).logout();
+  // `account_deleted`: show the blocking dialog; when it came back as a 401 on
+  // the current session also clear the stored token/session (logout() is
+  // local-only, so no refresh/retry — there is no refresh token). The router
+  // redirect then returns the user to login.
+  SessionExpiryNotifier.onAccountDeleted = ({required bool clearSession}) {
+    container.read(accountDeletedEventProvider.notifier).notify();
+    if (clearSession) {
+      container.read(authViewModelProvider.notifier).logout();
+    }
+  };
   runApp(UncontrolledProviderScope(container: container, child: const App()));
 }

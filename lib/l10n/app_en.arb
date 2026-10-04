@@ -694,5 +694,33 @@
   "commonPageOfTotal": "Page {page} / {total}",
   "@commonPageOfTotal": {
     "placeholders": { "page": { "type": "int" }, "total": { "type": "int" } }
-  }
+  },
+
+  "commonOk": "OK",
+
+  "accountDeletedTitle": "Account deleted",
+  "accountDeletedMessage": "This account has been deleted. Contact {email} to recover it.",
+  "@accountDeletedMessage": {
+    "placeholders": { "email": { "type": "String" } }
+  },
+  "accountDeletedEmailSupport": "Email support",
+  "accountDeletedMailFailed": "Couldn't open your email app. Please write to {email}.",
+  "@accountDeletedMailFailed": {
+    "placeholders": { "email": { "type": "String" } }
+  },
+
+  "phoneRegisteredOtherRoleTitle": "Number already in use",
+  "phoneRegisteredOtherRoleMessage": "This number is already registered as a {role, select, teacher{teacher} student{student} other{{role}}} account.",
+  "@phoneRegisteredOtherRoleMessage": {
+    "placeholders": { "role": { "type": "String" } }
+  },
+  "phoneLogInAsRole": "Log in as {role, select, teacher{teacher} student{student} other{{role}}}",
+  "@phoneLogInAsRole": {
+    "placeholders": { "role": { "type": "String" } }
+  },
+  "phoneUseDifferentNumber": "Use a different number",
+
+  "phoneAlreadyRegisteredTitle": "Account already exists",
+  "phoneAlreadyRegisteredMessage": "An account with this phone number already exists.",
+  "phoneGoToLogin": "Go to login"
 }

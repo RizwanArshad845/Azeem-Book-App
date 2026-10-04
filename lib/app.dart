@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/widgets/account_deleted_dialog.dart';
+import 'presentation/auth/viewmodel/account_deleted_viewmodel.dart';
 import 'l10n/app_localizations.dart';
 
 class App extends ConsumerWidget {
@@ -13,6 +15,14 @@ class App extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(goRouterProvider);
     final locale = ref.watch(localeProvider);
+
+    // Backend `account_deleted` (login/signup 403, or 401 on a normal call):
+    // blocking dialog on the root navigator. Session clearing and the return
+    // to login for the 401 case are handled in `main.dart`'s callback.
+    ref.listen<int>(accountDeletedEventProvider, (previous, next) {
+      final dialogContext = rootNavigatorKey.currentContext;
+      if (dialogContext != null) showAccountDeletedDialog(dialogContext);
+    });
 
     return MaterialApp.router(
       title: 'Azeem Publications',

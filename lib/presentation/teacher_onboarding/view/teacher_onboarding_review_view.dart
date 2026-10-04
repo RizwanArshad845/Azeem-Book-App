@@ -9,6 +9,7 @@ import '../../../core/widgets/onboarding_step_header.dart';
 import '../../../core/widgets/onboarding_summary_item.dart';
 import '../../../domain/common/failure.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
+import '../../auth/widgets/account_state_failure_handler.dart';
 import '../../auth/widgets/onboarding_logout_action.dart';
 import '../viewmodel/teacher_onboarding_viewmodel.dart';
 import '../viewmodel/teacher_signup_form_providers.dart';
@@ -49,6 +50,10 @@ class TeacherOnboardingReviewView extends ConsumerWidget {
         .then((success) {
       if (!context.mounted || success) return;
       final failure = ref.read(teacherOnboardingViewModelProvider).error;
+      if (failure is Failure &&
+          handleAccountStateFailure(context, ref, failure)) {
+        return;
+      }
       AppSnackbar.show(
         context,
         failure is Failure

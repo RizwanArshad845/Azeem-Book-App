@@ -13,6 +13,7 @@ import '../../../domain/common/failure.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import '../viewmodel/otp_timer_viewmodel.dart';
 import '../viewmodel/otp_verify_viewmodel.dart';
+import '../widgets/account_state_failure_handler.dart';
 import '../widgets/otp_digit_box.dart';
 
 /// Shared 6-digit OTP verification UI. By default (`onVerifyCode`/`onResend`
@@ -119,7 +120,9 @@ class OtpVerifyView extends ConsumerWidget {
       ref.listen(authViewModelProvider, (previous, next) {
         final err = next.error;
         if (err is Failure && previous?.error != err) {
-          AppSnackbar.show(context, err.localizedMessage(context));
+          if (!handleAccountStateFailure(context, ref, err)) {
+            AppSnackbar.show(context, err.localizedMessage(context));
+          }
         }
         if (next.hasValue &&
             next.value != null &&
@@ -182,7 +185,7 @@ class OtpVerifyView extends ConsumerWidget {
           ),
           SizedBox(height: context.dimens.xl),
           if (isLoading) const DelayedLoader(child: LoadingIndicator()),
-          if (!isLoading && failure is Failure)
+          if (!isLoading && failure is Failure && !isAccountStateFailure(failure))
             Padding(
               padding: EdgeInsets.only(top: context.dimens.md),
               child: AppErrorView(

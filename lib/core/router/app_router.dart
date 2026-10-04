@@ -306,11 +306,18 @@ String? _redirectFor(Ref ref, String location) {
       : AppRoutes.studentOnboardingBasicInfo;
 }
 
+/// Root navigator key — lets code outside the widget tree's routes (the
+/// app-wide "Account deleted" dialog in `App`) open a dialog on the root
+/// navigator, whose context sits below `MaterialApp` (so localizations and
+/// theme resolve).
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+
 final goRouterProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = _RouterRefreshNotifier(ref);
   ref.onDispose(refreshNotifier.dispose);
 
   return GoRouter(
+    navigatorKey: rootNavigatorKey,
     initialLocation: AppRoutes.splash,
     refreshListenable: refreshNotifier,
     redirect: (context, state) => _redirectFor(ref, state.matchedLocation),

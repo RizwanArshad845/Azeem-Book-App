@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../domain/common/failure.dart';
 import '../../l10n/app_localizations.dart';
+import '../constants/support_contact.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_dimensions.dart';
 
@@ -71,6 +72,10 @@ extension FailureLocalization on Failure {
       ParsingFailure(:final details) => details ?? l10n.commonErrorParsing,
       ValidationFailure(:final message) => message,
       UnknownFailure(:final details) => details ?? l10n.commonErrorGeneric,
+      AccountDeletedFailure() => l10n.accountDeletedMessage(kSupportEmail),
+      PhoneRegisteredOtherRoleFailure(:final existingRole) =>
+        l10n.phoneRegisteredOtherRoleMessage(existingRole),
+      PhoneAlreadyRegisteredFailure() => l10n.phoneAlreadyRegisteredMessage,
     };
   }
 }

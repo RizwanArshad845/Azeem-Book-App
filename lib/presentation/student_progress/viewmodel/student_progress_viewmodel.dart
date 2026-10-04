@@ -46,6 +46,18 @@ final studentTestAttemptsProvider = FutureProvider<List<TestAttempt>>((
   );
 });
 
+/// Only attempts whose grading finished (`status == graded`). All-or-nothing
+/// release (§6.6): pending/failed attempts carry no score, so they must not
+/// count toward any progress metric. Deliberately a separate provider —
+/// `hasCompletedAnyTestAttemptProvider` and `free_attempts_provider.dart`
+/// need the full submitted list.
+final gradedStudentAttemptsProvider = FutureProvider<List<TestAttempt>>((
+  ref,
+) async {
+  final attempts = await ref.watch(studentTestAttemptsProvider.future);
+  return attempts.where((a) => a.status == TestAttemptStatus.graded).toList();
+});
+
 /// True once the student has submitted at least one test attempt (any
 /// test). Drives the pricing-visibility rule: price stays hidden on
 /// discovery screens (Home subject cards, Chapters bundle header) until
@@ -106,7 +118,7 @@ class ChapterProgressSummary {
 final chapterProgressSummaryProvider = FutureProvider<ChapterProgressSummary>((
   ref,
 ) async {
-  final attempts = await ref.watch(studentTestAttemptsProvider.future);
+  final attempts = await ref.watch(gradedStudentAttemptsProvider.future);
   if (attempts.isEmpty) return ChapterProgressSummary.empty;
 
   final weakChapterIds = <String>{};
@@ -204,7 +216,7 @@ final perSubjectProgressProvider =
       // See `filteredAttemptsProvider` for why these are read eagerly
       // before either is awaited (lets the independent tests fetch run
       // concurrently with the attempts fetch).
-      final attemptsFuture = ref.watch(studentTestAttemptsProvider.future);
+      final attemptsFuture = ref.watch(gradedStudentAttemptsProvider.future);
       final testsByIdFuture = ref.watch(progressTestsByIdProvider.future);
 
       final attempts = await attemptsFuture;
@@ -339,7 +351,7 @@ final selectedProgressAttemptFilterProvider =
 
 /// Computes all available attempt filter options based on the student's actual attempt counts.
 final availableAttemptFiltersProvider = FutureProvider<List<String>>((ref) async {
-  final attempts = await ref.watch(studentTestAttemptsProvider.future);
+  final attempts = await ref.watch(gradedStudentAttemptsProvider.future);
   if (attempts.isEmpty) return const ['all'];
 
   final attemptsByTest = <String, int>{};
@@ -367,7 +379,7 @@ final filteredAttemptsProvider = FutureProvider<List<TestAttempt>>((ref) async {
   // fetch starts concurrently with the attempts fetch instead of only
   // starting once attempts resolves — halves the network-bound latency on
   // a cold load versus sequential `await`s.
-  final attemptsFuture = ref.watch(studentTestAttemptsProvider.future);
+  final attemptsFuture = ref.watch(gradedStudentAttemptsProvider.future);
   final testsByIdFuture = ref.watch(progressTestsByIdProvider.future);
 
   final attempts = await attemptsFuture;

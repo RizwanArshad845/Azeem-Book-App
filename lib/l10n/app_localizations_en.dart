@@ -1569,4 +1569,59 @@ class AppLocalizationsEn extends AppLocalizations {
   String commonPageOfTotal(int page, int total) {
     return 'Page $page / $total';
   }
+
+  @override
+  String get commonOk => 'OK';
+
+  @override
+  String get accountDeletedTitle => 'Account deleted';
+
+  @override
+  String accountDeletedMessage(String email) {
+    return 'This account has been deleted. Contact $email to recover it.';
+  }
+
+  @override
+  String get accountDeletedEmailSupport => 'Email support';
+
+  @override
+  String accountDeletedMailFailed(String email) {
+    return 'Couldn\'t open your email app. Please write to $email.';
+  }
+
+  @override
+  String get phoneRegisteredOtherRoleTitle => 'Number already in use';
+
+  @override
+  String phoneRegisteredOtherRoleMessage(String role) {
+    String _temp0 = intl.Intl.selectLogic(role, {
+      'teacher': 'teacher',
+      'student': 'student',
+      'other': '$role',
+    });
+    return 'This number is already registered as a $_temp0 account.';
+  }
+
+  @override
+  String phoneLogInAsRole(String role) {
+    String _temp0 = intl.Intl.selectLogic(role, {
+      'teacher': 'teacher',
+      'student': 'student',
+      'other': '$role',
+    });
+    return 'Log in as $_temp0';
+  }
+
+  @override
+  String get phoneUseDifferentNumber => 'Use a different number';
+
+  @override
+  String get phoneAlreadyRegisteredTitle => 'Account already exists';
+
+  @override
+  String get phoneAlreadyRegisteredMessage =>
+      'An account with this phone number already exists.';
+
+  @override
+  String get phoneGoToLogin => 'Go to login';
 }

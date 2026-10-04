@@ -56,6 +56,13 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
 
   UserRole get selectedRole => _selectedRole ?? UserRole.student;
 
+  /// The number last entered for OTP, so phone entry can prefill it after a
+  /// role switch (`phone_registered_other_role` -> "Log in as ...").
+  String? get enteredPhoneNumber => _phoneNumber;
+
+  /// Drops the remembered number ("Use a different number").
+  void clearEnteredPhoneNumber() => _phoneNumber = null;
+
   /// Requests an OTP for [phoneNumber] under the previously selected role.
   /// Returns `true` on success so the view can navigate to OTP entry.
   Future<bool> requestOtp(

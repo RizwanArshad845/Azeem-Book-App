@@ -12,6 +12,7 @@ import '../../../core/widgets/onboarding_summary_item.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/student_onboarding/entities/teacher_option.dart';
+import '../../auth/widgets/account_state_failure_handler.dart';
 import '../../auth/widgets/onboarding_logout_action.dart';
 import '../viewmodel/student_onboarding_viewmodel.dart';
 
@@ -46,6 +47,9 @@ class StudentOnboardingReviewView extends ConsumerWidget {
     ) {
       final error = next.error;
       if (error != null) {
+        if (error is Failure && handleAccountStateFailure(context, ref, error)) {
+          return;
+        }
         final message = error is Failure
             ? error.localizedMessage(context)
             : context.l10n.commonErrorGeneric;

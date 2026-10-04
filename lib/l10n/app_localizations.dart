@@ -2885,6 +2885,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Page {page} / {total}'**
   String commonPageOfTotal(int page, int total);
+
+  /// No description provided for @commonOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get commonOk;
+
+  /// No description provided for @accountDeletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account deleted'**
+  String get accountDeletedTitle;
+
+  /// No description provided for @accountDeletedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has been deleted. Contact {email} to recover it.'**
+  String accountDeletedMessage(String email);
+
+  /// No description provided for @accountDeletedEmailSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Email support'**
+  String get accountDeletedEmailSupport;
+
+  /// No description provided for @accountDeletedMailFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open your email app. Please write to {email}.'**
+  String accountDeletedMailFailed(String email);
+
+  /// No description provided for @phoneRegisteredOtherRoleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Number already in use'**
+  String get phoneRegisteredOtherRoleTitle;
+
+  /// No description provided for @phoneRegisteredOtherRoleMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This number is already registered as a {role, select, teacher{teacher} student{student} other{{role}}} account.'**
+  String phoneRegisteredOtherRoleMessage(String role);
+
+  /// No description provided for @phoneLogInAsRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in as {role, select, teacher{teacher} student{student} other{{role}}}'**
+  String phoneLogInAsRole(String role);
+
+  /// No description provided for @phoneUseDifferentNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a different number'**
+  String get phoneUseDifferentNumber;
+
+  /// No description provided for @phoneAlreadyRegisteredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account already exists'**
+  String get phoneAlreadyRegisteredTitle;
+
+  /// No description provided for @phoneAlreadyRegisteredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this phone number already exists.'**
+  String get phoneAlreadyRegisteredMessage;
+
+  /// No description provided for @phoneGoToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to login'**
+  String get phoneGoToLogin;
 }
 
 class _AppLocalizationsDelegate

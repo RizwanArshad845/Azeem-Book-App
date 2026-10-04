@@ -1576,4 +1576,59 @@ class AppLocalizationsUr extends AppLocalizations {
   String commonPageOfTotal(int page, int total) {
     return 'صفحہ $page / $total';
   }
+
+  @override
+  String get commonOk => 'ٹھیک ہے';
+
+  @override
+  String get accountDeletedTitle => 'اکاؤنٹ حذف کر دیا گیا ہے';
+
+  @override
+  String accountDeletedMessage(String email) {
+    return 'یہ اکاؤنٹ حذف کر دیا گیا ہے۔ اسے بحال کروانے کے لیے $email پر رابطہ کریں۔';
+  }
+
+  @override
+  String get accountDeletedEmailSupport => 'سپورٹ کو ای میل کریں';
+
+  @override
+  String accountDeletedMailFailed(String email) {
+    return 'آپ کی ای میل ایپ نہیں کھل سکی۔ براہ کرم $email پر لکھیں۔';
+  }
+
+  @override
+  String get phoneRegisteredOtherRoleTitle => 'نمبر پہلے سے استعمال میں ہے';
+
+  @override
+  String phoneRegisteredOtherRoleMessage(String role) {
+    String _temp0 = intl.Intl.selectLogic(role, {
+      'teacher': 'استاد',
+      'student': 'طالب علم',
+      'other': '$role',
+    });
+    return 'یہ نمبر پہلے سے $_temp0 اکاؤنٹ کے طور پر رجسٹرڈ ہے۔';
+  }
+
+  @override
+  String phoneLogInAsRole(String role) {
+    String _temp0 = intl.Intl.selectLogic(role, {
+      'teacher': 'استاد',
+      'student': 'طالب علم',
+      'other': '$role',
+    });
+    return '$_temp0 کے طور پر لاگ اِن کریں';
+  }
+
+  @override
+  String get phoneUseDifferentNumber => 'دوسرا نمبر استعمال کریں';
+
+  @override
+  String get phoneAlreadyRegisteredTitle => 'اکاؤنٹ پہلے سے موجود ہے';
+
+  @override
+  String get phoneAlreadyRegisteredMessage =>
+      'اس فون نمبر کے ساتھ اکاؤنٹ پہلے سے موجود ہے۔';
+
+  @override
+  String get phoneGoToLogin => 'لاگ اِن پر جائیں';
 }

@@ -555,5 +555,21 @@
   "commonSort": "ترتیب دیں",
 
   "teacherStudentsShowingRange": "{total} طلباء میں سے {start}–{end} دکھائے جا رہے ہیں",
-  "commonPageOfTotal": "صفحہ {page} / {total}"
+  "commonPageOfTotal": "صفحہ {page} / {total}",
+
+  "commonOk": "ٹھیک ہے",
+
+  "accountDeletedTitle": "اکاؤنٹ حذف کر دیا گیا ہے",
+  "accountDeletedMessage": "یہ اکاؤنٹ حذف کر دیا گیا ہے۔ اسے بحال کروانے کے لیے {email} پر رابطہ کریں۔",
+  "accountDeletedEmailSupport": "سپورٹ کو ای میل کریں",
+  "accountDeletedMailFailed": "آپ کی ای میل ایپ نہیں کھل سکی۔ براہ کرم {email} پر لکھیں۔",
+
+  "phoneRegisteredOtherRoleTitle": "نمبر پہلے سے استعمال میں ہے",
+  "phoneRegisteredOtherRoleMessage": "یہ نمبر پہلے سے {role, select, teacher{استاد} student{طالب علم} other{{role}}} اکاؤنٹ کے طور پر رجسٹرڈ ہے۔",
+  "phoneLogInAsRole": "{role, select, teacher{استاد} student{طالب علم} other{{role}}} کے طور پر لاگ اِن کریں",
+  "phoneUseDifferentNumber": "دوسرا نمبر استعمال کریں",
+
+  "phoneAlreadyRegisteredTitle": "اکاؤنٹ پہلے سے موجود ہے",
+  "phoneAlreadyRegisteredMessage": "اس فون نمبر کے ساتھ اکاؤنٹ پہلے سے موجود ہے۔",
+  "phoneGoToLogin": "لاگ اِن پر جائیں"
 }

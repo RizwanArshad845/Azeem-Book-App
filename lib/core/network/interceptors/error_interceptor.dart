@@ -19,10 +19,43 @@ import 'auth_interceptor.dart';
 class ErrorInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    if (err.response?.statusCode == 401 && _belongsToCurrentSession(err)) {
+    final statusCode = err.response?.statusCode;
+    final code = _errorCode(err);
+
+    // `account_deleted` must be checked BEFORE the generic 401 handling
+    // below: a 401 is no longer always "expired session" — here it means the
+    // account was deleted, which gets its own dialog instead of a silent
+    // logout. A 403 with this code (login/signup) has no session to clear.
+    if (code == _accountDeleted) {
+      if (statusCode == 403) {
+        SessionExpiryNotifier.onAccountDeleted?.call(clearSession: false);
+      } else if (statusCode == 401 && _belongsToCurrentSession(err)) {
+        SessionExpiryNotifier.onAccountDeleted?.call(clearSession: true);
+      }
+    } else if (statusCode == 401 && _belongsToCurrentSession(err)) {
       SessionExpiryNotifier.onUnauthorized?.call();
     }
     handler.next(err.copyWith(error: _mapToFailure(err)));
+  }
+
+  static const _accountDeleted = 'account_deleted';
+  static const _phoneRegisteredOtherRole = 'phone_registered_other_role';
+  static const _phoneAlreadyRegistered = 'phone_already_registered';
+
+  /// The `error` object of the `{"error": {"code", "message", ...}}` envelope
+  /// (extra fields like `contactEmail`/`existingRole` live next to `code`).
+  Map<String, dynamic>? _errorBody(DioException err) {
+    final data = err.response?.data;
+    if (data is Map<String, dynamic>) {
+      final error = data['error'];
+      if (error is Map<String, dynamic>) return error;
+    }
+    return null;
+  }
+
+  String? _errorCode(DioException err) {
+    final code = _errorBody(err)?['code'];
+    return code is String ? code : null;
   }
 
   /// Guards against a stale, slow-to-fail request logging out a session that
@@ -50,6 +83,21 @@ class ErrorInterceptor extends Interceptor {
 
     final statusCode = err.response?.statusCode;
     final serverMessage = _serverMessage(err);
+
+    // Account-state codes — branch on `error.code`, never on message text.
+    switch (_errorCode(err)) {
+      case _accountDeleted when statusCode == 401 || statusCode == 403:
+        final email = _errorBody(err)?['contactEmail'];
+        return AccountDeletedFailure(email is String ? email : null);
+      case _phoneRegisteredOtherRole when statusCode == 409:
+        final role = _errorBody(err)?['existingRole'];
+        if (role is String && role.isNotEmpty) {
+          return PhoneRegisteredOtherRoleFailure(role);
+        }
+      case _phoneAlreadyRegistered when statusCode == 409:
+        return const PhoneAlreadyRegisteredFailure();
+    }
+
     if (statusCode == 400) {
       return ValidationFailure(
         serverMessage ??

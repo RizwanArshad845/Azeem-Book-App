@@ -12,6 +12,7 @@ import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/common/failure.dart';
 import '../viewmodel/auth_viewmodel.dart';
 import '../viewmodel/otp_timer_viewmodel.dart';
+import '../widgets/account_state_failure_handler.dart';
 import 'otp_verify_view.dart';
 
 /// Second screen of the generic OTP auth flow (§10.2) — collects the phone
@@ -25,6 +26,16 @@ class PhoneEntryView extends ConsumerStatefulWidget {
 
 class _PhoneEntryViewState extends ConsumerState<PhoneEntryView> {
   final _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Keeps the number typed before a role switch / bounce back to login.
+    final remembered = ref
+        .read(authViewModelProvider.notifier)
+        .enteredPhoneNumber;
+    if (remembered != null) _controller.text = remembered;
+  }
 
   @override
   void dispose() {
@@ -58,6 +69,9 @@ class _PhoneEntryViewState extends ConsumerState<PhoneEntryView> {
         _openOtpSheet(phoneNumber);
       } else {
         final failure = ref.read(authViewModelProvider).error;
+        if (failure is Failure && handleAccountStateFailure(context, ref, failure)) {
+          return;
+        }
         if (failure is! ValidationFailure) {
           AppSnackbar.show(
             context,

@@ -46,7 +46,7 @@ class StudentProgressView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final attemptsAsync = ref.watch(studentTestAttemptsProvider);
+    final attemptsAsync = ref.watch(gradedStudentAttemptsProvider);
     final masteryAsync = ref.watch(filteredOverallMasteryProvider);
     final summaryAsync = ref.watch(filteredChapterProgressSummaryProvider);
     final subjectsAsync = ref.watch(perSubjectProgressProvider);
@@ -63,6 +63,7 @@ class StudentProgressView extends ConsumerWidget {
         child: RefreshIndicator(
           onRefresh: () async {
             ref.invalidate(studentTestAttemptsProvider);
+            ref.invalidate(gradedStudentAttemptsProvider);
             ref.invalidate(progressTestsByIdProvider);
             ref.invalidate(perSubjectProgressProvider);
             ref.invalidate(filteredAttemptsProvider);
@@ -77,7 +78,10 @@ class StudentProgressView extends ConsumerWidget {
               padding: EdgeInsets.all(16),
               child: SkeletonList(itemCount: 4),
             ),
-            onRetry: () => ref.invalidate(studentTestAttemptsProvider),
+            onRetry: () {
+              ref.invalidate(studentTestAttemptsProvider);
+              ref.invalidate(gradedStudentAttemptsProvider);
+            },
             data: (attempts) {
               if (attempts.isEmpty) {
                 return LayoutBuilder(
