@@ -1638,6 +1638,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'You\'re already enrolled in this subject.';
 
   @override
+  String get offlineTitle => 'No internet connection';
+
+  @override
+  String get offlineMessage =>
+      'Please connect to the internet to continue using the app.';
+
+  @override
   String get teacherLockedTapMessage =>
       'You\'ve already bought this subject, so its teacher can\'t be changed.';
 

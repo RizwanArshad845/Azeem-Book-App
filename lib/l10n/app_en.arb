@@ -727,6 +727,8 @@
   "teacherNotSelectableMessage": "This teacher isn't available for your campus. Please choose another.",
   "teacherLockedAfterPurchaseMessage": "The teacher can't be changed after purchase.",
   "alreadyEnrolledMessage": "You're already enrolled in this subject.",
+  "offlineTitle": "No internet connection",
+  "offlineMessage": "Please connect to the internet to continue using the app.",
   "teacherLockedTapMessage": "You've already bought this subject, so its teacher can't be changed.",
 
   "addSubjectButton": "Add subject",

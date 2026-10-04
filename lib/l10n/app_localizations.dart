@@ -2976,6 +2976,18 @@ abstract class AppLocalizations {
   /// **'You\'re already enrolled in this subject.'**
   String get alreadyEnrolledMessage;
 
+  /// No description provided for @offlineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get offlineTitle;
+
+  /// No description provided for @offlineMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please connect to the internet to continue using the app.'**
+  String get offlineMessage;
+
   /// No description provided for @teacherLockedTapMessage.
   ///
   /// In en, this message translates to:

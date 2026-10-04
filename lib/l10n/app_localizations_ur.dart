@@ -1644,6 +1644,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get alreadyEnrolledMessage => 'آپ پہلے ہی اس مضمون میں داخل ہیں۔';
 
   @override
+  String get offlineTitle => 'انٹرنیٹ کنکشن نہیں ہے';
+
+  @override
+  String get offlineMessage =>
+      'ایپ کا استعمال جاری رکھنے کے لیے براہ کرم انٹرنیٹ سے جڑیں۔';
+
+  @override
   String get teacherLockedTapMessage =>
       'آپ یہ مضمون پہلے ہی خرید چکے ہیں، اس لیے اس کا استاد تبدیل نہیں کیا جا سکتا۔';
 

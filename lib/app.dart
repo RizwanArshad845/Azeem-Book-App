@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/providers/connectivity_provider.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/account_deleted_dialog.dart';
+import 'core/widgets/offline_screen.dart';
 import 'presentation/auth/viewmodel/account_deleted_viewmodel.dart';
 import 'l10n/app_localizations.dart';
 
@@ -38,7 +40,22 @@ class App extends ConsumerWidget {
       builder: (context, child) => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         behavior: HitTestBehavior.opaque,
-        child: child,
+        // The offline screen sits on top of the whole app (not pushed onto the
+        // router), so the user's place — and any in-progress test — is intact
+        // underneath and it disappears the moment the connection returns.
+        // A Consumer keeps the connectivity watch from rebuilding the whole
+        // `MaterialApp.router`.
+        child: Consumer(
+          builder: (context, ref, _) {
+            final isOnline = ref.watch(isOnlineProvider);
+            return Stack(
+              children: [
+                ?child,
+                if (!isOnline) const Positioned.fill(child: OfflineScreen()),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

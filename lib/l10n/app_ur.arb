@@ -576,6 +576,8 @@
   "teacherNotSelectableMessage": "یہ استاد آپ کے کیمپس کے لیے دستیاب نہیں ہیں۔ براہ کرم کسی اور کا انتخاب کریں۔",
   "teacherLockedAfterPurchaseMessage": "خریداری کے بعد استاد تبدیل نہیں کیا جا سکتا۔",
   "alreadyEnrolledMessage": "آپ پہلے ہی اس مضمون میں داخل ہیں۔",
+  "offlineTitle": "انٹرنیٹ کنکشن نہیں ہے",
+  "offlineMessage": "ایپ کا استعمال جاری رکھنے کے لیے براہ کرم انٹرنیٹ سے جڑیں۔",
   "teacherLockedTapMessage": "آپ یہ مضمون پہلے ہی خرید چکے ہیں، اس لیے اس کا استاد تبدیل نہیں کیا جا سکتا۔",
 
   "addSubjectButton": "مضمون شامل کریں",
