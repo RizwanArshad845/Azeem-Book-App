@@ -105,6 +105,40 @@ class StudentRepositoryImpl with SwrRepositoryMixin implements StudentRepository
   }
 
   @override
+  Future<Result<SubjectEnrollment>> addSubjectEnrollment(
+    String studentId,
+    String subjectId, {
+    String? teacherId,
+  }) {
+    return guardRequest(() async {
+      final dto = await remote.addSubjectEnrollment(
+        studentId,
+        subjectId,
+        teacherId: teacherId,
+      );
+      _studentCache.remove(studentId);
+      return dto.toDomain();
+    });
+  }
+
+  @override
+  Future<Result<SubjectEnrollment>> setSubjectTeacher(
+    String studentId,
+    String subjectId,
+    String? teacherId,
+  ) {
+    return guardRequest(() async {
+      final dto = await remote.setSubjectTeacher(
+        studentId,
+        subjectId,
+        teacherId,
+      );
+      _studentCache.remove(studentId);
+      return dto.toDomain();
+    });
+  }
+
+  @override
   Future<Result<List<SubjectEnrollment>>> getSubjectEnrollments(
     String studentId,
   ) {

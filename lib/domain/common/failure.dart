@@ -105,6 +105,33 @@ class PhoneAlreadyRegisteredFailure extends Failure {
   String get message => 'An account with this phone number already exists.';
 }
 
+/// Backend `teacher_not_selectable` (400): the chosen teacher is from another
+/// campus, not approved, or deleted. The teacher list should be refreshed.
+class TeacherNotSelectableFailure extends Failure {
+  const TeacherNotSelectableFailure();
+
+  @override
+  String get message => "This teacher isn't available for your campus.";
+}
+
+/// Backend `teacher_locked_after_purchase` (400): the subject's bundle was
+/// already bought, so its teacher can no longer be set, changed or removed.
+class TeacherLockedAfterPurchaseFailure extends Failure {
+  const TeacherLockedAfterPurchaseFailure();
+
+  @override
+  String get message => "The teacher can't be changed after purchase.";
+}
+
+/// Backend `already_enrolled` (409): `POST` for a subject the student already
+/// has — use `PATCH` (or just refresh) instead.
+class AlreadyEnrolledFailure extends Failure {
+  const AlreadyEnrolledFailure();
+
+  @override
+  String get message => 'You are already enrolled in this subject.';
+}
+
 class NotFoundFailure extends Failure {
   const NotFoundFailure([this.details]);
 

@@ -39,6 +39,8 @@ class ApiEndpoints {
       '/students/$studentId/progress';
   static String studentSubjectEnrollments(String studentId) =>
       '/students/$studentId/subject-enrollments';
+  static String studentSubjectEnrollment(String studentId, String subjectId) =>
+      '/students/$studentId/subject-enrollments/$subjectId';
   static String studentTestAttempts(String studentId) =>
       '/students/$studentId/test-attempts';
 

@@ -38,6 +38,8 @@ import '../../domain/student_onboarding/usecases/get_student_by_id_usecase.dart'
 import '../../domain/student_onboarding/usecases/update_student_usecase.dart';
 import '../../domain/student_onboarding/usecases/get_students_for_teacher_usecase.dart';
 import '../../domain/student_onboarding/usecases/get_teachers_for_campus_usecase.dart';
+import '../../domain/student_onboarding/usecases/add_student_subject_enrollment_usecase.dart';
+import '../../domain/student_onboarding/usecases/set_student_subject_teacher_usecase.dart';
 import '../../domain/student_onboarding/usecases/update_student_subject_enrollments_usecase.dart';
 import '../../domain/teacher_onboarding/repositories/teacher_repository.dart';
 import '../../domain/teacher_onboarding/usecases/delete_teacher_account_usecase.dart';
@@ -103,14 +105,14 @@ void setupLocator() {
   sl.registerLazySingleton<CatalogRepository>(
     () => CatalogRepositoryImpl(remote: sl(), cache: sl()),
   );
-  sl.registerFactory(() => GetClassLevelsUseCase(sl()));
-  sl.registerFactory(() => GetBoardClassesUseCase(sl()));
-  sl.registerFactory(() => GetSubjectsUseCase(sl()));
-  sl.registerFactory(() => GetChaptersUseCase(sl()));
-  sl.registerFactory(() => GetTestsUseCase(sl()));
-  sl.registerFactory(() => GetQuestionsUseCase(sl()));
-  sl.registerFactory(() => GetEbookUseCase(sl()));
-  sl.registerFactory(() => GetEbookPagesUseCase(sl()));
+  sl.registerLazySingleton(() => GetClassLevelsUseCase(sl()));
+  sl.registerLazySingleton(() => GetBoardClassesUseCase(sl()));
+  sl.registerLazySingleton(() => GetSubjectsUseCase(sl()));
+  sl.registerLazySingleton(() => GetChaptersUseCase(sl()));
+  sl.registerLazySingleton(() => GetTestsUseCase(sl()));
+  sl.registerLazySingleton(() => GetQuestionsUseCase(sl()));
+  sl.registerLazySingleton(() => GetEbookUseCase(sl()));
+  sl.registerLazySingleton(() => GetEbookPagesUseCase(sl()));
 
   // campus-directory
   sl.registerLazySingleton<CampusRemoteDataSource>(
@@ -128,11 +130,11 @@ void setupLocator() {
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(remote: sl()),
   );
-  sl.registerFactory(() => RequestOtpUseCase(sl()));
-  sl.registerFactory(() => VerifyOtpUseCase(sl()));
-  sl.registerFactory(() => LogoutUseCase(sl()));
-  sl.registerFactory(() => RefreshSessionStatusUseCase(sl()));
-  sl.registerFactory(() => GetStoredSessionUseCase(sl()));
+  sl.registerLazySingleton(() => RequestOtpUseCase(sl()));
+  sl.registerLazySingleton(() => VerifyOtpUseCase(sl()));
+  sl.registerLazySingleton(() => LogoutUseCase(sl()));
+  sl.registerLazySingleton(() => RefreshSessionStatusUseCase(sl()));
+  sl.registerLazySingleton(() => GetStoredSessionUseCase(sl()));
 
   // teacher-onboarding
   sl.registerLazySingleton<TeacherRemoteDataSource>(
@@ -141,10 +143,10 @@ void setupLocator() {
   sl.registerLazySingleton<TeacherRepository>(
     () => TeacherRepositoryImpl(remote: sl()),
   );
-  sl.registerFactory(() => GetTeacherByPhoneUseCase(sl()));
-  sl.registerFactory(() => SignUpTeacherUseCase(sl()));
-  sl.registerFactory(() => UpdateTeacherUseCase(sl()));
-  sl.registerFactory(() => DeleteTeacherAccountUseCase(sl()));
+  sl.registerLazySingleton(() => GetTeacherByPhoneUseCase(sl()));
+  sl.registerLazySingleton(() => SignUpTeacherUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateTeacherUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteTeacherAccountUseCase(sl()));
 
   // student-onboarding
   sl.registerLazySingleton<StudentRemoteDataSource>(
@@ -153,19 +155,21 @@ void setupLocator() {
   sl.registerLazySingleton<StudentRepository>(
     () => StudentRepositoryImpl(remote: sl(), cache: sl()),
   );
-  sl.registerFactory(() => CompleteStudentOnboardingUseCase(sl()));
-  sl.registerFactory(() => GetStudentsForTeacherUseCase(sl()));
-  sl.registerFactory(() => UpdateStudentUseCase(sl()));
-  sl.registerFactory(() => DeleteStudentAccountUseCase(sl()));
-  sl.registerFactory(() => GetStudentByIdUseCase(sl()));
+  sl.registerLazySingleton(() => CompleteStudentOnboardingUseCase(sl()));
+  sl.registerLazySingleton(() => GetStudentsForTeacherUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateStudentUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteStudentAccountUseCase(sl()));
+  sl.registerLazySingleton(() => GetStudentByIdUseCase(sl()));
   sl.registerLazySingleton<TeacherDirectoryRemoteDataSource>(
     () => TeacherDirectoryRemoteDataSourceImpl(sl()),
   );
   sl.registerLazySingleton<TeacherDirectoryRepository>(
     () => TeacherDirectoryRepositoryImpl(remote: sl()),
   );
-  sl.registerFactory(() => GetTeachersForCampusUseCase(sl()));
-  sl.registerFactory(() => UpdateStudentSubjectEnrollmentsUseCase(sl()));
+  sl.registerLazySingleton(() => GetTeachersForCampusUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateStudentSubjectEnrollmentsUseCase(sl()));
+  sl.registerLazySingleton(() => AddStudentSubjectEnrollmentUseCase(sl()));
+  sl.registerLazySingleton(() => SetStudentSubjectTeacherUseCase(sl()));
 
   // notifications
   sl.registerLazySingleton<NotificationRemoteDataSource>(
@@ -174,10 +178,10 @@ void setupLocator() {
   sl.registerLazySingleton<NotificationRepository>(
     () => NotificationRepositoryImpl(remote: sl(), cache: sl()),
   );
-  sl.registerFactory(() => GetNotificationsUseCase(sl()));
-  sl.registerFactory(() => MarkNotificationReadUseCase(sl()));
-  sl.registerFactory(() => MarkAllNotificationsReadUseCase(sl()));
-  sl.registerFactory(() => ClearAllNotificationsUseCase(sl()));
+  sl.registerLazySingleton(() => GetNotificationsUseCase(sl()));
+  sl.registerLazySingleton(() => MarkNotificationReadUseCase(sl()));
+  sl.registerLazySingleton(() => MarkAllNotificationsReadUseCase(sl()));
+  sl.registerLazySingleton(() => ClearAllNotificationsUseCase(sl()));
 
   // earnings
   sl.registerLazySingleton<EarningsRemoteDataSource>(
@@ -186,7 +190,7 @@ void setupLocator() {
   sl.registerLazySingleton<EarningsRepository>(
     () => EarningsRepositoryImpl(remote: sl(), cache: sl()),
   );
-  sl.registerFactory(() => GetEarningsForTeacherUseCase(sl()));
+  sl.registerLazySingleton(() => GetEarningsForTeacherUseCase(sl()));
 
   // student-cart
   sl.registerLazySingleton<CartRemoteDataSource>(
@@ -195,11 +199,11 @@ void setupLocator() {
   sl.registerLazySingleton<CartRepository>(
     () => CartRepositoryImpl(remote: sl()),
   );
-  sl.registerFactory(() => GetCartUseCase(sl()));
-  sl.registerFactory(() => AddSubjectBundleUseCase(sl()));
-  sl.registerFactory(() => RemoveFromCartUseCase(sl()));
-  sl.registerFactory(() => CheckoutUseCase(sl()));
-  sl.registerFactory(() => GetPurchasedSubjectIdsUseCase(sl()));
+  sl.registerLazySingleton(() => GetCartUseCase(sl()));
+  sl.registerLazySingleton(() => AddSubjectBundleUseCase(sl()));
+  sl.registerLazySingleton(() => RemoveFromCartUseCase(sl()));
+  sl.registerLazySingleton(() => CheckoutUseCase(sl()));
+  sl.registerLazySingleton(() => GetPurchasedSubjectIdsUseCase(sl()));
 
   // test-taking
   sl.registerLazySingleton<TestAttemptRemoteDataSource>(
@@ -208,12 +212,12 @@ void setupLocator() {
   sl.registerLazySingleton<TestAttemptRepository>(
     () => TestAttemptRepositoryImpl(remote: sl()),
   );
-  sl.registerFactory(() => StartTestAttemptUseCase(sl()));
-  sl.registerFactory(() => SubmitTestAttemptUseCase(sl()));
-  sl.registerFactory(() => GetAttemptUseCase(sl()));
+  sl.registerLazySingleton(() => StartTestAttemptUseCase(sl()));
+  sl.registerLazySingleton(() => SubmitTestAttemptUseCase(sl()));
+  sl.registerLazySingleton(() => GetAttemptUseCase(sl()));
 
   // student-progress
-  sl.registerFactory(() => GetStudentTestAttemptsUseCase(sl()));
+  sl.registerLazySingleton(() => GetStudentTestAttemptsUseCase(sl()));
 
   // live-test-registration
   sl.registerLazySingleton<LiveTestRegistrationRemoteDataSource>(
@@ -222,6 +226,6 @@ void setupLocator() {
   sl.registerLazySingleton<LiveTestRegistrationRepository>(
     () => LiveTestRegistrationRepositoryImpl(remote: sl()),
   );
-  sl.registerFactory(() => RegisterForLiveTestUseCase(sl()));
-  sl.registerFactory(() => GetLiveTestRegistrationsUseCase(sl()));
+  sl.registerLazySingleton(() => RegisterForLiveTestUseCase(sl()));
+  sl.registerLazySingleton(() => GetLiveTestRegistrationsUseCase(sl()));
 }

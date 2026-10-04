@@ -571,5 +571,17 @@
 
   "phoneAlreadyRegisteredTitle": "اکاؤنٹ پہلے سے موجود ہے",
   "phoneAlreadyRegisteredMessage": "اس فون نمبر کے ساتھ اکاؤنٹ پہلے سے موجود ہے۔",
-  "phoneGoToLogin": "لاگ اِن پر جائیں"
+  "phoneGoToLogin": "لاگ اِن پر جائیں",
+
+  "teacherNotSelectableMessage": "یہ استاد آپ کے کیمپس کے لیے دستیاب نہیں ہیں۔ براہ کرم کسی اور کا انتخاب کریں۔",
+  "teacherLockedAfterPurchaseMessage": "خریداری کے بعد استاد تبدیل نہیں کیا جا سکتا۔",
+  "alreadyEnrolledMessage": "آپ پہلے ہی اس مضمون میں داخل ہیں۔",
+  "teacherLockedTapMessage": "آپ یہ مضمون پہلے ہی خرید چکے ہیں، اس لیے اس کا استاد تبدیل نہیں کیا جا سکتا۔",
+
+  "addSubjectButton": "مضمون شامل کریں",
+  "addSubjectTitle": "مضمون شامل کریں",
+  "addSubjectSubtitle": "اپنی جماعت میں سے کوئی بھی مضمون چنیں اور اسے اپنی فہرست میں شامل کریں۔",
+  "addSubjectTapToAdd": "شامل کرنے کے لیے ٹیپ کریں",
+  "addSubjectNoneLeft": "آپ اپنی جماعت کے تمام مضامین پہلے ہی شامل کر چکے ہیں۔",
+  "addSubjectSuccess": "{subject} شامل ہو گیا۔ استاد چننے کے لیے اسے کھولیں۔"
 }

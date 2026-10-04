@@ -14,11 +14,13 @@ import '../../../core/widgets/status_badge.dart';
 import '../../../domain/catalog/entities/chapter.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
+import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 import '../../student_progress/viewmodel/student_progress_viewmodel.dart';
 import '../../test_taking/viewmodel/free_attempts_provider.dart';
 import '../viewmodel/student_home_viewmodel.dart';
 import '../widgets/chapter_actions_sheet.dart';
 import '../widgets/subject_bundle_header.dart';
+import '../widgets/teacher_assignment_card.dart';
 
 String _testListPath(String subjectId, String chapterId) => AppRoutes
     .studentHomeChapterTests
@@ -129,6 +131,19 @@ class ChapterListView extends ConsumerWidget {
         ? context.l10n.localizedSubjectName(resolvedSubjectName)
         : context.l10n.chapterListTitle;
 
+    // Teacher choice for this subject: changeable until its bundle is bought
+    // (backend `isPaid`, or the purchased-ids list as a fallback), then locked.
+    final studentCampusId = student?.campusId ?? '';
+    final assignedTeacherName = hasTeacherAssigned && studentCampusId.isNotEmpty
+        ? ref
+              .watch(teachersForCampusProvider(studentCampusId))
+              .value
+              ?.where((t) => t.id == assignedTeacherId)
+              .firstOrNull
+              ?.name
+        : null;
+    final teacherLocked = isOwned || (enrollment?.isPaid ?? false);
+
     return Scaffold(
       appBar: AppBar(title: AppBarTitle(title)),
       body: SafeArea(
@@ -136,6 +151,16 @@ class ChapterListView extends ConsumerWidget {
           padding: EdgeInsets.all(context.dimens.lg),
           child: Column(
             children: [
+              if (student != null) ...[
+                TeacherAssignmentCard(
+                  subjectId: subjectId,
+                  subjectTitle: resolvedSubjectName ?? title,
+                  assignedTeacherId: hasTeacherAssigned ? assignedTeacherId : null,
+                  assignedTeacherName: assignedTeacherName,
+                  isPaid: teacherLocked,
+                ),
+                SizedBox(height: context.dimens.md),
+              ],
               Expanded(
                 child: AsyncValueWidget<List<Chapter>>(
                   value: chaptersAsync,

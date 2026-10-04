@@ -20,6 +20,10 @@ abstract class SubjectEnrollment with _$SubjectEnrollment {
     required String subjectId,
     String? teacherId,
     @Default(false) bool discountApplied,
+    // Backend `isPaid`: the subject's bundle was bought, which locks the
+    // teacher for THIS subject (per-subject — buying Physics doesn't lock
+    // Chemistry).
+    @Default(false) bool isPaid,
   }) = _SubjectEnrollment;
 
   /// Preferred construction path: defaults discountApplied to false at

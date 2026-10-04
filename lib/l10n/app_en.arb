@@ -722,5 +722,20 @@
 
   "phoneAlreadyRegisteredTitle": "Account already exists",
   "phoneAlreadyRegisteredMessage": "An account with this phone number already exists.",
-  "phoneGoToLogin": "Go to login"
+  "phoneGoToLogin": "Go to login",
+
+  "teacherNotSelectableMessage": "This teacher isn't available for your campus. Please choose another.",
+  "teacherLockedAfterPurchaseMessage": "The teacher can't be changed after purchase.",
+  "alreadyEnrolledMessage": "You're already enrolled in this subject.",
+  "teacherLockedTapMessage": "You've already bought this subject, so its teacher can't be changed.",
+
+  "addSubjectButton": "Add subject",
+  "addSubjectTitle": "Add a subject",
+  "addSubjectSubtitle": "Pick any subject from your class to add it to your list.",
+  "addSubjectTapToAdd": "Tap to add",
+  "addSubjectNoneLeft": "You've already added every subject for your class.",
+  "addSubjectSuccess": "{subject} added. Open it to choose a teacher.",
+  "@addSubjectSuccess": {
+    "placeholders": { "subject": { "type": "String" } }
+  }
 }

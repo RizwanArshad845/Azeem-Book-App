@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import 'assign_teacher_sheet.dart';
 
-/// Assigned-teacher summary card, previously shown at the top of
-/// `ChapterListView`. Currently unused (not wired into any screen) — kept as
-/// a standalone widget so it can be reinstated later without rewriting it.
+/// Assigned-teacher summary card shown at the top of `ChapterListView`.
 ///
-/// Displays the subject's assigned teacher (or a self-study fallback) with a
-/// Change/Assign button that opens [AssignTeacherSheet].
+/// Displays the subject's assigned teacher (or a "no teacher" fallback) with a
+/// Change/Assign button that opens [AssignTeacherSheet]. Once the subject's
+/// bundle is bought ([isPaid]) the teacher is locked: the button is replaced
+/// by a lock icon and the sheet can't be opened.
 class TeacherAssignmentCard extends StatelessWidget {
   const TeacherAssignmentCard({
     super.key,
@@ -17,11 +18,15 @@ class TeacherAssignmentCard extends StatelessWidget {
     required this.subjectTitle,
     required this.assignedTeacherId,
     required this.assignedTeacherName,
+    this.isPaid = false,
   });
 
   final String subjectId;
   final String subjectTitle;
   final String? assignedTeacherId;
+
+  /// Bundle bought -> teacher is read-only for this subject.
+  final bool isPaid;
 
   /// Pre-resolved teacher display name, or null if unresolved/unassigned.
   final String? assignedTeacherName;
@@ -29,6 +34,14 @@ class TeacherAssignmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
+      // Locked: tapping anywhere on the card explains why the teacher can't
+      // be changed (instead of silently doing nothing).
+      onTap: isPaid
+          ? () => AppSnackbar.show(
+              context,
+              context.l10n.teacherLockedTapMessage,
+            )
+          : null,
       padding: EdgeInsets.symmetric(
         horizontal: context.dimens.md,
         vertical: context.dimens.sm,
@@ -73,6 +86,16 @@ class TeacherAssignmentCard extends StatelessWidget {
               ],
             ),
           ),
+          if (isPaid)
+            Padding(
+              padding: EdgeInsets.all(context.dimens.sm),
+              child: Icon(
+                Icons.lock_outline,
+                size: 20,
+                color: context.colors.textSecondary,
+              ),
+            )
+          else
           TextButton.icon(
             onPressed: () => AssignTeacherSheet.show(
               context: context,

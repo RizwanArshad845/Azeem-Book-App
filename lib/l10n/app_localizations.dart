@@ -2957,6 +2957,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go to login'**
   String get phoneGoToLogin;
+
+  /// No description provided for @teacherNotSelectableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This teacher isn\'t available for your campus. Please choose another.'**
+  String get teacherNotSelectableMessage;
+
+  /// No description provided for @teacherLockedAfterPurchaseMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The teacher can\'t be changed after purchase.'**
+  String get teacherLockedAfterPurchaseMessage;
+
+  /// No description provided for @alreadyEnrolledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re already enrolled in this subject.'**
+  String get alreadyEnrolledMessage;
+
+  /// No description provided for @teacherLockedTapMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve already bought this subject, so its teacher can\'t be changed.'**
+  String get teacherLockedTapMessage;
+
+  /// No description provided for @addSubjectButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add subject'**
+  String get addSubjectButton;
+
+  /// No description provided for @addSubjectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a subject'**
+  String get addSubjectTitle;
+
+  /// No description provided for @addSubjectSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick any subject from your class to add it to your list.'**
+  String get addSubjectSubtitle;
+
+  /// No description provided for @addSubjectTapToAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to add'**
+  String get addSubjectTapToAdd;
+
+  /// No description provided for @addSubjectNoneLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve already added every subject for your class.'**
+  String get addSubjectNoneLeft;
+
+  /// No description provided for @addSubjectSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{subject} added. Open it to choose a teacher.'**
+  String addSubjectSuccess(String subject);
 }
 
 class _AppLocalizationsDelegate

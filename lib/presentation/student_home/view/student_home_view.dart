@@ -9,6 +9,7 @@ import '../../../core/utils/subject_icons.dart';
 import '../../../core/utils/subject_illustration.dart';
 import '../../../core/widgets/app_bar_actions.dart';
 import '../../../core/widgets/app_bar_title.dart';
+import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/delayed_loader.dart';
 import '../../../core/widgets/empty_state_view.dart';
@@ -24,6 +25,7 @@ import '../../../domain/catalog/entities/subject.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
 import '../../test_taking/widgets/practice_question_bank_sheet.dart';
 import '../viewmodel/student_home_viewmodel.dart';
+import '../widgets/add_subject_sheet.dart';
 import '../widgets/subject_actions_sheet.dart';
 import '../widgets/subject_card.dart';
 
@@ -184,6 +186,11 @@ class _SubjectsSection extends ConsumerWidget {
     final cartState = ref.watch(studentCartViewModelProvider).value;
     final cartItems = cartState?.items;
     final viewMode = ref.watch(subjectViewModeProvider);
+    // An onboarded student can add more subjects any time (needs a board
+    // class — the backend rejects enrolment without one).
+    final canAddSubjects = ref.watch(
+      currentStudentProvider.select((s) => (s?.boardClassId ?? '').isNotEmpty),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -217,6 +224,21 @@ class _SubjectsSection extends ConsumerWidget {
             ],
           ),
         ),
+        if (canAddSubjects) ...[
+          SizedBox(height: context.dimens.sm),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: context.dimens.lg),
+            // Full-width filled button so it reads clearly as an action,
+            // not as a text link (the themed ElevatedButton is already
+            // full-width and primary-coloured).
+            child: AppPrimaryButton(
+              label: context.l10n.addSubjectButton,
+              icon: Icons.add_rounded,
+              iconPosition: AppButtonIconPosition.leading,
+              onPressed: () => AddSubjectSheet.show(context),
+            ),
+          ),
+        ],
         SizedBox(height: context.dimens.md),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: context.dimens.lg),

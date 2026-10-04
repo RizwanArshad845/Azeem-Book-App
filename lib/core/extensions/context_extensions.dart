@@ -76,6 +76,9 @@ extension FailureLocalization on Failure {
       PhoneRegisteredOtherRoleFailure(:final existingRole) =>
         l10n.phoneRegisteredOtherRoleMessage(existingRole),
       PhoneAlreadyRegisteredFailure() => l10n.phoneAlreadyRegisteredMessage,
+      TeacherNotSelectableFailure() => l10n.teacherNotSelectableMessage,
+      TeacherLockedAfterPurchaseFailure() => l10n.teacherLockedAfterPurchaseMessage,
+      AlreadyEnrolledFailure() => l10n.alreadyEnrolledMessage,
     };
   }
 }

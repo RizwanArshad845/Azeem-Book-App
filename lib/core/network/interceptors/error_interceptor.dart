@@ -102,6 +102,12 @@ class ErrorInterceptor extends Interceptor {
         }
       case _phoneAlreadyRegistered when statusCode == 409:
         return const PhoneAlreadyRegisteredFailure();
+      case 'teacher_not_selectable' when statusCode == 400:
+        return const TeacherNotSelectableFailure();
+      case 'teacher_locked_after_purchase' when statusCode == 400:
+        return const TeacherLockedAfterPurchaseFailure();
+      case 'already_enrolled' when statusCode == 409:
+        return const AlreadyEnrolledFailure();
     }
 
     if (statusCode == 400) {

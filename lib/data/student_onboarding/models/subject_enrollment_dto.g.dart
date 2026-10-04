@@ -14,6 +14,7 @@ _SubjectEnrollmentDto _$SubjectEnrollmentDtoFromJson(
   subjectId: json['subjectId'] as String,
   teacherId: json['teacherId'] as String?,
   discountApplied: json['discountApplied'] as bool? ?? false,
+  isPaid: json['isPaid'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$SubjectEnrollmentDtoToJson(
@@ -24,4 +25,5 @@ Map<String, dynamic> _$SubjectEnrollmentDtoToJson(
   'subjectId': instance.subjectId,
   'teacherId': instance.teacherId,
   'discountApplied': instance.discountApplied,
+  'isPaid': instance.isPaid,
 };

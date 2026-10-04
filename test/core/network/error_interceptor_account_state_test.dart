@@ -123,6 +123,29 @@ void main() {
     expect(failure, isA<UnauthorizedFailure>());
   });
 
+  test('enrollment error codes map to their own failures', () async {
+    expect(
+      await _run(_error(400, {'code': 'teacher_not_selectable', 'message': 'x'})),
+      isA<TeacherNotSelectableFailure>(),
+    );
+    expect(
+      await _run(
+        _error(400, {'code': 'teacher_locked_after_purchase', 'message': 'x'}),
+      ),
+      isA<TeacherLockedAfterPurchaseFailure>(),
+    );
+    expect(
+      await _run(_error(409, {'code': 'already_enrolled', 'message': 'x'})),
+      isA<AlreadyEnrolledFailure>(),
+    );
+    // Plain validation errors keep surfacing the server's message.
+    final validation = await _run(
+      _error(400, {'code': 'validation_error', 'message': 'Wrong board class'}),
+    );
+    expect(validation, isA<ValidationFailure>());
+    expect(validation.message, 'Wrong board class');
+  });
+
   test('403 without account_deleted code stays UnauthorizedFailure', () async {
     final failure = await _run(
       _error(403, {'code': 'forbidden', 'message': 'locked'}),

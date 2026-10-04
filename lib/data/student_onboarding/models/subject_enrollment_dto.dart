@@ -19,6 +19,7 @@ abstract class SubjectEnrollmentDto with _$SubjectEnrollmentDto {
     required String subjectId,
     String? teacherId,
     @Default(false) bool discountApplied,
+    @Default(false) bool isPaid,
   }) = _SubjectEnrollmentDto;
 
   factory SubjectEnrollmentDto.fromJson(Map<String, dynamic> json) =>
@@ -30,6 +31,7 @@ abstract class SubjectEnrollmentDto with _$SubjectEnrollmentDto {
     subjectId: subjectId,
     teacherId: teacherId,
     discountApplied: discountApplied,
+    isPaid: isPaid,
   );
 
   factory SubjectEnrollmentDto.fromDomain(SubjectEnrollment entity) =>
@@ -39,5 +41,6 @@ abstract class SubjectEnrollmentDto with _$SubjectEnrollmentDto {
         subjectId: entity.subjectId,
         teacherId: entity.teacherId,
         discountApplied: entity.discountApplied,
+        isPaid: entity.isPaid,
       );
 }

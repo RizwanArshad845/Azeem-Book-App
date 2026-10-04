@@ -43,4 +43,21 @@ abstract class StudentRepository {
   Future<Result<List<SubjectEnrollment>>> getSubjectEnrollments(
     String studentId,
   );
+
+  /// Adds a single subject (teacher optional) to the student's enrollments.
+  /// Fails with [AlreadyEnrolledFailure] if it's already there.
+  Future<Result<SubjectEnrollment>> addSubjectEnrollment(
+    String studentId,
+    String subjectId, {
+    String? teacherId,
+  });
+
+  /// Sets, changes, or (null [teacherId]) removes the teacher for one
+  /// already-enrolled subject. Fails with [TeacherLockedAfterPurchaseFailure]
+  /// once that subject's bundle is bought.
+  Future<Result<SubjectEnrollment>> setSubjectTeacher(
+    String studentId,
+    String subjectId,
+    String? teacherId,
+  );
 }

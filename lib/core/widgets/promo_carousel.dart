@@ -42,8 +42,8 @@ final promoCarouselPageProvider =
 );
 
 /// A horizontally-scrolling, auto-advancing, infinite promo carousel with page
-/// dots. Each card is swipe-to-dismiss (vertical) and reports dismissals via
-/// [onDismiss]. Replaces the single static live-test banner on Home.
+/// dots. Each card has a close button and reports dismissals via [onDismiss].
+/// Replaces the single static live-test banner on Home.
 class PromoCarousel extends ConsumerStatefulWidget {
   const PromoCarousel({
     super.key,
@@ -113,11 +113,32 @@ class _PromoCarouselState extends ConsumerState<PromoCarousel> {
                   padding: EdgeInsets.symmetric(
                     horizontal: context.dimens.lg,
                   ),
-                  child: Dismissible(
-                    key: ValueKey('promo-${banner.id}-$index'),
-                    direction: DismissDirection.up,
-                    onDismissed: (_) => widget.onDismiss?.call(banner.id),
-                    child: _PromoCard(banner: banner),
+                  // Dismiss is an explicit close button, NOT a swipe: a
+                  // swipe-up gesture on the card hijacked vertical page
+                  // scrolling and dismissed banners by accident.
+                  child: Stack(
+                    children: [
+                      Positioned.fill(child: _PromoCard(banner: banner)),
+                      if (widget.onDismiss != null)
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: IconButton(
+                            tooltip: MaterialLocalizations.of(
+                              context,
+                            ).closeButtonTooltip,
+                            visualDensity: VisualDensity.compact,
+                            icon: Icon(
+                              Icons.close_rounded,
+                              size: context.dimens.iconSm,
+                              color: context.colors.onPrimary.withValues(
+                                alpha: 0.9,
+                              ),
+                            ),
+                            onPressed: () => widget.onDismiss?.call(banner.id),
+                          ),
+                        ),
+                    ],
                   ),
                 );
               },

@@ -1631,4 +1631,41 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get phoneGoToLogin => 'لاگ اِن پر جائیں';
+
+  @override
+  String get teacherNotSelectableMessage =>
+      'یہ استاد آپ کے کیمپس کے لیے دستیاب نہیں ہیں۔ براہ کرم کسی اور کا انتخاب کریں۔';
+
+  @override
+  String get teacherLockedAfterPurchaseMessage =>
+      'خریداری کے بعد استاد تبدیل نہیں کیا جا سکتا۔';
+
+  @override
+  String get alreadyEnrolledMessage => 'آپ پہلے ہی اس مضمون میں داخل ہیں۔';
+
+  @override
+  String get teacherLockedTapMessage =>
+      'آپ یہ مضمون پہلے ہی خرید چکے ہیں، اس لیے اس کا استاد تبدیل نہیں کیا جا سکتا۔';
+
+  @override
+  String get addSubjectButton => 'مضمون شامل کریں';
+
+  @override
+  String get addSubjectTitle => 'مضمون شامل کریں';
+
+  @override
+  String get addSubjectSubtitle =>
+      'اپنی جماعت میں سے کوئی بھی مضمون چنیں اور اسے اپنی فہرست میں شامل کریں۔';
+
+  @override
+  String get addSubjectTapToAdd => 'شامل کرنے کے لیے ٹیپ کریں';
+
+  @override
+  String get addSubjectNoneLeft =>
+      'آپ اپنی جماعت کے تمام مضامین پہلے ہی شامل کر چکے ہیں۔';
+
+  @override
+  String addSubjectSuccess(String subject) {
+    return '$subject شامل ہو گیا۔ استاد چننے کے لیے اسے کھولیں۔';
+  }
 }

@@ -5,8 +5,11 @@ import '../../../core/di/injection.dart';
 import '../../../core/di/riverpod_providers.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_snackbar.dart';
+import '../../../domain/common/failure.dart';
+import '../../../domain/common/result.dart';
 import '../../../domain/student_onboarding/entities/subject_enrollment.dart';
-import '../../../domain/student_onboarding/usecases/update_student_subject_enrollments_usecase.dart';
+import '../../../domain/student_onboarding/usecases/add_student_subject_enrollment_usecase.dart';
+import '../../../domain/student_onboarding/usecases/set_student_subject_teacher_usecase.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 import 'student_home_viewmodel.dart';
@@ -75,64 +78,84 @@ class AssignTeacherViewModel extends Notifier<AssignTeacherState> {
 
     state = state.copyWith(isSaving: true);
 
+    final teacherId = state.selectedTeacherId;
     final currentEnrollments =
         student.subjectEnrollments ?? <SubjectEnrollment>[];
-    final updatedEnrollments = <SubjectEnrollment>[];
-    var found = false;
-
-    for (final enrollment in currentEnrollments) {
-      if (enrollment.subjectId == subjectId) {
-        found = true;
-        updatedEnrollments.add(
-          enrollment.copyWith(
-            teacherId: state.selectedTeacherId,
-            discountApplied: state.selectedTeacherId != null,
-          ),
-        );
-      } else {
-        updatedEnrollments.add(enrollment);
-      }
-    }
-
-    if (!found) {
-      updatedEnrollments.add(
-        SubjectEnrollment.create(
-          studentId: student.id,
-          subjectId: subjectId,
-          teacherId: state.selectedTeacherId,
-          discountApplied: state.selectedTeacherId != null,
-        ),
-      );
-    }
-
-    final result = await sl<UpdateStudentSubjectEnrollmentsUseCase>()(
-      student.id,
-      updatedEnrollments,
+    final alreadyEnrolled = currentEnrollments.any(
+      (e) => e.subjectId == subjectId,
     );
+
+    // One subject at a time: POST adds it (teacher optional), PATCH changes
+    // or removes the teacher of an existing one. The other subjects are never
+    // sent, so nothing else can be dropped or locked by accident.
+    var result = alreadyEnrolled
+        ? await _setTeacher(student.id, subjectId, teacherId)
+        : await sl<AddStudentSubjectEnrollmentUseCase>()(
+            student.id,
+            subjectId,
+            teacherId: teacherId,
+          );
+    // Stale local list (e.g. added on another device): the backend says it's
+    // already there, so just set the teacher on it instead.
+    if (result case ResultFailure(failure: AlreadyEnrolledFailure())) {
+      result = await _setTeacher(student.id, subjectId, teacherId);
+    }
 
     if (!context.mounted) return;
     state = state.copyWith(isSaving: false);
 
     result.when(
-      success: (savedEnrollments) {
-        ref.read(studentOnboardingViewModelProvider.notifier).setStudent(
-              student.copyWith(subjectEnrollments: savedEnrollments),
-            );
+      success: (saved) {
+        final updated = [
+          for (final e in currentEnrollments)
+            if (e.subjectId != subjectId) e,
+          saved.copyWith(studentId: student.id),
+        ];
+        ref
+            .read(studentOnboardingViewModelProvider.notifier)
+            .setStudent(student.copyWith(subjectEnrollments: updated));
         _refreshCatalogForBoardClass(ref, student.boardClassId);
+        // Prices change when a teacher is set or removed.
         ref.invalidate(studentCartViewModelProvider);
         Navigator.of(context).pop();
         AppSnackbar.show(
           context,
-          state.selectedTeacherId != null
+          saved.teacherId != null
               ? context.l10n.assignTeacherSavedSuccess
               : context.l10n.assignTeacherSetSelfStudy,
         );
       },
       failure: (failure) {
+        if (failure is TeacherLockedAfterPurchaseFailure) {
+          // Bought (maybe on another device): mark it locally so the UI
+          // stops offering the change.
+          ref.read(studentOnboardingViewModelProvider.notifier).setStudent(
+                student.copyWith(
+                  subjectEnrollments: [
+                    for (final e in currentEnrollments)
+                      e.subjectId == subjectId ? e.copyWith(isPaid: true) : e,
+                  ],
+                ),
+              );
+          Navigator.of(context).pop();
+        } else if (failure is TeacherNotSelectableFailure) {
+          // Stale list — reload it so the unavailable teacher disappears.
+          final campusId = student.campusId;
+          if (campusId.isNotEmpty) {
+            ref.invalidate(teachersForCampusProvider(campusId));
+          }
+          select(_initialTeacherId);
+        }
         AppSnackbar.show(context, failure.localizedMessage(context));
       },
     );
   }
+
+  Future<Result<SubjectEnrollment>> _setTeacher(
+    String studentId,
+    String subjectId,
+    String? teacherId,
+  ) => sl<SetStudentSubjectTeacherUseCase>()(studentId, subjectId, teacherId);
 
   /// Force-refetches just [boardClassId]'s subjects (so the newly
   /// backend-applied teacher discount is reflected) instead of wiping the

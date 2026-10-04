@@ -29,6 +29,24 @@ abstract class StudentRemoteDataSource {
 
   /// Reads the current student's subject enrollments from backend.
   Future<List<SubjectEnrollmentDto>> getSubjectEnrollments(String studentId);
+
+  /// `POST /students/{id}/subject-enrollments` — adds ONE subject (teacher
+  /// optional) without touching the student's other subjects.
+  Future<SubjectEnrollmentDto> addSubjectEnrollment(
+    String studentId,
+    String subjectId, {
+    String? teacherId,
+  });
+
+  /// `PATCH /students/{id}/subject-enrollments/{subjectId}` — sets, changes
+  /// or (with a `null` [teacherId]) removes the teacher for one subject. The
+  /// `teacherId` key is always sent, even when `null` — the backend rejects a
+  /// body without it.
+  Future<SubjectEnrollmentDto> setSubjectTeacher(
+    String studentId,
+    String subjectId,
+    String? teacherId,
+  );
 }
 
 class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
@@ -115,6 +133,35 @@ class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
     return items
         .map((e) => SubjectEnrollmentDto.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  @override
+  Future<SubjectEnrollmentDto> addSubjectEnrollment(
+    String studentId,
+    String subjectId, {
+    String? teacherId,
+  }) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      ApiEndpoints.studentSubjectEnrollments(studentId),
+      data: {
+        'subjectId': subjectId,
+        'teacherId': ?teacherId,
+      },
+    );
+    return SubjectEnrollmentDto.fromJson(response.data ?? const {});
+  }
+
+  @override
+  Future<SubjectEnrollmentDto> setSubjectTeacher(
+    String studentId,
+    String subjectId,
+    String? teacherId,
+  ) async {
+    final response = await _dio.patch<Map<String, dynamic>>(
+      ApiEndpoints.studentSubjectEnrollment(studentId, subjectId),
+      data: {'teacherId': teacherId},
+    );
+    return SubjectEnrollmentDto.fromJson(response.data ?? const {});
   }
 
   /// Backs the `teacher-students` Students tab — the `ApiEndpoints`

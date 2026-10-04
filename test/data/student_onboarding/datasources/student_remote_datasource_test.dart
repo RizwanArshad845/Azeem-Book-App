@@ -70,6 +70,81 @@ void main() {
     },
   );
 
+  group('single-subject enrollment calls', () {
+    const enrollmentJson = {
+      'id': 'e1',
+      'subjectId': 'subject-1',
+      'teacherId': null,
+      'discountApplied': false,
+      'isPaid': true,
+    };
+
+    test('PATCH always sends teacherId, even when null (remove teacher)',
+        () async {
+      when(
+        () => dio.patch<Map<String, dynamic>>(
+          any(),
+          data: any(named: 'data'),
+        ),
+      ).thenAnswer((_) async => responseWith(enrollmentJson));
+
+      final result =
+          await dataSource.setSubjectTeacher('student-1', 'subject-1', null);
+
+      final captured = verify(
+        () => dio.patch<Map<String, dynamic>>(
+          ApiEndpoints.studentSubjectEnrollment('student-1', 'subject-1'),
+          data: captureAny(named: 'data'),
+        ),
+      ).captured.single as Map<String, dynamic>;
+      expect(captured.containsKey('teacherId'), isTrue);
+      expect(captured['teacherId'], isNull);
+      expect(result.isPaid, isTrue);
+    });
+
+    test('POST omits teacherId when none is chosen', () async {
+      when(
+        () => dio.post<Map<String, dynamic>>(
+          any(),
+          data: any(named: 'data'),
+        ),
+      ).thenAnswer((_) async => responseWith(enrollmentJson));
+
+      await dataSource.addSubjectEnrollment('student-1', 'subject-1');
+
+      final captured = verify(
+        () => dio.post<Map<String, dynamic>>(
+          ApiEndpoints.studentSubjectEnrollments('student-1'),
+          data: captureAny(named: 'data'),
+        ),
+      ).captured.single as Map<String, dynamic>;
+      expect(captured, {'subjectId': 'subject-1'});
+    });
+
+    test('POST sends teacherId when chosen', () async {
+      when(
+        () => dio.post<Map<String, dynamic>>(
+          any(),
+          data: any(named: 'data'),
+        ),
+      ).thenAnswer((_) async => responseWith(enrollmentJson));
+
+      await dataSource.addSubjectEnrollment(
+        'student-1',
+        'subject-1',
+        teacherId: 'teacher-9',
+      );
+
+      final captured = verify(
+        () => dio.post<Map<String, dynamic>>(
+          any(),
+          data: captureAny(named: 'data'),
+        ),
+      ).captured.single as Map<String, dynamic>;
+      expect(captured, {'subjectId': 'subject-1', 'teacherId': 'teacher-9'});
+    });
+  });
+
   test(
     'uses the response values when the PUT response does include new '
     'boardClassId, cartId, and subjectEnrollments (real updates still win)',

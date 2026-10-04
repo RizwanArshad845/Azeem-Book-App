@@ -1624,4 +1624,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get phoneGoToLogin => 'Go to login';
+
+  @override
+  String get teacherNotSelectableMessage =>
+      'This teacher isn\'t available for your campus. Please choose another.';
+
+  @override
+  String get teacherLockedAfterPurchaseMessage =>
+      'The teacher can\'t be changed after purchase.';
+
+  @override
+  String get alreadyEnrolledMessage =>
+      'You\'re already enrolled in this subject.';
+
+  @override
+  String get teacherLockedTapMessage =>
+      'You\'ve already bought this subject, so its teacher can\'t be changed.';
+
+  @override
+  String get addSubjectButton => 'Add subject';
+
+  @override
+  String get addSubjectTitle => 'Add a subject';
+
+  @override
+  String get addSubjectSubtitle =>
+      'Pick any subject from your class to add it to your list.';
+
+  @override
+  String get addSubjectTapToAdd => 'Tap to add';
+
+  @override
+  String get addSubjectNoneLeft =>
+      'You\'ve already added every subject for your class.';
+
+  @override
+  String addSubjectSuccess(String subject) {
+    return '$subject added. Open it to choose a teacher.';
+  }
 }
