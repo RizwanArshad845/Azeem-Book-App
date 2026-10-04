@@ -142,6 +142,10 @@ class _NotificationCard extends ConsumerWidget {
       Icons.hourglass_top_rounded,
       const Color(0xFFD97706), // Amber
     ),
+    NotificationType.teacherApproved => (
+      Icons.verified_rounded,
+      const Color(0xFF059669), // Emerald Green
+    ),
     NotificationType.paymentSuccessful || NotificationType.studentEnrolled => (
       Icons.check_circle_rounded,
       const Color(0xFF059669), // Emerald Green

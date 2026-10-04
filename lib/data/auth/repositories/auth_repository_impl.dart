@@ -53,6 +53,22 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Result<String?>> refreshSessionStatus() {
+    return guardRequest(() async {
+      final status = await remote.getSessionStatus();
+      if (status != null) {
+        final raw = await _secureStorage.read(key: _sessionKey);
+        if (raw != null) {
+          final json = jsonDecode(raw) as Map<String, dynamic>;
+          json['status'] = status;
+          await _secureStorage.write(key: _sessionKey, value: jsonEncode(json));
+        }
+      }
+      return status;
+    });
+  }
+
+  @override
   Future<Result<void>> logout() {
     return guardRequest(() async {
       AuthInterceptor.currentToken = null;

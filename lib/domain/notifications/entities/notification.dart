@@ -50,6 +50,9 @@ enum NotificationType {
   resultReady,
   testGradingFailed,
 
+  /// Sent to a self-signup teacher when an admin approves their account.
+  teacherApproved,
+
   /// Not a real wire value — `@JsonKey(unknownEnumValue: ...)` fallback on
   /// `NotificationDto.type` for any future type added server-side before
   /// this enum is updated to match.

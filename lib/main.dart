@@ -60,5 +60,12 @@ Future<void> _runApp() async {
       container.read(authViewModelProvider.notifier).logout();
     }
   };
+  // `teacher_pending_approval` 403: the server is the authority — re-read the
+  // routing status (-> `PENDING_APPROVAL`), and the router redirect moves the
+  // teacher to the awaiting-approval screen. Concurrent 403s collapse inside
+  // `refreshSessionStatus`.
+  SessionExpiryNotifier.onTeacherPendingApproval = () {
+    container.read(authViewModelProvider.notifier).refreshSessionStatus();
+  };
   runApp(UncontrolledProviderScope(container: container, child: const App()));
 }

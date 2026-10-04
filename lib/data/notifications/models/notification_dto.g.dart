@@ -71,5 +71,6 @@ const _$NotificationTypeEnumMap = {
   NotificationType.teacherJoinedWithCode: 'teacherJoinedWithCode',
   NotificationType.resultReady: 'resultReady',
   NotificationType.testGradingFailed: 'testGradingFailed',
+  NotificationType.teacherApproved: 'teacherApproved',
   NotificationType.unknown: 'unknown',
 };

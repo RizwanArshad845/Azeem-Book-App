@@ -19,6 +19,11 @@ abstract class AuthRepository {
     UserRole role,
   );
 
+  /// Asks the backend for the current routing status
+  /// (`GET /auth/session-status`) and, when one comes back, persists it onto
+  /// the stored session so a restart doesn't resurrect a stale status.
+  Future<Result<String?>> refreshSessionStatus();
+
   /// Clears the current session (interceptor token + persisted storage).
   Future<Result<void>> logout();
 

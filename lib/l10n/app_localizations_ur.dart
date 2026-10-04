@@ -261,7 +261,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get teacherPendingNote =>
-      'ہماری ٹیم کی طرف سے تصدیق کے بعد آپ کو مکمل رسائی مل جائے گی۔';
+      'آپ کا اکاؤنٹ ایڈمن کی منظوری کا منتظر ہے۔ منظوری ہوتے ہی ہم آپ کو واٹس ایپ پر اطلاع دیں گے۔';
 
   @override
   String homeGreeting(String name) {
@@ -725,7 +725,7 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get teacherPendingCheckStatus => 'سٹیٹس چیک کریں';
+  String get teacherPendingCheckStatus => 'ریفریش کریں';
 
   @override
   String get teacherPendingStillPendingMessage =>

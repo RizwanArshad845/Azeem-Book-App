@@ -32,6 +32,11 @@ class ErrorInterceptor extends Interceptor {
       } else if (statusCode == 401 && _belongsToCurrentSession(err)) {
         SessionExpiryNotifier.onAccountDeleted?.call(clearSession: true);
       }
+    } else if (code == _teacherPendingApproval && statusCode == 403) {
+      // Dashboard endpoints are gated until an admin approves the teacher.
+      // Normally status-based routing keeps them away from here; this covers
+      // a stale session (e.g. an admin moved them back to pending).
+      SessionExpiryNotifier.onTeacherPendingApproval?.call();
     } else if (statusCode == 401 && _belongsToCurrentSession(err)) {
       SessionExpiryNotifier.onUnauthorized?.call();
     }
@@ -39,6 +44,7 @@ class ErrorInterceptor extends Interceptor {
   }
 
   static const _accountDeleted = 'account_deleted';
+  static const _teacherPendingApproval = 'teacher_pending_approval';
   static const _phoneRegisteredOtherRole = 'phone_registered_other_role';
   static const _phoneAlreadyRegistered = 'phone_already_registered';
 

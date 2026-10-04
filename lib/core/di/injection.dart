@@ -10,6 +10,7 @@ import '../../data/catalog/repositories/catalog_repository_impl.dart';
 import '../../domain/auth/repositories/auth_repository.dart';
 import '../../domain/auth/usecases/get_stored_session_usecase.dart';
 import '../../domain/auth/usecases/logout_usecase.dart';
+import '../../domain/auth/usecases/refresh_session_status_usecase.dart';
 import '../../domain/auth/usecases/request_otp_usecase.dart';
 import '../../domain/auth/usecases/verify_otp_usecase.dart';
 import '../../domain/campus_directory/repositories/campus_repository.dart';
@@ -130,6 +131,7 @@ void setupLocator() {
   sl.registerFactory(() => RequestOtpUseCase(sl()));
   sl.registerFactory(() => VerifyOtpUseCase(sl()));
   sl.registerFactory(() => LogoutUseCase(sl()));
+  sl.registerFactory(() => RefreshSessionStatusUseCase(sl()));
   sl.registerFactory(() => GetStoredSessionUseCase(sl()));
 
   // teacher-onboarding

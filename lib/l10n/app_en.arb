@@ -91,7 +91,7 @@
   "teacherSignupSubtitle": "Fill in your details to register as a teacher",
   "teacherPendingTitle": "Pending Approval",
   "teacherPendingMessage": "Your teacher application has been submitted and is currently under review by Azeem Publications.",
-  "teacherPendingNote": "You will receive full access once your credentials are verified by our team.",
+  "teacherPendingNote": "Your account is waiting for admin approval. We'll notify you on WhatsApp once it's approved.",
 
   "homeGreeting": "Hi, {name}",
   "@homeGreeting": {
@@ -275,7 +275,7 @@
   "@teacherApprovedNote": {
     "placeholders": { "name": { "type": "String" } }
   },
-  "teacherPendingCheckStatus": "Check status",
+  "teacherPendingCheckStatus": "Refresh",
   "teacherPendingStillPendingMessage": "Your registration is pending approval.",
   "backToLogin": "Back to login",
   "chapterListTitle": "Chapters",

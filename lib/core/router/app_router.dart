@@ -228,15 +228,40 @@ String? _redirectFor(Ref ref, String location) {
   }
 
   if (session.role == UserRole.teacher) {
-    if (session.status == 'DASHBOARD') {
-      final allowed =
-          _teacherShellRoutes.contains(location) || _isOutsideShellRoute(location);
-      return allowed ? null : AppRoutes.teacherOverview;
-    }
     const teacherPreSubmitRoutes = {
       AppRoutes.teacherOnboardingSignup,
       AppRoutes.teacherOnboardingReview,
     };
+
+    switch (session.status) {
+      case 'DASHBOARD':
+        final allowed =
+            _teacherShellRoutes.contains(location) ||
+            _isOutsideShellRoute(location);
+        return allowed ? null : AppRoutes.teacherOverview;
+      case 'PENDING_APPROVAL':
+        // Signed up, waiting on an admin. The backend blocks the dashboard
+        // endpoints (403 `teacher_pending_approval`) until approved.
+        return location == AppRoutes.teacherOnboardingPending
+            ? null
+            : AppRoutes.teacherOnboardingPending;
+      case 'ONBOARDING':
+        // Admin-seeded teacher who hasn't finished onboarding — checked
+        // before the profile lookup below, which would otherwise wave a
+        // seeded teacher straight into the shell.
+        return teacherPreSubmitRoutes.contains(location)
+            ? null
+            : AppRoutes.teacherOnboardingSignup;
+      case 'NOT_REGISTERED' || null:
+        break; // Existing profile-lookup inference below.
+      default:
+        // Unrecognized status: never assume DASHBOARD. Drop the session so
+        // the user lands back on login (redirect can't log out itself).
+        Future.microtask(
+          () => ref.read(authViewModelProvider.notifier).logout(),
+        );
+        return null;
+    }
 
     final teacherAsync = ref.read(teacherOnboardingViewModelProvider);
     if (teacherAsync.isLoading) return null;

@@ -7,7 +7,6 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/async_value_widget.dart';
-import '../../../core/widgets/empty_state_view.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
 import '../viewmodel/teacher_onboarding_viewmodel.dart';
@@ -24,31 +23,57 @@ class TeacherPendingApprovalView extends ConsumerStatefulWidget {
 }
 
 class _TeacherPendingApprovalViewState
-    extends ConsumerState<TeacherPendingApprovalView> {
+    extends ConsumerState<TeacherPendingApprovalView>
+    with WidgetsBindingObserver {
   bool _isChecking = false;
   bool _isLoggingOut = false;
 
-  Future<void> _handleCheckStatus() async {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  /// Re-check approval when the app comes back to the foreground (no tight
+  /// polling timer — there is no push yet, so this is how an approval made
+  /// while the app was backgrounded gets noticed).
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _checkStatus(silent: true);
+  }
+
+  Future<void> _handleCheckStatus() => _checkStatus();
+
+  /// Asks `GET /auth/session-status`. `DASHBOARD` updates the session, and
+  /// the router redirect then moves the teacher to the dashboard; anything
+  /// else keeps them here. [silent] suppresses the "still pending" snackbar
+  /// (used for the automatic on-resume check).
+  Future<void> _checkStatus({bool silent = false}) async {
+    if (_isChecking || _isLoggingOut) return;
     setState(() => _isChecking = true);
     try {
-      ref.invalidate(teacherOnboardingViewModelProvider);
-      final updatedTeacher =
-          await ref.read(teacherOnboardingViewModelProvider.future);
+      final status =
+          await ref.read(authViewModelProvider.notifier).refreshSessionStatus();
       if (!mounted) return;
-      if (updatedTeacher == null ||
-          teacherOnboardingStageOf(updatedTeacher) ==
-              TeacherOnboardingStage.pendingApproval) {
+      if (status == 'DASHBOARD') {
+        // Pick up the now-approved teacher record for the dashboard screens.
+        ref.invalidate(teacherOnboardingViewModelProvider);
+        return;
+      }
+      if (!silent) {
         AppSnackbar.show(
           context,
-          context.l10n.teacherPendingStillPendingMessage,
+          status == null
+              ? context.l10n.commonErrorGeneric
+              : context.l10n.teacherPendingStillPendingMessage,
         );
       }
-    } catch (_) {
-      if (!mounted) return;
-      AppSnackbar.show(
-        context,
-        context.l10n.teacherPendingStillPendingMessage,
-      );
     } finally {
       if (mounted) {
         setState(() => _isChecking = false);
@@ -78,16 +103,13 @@ class _TeacherPendingApprovalViewState
           value: onboarding,
           onRetry: () => ref.invalidate(teacherOnboardingViewModelProvider),
           data: (teacher) {
-            if (teacher == null) {
-              return EmptyStateView(
-                icon: Icons.person_search_outlined,
-                message: context.l10n.teacherPendingNotFound,
-              );
-            }
-
-            final stage = teacherOnboardingStageOf(teacher);
+            // The routing status (not this lookup) decides we're on this
+            // screen, so Refresh/Log out must stay reachable even when the
+            // teacher record is missing — treat "no record" as still pending.
             final isStillPending =
-                stage == TeacherOnboardingStage.pendingApproval;
+                teacher == null ||
+                teacherOnboardingStageOf(teacher) ==
+                    TeacherOnboardingStage.pendingApproval;
 
             return Center(
               child: ConstrainedBox(
@@ -127,23 +149,25 @@ class _TeacherPendingApprovalViewState
                           color: context.colors.textSecondary,
                         ),
                       ),
-                      SizedBox(height: context.dimens.lg),
-                      AppCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TeacherInfoRow(label: context.l10n.nameLabel, value: teacher.name),
-                            TeacherInfoRow(
-                              label: context.l10n.phoneLabel,
-                              value: teacher.phoneNumber,
-                            ),
-                            TeacherInfoRow(
-                              label: context.l10n.teacherSignupSubjectsLabel,
-                              value: teacher.subjectIds.length.toString(),
-                            ),
-                          ],
+                      if (teacher != null) ...[
+                        SizedBox(height: context.dimens.lg),
+                        AppCard(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TeacherInfoRow(label: context.l10n.nameLabel, value: teacher.name),
+                              TeacherInfoRow(
+                                label: context.l10n.phoneLabel,
+                                value: teacher.phoneNumber,
+                              ),
+                              TeacherInfoRow(
+                                label: context.l10n.teacherSignupSubjectsLabel,
+                                value: teacher.subjectIds.length.toString(),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                       SizedBox(height: context.dimens.xl),
                       AppButton(
                         label: context.l10n.teacherPendingCheckStatus,

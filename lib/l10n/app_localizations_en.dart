@@ -258,7 +258,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get teacherPendingNote =>
-      'You will receive full access once your credentials are verified by our team.';
+      'Your account is waiting for admin approval. We\'ll notify you on WhatsApp once it\'s approved.';
 
   @override
   String homeGreeting(String name) {
@@ -720,7 +720,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get teacherPendingCheckStatus => 'Check status';
+  String get teacherPendingCheckStatus => 'Refresh';
 
   @override
   String get teacherPendingStillPendingMessage =>

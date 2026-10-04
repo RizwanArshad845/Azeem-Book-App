@@ -29,6 +29,7 @@ Future<Failure> _run(DioException err) async {
   final handler = ErrorInterceptorHandler();
   ErrorInterceptor().onError(err, handler);
   try {
+    // ignore: invalid_use_of_protected_member
     await handler.future;
   } catch (e) {
     // `handler.next` completes with the (possibly wrapped) DioException.
@@ -107,6 +108,19 @@ void main() {
       _error(409, {'code': 'phone_already_registered', 'message': 'x'}),
     );
     expect(failure, isA<PhoneAlreadyRegisteredFailure>());
+  });
+
+  test('403 teacher_pending_approval fires the pending callback', () async {
+    var pendingCalls = 0;
+    SessionExpiryNotifier.onTeacherPendingApproval = () => pendingCalls++;
+    addTearDown(() => SessionExpiryNotifier.onTeacherPendingApproval = null);
+
+    final failure = await _run(
+      _error(403, {'code': 'teacher_pending_approval', 'message': 'wait'}),
+    );
+    expect(pendingCalls, 1);
+    expect(unauthorizedCalls, 0);
+    expect(failure, isA<UnauthorizedFailure>());
   });
 
   test('403 without account_deleted code stays UnauthorizedFailure', () async {

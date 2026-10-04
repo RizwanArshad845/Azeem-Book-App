@@ -86,7 +86,7 @@
   "teacherSignupSubtitle": "ٹیچر کے طور پر رجسٹر ہونے کے لیے اپنی تفصیلات بھریں",
   "teacherPendingTitle": "منظوری کا انتظار",
   "teacherPendingMessage": "آپ کی ٹیچر کی درخواست جمع کر دی گئی ہے اور عظیم پبلیکیشنز کے زیر جائزہ ہے۔",
-  "teacherPendingNote": "ہماری ٹیم کی طرف سے تصدیق کے بعد آپ کو مکمل رسائی مل جائے گی۔",
+  "teacherPendingNote": "آپ کا اکاؤنٹ ایڈمن کی منظوری کا منتظر ہے۔ منظوری ہوتے ہی ہم آپ کو واٹس ایپ پر اطلاع دیں گے۔",
 
   "homeGreeting": "السلام علیکم، {name}",
   "homeDiagnosticTestTitle": "تشخیصی ٹیسٹ",
@@ -261,7 +261,7 @@
   "teacherPendingAccountStatus": "آپ کا اکاؤنٹ ایڈمن کی منظوری کا منتظر ہے۔",
   "teacherApprovedAccountStatus": "آپ منظور ہو چکے ہیں! آپ ایپ میں جاری رکھ سکتے ہیں۔",
   "teacherApprovedNote": "{name} کے لیے منظوری مکمل ہو چکی ہے۔",
-  "teacherPendingCheckStatus": "سٹیٹس چیک کریں",
+  "teacherPendingCheckStatus": "ریفریش کریں",
   "teacherPendingStillPendingMessage": "آپ کی رجسٹریشن منظوری کی منتظر ہے۔",
   "backToLogin": "لاگ ان پر واپس جائیں",
   "chapterListTitle": "ابواب",

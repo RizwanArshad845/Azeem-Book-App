@@ -16,4 +16,10 @@ class SessionExpiryNotifier {
   /// must be cleared too — so the composition root can log out and show the
   /// blocking dialog.
   static void Function({required bool clearSession})? onAccountDeleted;
+
+  /// Fired on `403 teacher_pending_approval` (a gated teacher dashboard call
+  /// from a not-yet-approved teacher). The composition root re-syncs the
+  /// routing status so the router redirect lands on the awaiting-approval
+  /// screen.
+  static VoidCallback? onTeacherPendingApproval;
 }

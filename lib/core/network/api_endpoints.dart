@@ -6,6 +6,7 @@ class ApiEndpoints {
 
   static const String authOtpRequest = '/auth/otp/request';
   static const String authOtpVerify = '/auth/otp/verify';
+  static const String authSessionStatus = '/auth/session-status';
   static const String authPhoneChangeRequest = '/auth/phone-change/request';
   static const String authPhoneChangeVerify = '/auth/phone-change/verify';
 

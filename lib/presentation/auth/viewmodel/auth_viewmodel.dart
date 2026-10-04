@@ -8,6 +8,7 @@ import '../../../domain/auth/entities/auth_session.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/auth/usecases/get_stored_session_usecase.dart';
 import '../../../domain/auth/usecases/logout_usecase.dart';
+import '../../../domain/auth/usecases/refresh_session_status_usecase.dart';
 import '../../../domain/auth/usecases/request_otp_usecase.dart';
 import '../../../domain/auth/usecases/verify_otp_usecase.dart';
 import '../../../domain/common/failure.dart';
@@ -142,6 +143,38 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
         unawaited(preloadTeacherProfileLookups());
       }
     }
+  }
+
+  bool _refreshingStatus = false;
+
+  /// Re-fetches the routing status (`GET /auth/session-status`) and, if it
+  /// changed, swaps it into the current session so the router redirect
+  /// re-evaluates (e.g. `PENDING_APPROVAL` -> `DASHBOARD` after an admin
+  /// approves a teacher). Returns the status the backend reported, or `null`
+  /// if there is no session or the call failed (the session is left as-is).
+  /// Concurrent calls collapse into one (returns `null` for the extras).
+  Future<String?> refreshSessionStatus() async {
+    if (_refreshingStatus || state.value == null) return null;
+    _refreshingStatus = true;
+    try {
+      final result = await sl<RefreshSessionStatusUseCase>()();
+      final status = result.when(
+        success: (status) => status,
+        failure: (_) => null,
+      );
+      if (status != null) setSessionStatus(status);
+      return status;
+    } finally {
+      _refreshingStatus = false;
+    }
+  }
+
+  /// Updates only the `status` of the current session (no-op if unchanged or
+  /// signed out). In-memory; [refreshSessionStatus] also persists.
+  void setSessionStatus(String status) {
+    final current = state.value;
+    if (current == null || current.status == status) return;
+    state = AsyncData<AuthSession?>(current.copyWith(status: status));
   }
 
   /// Kicks off the role-agnostic catalog lookups (campus/board-class/

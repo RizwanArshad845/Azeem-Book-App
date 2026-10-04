@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
@@ -13,16 +15,30 @@ import '../../auth/viewmodel/auth_viewmodel.dart';
 class NotificationsViewModel extends AsyncNotifier<List<Notification>> {
   @override
   Future<List<Notification>> build() async {
-    final user = ref.watch(currentUserProvider);
+    // Rebuild only when the logged-in user changes, not when just the
+    // routing `status` is refreshed (see the teacherApproved check below).
+    ref.watch(currentUserProvider.select((u) => u?.userId));
+    final user = ref.read(currentUserProvider);
     if (user == null) {
       return const [];
     }
 
     final result = await sl<GetNotificationsUseCase>()(user.userId!);
-    return result.when(
+    final notifications = result.when(
       success: (notifications) => notifications,
       failure: (failure) => throw failure,
     );
+
+    // An unread `teacherApproved` means an admin approved this teacher:
+    // re-sync the routing status so a still-`PENDING_APPROVAL` session moves
+    // on to the dashboard (no push yet — this is how the app finds out).
+    if (user.status != 'DASHBOARD' &&
+        notifications.any(
+          (n) => n.type == NotificationType.teacherApproved && !n.isRead,
+        )) {
+      unawaited(ref.read(authViewModelProvider.notifier).refreshSessionStatus());
+    }
+    return notifications;
   }
 
   /// Marks [notificationId] as read.

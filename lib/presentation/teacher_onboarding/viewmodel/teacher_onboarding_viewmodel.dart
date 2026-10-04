@@ -51,7 +51,13 @@ TeacherOnboardingStage teacherOnboardingStageOf(Teacher teacher) {
 class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
   @override
   Future<Teacher?> build() async {
-    final session = ref.watch(currentUserProvider);
+    // Rebuild only when WHO is logged in changes — not when just the routing
+    // `status` is refreshed (`AuthViewModel.refreshSessionStatus`), which
+    // would otherwise re-fetch the teacher on every status poll.
+    ref.watch(
+      currentUserProvider.select((s) => (s?.userId, s?.phoneNumber, s?.role)),
+    );
+    final session = ref.read(currentUserProvider);
     if (session == null) return null;
 
     // A student session has no row in the teachers table by definition —
@@ -129,6 +135,15 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
     return result.when(
       success: (created) {
         state = AsyncData<Teacher?>(created);
+        // The session's `status` is a snapshot from OTP-verify time
+        // (`NOT_REGISTERED`) — advance it so routing matches the backend,
+        // which now reports `PENDING_APPROVAL` for this teacher. Persisted
+        // by the next `refreshSessionStatus()`.
+        if (created.approvalStatus == TeacherApprovalStatus.pendingAdminApproval) {
+          ref
+              .read(authViewModelProvider.notifier)
+              .setSessionStatus('PENDING_APPROVAL');
+        }
         return true;
       },
       failure: (failure) {

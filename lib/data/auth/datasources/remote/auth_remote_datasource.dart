@@ -13,6 +13,12 @@ abstract class AuthRemoteDataSource {
     UserRole role,
   );
 
+  /// `GET /auth/session-status` — the routing `status` for the current token
+  /// (`NOT_REGISTERED`/`ONBOARDING`/`PENDING_APPROVAL`/`DASHBOARD`), or `null`
+  /// if the response carries none. Only the status is read: this response
+  /// must never overwrite the stored token/userId.
+  Future<String?> getSessionStatus();
+
   /// Sends an OTP to [newPhone] to confirm a phone-number change away from
   /// [currentPhone] (`backend.md` §4.8).
   Future<void> requestPhoneChangeOtp(String currentPhone, String newPhone);
@@ -46,6 +52,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       data: {'phoneNumber': phoneNumber, 'otp': otp, 'role': role.name},
     );
     return AuthSessionDto.fromJson(response.data ?? const {});
+  }
+
+  @override
+  Future<String?> getSessionStatus() async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      ApiEndpoints.authSessionStatus,
+    );
+    final status = response.data?['status'];
+    return status is String ? status : null;
   }
 
   @override

@@ -557,7 +557,7 @@ abstract class AppLocalizations {
   /// No description provided for @teacherPendingNote.
   ///
   /// In en, this message translates to:
-  /// **'You will receive full access once your credentials are verified by our team.'**
+  /// **'Your account is waiting for admin approval. We\'ll notify you on WhatsApp once it\'s approved.'**
   String get teacherPendingNote;
 
   /// No description provided for @homeGreeting.
@@ -1403,7 +1403,7 @@ abstract class AppLocalizations {
   /// No description provided for @teacherPendingCheckStatus.
   ///
   /// In en, this message translates to:
-  /// **'Check status'**
+  /// **'Refresh'**
   String get teacherPendingCheckStatus;
 
   /// No description provided for @teacherPendingStillPendingMessage.
