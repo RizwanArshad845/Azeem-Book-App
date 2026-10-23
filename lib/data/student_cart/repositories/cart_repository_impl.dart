@@ -27,6 +27,7 @@ class CartRepositoryImpl implements CartRepository {
 
   final Map<String, Cart> _cachedCartByStudent = {};
   final Map<String, Set<String>> _cachedPurchasedIdsByStudent = {};
+  final Map<String, Set<String>> _cachedPendingIdsByStudent = {};
   final Map<String, String> _knownSubjectNames = {};
   final Map<String, int> _knownTestCounts = {};
 
@@ -125,6 +126,16 @@ class CartRepositoryImpl implements CartRepository {
     final result = await remote.checkout(studentId);
     return result.when(
       success: (dto) {
+        // A gateway checkout comes back `pending`: the backend has reserved
+        // the cart items, but nothing is purchased until its webhook
+        // settles the payment. Drop the cart cache so the next read sees
+        // the server's state (items return to the cart if payment fails).
+        if (dto.status != PaymentStatus.success) {
+          _cachedCartByStudent.remove(studentId);
+          _cachedPendingIdsByStudent.remove(studentId);
+          return Success(dto.toDomain());
+        }
+
         final currentItems =
             _cachedCartByStudent[studentId]?.items ?? const [];
         final newPurchasedIds =
@@ -161,15 +172,37 @@ class CartRepositoryImpl implements CartRepository {
     if (cached != null && !forceRefresh) {
       return Success(cached);
     }
+    return _fetchPaymentStatus(studentId, _cachedPurchasedIdsByStudent);
+  }
 
-    final result = await remote.getPurchasedSubjectIds(studentId);
+  @override
+  Future<Result<Set<String>>> getPendingSubjectIds(
+    String studentId, {
+    bool forceRefresh = false,
+  }) async {
+    final cached = _cachedPendingIdsByStudent[studentId];
+    if (cached != null && !forceRefresh) {
+      return Success(cached);
+    }
+    return _fetchPaymentStatus(studentId, _cachedPendingIdsByStudent);
+  }
+
+  /// One `/payments/status` call refreshes both caches, so a caller polling
+  /// one set can read the other straight after without a second request.
+  /// Returns the set held in [cache]; falls back to its stale value on error.
+  Future<Result<Set<String>>> _fetchPaymentStatus(
+    String studentId,
+    Map<String, Set<String>> cache,
+  ) async {
+    final result = await remote.getPaymentStatus(studentId);
     return result.when(
-      success: (ids) {
-        _cachedPurchasedIdsByStudent[studentId] = ids;
-        return Success(ids);
+      success: (status) {
+        _cachedPurchasedIdsByStudent[studentId] = status.purchased;
+        _cachedPendingIdsByStudent[studentId] = status.pending;
+        return Success(cache[studentId]!);
       },
       failure: (f) {
-        final stale = _cachedPurchasedIdsByStudent[studentId];
+        final stale = cache[studentId];
         return stale != null ? Success(stale) : ResultFailure(f);
       },
     );
@@ -179,5 +212,6 @@ class CartRepositoryImpl implements CartRepository {
   void clearCache() {
     _cachedCartByStudent.clear();
     _cachedPurchasedIdsByStudent.clear();
+    _cachedPendingIdsByStudent.clear();
   }
 }

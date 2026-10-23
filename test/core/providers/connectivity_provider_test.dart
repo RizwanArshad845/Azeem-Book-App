@@ -20,6 +20,8 @@ class _FakeConnectivity implements Connectivity {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized(); // AppLifecycleListener
+
   late _FakeConnectivity fake;
   late bool reachable;
   late ProviderContainer container;
@@ -58,7 +60,7 @@ void main() {
 
     fake.current = [ConnectivityResult.none];
     fake.controller.add([ConnectivityResult.none]);
-    await Future<void>.delayed(Duration.zero);
+    await settle();
     expect(container.read(isOnlineProvider), isFalse);
 
     fake.current = [ConnectivityResult.mobile];
@@ -72,7 +74,31 @@ void main() {
     reachable = false; // e.g. Wi-Fi with no uplink
     start();
     await settle();
+    await container.read(isOnlineProvider.notifier).recheck();
     expect(container.read(isOnlineProvider), isFalse);
+  });
+
+  test('ignores a transient `none` event while a network is still up',
+      () async {
+    start();
+    await settle();
+
+    fake.controller.add([ConnectivityResult.none]); // handover blip
+    await settle();
+    expect(container.read(isOnlineProvider), isTrue);
+  });
+
+  test('a single failed lookup does not show the offline screen', () async {
+    start();
+    await settle();
+
+    reachable = false;
+    await container.read(isOnlineProvider.notifier).recheck();
+    expect(container.read(isOnlineProvider), isTrue);
+
+    reachable = true;
+    await container.read(isOnlineProvider.notifier).recheck();
+    expect(container.read(isOnlineProvider), isTrue);
   });
 
   test('starts offline if there is no network at launch', () async {
@@ -87,6 +113,7 @@ void main() {
     await settle();
 
     reachable = false;
+    await container.read(isOnlineProvider.notifier).recheck();
     await container.read(isOnlineProvider.notifier).recheck();
     expect(container.read(isOnlineProvider), isFalse);
 

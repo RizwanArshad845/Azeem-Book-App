@@ -79,6 +79,8 @@ extension FailureLocalization on Failure {
       TeacherNotSelectableFailure() => l10n.teacherNotSelectableMessage,
       TeacherLockedAfterPurchaseFailure() => l10n.teacherLockedAfterPurchaseMessage,
       AlreadyEnrolledFailure() => l10n.alreadyEnrolledMessage,
+      SubjectAlreadyPurchasedFailure() => l10n.subjectAlreadyPurchasedMessage,
+      SubjectPaymentPendingFailure() => l10n.paymentProcessingMessage,
     };
   }
 }

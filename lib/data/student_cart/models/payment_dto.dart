@@ -16,6 +16,7 @@ abstract class PaymentDto with _$PaymentDto {
     @DecimalStringConverter() required double amount,
     required PaymentStatus status,
     String? gatewayReference,
+    String? checkoutUrl,
     required DateTime createdAt,
   }) = _PaymentDto;
 
@@ -28,6 +29,7 @@ abstract class PaymentDto with _$PaymentDto {
     amount: amount,
     status: status,
     gatewayReference: gatewayReference,
+    checkoutUrl: checkoutUrl,
     createdAt: createdAt,
   );
 
@@ -37,6 +39,7 @@ abstract class PaymentDto with _$PaymentDto {
     amount: entity.amount,
     status: entity.status,
     gatewayReference: entity.gatewayReference,
+    checkoutUrl: entity.checkoutUrl,
     createdAt: entity.createdAt,
   );
 }

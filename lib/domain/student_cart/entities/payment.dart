@@ -5,11 +5,13 @@ part 'payment.freezed.dart';
 /// `status` of a [Payment] (project_spec.md §9.2).
 enum PaymentStatus { pending, success, failed }
 
-/// Result of a checkout attempt against the (simulated, in dummy mode)
-/// payment gateway (project_spec.md §9.2 `Payment`, §10.2 "checkout ->
-/// payment gateway redirect"). A `success` status is what makes every
-/// `testId` in the checked-out cart "purchased" for that student — see
-/// `GetPurchasedTestIdsUseCase`.
+/// Result of a checkout attempt against the RapidGateway hosted checkout
+/// (project_spec.md §9.2 `Payment`, §10.2 "checkout -> payment gateway
+/// redirect"). A real checkout comes back `pending` with a [checkoutUrl] the
+/// student pays on; only the backend's signed webhook moves it to `success`,
+/// which is what makes every subject in the checked-out cart "purchased" —
+/// see `GetPurchasedSubjectIdsUseCase`. A free cart settles immediately
+/// (`success`, no [checkoutUrl]).
 @freezed
 abstract class Payment with _$Payment {
   const factory Payment({
@@ -18,6 +20,7 @@ abstract class Payment with _$Payment {
     required double amount,
     required PaymentStatus status,
     String? gatewayReference,
+    String? checkoutUrl,
     required DateTime createdAt,
   }) = _Payment;
 }

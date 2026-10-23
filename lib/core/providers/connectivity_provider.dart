@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../config/app_config.dart';
@@ -23,11 +24,10 @@ final internetReachabilityProvider = Provider<Future<bool> Function()>((ref) {
     try {
       final addresses = await InternetAddress.lookup(
         host,
-      ).timeout(const Duration(seconds: 4));
+      ).timeout(const Duration(seconds: 5));
       return addresses.isNotEmpty && addresses.first.rawAddress.isNotEmpty;
-    } on SocketException {
-      return false;
-    } on TimeoutException {
+    } catch (_) {
+      // SocketException, TimeoutException, or any platform lookup error.
       return false;
     }
   };
@@ -38,18 +38,30 @@ final internetReachabilityProvider = Provider<Future<bool> Function()>((ref) {
 /// check is still running.
 ///
 /// Two signals are combined:
-/// - `connectivity_plus` change events, so losing every network flips this to
-///   offline immediately (no waiting on a lookup);
+/// - `connectivity_plus` interface state, so losing every network flips this
+///   to offline right away (once re-confirmed — Android emits a transient
+///   `none` during Wi-Fi ↔ mobile handover);
 /// - a real reachability check (see [internetReachabilityProvider]) on every
 ///   change, on [recheck], and every [_pollInterval], because an interface
 ///   being "up" doesn't mean the internet works (captive/no-uplink Wi-Fi).
+///   A single failed lookup is treated as a blip: it takes
+///   [_failureThreshold] consecutive failures to go offline.
+///
+/// Polling pauses while the app is backgrounded — the OS restricts network
+/// access then, so lookups fail and would wrongly show the offline screen on
+/// resume.
 class ConnectivityNotifier extends Notifier<bool> {
   static const _pollInterval = Duration(seconds: 5);
+  static const _confirmDelay = Duration(seconds: 2);
+  static const _failureThreshold = 2;
 
   StreamSubscription<List<ConnectivityResult>>? _subscription;
+  AppLifecycleListener? _lifecycle;
   Timer? _timer;
+  Timer? _confirmTimer;
   bool _checking = false;
   bool _recheckQueued = false;
+  int _failures = 0;
 
   @override
   bool build() {
@@ -59,17 +71,39 @@ class ConnectivityNotifier extends Notifier<bool> {
       onError: (Object e, StackTrace st) =>
           sl<Logger>().e('Connectivity stream error', e, st),
     );
-    _timer = Timer.periodic(_pollInterval, (_) => _refresh());
+    _lifecycle = AppLifecycleListener(
+      onResume: _onResume,
+      onHide: _stopPolling,
+    );
+    _startPolling();
     ref.onDispose(() {
       _subscription?.cancel();
-      _timer?.cancel();
+      _lifecycle?.dispose();
+      _stopPolling();
     });
     _refresh();
     return true;
   }
 
-  void _onInterfaceChange(List<ConnectivityResult> results) {
-    if (!_hasInterface(results)) {
+  void _startPolling() {
+    _timer?.cancel();
+    _timer = Timer.periodic(_pollInterval, (_) => _refresh());
+  }
+
+  void _stopPolling() {
+    _timer?.cancel();
+    _confirmTimer?.cancel();
+  }
+
+  void _onResume() {
+    _failures = 0; // background failures don't count
+    _startPolling();
+    _refresh();
+  }
+
+  Future<void> _onInterfaceChange(List<ConnectivityResult> results) async {
+    if (!_hasInterface(results) && !await _currentlyHasInterface()) {
+      _failures = _failureThreshold;
       _set(false); // lost every network: show the offline screen right now
       return;
     }
@@ -78,6 +112,19 @@ class ConnectivityNotifier extends Notifier<bool> {
 
   bool _hasInterface(List<ConnectivityResult> results) =>
       results.isNotEmpty && results.any((r) => r != ConnectivityResult.none);
+
+  Future<bool> _currentlyHasInterface() async {
+    try {
+      return _hasInterface(
+        await ref.read(connectivityServiceProvider).checkConnectivity(),
+      );
+    } catch (e, st) {
+      // e.g. the native plugin isn't registered (app not fully rebuilt
+      // after adding it) — log it and fall back to reachability alone.
+      sl<Logger>().e('connectivity_plus checkConnectivity failed', e, st);
+      return true;
+    }
+  }
 
   /// Re-checks both signals (the offline screen's "Try again").
   Future<void> recheck() => _refresh();
@@ -91,19 +138,19 @@ class ConnectivityNotifier extends Notifier<bool> {
     try {
       do {
         _recheckQueued = false;
-        var hasInterface = true;
-        try {
-          hasInterface = _hasInterface(
-            await ref.read(connectivityServiceProvider).checkConnectivity(),
-          );
-        } catch (e, st) {
-          // e.g. the native plugin isn't registered (app not fully rebuilt
-          // after adding it) — log it and fall back to reachability alone.
-          sl<Logger>().e('connectivity_plus checkConnectivity failed', e, st);
+        if (!await _currentlyHasInterface()) {
+          _failures = _failureThreshold;
+          _set(false);
+        } else if (await ref.read(internetReachabilityProvider)()) {
+          _failures = 0;
+          _set(true);
+        } else if (++_failures >= _failureThreshold) {
+          _set(false);
+        } else {
+          // First failure: confirm soon instead of waiting a full poll.
+          _confirmTimer?.cancel();
+          _confirmTimer = Timer(_confirmDelay, _refresh);
         }
-        final online =
-            hasInterface && await ref.read(internetReachabilityProvider)();
-        _set(online);
       } while (_recheckQueued && ref.mounted);
     } finally {
       _checking = false;

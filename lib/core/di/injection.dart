@@ -68,6 +68,7 @@ import '../../domain/student_cart/repositories/cart_repository.dart';
 import '../../domain/student_cart/usecases/add_subject_bundle_usecase.dart';
 import '../../domain/student_cart/usecases/checkout_usecase.dart';
 import '../../domain/student_cart/usecases/get_cart_usecase.dart';
+import '../../domain/student_cart/usecases/get_pending_subject_ids_usecase.dart';
 import '../../domain/student_cart/usecases/get_purchased_subject_ids_usecase.dart';
 import '../../domain/student_cart/usecases/remove_from_cart_usecase.dart';
 import '../../data/test_taking/datasources/remote/test_attempt_remote_datasource.dart';
@@ -204,6 +205,7 @@ void setupLocator() {
   sl.registerLazySingleton(() => RemoveFromCartUseCase(sl()));
   sl.registerLazySingleton(() => CheckoutUseCase(sl()));
   sl.registerLazySingleton(() => GetPurchasedSubjectIdsUseCase(sl()));
+  sl.registerLazySingleton(() => GetPendingSubjectIdsUseCase(sl()));
 
   // test-taking
   sl.registerLazySingleton<TestAttemptRemoteDataSource>(

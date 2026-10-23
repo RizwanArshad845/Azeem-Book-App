@@ -847,6 +847,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkoutPendingStatus => 'Payment pending';
 
   @override
+  String get checkoutGatewayHint =>
+      'Complete your payment on the secure RapidGateway page. Your subjects unlock as soon as the payment is confirmed.';
+
+  @override
+  String get checkoutConfirming => 'Confirming your payment...';
+
+  @override
+  String get checkoutUnconfirmedMessage =>
+      'We haven\'t received confirmation yet. If you paid, your subjects will unlock automatically within a few minutes.';
+
+  @override
+  String get checkoutCheckStatus => 'Check payment status';
+
+  @override
+  String get checkoutGatewayFailedMessage =>
+      'Payment was not completed. Any items will return to your cart.';
+
+  @override
+  String get paymentGatewayTitle => 'Secure Payment';
+
+  @override
+  String get paymentProcessingBadge => 'Processing';
+
+  @override
+  String get subjectAlreadyPurchasedMessage =>
+      'You have already purchased this subject.';
+
+  @override
+  String get paymentProcessingTitle => 'Payment processing';
+
+  @override
+  String get paymentProcessingMessage =>
+      'We\'re confirming your payment. Your subjects will unlock automatically — you don\'t need to pay again.';
+
+  @override
+  String get paymentConfirmedMessage =>
+      'Payment confirmed — your subjects are unlocked.';
+
+  @override
+  String get paymentFailedMessage =>
+      'Payment was not completed. Your items are back in the cart.';
+
+  @override
   String get commonDone => 'Done';
 
   @override

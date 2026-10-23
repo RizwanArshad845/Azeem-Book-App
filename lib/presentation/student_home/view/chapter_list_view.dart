@@ -14,6 +14,7 @@ import '../../../core/widgets/status_badge.dart';
 import '../../../domain/catalog/entities/chapter.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
+import '../../student_cart/widgets/payment_processing_banner.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 import '../../student_progress/viewmodel/student_progress_viewmodel.dart';
 import '../../test_taking/viewmodel/free_attempts_provider.dart';
@@ -91,6 +92,11 @@ class ChapterListView extends ConsumerWidget {
     final chaptersAsync = ref.watch(chaptersForSubjectProvider(subjectId));
     final purchasedIds = ref.watch(purchasedSubjectIdsProvider).value;
     final isOwned = purchasedIds?.contains(subjectId) ?? false;
+    final isPaymentPending = ref.watch(
+      pendingSubjectIdsProvider.select(
+        (ids) => ids.value?.contains(subjectId) ?? false,
+      ),
+    );
     final remainingFree = ref.watch(remainingFreeAttemptsProvider).value ??
         AppConfig.freeAttemptsPerStudent;
     final tests = ref.watch(testsForSubjectProvider(subjectId)).value;
@@ -229,7 +235,12 @@ class ChapterListView extends ConsumerWidget {
                   },
                 ),
               ),
-              if (!isOwned && tests != null && tests.isNotEmpty) ...[
+              // Paid but not yet confirmed: no Buy Now (it would be refused
+              // anyway) — explain that it unlocks on its own instead.
+              if (!isOwned && isPaymentPending) ...[
+                SizedBox(height: context.dimens.md),
+                PaymentProcessingBanner(subjectId: subjectId),
+              ] else if (!isOwned && tests != null && tests.isNotEmpty) ...[
                 SizedBox(height: context.dimens.md),
                 SubjectBundleHeader(
                   subjectName: resolvedSubjectName ?? title,

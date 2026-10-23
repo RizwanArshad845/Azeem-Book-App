@@ -46,6 +46,7 @@ class AppRoutes {
   static String ebookReaderPath(String subjectId) =>
       '/ebook-reader/$subjectId';
   static const String cartCheckout = '/cart/checkout';
+  static const String paymentGateway = '/cart/checkout/pay';
   static const String teacherStudentProgressDetail =
       '/teacher/students/:studentId/progress';
   static String teacherStudentProgressDetailPath(String studentId) =>

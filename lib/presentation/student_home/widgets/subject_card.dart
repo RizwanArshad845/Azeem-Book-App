@@ -24,6 +24,11 @@ class SubjectCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final purchasedIds = ref.watch(purchasedSubjectIdsProvider).value;
     final isOwned = purchasedIds?.contains(subject.id) ?? false;
+    final isPaymentPending = ref.watch(
+      pendingSubjectIdsProvider.select(
+        (ids) => ids.value?.contains(subject.id) ?? false,
+      ),
+    );
     final cartState = ref.watch(studentCartViewModelProvider).value;
     final cartItems = cartState?.items;
     final isInCart =
@@ -52,6 +57,11 @@ class SubjectCard extends ConsumerWidget {
                 StatusBadge(
                   label: context.l10n.subjectCardOwnedBadge,
                   color: context.colors.success,
+                )
+              else if (isPaymentPending)
+                StatusBadge(
+                  label: context.l10n.paymentProcessingBadge,
+                  color: context.colors.warning,
                 )
               else if (isInCart)
                 StatusBadge(

@@ -32,9 +32,12 @@ abstract class CartRepository {
 
   Future<Result<Cart>> removeItem(String studentId, String subjectId);
 
-  /// Simulates a payment-gateway checkout for the student's current cart.
-  /// On success: clears the cart's items, and every `subjectId` that was in
-  /// it becomes "purchased" for that student (see [getPurchasedSubjectIds]).
+  /// Starts a RapidGateway checkout for the student's current cart. Usually
+  /// returns a `pending` [Payment] with a `checkoutUrl` to open; subjects
+  /// only become purchased once the backend webhook settles it (poll
+  /// [getPurchasedSubjectIds] with `forceRefresh`). A free cart comes back
+  /// `success` directly: its items are cleared and every `subjectId` that
+  /// was in it becomes "purchased" for that student.
   Future<Result<Payment>> checkout(String studentId);
 
   /// Every `subjectId` that has ever appeared in a `success`-status
@@ -43,6 +46,15 @@ abstract class CartRepository {
   /// `subjectId` is in this set — subject-scoped rather than test-scoped so
   /// a test Admin adds to an already-purchased subject is unlocked too.
   Future<Result<Set<String>>> getPurchasedSubjectIds(
+    String studentId, {
+    bool forceRefresh = false,
+  });
+
+  /// Every `subjectId` reserved by a gateway payment the backend hasn't had
+  /// an outcome for yet (shared fetch with [getPurchasedSubjectIds]). Such a
+  /// subject is neither owned nor buyable: the backend refuses to add it to
+  /// the cart again (`subject_payment_pending`) so it can't be paid twice.
+  Future<Result<Set<String>>> getPendingSubjectIds(
     String studentId, {
     bool forceRefresh = false,
   });

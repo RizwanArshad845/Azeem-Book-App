@@ -13,6 +13,7 @@ import '../viewmodel/student_cart_viewmodel.dart';
 import '../widgets/cart_item_card.dart';
 import '../widgets/cart_total_row.dart';
 import '../widgets/checkout_review_sheet.dart';
+import '../widgets/payment_processing_banner.dart';
 
 /// Student shell Cart tab root (§10.2: "Add-to-cart summary, checkout ->
 /// payment gateway redirect"). One primary action per §10.1: the
@@ -25,11 +26,41 @@ class StudentCartView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cartAsync = ref.watch(studentCartViewModelProvider);
     final isMutating = ref.watch(cartMutationInProgressProvider);
+    final hasPendingPayment = ref.watch(
+      pendingSubjectIdsProvider.select((ids) => ids.value?.isNotEmpty ?? false),
+    );
 
     return Scaffold(
       appBar: AppBar(title: AppBarTitle(context.l10n.cartTitle)),
       body: SafeArea(
-        child: AsyncValueWidget<Cart>(
+        child: Column(
+          children: [
+            // A payment the student left mid-way: its items are reserved
+            // (so not listed below) until the gateway reports back.
+            if (hasPendingPayment)
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  context.dimens.lg,
+                  context.dimens.lg,
+                  context.dimens.lg,
+                  0,
+                ),
+                child: const PaymentProcessingBanner(),
+              ),
+            Expanded(child: _buildCart(context, ref, cartAsync, isMutating)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCart(
+    BuildContext context,
+    WidgetRef ref,
+    AsyncValue<Cart> cartAsync,
+    bool isMutating,
+  ) {
+    return AsyncValueWidget<Cart>(
           value: cartAsync,
           onRetry: () => ref.invalidate(studentCartViewModelProvider),
           skeleton: Padding(
@@ -77,8 +108,6 @@ class StudentCartView extends ConsumerWidget {
               ),
             );
           },
-        ),
-      ),
-    );
+        );
   }
 }

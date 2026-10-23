@@ -108,6 +108,10 @@ class ErrorInterceptor extends Interceptor {
         return const TeacherLockedAfterPurchaseFailure();
       case 'already_enrolled' when statusCode == 409:
         return const AlreadyEnrolledFailure();
+      case 'subject_already_purchased' when statusCode == 409:
+        return const SubjectAlreadyPurchasedFailure();
+      case 'subject_payment_pending' when statusCode == 409:
+        return const SubjectPaymentPendingFailure();
     }
 
     if (statusCode == 400) {

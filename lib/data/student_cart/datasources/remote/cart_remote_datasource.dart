@@ -27,8 +27,12 @@ abstract class CartRemoteDataSource {
 
   Future<Result<PaymentDto>> checkout(String studentId);
 
-  Future<Result<Set<String>>> getPurchasedSubjectIds(String studentId);
+  /// `GET /payments/status`: subjects the student owns, and subjects tied up
+  /// in a gateway payment that hasn't been confirmed yet.
+  Future<Result<PaymentStatusSnapshot>> getPaymentStatus(String studentId);
 }
+
+typedef PaymentStatusSnapshot = ({Set<String> purchased, Set<String> pending});
 
 class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   CartRemoteDataSourceImpl(this._dio);
@@ -81,16 +85,20 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   }
 
   @override
-  Future<Result<Set<String>>> getPurchasedSubjectIds(String studentId) {
+  Future<Result<PaymentStatusSnapshot>> getPaymentStatus(String studentId) {
     return guardRequest(() async {
       final response = await _dio.get<Map<String, dynamic>>(
         ApiEndpoints.paymentStatus,
         queryParameters: {'studentId': studentId},
       );
       final data = response.data;
-      final rawList = data?['purchasedSubjectIds'] as List<dynamic>? ?? [];
-      final ids = rawList.map((e) => e.toString()).toSet();
-      return ids;
+      Set<String> ids(String key) => (data?[key] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toSet();
+      return (
+        purchased: ids('purchasedSubjectIds'),
+        pending: ids('pendingSubjectIds'),
+      );
     });
   }
 }

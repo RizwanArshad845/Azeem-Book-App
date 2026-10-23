@@ -132,6 +132,26 @@ class AlreadyEnrolledFailure extends Failure {
   String get message => 'You are already enrolled in this subject.';
 }
 
+/// Backend `subject_already_purchased` (409): add-to-cart for a subject the
+/// student already owns.
+class SubjectAlreadyPurchasedFailure extends Failure {
+  const SubjectAlreadyPurchasedFailure();
+
+  @override
+  String get message => 'You have already purchased this subject.';
+}
+
+/// Backend `subject_payment_pending` (409): add-to-cart for a subject whose
+/// payment is still being confirmed — refused so it can't be paid twice.
+class SubjectPaymentPendingFailure extends Failure {
+  const SubjectPaymentPendingFailure();
+
+  @override
+  String get message =>
+      'A payment for this subject is still being processed. It will unlock '
+      'automatically once the payment is confirmed.';
+}
+
 class NotFoundFailure extends Failure {
   const NotFoundFailure([this.details]);
 

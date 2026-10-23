@@ -12,6 +12,7 @@ _PaymentDto _$PaymentDtoFromJson(Map<String, dynamic> json) => _PaymentDto(
   amount: const DecimalStringConverter().fromJson(json['amount']),
   status: $enumDecode(_$PaymentStatusEnumMap, json['status']),
   gatewayReference: json['gatewayReference'] as String?,
+  checkoutUrl: json['checkoutUrl'] as String?,
   createdAt: DateTime.parse(json['createdAt'] as String),
 );
 
@@ -22,6 +23,7 @@ Map<String, dynamic> _$PaymentDtoToJson(_PaymentDto instance) =>
       'amount': const DecimalStringConverter().toJson(instance.amount),
       'status': _$PaymentStatusEnumMap[instance.status]!,
       'gatewayReference': instance.gatewayReference,
+      'checkoutUrl': instance.checkoutUrl,
       'createdAt': instance.createdAt.toIso8601String(),
     };
 

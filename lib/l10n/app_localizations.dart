@@ -1628,6 +1628,78 @@ abstract class AppLocalizations {
   /// **'Payment pending'**
   String get checkoutPendingStatus;
 
+  /// No description provided for @checkoutGatewayHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your payment on the secure RapidGateway page. Your subjects unlock as soon as the payment is confirmed.'**
+  String get checkoutGatewayHint;
+
+  /// No description provided for @checkoutConfirming.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirming your payment...'**
+  String get checkoutConfirming;
+
+  /// No description provided for @checkoutUnconfirmedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We haven\'t received confirmation yet. If you paid, your subjects will unlock automatically within a few minutes.'**
+  String get checkoutUnconfirmedMessage;
+
+  /// No description provided for @checkoutCheckStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Check payment status'**
+  String get checkoutCheckStatus;
+
+  /// No description provided for @checkoutGatewayFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment was not completed. Any items will return to your cart.'**
+  String get checkoutGatewayFailedMessage;
+
+  /// No description provided for @paymentGatewayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Payment'**
+  String get paymentGatewayTitle;
+
+  /// No description provided for @paymentProcessingBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing'**
+  String get paymentProcessingBadge;
+
+  /// No description provided for @subjectAlreadyPurchasedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have already purchased this subject.'**
+  String get subjectAlreadyPurchasedMessage;
+
+  /// No description provided for @paymentProcessingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment processing'**
+  String get paymentProcessingTitle;
+
+  /// No description provided for @paymentProcessingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re confirming your payment. Your subjects will unlock automatically — you don\'t need to pay again.'**
+  String get paymentProcessingMessage;
+
+  /// No description provided for @paymentConfirmedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment confirmed — your subjects are unlocked.'**
+  String get paymentConfirmedMessage;
+
+  /// No description provided for @paymentFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment was not completed. Your items are back in the cart.'**
+  String get paymentFailedMessage;
+
   /// No description provided for @commonDone.
   ///
   /// In en, this message translates to:

@@ -14,8 +14,10 @@ import '../../presentation/notifications/view/notifications_view.dart';
 import '../../presentation/splash/view/splash_view.dart';
 import '../../presentation/splash/viewmodel/splash_viewmodel.dart';
 import '../../presentation/student_cart/view/checkout_view.dart';
+import '../../presentation/student_cart/view/payment_gateway_view.dart';
 import '../../presentation/student_cart/view/student_cart_view.dart';
 import '../../presentation/student_cart/viewmodel/student_cart_viewmodel.dart';
+import '../../presentation/student_cart/widgets/payment_watcher.dart';
 import '../../presentation/student_progress/view/student_progress_view.dart';
 import '../../presentation/live_test_registration/view/live_tests_view.dart';
 import '../../presentation/student_home/view/chapter_list_view.dart';
@@ -181,6 +183,7 @@ const _teacherShellRoutes = {
 // `AppRoutes.testTaking` pattern.
 const _outsideShellRoutes = {
   AppRoutes.cartCheckout,
+  AppRoutes.paymentGateway,
   AppRoutes.studentProfile,
   // Round-2: Profile + Notifications moved off the bottom nav to dedicated
   // app-bar icons; they now push full-screen on top of either shell.
@@ -417,9 +420,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 (c) => c.value?.items?.length ?? 0,
               ),
             );
-            return AppScaffoldWithBottomNav(
-              navigationShell: navigationShell,
-              destinations: _buildStudentDestinations(context, cartCount),
+            return PaymentWatcher(
+              child: AppScaffoldWithBottomNav(
+                navigationShell: navigationShell,
+                destinations: _buildStudentDestinations(context, cartCount),
+              ),
             );
           },
         ),
@@ -560,6 +565,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.cartCheckout,
         pageBuilder: (context, state) =>
             _appPage(state, const CheckoutView()),
+      ),
+      GoRoute(
+        path: AppRoutes.paymentGateway,
+        pageBuilder: (context, state) => _appPage(
+          state,
+          PaymentGatewayView(checkoutUrl: state.extra! as String),
+        ),
       ),
       GoRoute(
         path: AppRoutes.teacherStudentProgressDetail,

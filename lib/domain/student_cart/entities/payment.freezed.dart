@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Payment {
 
- String get id; String get studentId; double get amount; PaymentStatus get status; String? get gatewayReference; DateTime get createdAt;
+ String get id; String get studentId; double get amount; PaymentStatus get status; String? get gatewayReference; String? get checkoutUrl; DateTime get createdAt;
 /// Create a copy of Payment
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $PaymentCopyWith<Payment> get copyWith => _$PaymentCopyWithImpl<Payment>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Payment&&(identical(other.id, id) || other.id == id)&&(identical(other.studentId, studentId) || other.studentId == studentId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.status, status) || other.status == status)&&(identical(other.gatewayReference, gatewayReference) || other.gatewayReference == gatewayReference)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Payment&&(identical(other.id, id) || other.id == id)&&(identical(other.studentId, studentId) || other.studentId == studentId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.status, status) || other.status == status)&&(identical(other.gatewayReference, gatewayReference) || other.gatewayReference == gatewayReference)&&(identical(other.checkoutUrl, checkoutUrl) || other.checkoutUrl == checkoutUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,studentId,amount,status,gatewayReference,createdAt);
+int get hashCode => Object.hash(runtimeType,id,studentId,amount,status,gatewayReference,checkoutUrl,createdAt);
 
 @override
 String toString() {
-  return 'Payment(id: $id, studentId: $studentId, amount: $amount, status: $status, gatewayReference: $gatewayReference, createdAt: $createdAt)';
+  return 'Payment(id: $id, studentId: $studentId, amount: $amount, status: $status, gatewayReference: $gatewayReference, checkoutUrl: $checkoutUrl, createdAt: $createdAt)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $PaymentCopyWith<$Res>  {
   factory $PaymentCopyWith(Payment value, $Res Function(Payment) _then) = _$PaymentCopyWithImpl;
 @useResult
 $Res call({
- String id, String studentId, double amount, PaymentStatus status, String? gatewayReference, DateTime createdAt
+ String id, String studentId, double amount, PaymentStatus status, String? gatewayReference, String? checkoutUrl, DateTime createdAt
 });
 
 
@@ -62,13 +62,14 @@ class _$PaymentCopyWithImpl<$Res>
 
 /// Create a copy of Payment
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? studentId = null,Object? amount = null,Object? status = null,Object? gatewayReference = freezed,Object? createdAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? studentId = null,Object? amount = null,Object? status = null,Object? gatewayReference = freezed,Object? checkoutUrl = freezed,Object? createdAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,studentId: null == studentId ? _self.studentId : studentId // ignore: cast_nullable_to_non_nullable
 as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as double,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as PaymentStatus,gatewayReference: freezed == gatewayReference ? _self.gatewayReference : gatewayReference // ignore: cast_nullable_to_non_nullable
+as String?,checkoutUrl: freezed == checkoutUrl ? _self.checkoutUrl : checkoutUrl // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
@@ -155,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String studentId,  double amount,  PaymentStatus status,  String? gatewayReference,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String studentId,  double amount,  PaymentStatus status,  String? gatewayReference,  String? checkoutUrl,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Payment() when $default != null:
-return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gatewayReference,_that.createdAt);case _:
+return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gatewayReference,_that.checkoutUrl,_that.createdAt);case _:
   return orElse();
 
 }
@@ -176,10 +177,10 @@ return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gateway
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String studentId,  double amount,  PaymentStatus status,  String? gatewayReference,  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String studentId,  double amount,  PaymentStatus status,  String? gatewayReference,  String? checkoutUrl,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _Payment():
-return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gatewayReference,_that.createdAt);case _:
+return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gatewayReference,_that.checkoutUrl,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +197,10 @@ return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gateway
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String studentId,  double amount,  PaymentStatus status,  String? gatewayReference,  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String studentId,  double amount,  PaymentStatus status,  String? gatewayReference,  String? checkoutUrl,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Payment() when $default != null:
-return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gatewayReference,_that.createdAt);case _:
+return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gatewayReference,_that.checkoutUrl,_that.createdAt);case _:
   return null;
 
 }
@@ -211,7 +212,7 @@ return $default(_that.id,_that.studentId,_that.amount,_that.status,_that.gateway
 
 
 class _Payment implements Payment {
-  const _Payment({required this.id, required this.studentId, required this.amount, required this.status, this.gatewayReference, required this.createdAt});
+  const _Payment({required this.id, required this.studentId, required this.amount, required this.status, this.gatewayReference, this.checkoutUrl, required this.createdAt});
   
 
 @override final  String id;
@@ -219,6 +220,7 @@ class _Payment implements Payment {
 @override final  double amount;
 @override final  PaymentStatus status;
 @override final  String? gatewayReference;
+@override final  String? checkoutUrl;
 @override final  DateTime createdAt;
 
 /// Create a copy of Payment
@@ -231,16 +233,16 @@ _$PaymentCopyWith<_Payment> get copyWith => __$PaymentCopyWithImpl<_Payment>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Payment&&(identical(other.id, id) || other.id == id)&&(identical(other.studentId, studentId) || other.studentId == studentId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.status, status) || other.status == status)&&(identical(other.gatewayReference, gatewayReference) || other.gatewayReference == gatewayReference)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Payment&&(identical(other.id, id) || other.id == id)&&(identical(other.studentId, studentId) || other.studentId == studentId)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.status, status) || other.status == status)&&(identical(other.gatewayReference, gatewayReference) || other.gatewayReference == gatewayReference)&&(identical(other.checkoutUrl, checkoutUrl) || other.checkoutUrl == checkoutUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,studentId,amount,status,gatewayReference,createdAt);
+int get hashCode => Object.hash(runtimeType,id,studentId,amount,status,gatewayReference,checkoutUrl,createdAt);
 
 @override
 String toString() {
-  return 'Payment(id: $id, studentId: $studentId, amount: $amount, status: $status, gatewayReference: $gatewayReference, createdAt: $createdAt)';
+  return 'Payment(id: $id, studentId: $studentId, amount: $amount, status: $status, gatewayReference: $gatewayReference, checkoutUrl: $checkoutUrl, createdAt: $createdAt)';
 }
 
 
@@ -251,7 +253,7 @@ abstract mixin class _$PaymentCopyWith<$Res> implements $PaymentCopyWith<$Res> {
   factory _$PaymentCopyWith(_Payment value, $Res Function(_Payment) _then) = __$PaymentCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String studentId, double amount, PaymentStatus status, String? gatewayReference, DateTime createdAt
+ String id, String studentId, double amount, PaymentStatus status, String? gatewayReference, String? checkoutUrl, DateTime createdAt
 });
 
 
@@ -268,13 +270,14 @@ class __$PaymentCopyWithImpl<$Res>
 
 /// Create a copy of Payment
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? studentId = null,Object? amount = null,Object? status = null,Object? gatewayReference = freezed,Object? createdAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? studentId = null,Object? amount = null,Object? status = null,Object? gatewayReference = freezed,Object? checkoutUrl = freezed,Object? createdAt = null,}) {
   return _then(_Payment(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,studentId: null == studentId ? _self.studentId : studentId // ignore: cast_nullable_to_non_nullable
 as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
 as double,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as PaymentStatus,gatewayReference: freezed == gatewayReference ? _self.gatewayReference : gatewayReference // ignore: cast_nullable_to_non_nullable
+as String?,checkoutUrl: freezed == checkoutUrl ? _self.checkoutUrl : checkoutUrl // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));

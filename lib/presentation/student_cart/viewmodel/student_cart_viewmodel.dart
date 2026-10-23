@@ -6,12 +6,14 @@ import '../../../core/di/injection.dart';
 import '../../../core/di/riverpod_providers.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../../domain/catalog/entities/test.dart';
+import '../../../domain/common/failure.dart';
 import '../../../domain/student_cart/entities/cart.dart';
 import '../../../domain/student_cart/entities/cart_item.dart';
 import '../../../domain/student_cart/entities/payment.dart';
 import '../../../domain/student_cart/usecases/add_subject_bundle_usecase.dart';
 import '../../../domain/student_cart/usecases/checkout_usecase.dart';
 import '../../../domain/student_cart/usecases/get_cart_usecase.dart';
+import '../../../domain/student_cart/usecases/get_pending_subject_ids_usecase.dart';
 import '../../../domain/student_cart/usecases/get_purchased_subject_ids_usecase.dart';
 import '../../../domain/student_cart/usecases/remove_from_cart_usecase.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
@@ -117,6 +119,21 @@ class StudentCartViewModel extends AsyncNotifier<Cart> {
         subject,
         tests,
       );
+      // Already owned / payment still processing: the backend refused so it
+      // can't be paid twice. Keep the cart as it is and re-sync purchase
+      // status instead — the UI then shows the subject as owned/processing.
+      final refused = result.when(
+        success: (_) => false,
+        failure: (f) =>
+            f is SubjectPaymentPendingFailure ||
+            f is SubjectAlreadyPurchasedFailure,
+      );
+      if (refused) {
+        unawaited(
+          ref.read(paymentConfirmationProvider.notifier).resumeIfPending(),
+        );
+        return;
+      }
       state = await result.when(
         success: (cart) async => AsyncData<Cart>(await _enrichCart(cart)),
         failure: (failure) async =>
@@ -216,6 +233,19 @@ final currentCart = state.value;
 
     return result.when(
       success: (payment) {
+        // RapidGateway checkout: nothing is purchased until the backend's
+        // webhook settles it, so don't unlock anything here — hand the
+        // awaited subjects to the confirmation poller and let the cart
+        // reflect the server's reserved state.
+        if (payment.status == PaymentStatus.pending) {
+          ref
+              .read(paymentConfirmationProvider.notifier)
+              .expect(purchasedIds);
+          unawaited(_reconcileCartAfterCheckout(session.userId!));
+          return payment;
+        }
+        if (payment.status == PaymentStatus.failed) return payment;
+
         // 1. Immediate optimistic UI update (0ms delay)
         final emptyCart = Cart(
           id: session.userId!,
@@ -252,6 +282,14 @@ final currentCart = state.value;
       },
       failure: (_) => null,
     );
+  }
+
+  /// Re-fetches the cart from the server (e.g. after a gateway payment
+  /// settles or fails and the backend has cleared or restored its items).
+  Future<void> refreshCart() async {
+    final session = ref.read(currentUserProvider);
+    if (session?.userId == null) return;
+    await _reconcileCartAfterCheckout(session!.userId!);
   }
 
   Future<void> _reconcileCartAfterCheckout(String studentId) async {
@@ -293,6 +331,164 @@ final cartMutationInProgressProvider =
 final checkoutPaymentProvider = FutureProvider<Payment?>((ref) async {
   return ref.read(studentCartViewModelProvider.notifier).checkout();
 });
+
+/// Where a pending RapidGateway payment stands from the app's point of view.
+/// Only the backend webhook can settle a payment, so "confirmed" means the
+/// awaited subjects showed up in `GET /payments/status` — never the
+/// `result=success` on the WebView's return URL.
+enum PaymentConfirmation { idle, confirming, confirmed, unconfirmed, failed }
+
+/// Tracks a pending RapidGateway payment until the backend settles it, from
+/// `GET /payments/status` (`purchasedSubjectIds` + `pendingSubjectIds`).
+///
+/// Deliberately not tied to `CheckoutView`: the student may leave the
+/// checkout screen (or the app) at any point while a payment is processing.
+/// Polling carries on in the background, `PaymentWatcher` resumes it on app
+/// start / return to the foreground, and the server-side pending set keeps
+/// the subject un-buyable meanwhile — so leaving early never loses a payment
+/// or lets the same subject be paid for twice.
+class PaymentConfirmationViewModel extends Notifier<PaymentConfirmation> {
+  static const _pollInterval = Duration(seconds: 3);
+  static const _maxPolls = 40; // ~2 minutes, then `unconfirmed`
+
+  Set<String> _awaitedSubjectIds = const {};
+
+  /// Bumped on every [expect]/[confirm] so a superseded polling loop stops.
+  int _generation = 0;
+
+  @override
+  PaymentConfirmation build() {
+    // Logout / account switch: drop anything the previous session was
+    // waiting on and stop its polling loop.
+    ref.watch(currentUserProvider.select((s) => s?.userId));
+    _generation++;
+    _awaitedSubjectIds = const {};
+    return PaymentConfirmation.idle;
+  }
+
+  /// Called when a checkout comes back pending, before the gateway opens.
+  void expect(Set<String> subjectIds) {
+    _generation++;
+    _awaitedSubjectIds = subjectIds;
+    ref.read(pendingSubjectIdsProvider.notifier).addAll(subjectIds);
+    state = PaymentConfirmation.idle;
+  }
+
+  /// Re-syncs purchase status from the server and, if a payment is still
+  /// pending there (e.g. the student left mid-payment or restarted the app),
+  /// starts waiting on it again. No-op while already confirming.
+  Future<void> resumeIfPending() async {
+    if (state == PaymentConfirmation.confirming) return;
+    final status = await _fetchStatus();
+    if (!ref.mounted || status == null) return;
+    if (status.pending.isEmpty) return;
+    _awaitedSubjectIds = status.pending;
+    await confirm();
+  }
+
+  /// Polls until every awaited subject is purchased (`confirmed`) or none of
+  /// them is pending any more without having been purchased (`failed` — the
+  /// backend gave up on the payment and returned the items to the cart).
+  Future<void> confirm() async {
+    final generation = ++_generation;
+    state = PaymentConfirmation.confirming;
+
+    for (var i = 0; i < _maxPolls; i++) {
+      final status = await _fetchStatus();
+      if (!ref.mounted || generation != _generation) return;
+
+      if (status != null) {
+        // Nothing known to wait on (e.g. a repeat checkout returned an
+        // earlier payment): wait on whatever the server says is pending.
+        if (_awaitedSubjectIds.isEmpty) _awaitedSubjectIds = status.pending;
+
+        if (_awaitedSubjectIds.isNotEmpty &&
+            status.purchased.containsAll(_awaitedSubjectIds)) {
+          _onSettled();
+          state = PaymentConfirmation.confirmed;
+          return;
+        }
+        if (_awaitedSubjectIds.isEmpty ||
+            !_awaitedSubjectIds.any(status.pending.contains)) {
+          _onSettled();
+          state = _awaitedSubjectIds.isEmpty
+              ? PaymentConfirmation.idle
+              : PaymentConfirmation.failed;
+          return;
+        }
+      }
+
+      await Future<void>.delayed(_pollInterval);
+      if (!ref.mounted || generation != _generation) return;
+    }
+    state = PaymentConfirmation.unconfirmed;
+  }
+
+  /// One `/payments/status` round trip; pushes both sets into their
+  /// providers so every screen reflects them. `null` if it couldn't load.
+  Future<({Set<String> purchased, Set<String> pending})?> _fetchStatus() async {
+    final studentId = ref.read(currentUserProvider)?.userId;
+    if (studentId == null) return null;
+    final purchased = (await sl<GetPurchasedSubjectIdsUseCase>()(
+      studentId,
+      forceRefresh: true,
+    )).when(success: (ids) => ids, failure: (_) => null);
+    // Same response as above, served from the repository cache.
+    final pending = (await sl<GetPendingSubjectIdsUseCase>()(studentId))
+        .when(success: (ids) => ids, failure: (_) => null);
+    if (!ref.mounted || purchased == null || pending == null) return null;
+
+    ref.read(purchasedSubjectIdsProvider.notifier).addPurchasedIds(purchased);
+    ref.read(pendingSubjectIdsProvider.notifier).replace(pending);
+    return (purchased: purchased, pending: pending);
+  }
+
+  /// The payment reached an outcome: the cart (cleared, or items returned
+  /// on failure) and the student's paid enrollments both changed server-side.
+  void _onSettled() {
+    unawaited(ref.read(studentCartViewModelProvider.notifier).refreshCart());
+    unawaited(
+      ref
+          .read(studentOnboardingViewModelProvider.notifier)
+          .refreshStudent()
+          .catchError((_) => null),
+    );
+  }
+}
+
+final paymentConfirmationProvider =
+    NotifierProvider<PaymentConfirmationViewModel, PaymentConfirmation>(
+  PaymentConfirmationViewModel.new,
+);
+
+/// Subjects tied up in a payment the backend hasn't confirmed yet — shown as
+/// "payment processing" (never as buyable) on subject cards, the chapter
+/// list and the cart. Kept current by `PaymentConfirmationViewModel`.
+class PendingSubjectIdsViewModel extends AsyncNotifier<Set<String>> {
+  @override
+  Future<Set<String>> build() async {
+    final session = ref.watch(currentUserProvider);
+    if (session == null || session.userId == null) return const <String>{};
+
+    final result = await sl<GetPendingSubjectIdsUseCase>()(session.userId!);
+    return result.when(
+      success: (ids) => ids,
+      failure: (failure) => throw failure,
+    );
+  }
+
+  void addAll(Iterable<String> ids) {
+    final current = state.value ?? const <String>{};
+    state = AsyncData<Set<String>>({...current, ...ids});
+  }
+
+  void replace(Set<String> ids) => state = AsyncData<Set<String>>(ids);
+}
+
+final pendingSubjectIdsProvider =
+    AsyncNotifierProvider<PendingSubjectIdsViewModel, Set<String>>(
+  PendingSubjectIdsViewModel.new,
+);
 
 /// Every `subjectId` the current student has ever successfully purchased
 /// (bundle-only purchasing — see `CartItem` doc comment). Drives the

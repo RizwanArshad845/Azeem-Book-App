@@ -11,6 +11,12 @@ class GetPurchasedSubjectIdsUseCase {
 
   final CartRepository _repository;
 
-  Future<Result<Set<String>>> call(String studentId) =>
-      _repository.getPurchasedSubjectIds(studentId);
+  Future<Result<Set<String>>> call(
+    String studentId, {
+    bool forceRefresh = false,
+  }) =>
+      _repository.getPurchasedSubjectIds(
+        studentId,
+        forceRefresh: forceRefresh,
+      );
 }

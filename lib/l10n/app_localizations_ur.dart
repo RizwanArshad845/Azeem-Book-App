@@ -853,6 +853,49 @@ class AppLocalizationsUr extends AppLocalizations {
   String get checkoutPendingStatus => 'ادائیگی التواء میں ہے';
 
   @override
+  String get checkoutGatewayHint =>
+      'محفوظ RapidGateway صفحے پر اپنی ادائیگی مکمل کریں۔ ادائیگی کی تصدیق ہوتے ہی آپ کے مضامین کھل جائیں گے۔';
+
+  @override
+  String get checkoutConfirming => 'آپ کی ادائیگی کی تصدیق ہو رہی ہے...';
+
+  @override
+  String get checkoutUnconfirmedMessage =>
+      'ابھی تک تصدیق موصول نہیں ہوئی۔ اگر آپ نے ادائیگی کر دی ہے تو آپ کے مضامین چند منٹوں میں خود بخود کھل جائیں گے۔';
+
+  @override
+  String get checkoutCheckStatus => 'ادائیگی کی حالت چیک کریں';
+
+  @override
+  String get checkoutGatewayFailedMessage =>
+      'ادائیگی مکمل نہیں ہوئی۔ آپ کی اشیاء کارٹ میں واپس آ جائیں گی۔';
+
+  @override
+  String get paymentGatewayTitle => 'محفوظ ادائیگی';
+
+  @override
+  String get paymentProcessingBadge => 'جاری ہے';
+
+  @override
+  String get subjectAlreadyPurchasedMessage =>
+      'آپ یہ مضمون پہلے ہی خرید چکے ہیں۔';
+
+  @override
+  String get paymentProcessingTitle => 'ادائیگی جاری ہے';
+
+  @override
+  String get paymentProcessingMessage =>
+      'ہم آپ کی ادائیگی کی تصدیق کر رہے ہیں۔ آپ کے مضامین خود بخود کھل جائیں گے — دوبارہ ادائیگی کرنے کی ضرورت نہیں۔';
+
+  @override
+  String get paymentConfirmedMessage =>
+      'ادائیگی کی تصدیق ہو گئی — آپ کے مضامین کھل گئے ہیں۔';
+
+  @override
+  String get paymentFailedMessage =>
+      'ادائیگی مکمل نہیں ہوئی۔ آپ کی اشیاء کارٹ میں واپس آ گئی ہیں۔';
+
+  @override
   String get commonDone => 'مکمل';
 
   @override
