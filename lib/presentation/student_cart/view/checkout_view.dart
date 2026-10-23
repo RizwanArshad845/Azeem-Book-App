@@ -30,6 +30,11 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
   /// never re-opens it (ephemeral navigation guard, not business state).
   String? _autoOpenedPaymentId;
 
+  /// Payment whose gateway page the student closed without finishing — only
+  /// then is the "Payment pending / Pay Now" fallback shown; until then the
+  /// screen just says it's redirecting (ephemeral UI flag, not business state).
+  String? _closedWithoutPayingId;
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +62,8 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
     // closed without reaching the return page: stay on "Pay Now".
     if (result != null) {
       ref.read(paymentConfirmationProvider.notifier).confirm();
+    } else {
+      setState(() => _closedWithoutPayingId = payment.id);
     }
   }
 
@@ -125,18 +132,8 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
     final confirmation = ref.read(paymentConfirmationProvider.notifier);
     return switch (ref.watch(paymentConfirmationProvider)) {
       PaymentConfirmation.confirmed => _buildSuccess(context, payment),
-      PaymentConfirmation.confirming => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const LoadingIndicator(),
-          SizedBox(height: context.dimens.md),
-          Text(
-            context.l10n.checkoutConfirming,
-            style: context.textStyles.titleMedium,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+      PaymentConfirmation.confirming =>
+        _buildLoading(context, context.l10n.checkoutConfirming),
       PaymentConfirmation.failed => AppErrorView(
         message: context.l10n.checkoutGatewayFailedMessage,
         onRetry: () => ref.invalidate(checkoutPaymentProvider),
@@ -149,6 +146,11 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
         onPrimary: () => context.pop(),
         onCheckStatus: confirmation.confirm,
       ),
+      // On its way to (or on) the gateway page — never flash "Pay Now".
+      PaymentConfirmation.idle
+          when payment.checkoutUrl != null &&
+              payment.id != _closedWithoutPayingId =>
+        _buildLoading(context, context.l10n.checkoutRedirecting),
       PaymentConfirmation.idle => _buildPending(
         context,
         payment,
@@ -160,6 +162,21 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
         onCheckStatus: confirmation.confirm,
       ),
     };
+  }
+
+  Widget _buildLoading(BuildContext context, String message) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const LoadingIndicator(),
+        SizedBox(height: context.dimens.md),
+        Text(
+          message,
+          style: context.textStyles.titleMedium,
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
   }
 
   Widget _buildPending(
