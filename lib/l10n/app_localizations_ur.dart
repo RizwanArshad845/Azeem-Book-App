@@ -772,6 +772,92 @@ class AppLocalizationsUr extends AppLocalizations {
   String get ebookReaderTitle => 'ای بک';
 
   @override
+  String get subjectHubSubtitle => 'آج آپ کیا کرنا چاہیں گے؟';
+
+  @override
+  String get hubVideoLectures => 'ویڈیو لیکچرز';
+
+  @override
+  String get hubVideoLecturesHint => 'باب وار ویڈیوز';
+
+  @override
+  String get hubOnlineTest => 'آن لائن ٹیسٹ';
+
+  @override
+  String get hubOnlineTestHint => 'باب وار ٹیسٹ';
+
+  @override
+  String get hubEbook => 'ای بک';
+
+  @override
+  String get hubEbookHint => 'اپنی درسی کتاب پڑھیں';
+
+  @override
+  String get hubSavedOfflineBadge => 'آف لائن';
+
+  @override
+  String get offlineSavedEbooksTitle => 'انتظار کے دوران آف لائن پڑھیں';
+
+  @override
+  String get offlineSavedEbooksTip =>
+      'ٹپ: کسی بھی مضمون کا ای بک کارڈ کھولیں اور \"آف لائن پڑھنے کے لیے محفوظ کریں\" پر ٹیپ کریں۔';
+
+  @override
+  String get offlineReconnecting => 'دوبارہ جڑنے کی کوشش ہو رہی ہے…';
+
+  @override
+  String get offlineTryAgain => 'دوبارہ کوشش کریں';
+
+  @override
+  String get chapterVideoUnavailable => 'اس باب کی ویڈیو جلد آ رہی ہے۔';
+
+  @override
+  String get chapterVideoLocked => 'لیکچرز دیکھنے کے لیے یہ مضمون خریدیں۔';
+
+  @override
+  String get lectureNextChapter => 'اگلا باب';
+
+  @override
+  String get lectureAttemptTest => 'اس باب کا ٹیسٹ دیں';
+
+  @override
+  String get ebookReadOnline => 'آن لائن پڑھیں';
+
+  @override
+  String get ebookReadOnlineHint => 'انٹرنیٹ کنکشن درکار ہے';
+
+  @override
+  String get ebookSaveOffline => 'آف لائن پڑھنے کے لیے محفوظ کریں';
+
+  @override
+  String get ebookSaveOfflineHint => 'صرف اسی ڈیوائس پر خفیہ طور پر محفوظ';
+
+  @override
+  String get ebookReadOffline => 'آف لائن پڑھیں';
+
+  @override
+  String get ebookOfflineSaved => 'اس ڈیوائس پر محفوظ ہے';
+
+  @override
+  String get ebookRemoveDownload => 'ڈاؤن لوڈ ہٹائیں';
+
+  @override
+  String ebookDownloading(int percent) {
+    return 'ڈاؤن لوڈ ہو رہا ہے… $percent%';
+  }
+
+  @override
+  String get ebookDownloadFailed =>
+      'ڈاؤن لوڈ ناکام ہو گیا۔ کنکشن چیک کر کے دوبارہ کوشش کریں۔';
+
+  @override
+  String get ebookDownloadDone => 'ای بک آف لائن پڑھنے کے لیے محفوظ ہو گئی۔';
+
+  @override
+  String get ebookOfflineMissing =>
+      'یہ ای بک اس ڈیوائس پر محفوظ نہیں۔ پڑھنے کے لیے انٹرنیٹ سے جڑیں۔';
+
+  @override
   String get ebookGoToPageTitle => 'صفحہ پر جائیں';
 
   @override
@@ -1687,11 +1773,11 @@ class AppLocalizationsUr extends AppLocalizations {
   String get alreadyEnrolledMessage => 'آپ پہلے ہی اس مضمون میں داخل ہیں۔';
 
   @override
-  String get offlineTitle => 'انٹرنیٹ کنکشن نہیں ہے';
+  String get offlineTitle => 'آپ آف لائن ہیں';
 
   @override
   String get offlineMessage =>
-      'ایپ کا استعمال جاری رکھنے کے لیے براہ کرم انٹرنیٹ سے جڑیں۔';
+      'اپنا وائی فائی یا موبائل ڈیٹا چیک کریں۔ کنکشن واپس آتے ہی ہم خود جڑ جائیں گے۔';
 
   @override
   String get teacherLockedTapMessage =>

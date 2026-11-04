@@ -7,6 +7,8 @@ import '../../data/campus_directory/datasources/remote/campus_remote_datasource.
 import '../../data/campus_directory/repositories/campus_repository_impl.dart';
 import '../../data/catalog/datasources/remote/catalog_remote_datasource.dart';
 import '../../data/catalog/repositories/catalog_repository_impl.dart';
+import '../../data/ebook_offline/repositories/ebook_offline_repository_impl.dart';
+import '../../domain/ebook_offline/repositories/ebook_offline_repository.dart';
 import '../../domain/auth/repositories/auth_repository.dart';
 import '../../domain/auth/usecases/get_stored_session_usecase.dart';
 import '../../domain/auth/usecases/logout_usecase.dart';
@@ -114,6 +116,11 @@ void setupLocator() {
   sl.registerLazySingleton(() => GetQuestionsUseCase(sl()));
   sl.registerLazySingleton(() => GetEbookUseCase(sl()));
   sl.registerLazySingleton(() => GetEbookPagesUseCase(sl()));
+
+  // ebook-offline
+  sl.registerLazySingleton<EbookOfflineRepository>(
+    () => EbookOfflineRepositoryImpl(catalog: sl()),
+  );
 
   // campus-directory
   sl.registerLazySingleton<CampusRemoteDataSource>(

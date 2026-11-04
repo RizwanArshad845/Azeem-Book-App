@@ -6,7 +6,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/auth/entities/user_role.dart';
 import '../../presentation/auth/view/otp_verify_view.dart';
+import '../../presentation/chapter_video/view/chapter_video_view.dart';
 import '../../presentation/ebook_reader/view/ebook_reader_view.dart';
+import '../../presentation/subject_hub/view/subject_hub_view.dart';
 import '../../presentation/auth/view/phone_entry_view.dart';
 import '../../presentation/auth/view/role_select_view.dart';
 import '../../presentation/auth/viewmodel/auth_viewmodel.dart';
@@ -196,6 +198,7 @@ bool _isOutsideShellRoute(String location) =>
     _outsideShellRoutes.contains(location) ||
     location.startsWith('/test-taking/') ||
     location.startsWith('/ebook-reader/') ||
+    location.startsWith('/lecture/') ||
     (location.startsWith('/teacher/students/') &&
         location.endsWith('/progress'));
 
@@ -437,12 +440,25 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     _appPage(state, const StudentHomeView()),
                 routes: [
                   GoRoute(
+                    path: 'subject/:subjectId',
+                    pageBuilder: (context, state) => _appPage(
+                      state,
+                      SubjectHubView(
+                        subjectId: state.pathParameters['subjectId']!,
+                        subjectName: state.extra as String?,
+                      ),
+                    ),
+                  ),
+                  GoRoute(
                     path: 'subject/:subjectId/chapters',
                     pageBuilder: (context, state) => _appPage(
                       state,
                       ChapterListView(
                         subjectId: state.pathParameters['subjectId']!,
                         subjectName: state.extra as String?,
+                        mode: ChapterListMode.parse(
+                          state.uri.queryParameters['mode'],
+                        ),
                       ),
                     ),
                   ),
@@ -558,7 +574,20 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.ebookReader,
         pageBuilder: (context, state) => _appPage(
           state,
-          EbookReaderView(subjectId: state.pathParameters['subjectId']!),
+          EbookReaderView(
+            subjectId: state.pathParameters['subjectId']!,
+            offline: state.uri.queryParameters['offline'] == '1',
+          ),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.chapterLecture,
+        pageBuilder: (context, state) => _appPage(
+          state,
+          ChapterVideoView(
+            subjectId: state.pathParameters['subjectId']!,
+            chapterId: state.pathParameters['chapterId']!,
+          ),
         ),
       ),
       GoRoute(

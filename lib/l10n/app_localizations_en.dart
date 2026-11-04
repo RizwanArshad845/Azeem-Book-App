@@ -767,6 +767,93 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ebookReaderTitle => 'Ebook';
 
   @override
+  String get subjectHubSubtitle => 'What would you like to do today?';
+
+  @override
+  String get hubVideoLectures => 'Video Lectures';
+
+  @override
+  String get hubVideoLecturesHint => 'Chapter videos';
+
+  @override
+  String get hubOnlineTest => 'Online Test';
+
+  @override
+  String get hubOnlineTestHint => 'Chapter tests';
+
+  @override
+  String get hubEbook => 'Ebook';
+
+  @override
+  String get hubEbookHint => 'Read your textbook';
+
+  @override
+  String get hubSavedOfflineBadge => 'Offline';
+
+  @override
+  String get offlineSavedEbooksTitle => 'While you wait, read offline';
+
+  @override
+  String get offlineSavedEbooksTip =>
+      'Tip: open any subject\'s Ebook card and tap \"Save for offline reading\" to read without internet.';
+
+  @override
+  String get offlineReconnecting => 'Trying to reconnect…';
+
+  @override
+  String get offlineTryAgain => 'Try again';
+
+  @override
+  String get chapterVideoUnavailable =>
+      'The video for this chapter is coming soon.';
+
+  @override
+  String get chapterVideoLocked => 'Buy this subject to watch its lectures.';
+
+  @override
+  String get lectureNextChapter => 'Next chapter';
+
+  @override
+  String get lectureAttemptTest => 'Attempt this chapter\'s test';
+
+  @override
+  String get ebookReadOnline => 'Read online';
+
+  @override
+  String get ebookReadOnlineHint => 'Needs an internet connection';
+
+  @override
+  String get ebookSaveOffline => 'Save for offline reading';
+
+  @override
+  String get ebookSaveOfflineHint => 'Stored encrypted on this device only';
+
+  @override
+  String get ebookReadOffline => 'Read offline';
+
+  @override
+  String get ebookOfflineSaved => 'Saved on this device';
+
+  @override
+  String get ebookRemoveDownload => 'Remove download';
+
+  @override
+  String ebookDownloading(int percent) {
+    return 'Downloading… $percent%';
+  }
+
+  @override
+  String get ebookDownloadFailed =>
+      'Download failed. Check your connection and try again.';
+
+  @override
+  String get ebookDownloadDone => 'Ebook saved for offline reading.';
+
+  @override
+  String get ebookOfflineMissing =>
+      'This ebook isn\'t saved on this device. Connect to the internet to read it.';
+
+  @override
   String get ebookGoToPageTitle => 'Go to page';
 
   @override
@@ -1681,11 +1768,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'You\'re already enrolled in this subject.';
 
   @override
-  String get offlineTitle => 'No internet connection';
+  String get offlineTitle => 'You\'re offline';
 
   @override
   String get offlineMessage =>
-      'Please connect to the internet to continue using the app.';
+      'Check your Wi-Fi or mobile data. We\'ll reconnect automatically.';
 
   @override
   String get teacherLockedTapMessage =>

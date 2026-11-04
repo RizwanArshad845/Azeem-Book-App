@@ -9,7 +9,6 @@ import '../../../core/utils/subject_icons.dart';
 import '../../../core/utils/subject_illustration.dart';
 import '../../../core/widgets/app_bar_actions.dart';
 import '../../../core/widgets/app_bar_title.dart';
-import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/delayed_loader.dart';
 import '../../../core/widgets/empty_state_view.dart';
@@ -26,11 +25,7 @@ import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
 import '../../test_taking/widgets/practice_question_bank_sheet.dart';
 import '../viewmodel/student_home_viewmodel.dart';
 import '../widgets/add_subject_sheet.dart';
-import '../widgets/subject_actions_sheet.dart';
 import '../widgets/subject_card.dart';
-
-String _chapterListPath(String subjectId) =>
-    AppRoutes.studentHomeSubjectChapters.replaceFirst(':subjectId', subjectId);
 
 /// Student shell Home tab root (§10.2: "Selected subjects, promo carousel,
 /// subject -> chapter -> test drill-down"). Redesigned per Reference #3:
@@ -46,12 +41,28 @@ class StudentHomeView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final student = ref.watch(currentStudentProvider);
+    // An onboarded student can add more subjects any time (needs a board
+    // class — the backend rejects enrolment without one).
+    final canAddSubjects = (student?.boardClassId ?? '').isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(
         title: AppBarTitle(context.l10n.homeNavHome),
         actions: const [AppBarActions(role: UserRole.student)],
       ),
+      floatingActionButton: canAddSubjects
+          ? FloatingActionButton.extended(
+              heroTag: 'add-subject-fab',
+              onPressed: () => AddSubjectSheet.show(context),
+              backgroundColor: context.colors.accent,
+              foregroundColor: context.colors.onAccent,
+              icon: const Icon(Icons.add_rounded),
+              label: Text(
+                context.l10n.addSubjectButton,
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
+            )
+          : null,
       body: SafeArea(
         child: student == null
             ? const DelayedLoader(child: LoadingIndicator())
@@ -64,7 +75,12 @@ class StudentHomeView extends ConsumerWidget {
                   ref.invalidate(studentCartViewModelProvider);
                 },
                 child: ListView(
-                  padding: EdgeInsets.symmetric(vertical: context.dimens.lg),
+                  // Extra bottom room so the last subject card can scroll
+                  // clear of the floating "Add subject" button.
+                  padding: EdgeInsets.only(
+                    top: context.dimens.lg,
+                    bottom: context.dimens.xxl * 2,
+                  ),
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(
@@ -186,11 +202,6 @@ class _SubjectsSection extends ConsumerWidget {
     final cartState = ref.watch(studentCartViewModelProvider).value;
     final cartItems = cartState?.items;
     final viewMode = ref.watch(subjectViewModeProvider);
-    // An onboarded student can add more subjects any time (needs a board
-    // class — the backend rejects enrolment without one).
-    final canAddSubjects = ref.watch(
-      currentStudentProvider.select((s) => (s?.boardClassId ?? '').isNotEmpty),
-    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -224,21 +235,6 @@ class _SubjectsSection extends ConsumerWidget {
             ],
           ),
         ),
-        if (canAddSubjects) ...[
-          SizedBox(height: context.dimens.sm),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: context.dimens.lg),
-            // Full-width filled button so it reads clearly as an action,
-            // not as a text link (the themed ElevatedButton is already
-            // full-width and primary-coloured).
-            child: AppPrimaryButton(
-              label: context.l10n.addSubjectButton,
-              icon: Icons.add_rounded,
-              iconPosition: AppButtonIconPosition.leading,
-              onPressed: () => AddSubjectSheet.show(context),
-            ),
-          ),
-        ],
         SizedBox(height: context.dimens.md),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: context.dimens.lg),
@@ -305,11 +301,9 @@ class _SubjectsSection extends ConsumerWidget {
                         color: context.colors.textSecondary,
                       ),
                     ),
-                    onTap: () => SubjectActionsSheet.show(
-                      context: context,
-                      subjectId: subject.id,
-                      subjectName: subject.name,
-                      chapterListPath: _chapterListPath(subject.id),
+                    onTap: () => context.push(
+                      AppRoutes.subjectHubPath(subject.id),
+                      extra: subject.name,
                     ),
                   );
                 },

@@ -14,6 +14,7 @@ import '../../domain/catalog/usecases/get_ebook_usecase.dart';
 import '../../domain/catalog/usecases/get_questions_usecase.dart';
 import '../../domain/catalog/usecases/get_subjects_usecase.dart';
 import '../../domain/catalog/usecases/get_tests_usecase.dart';
+import '../../domain/ebook_offline/repositories/ebook_offline_repository.dart';
 import '../../domain/notifications/repositories/notification_repository.dart';
 import '../services/logger.dart';
 import 'injection.dart';
@@ -39,6 +40,10 @@ final getEbookUseCaseProvider =
     Provider<GetEbookUseCase>((ref) => sl<GetEbookUseCase>());
 final getEbookPagesUseCaseProvider =
     Provider<GetEbookPagesUseCase>((ref) => sl<GetEbookPagesUseCase>());
+
+// ebook-offline
+final ebookOfflineRepositoryProvider =
+    Provider<EbookOfflineRepository>((ref) => sl<EbookOfflineRepository>());
 
 final classLevelsProvider = FutureProvider<List<ClassLevel>>((ref) async {
   final result = await ref.read(getClassLevelsUseCaseProvider)();

@@ -1,11 +1,11 @@
 import 'dart:async' show unawaited;
 
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/riverpod_providers.dart';
 import '../../../core/utils/concurrency_gate.dart';
 import '../../../domain/catalog/entities/ebook_page.dart';
+import '../ebook_page_cache.dart';
 
 /// State for a single ebook-reading session: the book's total page count
 /// (from ebook metadata) plus every page-image URL fetched so far, keyed by
@@ -70,7 +70,7 @@ class EbookReaderViewModel extends AsyncNotifier<EbookReaderState> {
       // image can't hang the screen forever) so the reader only appears once
       // there's something to show; the rest prefetches in the background.
       try {
-        await DefaultCacheManager()
+        await ebookPageCacheManager
             .getSingleFile(window.pages.first.url)
             .timeout(const Duration(seconds: 8));
       } catch (_) {
@@ -102,7 +102,7 @@ class EbookReaderViewModel extends AsyncNotifier<EbookReaderState> {
       unawaited(
         _imagePrefetchGate.acquire().then((_) async {
           try {
-            await DefaultCacheManager().getSingleFile(page.url);
+            await ebookPageCacheManager.getSingleFile(page.url);
           } catch (_) {
             // Ignored — see doc comment above.
           } finally {

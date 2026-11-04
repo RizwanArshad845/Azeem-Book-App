@@ -12,6 +12,8 @@ import '../../../domain/auth/usecases/refresh_session_status_usecase.dart';
 import '../../../domain/auth/usecases/request_otp_usecase.dart';
 import '../../../domain/auth/usecases/verify_otp_usecase.dart';
 import '../../../domain/common/failure.dart';
+import '../../../domain/ebook_offline/repositories/ebook_offline_repository.dart';
+import '../../ebook_reader/ebook_page_cache.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 import '../../teacher_onboarding/viewmodel/teacher_onboarding_viewmodel.dart';
 import '../../teacher_profile/viewmodel/teacher_profile_catalog_providers.dart';
@@ -220,6 +222,13 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
       final container = sl<ProviderContainer>();
       container.invalidate(studentOnboardingViewModelProvider);
       container.invalidate(teacherOnboardingViewModelProvider);
+      // Purchased content must not outlive the account on this device:
+      // wipe encrypted offline ebooks (and their keys) plus the streamed
+      // page cache. Best-effort — a storage error must not block logout.
+      try {
+        await sl<EbookOfflineRepository>().removeAll();
+        await ebookPageCacheManager.emptyCache();
+      } catch (_) {}
     }
   }
 }

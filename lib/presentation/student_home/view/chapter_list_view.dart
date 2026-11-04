@@ -7,6 +7,7 @@ import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/skeleton.dart';
@@ -19,7 +20,6 @@ import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 import '../../student_progress/viewmodel/student_progress_viewmodel.dart';
 import '../../test_taking/viewmodel/free_attempts_provider.dart';
 import '../viewmodel/student_home_viewmodel.dart';
-import '../widgets/chapter_actions_sheet.dart';
 import '../widgets/subject_bundle_header.dart';
 import '../widgets/teacher_assignment_card.dart';
 
@@ -35,6 +35,16 @@ String _testListPath(String subjectId, String chapterId) => AppRoutes
 /// changes, update this constant too.
 const double _teacherDiscountRate = 0.10;
 
+/// What tapping a chapter does, chosen on the Subject Hub: `test` opens the
+/// chapter's tests, `video` opens its lecture.
+enum ChapterListMode {
+  test,
+  video;
+
+  static ChapterListMode parse(String? raw) =>
+      raw == video.name ? video : test;
+}
+
 /// Chapters for a tapped subject (§10.2 subject -> chapter drill-down),
 /// ordered by `Chapter.order`. The `order == 1` chapter carries a "2 free"
 /// badge since that's where the 2 seeded `isFreeSample` tests per subject
@@ -43,10 +53,31 @@ const double _teacherDiscountRate = 0.10;
 /// Includes the bundle purchase header with urgency discount badge, price,
 /// and instant Buy Now / Cart navigation.
 class ChapterListView extends ConsumerWidget {
-  const ChapterListView({super.key, required this.subjectId, this.subjectName});
+  const ChapterListView({
+    super.key,
+    required this.subjectId,
+    this.subjectName,
+    this.mode = ChapterListMode.test,
+  });
 
   final String subjectId;
   final String? subjectName;
+  final ChapterListMode mode;
+
+  void _onChapterTap(BuildContext context, Chapter chapter, bool isOwned) {
+    switch (mode) {
+      case ChapterListMode.test:
+        context.push(_testListPath(subjectId, chapter.id));
+      case ChapterListMode.video:
+        if (chapter.youtubeUrl == null) {
+          AppSnackbar.show(context, context.l10n.chapterVideoUnavailable);
+        } else if (!isOwned && !chapter.isFreeSample) {
+          AppSnackbar.show(context, context.l10n.chapterVideoLocked);
+        } else {
+          context.push(AppRoutes.chapterLecturePath(subjectId, chapter.id));
+        }
+    }
+  }
 
   void _buyNow(
     BuildContext context,
@@ -186,15 +217,28 @@ class ChapterListView extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final chapter = chapters[index];
                         final isFirstChapter = chapter.order == 1;
+                        final isVideoMode = mode == ChapterListMode.video;
+                        final videoPlayable = chapter.youtubeUrl != null &&
+                            (isOwned || chapter.isFreeSample);
                         return AppCard(
-                          onTap: () => ChapterActionsSheet.show(
-                            context: context,
-                            chapter: chapter,
-                            testListPath:
-                                _testListPath(subjectId, chapter.id),
-                          ),
+                          onTap: () =>
+                              _onChapterTap(context, chapter, isOwned),
                           child: Row(
                             children: [
+                              if (isVideoMode) ...[
+                                Icon(
+                                  chapter.youtubeUrl == null
+                                      ? Icons.schedule_rounded
+                                      : videoPlayable
+                                          ? Icons.play_circle_fill_rounded
+                                          : Icons.lock_outline_rounded,
+                                  color: videoPlayable
+                                      ? context.colors.youtubeRed
+                                      : context.colors.textSecondary,
+                                  size: context.dimens.iconLg,
+                                ),
+                                SizedBox(width: context.dimens.sm),
+                              ],
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,7 +260,10 @@ class ChapterListView extends ConsumerWidget {
                                   ],
                                 ),
                               ),
-                              if (!isOwned && isFirstChapter && remainingFree > 0) ...[
+                              if (!isVideoMode &&
+                                  !isOwned &&
+                                  isFirstChapter &&
+                                  remainingFree > 0) ...[
                                 StatusBadge(
                                   label: '$remainingFree free',
                                   color: context.colors.success,

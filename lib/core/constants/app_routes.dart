@@ -22,8 +22,17 @@ class AppRoutes {
 
   // Student shell tabs
   static const String studentHome = '/student/home';
+  static const String studentHomeSubjectHub =
+      '/student/home/subject/:subjectId';
+  static String subjectHubPath(String subjectId) =>
+      '/student/home/subject/$subjectId';
   static const String studentHomeSubjectChapters =
       '/student/home/subject/:subjectId/chapters';
+
+  /// Chapter list opened from the Subject Hub; [mode] is `test` or `video`
+  /// and decides where tapping a chapter leads.
+  static String subjectChaptersPath(String subjectId, {required String mode}) =>
+      '/student/home/subject/$subjectId/chapters?mode=$mode';
   static const String studentHomeChapterTests =
       '/student/home/subject/:subjectId/chapter/:chapterId/tests';
   static const String studentLiveTests = '/student/home/live-tests';
@@ -45,6 +54,12 @@ class AppRoutes {
   static const String ebookReader = '/ebook-reader/:subjectId';
   static String ebookReaderPath(String subjectId) =>
       '/ebook-reader/$subjectId';
+  /// [offline] opens the encrypted on-device copy instead of streaming.
+  static String ebookReaderOfflinePath(String subjectId) =>
+      '/ebook-reader/$subjectId?offline=1';
+  static const String chapterLecture = '/lecture/:subjectId/:chapterId';
+  static String chapterLecturePath(String subjectId, String chapterId) =>
+      '/lecture/$subjectId/$chapterId';
   static const String cartCheckout = '/cart/checkout';
   static const String paymentGateway = '/cart/checkout/pay';
   static const String teacherStudentProgressDetail =

@@ -18,6 +18,7 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.textPrimary,
     required this.textSecondary,
     required this.divider,
+    required this.youtubeRed,
   });
 
   final Color primary;
@@ -41,6 +42,9 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color textSecondary;
   final Color divider;
 
+  /// YouTube brand red, used only for the video-lecture play badge.
+  final Color youtubeRed;
+
   static const AppColors light = AppColors(
     primary: Color(0xFF115740),
     onPrimary: Color(0xFFFFFFFF),
@@ -57,6 +61,7 @@ class AppColors extends ThemeExtension<AppColors> {
     textPrimary: Color(0xFF1A1A1A),
     textSecondary: Color(0xFF5C6B65),
     divider: Color(0xFFE0E4E1),
+    youtubeRed: Color(0xFFFF0033),
   );
 
   /// The app's signature primary→secondary gradient (top-left → bottom-right).
@@ -85,6 +90,7 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? textPrimary,
     Color? textSecondary,
     Color? divider,
+    Color? youtubeRed,
   }) {
     return AppColors(
       primary: primary ?? this.primary,
@@ -102,6 +108,7 @@ class AppColors extends ThemeExtension<AppColors> {
       textPrimary: textPrimary ?? this.textPrimary,
       textSecondary: textSecondary ?? this.textSecondary,
       divider: divider ?? this.divider,
+      youtubeRed: youtubeRed ?? this.youtubeRed,
     );
   }
 
@@ -124,6 +131,7 @@ class AppColors extends ThemeExtension<AppColors> {
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       divider: Color.lerp(divider, other.divider, t)!,
+      youtubeRed: Color.lerp(youtubeRed, other.youtubeRed, t)!,
     );
   }
 }

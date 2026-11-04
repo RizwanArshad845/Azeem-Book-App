@@ -1484,6 +1484,168 @@ abstract class AppLocalizations {
   /// **'Ebook'**
   String get ebookReaderTitle;
 
+  /// No description provided for @subjectHubSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to do today?'**
+  String get subjectHubSubtitle;
+
+  /// No description provided for @hubVideoLectures.
+  ///
+  /// In en, this message translates to:
+  /// **'Video Lectures'**
+  String get hubVideoLectures;
+
+  /// No description provided for @hubVideoLecturesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter videos'**
+  String get hubVideoLecturesHint;
+
+  /// No description provided for @hubOnlineTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Online Test'**
+  String get hubOnlineTest;
+
+  /// No description provided for @hubOnlineTestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter tests'**
+  String get hubOnlineTestHint;
+
+  /// No description provided for @hubEbook.
+  ///
+  /// In en, this message translates to:
+  /// **'Ebook'**
+  String get hubEbook;
+
+  /// No description provided for @hubEbookHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Read your textbook'**
+  String get hubEbookHint;
+
+  /// No description provided for @hubSavedOfflineBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get hubSavedOfflineBadge;
+
+  /// No description provided for @offlineSavedEbooksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'While you wait, read offline'**
+  String get offlineSavedEbooksTitle;
+
+  /// No description provided for @offlineSavedEbooksTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip: open any subject\'s Ebook card and tap \"Save for offline reading\" to read without internet.'**
+  String get offlineSavedEbooksTip;
+
+  /// No description provided for @offlineReconnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Trying to reconnect…'**
+  String get offlineReconnecting;
+
+  /// No description provided for @offlineTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get offlineTryAgain;
+
+  /// No description provided for @chapterVideoUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The video for this chapter is coming soon.'**
+  String get chapterVideoUnavailable;
+
+  /// No description provided for @chapterVideoLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy this subject to watch its lectures.'**
+  String get chapterVideoLocked;
+
+  /// No description provided for @lectureNextChapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Next chapter'**
+  String get lectureNextChapter;
+
+  /// No description provided for @lectureAttemptTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt this chapter\'s test'**
+  String get lectureAttemptTest;
+
+  /// No description provided for @ebookReadOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Read online'**
+  String get ebookReadOnline;
+
+  /// No description provided for @ebookReadOnlineHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs an internet connection'**
+  String get ebookReadOnlineHint;
+
+  /// No description provided for @ebookSaveOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Save for offline reading'**
+  String get ebookSaveOffline;
+
+  /// No description provided for @ebookSaveOfflineHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Stored encrypted on this device only'**
+  String get ebookSaveOfflineHint;
+
+  /// No description provided for @ebookReadOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Read offline'**
+  String get ebookReadOffline;
+
+  /// No description provided for @ebookOfflineSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this device'**
+  String get ebookOfflineSaved;
+
+  /// No description provided for @ebookRemoveDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove download'**
+  String get ebookRemoveDownload;
+
+  /// No description provided for @ebookDownloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading… {percent}%'**
+  String ebookDownloading(int percent);
+
+  /// No description provided for @ebookDownloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Download failed. Check your connection and try again.'**
+  String get ebookDownloadFailed;
+
+  /// No description provided for @ebookDownloadDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Ebook saved for offline reading.'**
+  String get ebookDownloadDone;
+
+  /// No description provided for @ebookOfflineMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'This ebook isn\'t saved on this device. Connect to the internet to read it.'**
+  String get ebookOfflineMissing;
+
   /// No description provided for @ebookGoToPageTitle.
   ///
   /// In en, this message translates to:
@@ -3051,13 +3213,13 @@ abstract class AppLocalizations {
   /// No description provided for @offlineTitle.
   ///
   /// In en, this message translates to:
-  /// **'No internet connection'**
+  /// **'You\'re offline'**
   String get offlineTitle;
 
   /// No description provided for @offlineMessage.
   ///
   /// In en, this message translates to:
-  /// **'Please connect to the internet to continue using the app.'**
+  /// **'Check your Wi-Fi or mobile data. We\'ll reconnect automatically.'**
   String get offlineMessage;
 
   /// No description provided for @teacherLockedTapMessage.

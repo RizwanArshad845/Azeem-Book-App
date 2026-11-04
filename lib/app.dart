@@ -8,6 +8,8 @@ import 'core/theme/app_theme.dart';
 import 'core/widgets/account_deleted_dialog.dart';
 import 'core/widgets/offline_screen.dart';
 import 'presentation/auth/viewmodel/account_deleted_viewmodel.dart';
+import 'presentation/ebook_reader/offline_reader_presence.dart';
+import 'presentation/ebook_reader/widgets/saved_ebooks_shortcut.dart';
 import 'l10n/app_localizations.dart';
 
 class App extends ConsumerWidget {
@@ -48,11 +50,22 @@ class App extends ConsumerWidget {
         child: Consumer(
           builder: (context, ref, _) {
             final isOnline = ref.watch(isOnlineProvider);
-            return Stack(
-              children: [
-                ?child,
-                if (!isOnline) const Positioned.fill(child: OfflineScreen()),
-              ],
+            // The offline ebook reader works with no connection, so it's the
+            // one screen the overlay must not cover (it's reached from the
+            // offline screen's downloaded-ebooks list).
+            return ValueListenableBuilder<bool>(
+              valueListenable: offlineReaderOpen,
+              builder: (context, readingOffline, _) {
+                return Stack(
+                  children: [
+                    ?child,
+                    if (!isOnline && !readingOffline)
+                      const Positioned.fill(
+                        child: OfflineScreen(footer: SavedEbooksShortcut()),
+                      ),
+                  ],
+                );
+              },
             );
           },
         ),
