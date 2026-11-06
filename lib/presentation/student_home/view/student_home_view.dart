@@ -51,15 +51,27 @@ class StudentHomeView extends ConsumerWidget {
         actions: const [AppBarActions(role: UserRole.student)],
       ),
       floatingActionButton: canAddSubjects
-          ? FloatingActionButton.extended(
-              heroTag: 'add-subject-fab',
-              onPressed: () => AddSubjectSheet.show(context),
-              backgroundColor: context.colors.accent,
-              foregroundColor: context.colors.onAccent,
-              icon: const Icon(Icons.add_rounded),
-              label: Text(
-                context.l10n.addSubjectButton,
-                style: const TextStyle(fontWeight: FontWeight.w700),
+          ? Padding(
+              // The shell Scaffold uses `extendBody: true` under a floating
+              // nav bar, which grows `padding.bottom` by the bar's height but
+              // leaves `viewPadding` alone — and the FAB float location only
+              // clears `viewPadding`. Lift it by the difference so it sits
+              // above the nav bar instead of behind it.
+              padding: EdgeInsets.only(
+                bottom: (MediaQuery.paddingOf(context).bottom -
+                        MediaQuery.viewPaddingOf(context).bottom)
+                    .clamp(0.0, double.infinity),
+              ),
+              child: FloatingActionButton.extended(
+                heroTag: 'add-subject-fab',
+                onPressed: () => AddSubjectSheet.show(context),
+                backgroundColor: context.colors.accent,
+                foregroundColor: context.colors.onAccent,
+                icon: const Icon(Icons.add_rounded),
+                label: Text(
+                  context.l10n.addSubjectButton,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
               ),
             )
           : null,
