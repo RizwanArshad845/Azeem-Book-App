@@ -1799,4 +1799,147 @@ class AppLocalizationsEn extends AppLocalizations {
   String addSubjectSuccess(String subject) {
     return '$subject added. Open it to choose a teacher.';
   }
+
+  @override
+  String get downloadsTitle => 'My downloaded books';
+
+  @override
+  String downloadsCardSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count books ready to read offline',
+      one: '1 book ready to read offline',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get downloadsNoneYet => 'No books downloaded yet';
+
+  @override
+  String get downloadsEmpty =>
+      'No downloaded books yet.\nOpen a subject\'s Ebook card and tap \"Save for offline reading\".';
+
+  @override
+  String downloadsPages(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pages',
+      one: '1 page',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get downloadsSwipeHint =>
+      'Swipe a book left to remove it from this device.';
+
+  @override
+  String get downloadsRemoveMessage =>
+      'This removes the saved copy from this device. You can download it again any time you\'re online.';
+
+  @override
+  String get offlineCheckingAgain => 'Checking again automatically…';
+
+  @override
+  String get stuContinueTitle => 'Continue where you left off';
+
+  @override
+  String get stuContinueButton => 'Continue';
+
+  @override
+  String get stuActivitySubject => 'Subject';
+
+  @override
+  String get stuActivityTest => 'Online test';
+
+  @override
+  String get stuActivityEbook => 'Ebook';
+
+  @override
+  String stuActivityEbookPage(int page) {
+    return 'Ebook · Page $page';
+  }
+
+  @override
+  String stuStreakChip(int count) {
+    return '🔥 $count-day streak';
+  }
+
+  @override
+  String get stuWelcomeSubtitleNeutral => 'What would you like to learn today?';
+
+  @override
+  String get stuScoreGreat => 'Outstanding! You\'ve really mastered this one.';
+
+  @override
+  String get stuScoreGood =>
+      'Good effort! Review your answers to push your score higher.';
+
+  @override
+  String get stuScoreLow =>
+      'Don\'t give up — every attempt makes you stronger. Give it another go!';
+
+  @override
+  String get stuTestBadgeNew => 'New';
+
+  @override
+  String stuTestBestScore(int percent) {
+    return 'Best $percent%';
+  }
+
+  @override
+  String get stuLockedEbookTitle => 'This ebook is locked';
+
+  @override
+  String get stuLockedVideoTitle => 'This lecture is locked';
+
+  @override
+  String get stuLockedBody =>
+      'Add this subject to your cart to unlock its ebook, video lectures and all tests.';
+
+  @override
+  String get stuBrowseSubjects => 'Browse subjects';
+
+  @override
+  String get stuTakeATest => 'Take a test';
+
+  @override
+  String get stuRecentAttempts => 'Recent attempts';
+
+  @override
+  String stuEbookPageOf(int current, int total) {
+    return 'Page $current of $total';
+  }
+
+  @override
+  String stuAttemptScore(int percent) {
+    return '$percent% score';
+  }
+
+  @override
+  String get tchStatsHeading => 'At a glance';
+
+  @override
+  String get tchStatNewThisMonth => 'New this month';
+
+  @override
+  String get tchStatActiveStudents => 'Active students';
+
+  @override
+  String get tchStatEarnedThisMonth => 'Earned this month (Rs.)';
+
+  @override
+  String get tchEarningsLinkTitle => 'Projected earnings';
+
+  @override
+  String get tchEarningsLinkSub => 'See your potential and commission history';
+
+  @override
+  String get tchPreviousPage => 'Previous page';
+
+  @override
+  String get tchNextPage => 'Next page';
 }

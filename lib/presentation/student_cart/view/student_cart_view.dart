@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/fade_slide_in.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../domain/student_cart/entities/cart.dart';
 import '../../../domain/student_cart/entities/cart_item.dart';
@@ -73,6 +76,8 @@ class StudentCartView extends ConsumerWidget {
               return EmptyStateView(
                 icon: Icons.shopping_cart_outlined,
                 message: context.l10n.cartEmpty,
+                actionLabel: context.l10n.stuBrowseSubjects,
+                onAction: () => context.go(AppRoutes.studentHome),
               );
             }
 
@@ -87,12 +92,15 @@ class StudentCartView extends ConsumerWidget {
                           SizedBox(height: context.dimens.sm),
                       itemBuilder: (context, index) {
                         final item = items[index];
-                        return CartItemCard(
+                        return FadeSlideIn(
+                          delay: Duration(milliseconds: 40 * index.clamp(0, 8)),
+                          child: CartItemCard(
                           item: item,
                           removing: isMutating,
                           onRemove: () => ref
                               .read(studentCartViewModelProvider.notifier)
                               .removeSubject(item.subjectId),
+                          ),
                         );
                       },
                     ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../extensions/context_extensions.dart';
 import 'app_card.dart';
 import 'illustration_thumbnail.dart';
+import 'urdu_aware_text.dart';
 
 /// A horizontal card with a left illustration thumbnail (image + icon
 /// fallback), a title, an optional meta line, an optional top badge, and a
@@ -46,7 +47,8 @@ class IllustratedListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveTrailing = trailing ??
+    final effectiveTrailing =
+        trailing ??
         (onTap != null
             ? Icon(Icons.chevron_right, color: context.colors.textSecondary)
             : null);
@@ -72,7 +74,7 @@ class IllustratedListCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: Text(
+                      child: UrduAwareText(
                         title,
                         maxLines: titleMaxLines,
                         overflow: TextOverflow.ellipsis,

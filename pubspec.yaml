@@ -102,6 +102,15 @@ flutter:
     - assets/images/
     - assets/illustrations/
 
+  # Urdu subjects (MOBILE_CHANGES.md §8). Uncomment once the licence is
+  # confirmed and the file is at this path — a declared-but-missing font
+  # fails the build. Until then Urdu renders in Noto Nastaliq Urdu (OFL,
+  # via google_fonts); see lib/core/widgets/urdu_aware_text.dart.
+  # fonts:
+  #   - family: JameelNooriNastaleeq
+  #     fonts:
+  #       - asset: assets/fonts/JameelNooriNastaleeq.ttf
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

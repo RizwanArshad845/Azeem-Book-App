@@ -95,9 +95,7 @@ class ExpectedTestPreviewSheet extends ConsumerWidget {
               SizedBox(width: context.dimens.sm),
               Expanded(
                 child: Text(
-                  context.l10n.testPreviewQuestionCount(
-                    preview.questionCount,
-                  ),
+                  context.l10n.testPreviewQuestionCount(preview.questionCount),
                   style: context.textStyles.bodyLarge,
                 ),
               ),
@@ -123,10 +121,7 @@ class ExpectedTestPreviewSheet extends ConsumerWidget {
               children: [
                 for (final title in preview.chapterTitles)
                   Chip(
-                    avatar: Icon(
-                      Icons.menu_book,
-                      size: context.dimens.iconSm,
-                    ),
+                    avatar: Icon(Icons.menu_book, size: context.dimens.iconSm),
                     label: Text(title),
                   ),
               ],

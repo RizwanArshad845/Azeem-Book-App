@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/fade_slide_in.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../viewmodel/student_progress_viewmodel.dart';
 import 'subject_progress_card.dart';
@@ -35,8 +36,11 @@ class SubjectProgressList extends ConsumerWidget {
 
         return Column(
           children: [
-            for (final summary in summaries) ...[
-              SubjectProgressCard(summary: summary),
+            for (final (i, summary) in summaries.indexed) ...[
+              FadeSlideIn(
+                delay: Duration(milliseconds: 40 * i.clamp(0, 8)),
+                child: SubjectProgressCard(summary: summary),
+              ),
               SizedBox(height: context.dimens.md),
             ],
           ],

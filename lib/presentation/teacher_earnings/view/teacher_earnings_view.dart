@@ -8,6 +8,7 @@ import '../../../core/widgets/app_frosted_card.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/blurred_logo_backdrop.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/fade_slide_in.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../domain/earnings/entities/earnings_record.dart';
 import '../../teacher_overview/viewmodel/teacher_overview_viewmodel.dart';
@@ -50,8 +51,20 @@ class TeacherEarningsView extends ConsumerWidget {
     final actualEarnings = ref.watch(
       teacherOverviewStatsProvider.select((s) => s.actualEarnings),
     );
-    final remainingStudents = ref.watch(
-      teacherOverviewStatsProvider.select((s) => s.remainingStudents),
+    final (
+      remainingStudents,
+      declaredStudents,
+      totalStudents,
+      goalProgress,
+    ) = ref.watch(
+      teacherOverviewStatsProvider.select(
+        (s) => (
+          s.remainingStudents,
+          s.declaredStudents,
+          s.totalStudents,
+          s.goalProgressPercent,
+        ),
+      ),
     );
     final studentsById = ref.watch(teacherStudentNamesByIdProvider);
     final currentPage = ref.watch(_teacherEarningsCurrentPageProvider);
@@ -126,15 +139,15 @@ class TeacherEarningsView extends ConsumerWidget {
                           Container(
                             padding: EdgeInsets.all(context.dimens.md),
                             decoration: BoxDecoration(
-                              color: const Color(
-                                0xFF059669,
-                              ).withValues(alpha: 0.12),
+                              color: context.colors.success.withValues(
+                                alpha: 0.12,
+                              ),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.savings_outlined,
-                              color: Color(0xFF059669),
-                              size: 28,
+                              color: context.colors.success,
+                              size: context.dimens.iconLg,
                             ),
                           ),
                           SizedBox(width: context.dimens.md),
@@ -156,7 +169,7 @@ class TeacherEarningsView extends ConsumerWidget {
                                   style: context.textStyles.headlineSmall
                                       ?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF059669),
+                                        color: context.colors.success,
                                       ),
                                 ),
                               ],
@@ -168,14 +181,17 @@ class TeacherEarningsView extends ConsumerWidget {
                               vertical: context.dimens.xs,
                             ),
                             decoration: BoxDecoration(
-                              color: context.colors.surfaceVariant
-                                  .withValues(alpha: 0.6),
+                              color: context.colors.surfaceVariant.withValues(
+                                alpha: 0.6,
+                              ),
                               borderRadius: BorderRadius.circular(
                                 context.dimens.radiusSm,
                               ),
                             ),
                             child: Text(
-                              context.l10n.teacherPurchasesCount(records.length),
+                              context.l10n.teacherPurchasesCount(
+                                records.length,
+                              ),
                               style: context.textStyles.labelSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -188,11 +204,14 @@ class TeacherEarningsView extends ConsumerWidget {
 
                     // 2. Interactive Projected Earnings Simulator Card
                     studentsLoadingForCalc
-                        ? _EarningsCalculatorSkeleton()
+                        ? const _EarningsCalculatorSkeleton()
                         : EarningsProjectedCalculatorCard(
-                          actualEarnings: actualEarnings,
-                          remainingStudents: remainingStudents,
-                        ),
+                            actualEarnings: actualEarnings,
+                            remainingStudents: remainingStudents,
+                            declaredStudents: declaredStudents,
+                            onboardedStudents: totalStudents,
+                            goalProgress: goalProgress,
+                          ),
                     SizedBox(height: context.dimens.xl),
 
                     // 3. Transactions History Title
@@ -235,26 +254,32 @@ class TeacherEarningsView extends ConsumerWidget {
                           ),
                           style: context.textStyles.bodySmall?.copyWith(
                             color: context.colors.textSecondary,
-                            fontSize: 11.5,
                           ),
                         ),
                       ),
-                      for (final record in pageRecords) ...[
-                        Padding(
-                          padding: EdgeInsets.only(bottom: context.dimens.sm),
-                          child: EarningsRecordCard(
-                            record: record,
-                            studentName: studentsById[record.studentId],
+                      for (final (i, record) in pageRecords.indexed)
+                        FadeSlideIn(
+                          // Keyed per page so a page change replays the
+                          // entrance instead of reusing settled state.
+                          key: ValueKey('${effectivePage}_${record.id}'),
+                          delay: Duration(milliseconds: 40 * i),
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: context.dimens.sm),
+                            child: EarningsRecordCard(
+                              record: record,
+                              studentName: studentsById[record.studentId],
+                            ),
                           ),
                         ),
-                      ],
                       if (totalPages > 1) ...[
                         SizedBox(height: context.dimens.sm),
                         _EarningsPaginationBar(
                           currentPage: effectivePage,
                           totalPages: totalPages,
                           onPageSelected: (page) => ref
-                              .read(_teacherEarningsCurrentPageProvider.notifier)
+                              .read(
+                                _teacherEarningsCurrentPageProvider.notifier,
+                              )
                               .setPage(page),
                         ),
                       ],
@@ -279,28 +304,10 @@ class _EarningsCalculatorSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(context.dimens.lg),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
-        borderRadius: BorderRadius.circular(context.dimens.radiusXl),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Skeleton(width: 120, height: 14),
-          SizedBox(height: context.dimens.md),
-          Skeleton(width: 200, height: 28),
-          SizedBox(height: context.dimens.sm),
-          Skeleton(width: double.infinity, height: 12),
-          SizedBox(height: context.dimens.md),
-          Skeleton(
-            width: double.infinity,
-            height: 20,
-            radius: context.dimens.radiusSm,
-          ),
-        ],
-      ),
+    return Skeleton(
+      width: double.infinity,
+      height: 200,
+      radius: context.dimens.radiusXl,
     );
   }
 }
@@ -319,39 +326,37 @@ class _EarningsPaginationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.dimens.sm,
-        vertical: context.dimens.xs / 2,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: context.dimens.xs),
       decoration: BoxDecoration(
         color: context.colors.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(context.dimens.radiusLg),
-        border: Border.all(color: context.colors.divider.withValues(alpha: 0.7)),
+        border: Border.all(
+          color: context.colors.divider.withValues(alpha: 0.7),
+        ),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // Default IconButton constraints give a >=48dp tap target.
           IconButton(
-            icon: const Icon(Icons.chevron_left_rounded, size: 20),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            onPressed:
-                currentPage > 1 ? () => onPageSelected(currentPage - 1) : null,
+            tooltip: context.l10n.tchPreviousPage,
+            icon: const Icon(Icons.chevron_left_rounded),
+            color: context.colors.primary,
+            onPressed: currentPage > 1
+                ? () => onPageSelected(currentPage - 1)
+                : null,
           ),
-          SizedBox(width: context.dimens.xs),
           Text(
             context.l10n.commonPageOfTotal(currentPage, totalPages),
-            style: context.textStyles.bodySmall?.copyWith(
+            style: context.textStyles.bodyMedium?.copyWith(
               color: context.colors.primary,
               fontWeight: FontWeight.w600,
-              fontSize: 12,
             ),
           ),
-          SizedBox(width: context.dimens.xs),
           IconButton(
-            icon: const Icon(Icons.chevron_right_rounded, size: 20),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
+            tooltip: context.l10n.tchNextPage,
+            icon: const Icon(Icons.chevron_right_rounded),
+            color: context.colors.primary,
             onPressed: currentPage < totalPages
                 ? () => onPageSelected(currentPage + 1)
                 : null,

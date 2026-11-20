@@ -9,7 +9,8 @@ import 'core/widgets/account_deleted_dialog.dart';
 import 'core/widgets/offline_screen.dart';
 import 'presentation/auth/viewmodel/account_deleted_viewmodel.dart';
 import 'presentation/ebook_reader/offline_reader_presence.dart';
-import 'presentation/ebook_reader/widgets/saved_ebooks_shortcut.dart';
+import 'presentation/ebook_reader/widgets/downloaded_books_card.dart';
+import 'presentation/student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 import 'l10n/app_localizations.dart';
 
 class App extends ConsumerWidget {
@@ -50,18 +51,29 @@ class App extends ConsumerWidget {
         child: Consumer(
           builder: (context, ref, _) {
             final isOnline = ref.watch(isOnlineProvider);
-            // The offline ebook reader works with no connection, so it's the
-            // one screen the overlay must not cover (it's reached from the
-            // offline screen's downloaded-ebooks list).
-            return ValueListenableBuilder<bool>(
-              valueListenable: offlineReaderOpen,
-              builder: (context, readingOffline, _) {
+            ref.listen<bool>(isOnlineProvider, (wasOnline, online) {
+              if (!online) {
+                // Drop the keyboard of a field hidden under the overlay.
+                FocusManager.instance.primaryFocus?.unfocus();
+              } else if (wasOnline == false &&
+                  ref.read(studentOnboardingViewModelProvider).hasError) {
+                // Cold start offline left the student record unfetched (the
+                // router is holding on splash) — retry now we're back.
+                ref.invalidate(studentOnboardingViewModelProvider);
+              }
+            });
+            // Offline-safe screens (downloaded books, offline reader) work
+            // with no connection, so the overlay steps aside while any of
+            // them is open.
+            return ValueListenableBuilder<int>(
+              valueListenable: offlineSafeScreens,
+              builder: (context, safeScreens, _) {
                 return Stack(
                   children: [
                     ?child,
-                    if (!isOnline && !readingOffline)
+                    if (!isOnline && safeScreens == 0)
                       const Positioned.fill(
-                        child: OfflineScreen(footer: SavedEbooksShortcut()),
+                        child: OfflineScreen(footer: DownloadedBooksCard()),
                       ),
                   ],
                 );

@@ -22,7 +22,9 @@ class AttemptsList extends ConsumerWidget {
         for (final attempt in attempts) ...[
           AttemptCard(
             attempt: attempt,
-            testTitle: testsById[attempt.testId]?.title ?? context.l10n.testTakingTitle,
+            testTitle:
+                testsById[attempt.testId]?.title ??
+                context.l10n.testTakingTitle,
           ),
           SizedBox(height: context.dimens.md),
         ],

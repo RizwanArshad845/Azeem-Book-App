@@ -88,16 +88,15 @@ class _ActivityRow extends StatelessWidget {
         notification.message.contains('earned') ||
         notification.message.contains('purchased');
 
-    final icon =
-        isCommission
-            ? Icons.shopping_bag_outlined
-            : Icons.person_add_alt_1_outlined;
-    final iconColor =
-        isCommission ? context.colors.success : context.colors.primary;
-    final iconBg =
-        isCommission
-            ? context.colors.success.withValues(alpha: 0.12)
-            : context.colors.primary.withValues(alpha: 0.12);
+    final icon = isCommission
+        ? Icons.shopping_bag_outlined
+        : Icons.person_add_alt_1_outlined;
+    final iconColor = isCommission
+        ? context.colors.success
+        : context.colors.primary;
+    final iconBg = isCommission
+        ? context.colors.success.withValues(alpha: 0.12)
+        : context.colors.primary.withValues(alpha: 0.12);
 
     return Padding(
       padding: EdgeInsets.all(context.dimens.md),
@@ -110,7 +109,7 @@ class _ActivityRow extends StatelessWidget {
               color: iconBg,
               borderRadius: BorderRadius.circular(context.dimens.radiusSm),
             ),
-            child: Icon(icon, color: iconColor, size: 18),
+            child: Icon(icon, color: iconColor, size: context.dimens.iconSm),
           ),
           SizedBox(width: context.dimens.md),
           Expanded(
@@ -122,7 +121,6 @@ class _ActivityRow extends StatelessWidget {
                   style: context.textStyles.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                     color: context.colors.textPrimary,
-                    fontSize: 13,
                   ),
                 ),
                 SizedBox(height: context.dimens.xs / 3),
@@ -130,7 +128,6 @@ class _ActivityRow extends StatelessWidget {
                   _timeAgo(context, notification.createdAt),
                   style: context.textStyles.bodySmall?.copyWith(
                     color: context.colors.textSecondary,
-                    fontSize: 11,
                   ),
                 ),
               ],

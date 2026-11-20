@@ -22,19 +22,17 @@ class StudentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPaid =
-        (student.subjectEnrollments ?? []).any((e) => e.discountApplied);
+    final isPaid = (student.subjectEnrollments ?? []).any(
+      (e) => e.discountApplied,
+    );
 
-    final statusColor =
-        isPaid ? const Color(0xFF059669) : const Color(0xFF64748B);
-    final statusBg =
-        isPaid
-            ? const Color(0xFF059669).withValues(alpha: 0.1)
-            : const Color(0xFF64748B).withValues(alpha: 0.1);
-    final statusLabel =
-        isPaid
-            ? context.l10n.teacherActivePaid
-            : context.l10n.teacherFreeUnpaid;
+    final statusColor = isPaid
+        ? context.colors.success
+        : context.colors.textSecondary;
+    final statusBg = statusColor.withValues(alpha: 0.1);
+    final statusLabel = isPaid
+        ? context.l10n.teacherActivePaid
+        : context.l10n.teacherFreeUnpaid;
 
     return AppFrostedCard(
       onTap: onTap,
@@ -47,22 +45,17 @@ class StudentCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
-                radius: 20,
-                backgroundColor:
-                    isPaid
-                        ? context.colors.primary.withValues(alpha: 0.15)
-                        : context.colors.divider.withValues(alpha: 0.5),
+                radius: context.dimens.avatarSm / 2,
+                backgroundColor: isPaid
+                    ? context.colors.primary.withValues(alpha: 0.15)
+                    : context.colors.divider.withValues(alpha: 0.5),
                 child: Text(
-                  student.name.isNotEmpty
-                      ? student.name[0].toUpperCase()
-                      : 'S',
-                  style: TextStyle(
-                    color:
-                        isPaid
-                            ? context.colors.primary
-                            : context.colors.textSecondary,
+                  student.name.isNotEmpty ? student.name[0].toUpperCase() : 'S',
+                  style: context.textStyles.titleMedium?.copyWith(
+                    color: isPaid
+                        ? context.colors.primary
+                        : context.colors.textSecondary,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
                   ),
                 ),
               ),
@@ -85,7 +78,6 @@ class StudentCard extends StatelessWidget {
                       student.phoneNumber,
                       style: context.textStyles.bodySmall?.copyWith(
                         color: context.colors.textSecondary,
-                        fontSize: 12,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -102,19 +94,15 @@ class StudentCard extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: statusBg,
-                  borderRadius: BorderRadius.circular(
-                    context.dimens.radiusLg,
-                  ),
-                  border: Border.all(
-                    color: statusColor.withValues(alpha: 0.3),
-                  ),
+                  borderRadius: BorderRadius.circular(context.dimens.radiusLg),
+                  border: Border.all(color: statusColor.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      width: 6,
-                      height: 6,
+                      width: context.dimens.xs * 1.5,
+                      height: context.dimens.xs * 1.5,
                       decoration: BoxDecoration(
                         color: statusColor,
                         shape: BoxShape.circle,
@@ -123,9 +111,8 @@ class StudentCard extends StatelessWidget {
                     SizedBox(width: context.dimens.xs / 2),
                     Text(
                       statusLabel,
-                      style: TextStyle(
+                      style: context.textStyles.labelSmall?.copyWith(
                         color: statusColor,
-                        fontSize: 11,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -165,47 +152,42 @@ class StudentCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(
-                child:
-                    isPaid
-                        ? Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.check_circle_rounded,
-                              size: 16,
-                              color: statusColor,
-                            ),
-                            SizedBox(width: context.dimens.xs / 2),
-                            Flexible(
-                              child: Text(
-                                context.l10n.teacherCommissionEarned,
-                                style: TextStyle(
-                                  color: statusColor,
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        )
-                        : Text(
-                          context.l10n.teacherBundleNotPurchased,
-                          style: context.textStyles.bodySmall?.copyWith(
-                            color: context.colors.textSecondary,
-                            fontStyle: FontStyle.italic,
-                            fontSize: 11.5,
+                child: isPaid
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.check_circle_rounded,
+                            size: context.dimens.iconSm,
+                            color: statusColor,
                           ),
-                          overflow: TextOverflow.ellipsis,
+                          SizedBox(width: context.dimens.xs / 2),
+                          Flexible(
+                            child: Text(
+                              context.l10n.teacherCommissionEarned,
+                              style: context.textStyles.labelSmall?.copyWith(
+                                color: statusColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Text(
+                        context.l10n.teacherBundleNotPurchased,
+                        style: context.textStyles.bodySmall?.copyWith(
+                          color: context.colors.textSecondary,
+                          fontStyle: FontStyle.italic,
                         ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
               ),
               SizedBox(width: context.dimens.xs),
 
               // "View Progress" Action Button
               InkWell(
-                borderRadius: BorderRadius.circular(
-                  context.dimens.radiusSm,
-                ),
+                borderRadius: BorderRadius.circular(context.dimens.radiusSm),
                 onTap: onTap,
                 child: Padding(
                   padding: EdgeInsets.symmetric(
@@ -225,7 +207,7 @@ class StudentCard extends StatelessWidget {
                       SizedBox(width: context.dimens.xs / 3),
                       Icon(
                         Icons.arrow_forward_rounded,
-                        size: 14,
+                        size: context.dimens.iconSm,
                         color: context.colors.primary,
                       ),
                     ],
@@ -260,19 +242,24 @@ class _InfoChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: context.colors.surfaceVariant.withValues(alpha: 0.6),
           borderRadius: BorderRadius.circular(context.dimens.radiusSm),
-          border: Border.all(color: context.colors.divider.withValues(alpha: 0.5)),
+          border: Border.all(
+            color: context.colors.divider.withValues(alpha: 0.5),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 12, color: context.colors.textSecondary),
+            Icon(
+              icon,
+              size: context.dimens.fontSm,
+              color: context.colors.textSecondary,
+            ),
             SizedBox(width: context.dimens.xs / 2),
             Flexible(
               child: Text(
                 label,
                 style: context.textStyles.bodySmall?.copyWith(
                   color: context.colors.textSecondary,
-                  fontSize: 11,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

@@ -36,7 +36,9 @@ class NotificationsViewModel extends AsyncNotifier<List<Notification>> {
         notifications.any(
           (n) => n.type == NotificationType.teacherApproved && !n.isRead,
         )) {
-      unawaited(ref.read(authViewModelProvider.notifier).refreshSessionStatus());
+      unawaited(
+        ref.read(authViewModelProvider.notifier).refreshSessionStatus(),
+      );
     }
     return notifications;
   }

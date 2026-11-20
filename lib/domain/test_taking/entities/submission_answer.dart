@@ -26,6 +26,10 @@ abstract class SubmissionAnswer with _$SubmissionAnswer {
     QuestionType? type,
     String? questionText,
     String? answerText,
+    /// Result only: the question's options in their *stored* order —
+    /// `selectedOptionIndex`/`correctOptionIndex` index into this list
+    /// (not the per-attempt shuffled order shown while answering).
+    List<String>? options,
     int? selectedOptionIndex,
     int? correctOptionIndex,
     String? correctOptionText,

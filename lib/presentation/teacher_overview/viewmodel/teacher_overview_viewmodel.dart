@@ -24,6 +24,8 @@ class TeacherOverviewStats {
     required this.remainingStudents,
     required this.projectedPotential,
     required this.goalProgressPercent,
+    required this.studentsThisMonth,
+    required this.earningsThisMonth,
   });
 
   final int totalStudents;
@@ -34,6 +36,14 @@ class TeacherOverviewStats {
   final int remainingStudents;
   final double projectedPotential;
   final double goalProgressPercent;
+
+  /// Students whose account `createdAt` falls in the current calendar month.
+  /// The backend exposes no "joined this teacher at" timestamp, so account
+  /// creation is the closest existing signal.
+  final int studentsThisMonth;
+
+  /// Sum of `EarningsRecord.amount` credited in the current calendar month.
+  final double earningsThisMonth;
 
   @override
   bool operator ==(Object other) {
@@ -46,20 +56,24 @@ class TeacherOverviewStats {
         other.declaredStudents == declaredStudents &&
         other.remainingStudents == remainingStudents &&
         other.projectedPotential == projectedPotential &&
-        other.goalProgressPercent == goalProgressPercent;
+        other.goalProgressPercent == goalProgressPercent &&
+        other.studentsThisMonth == studentsThisMonth &&
+        other.earningsThisMonth == earningsThisMonth;
   }
 
   @override
   int get hashCode => Object.hash(
-        totalStudents,
-        activePaidStudents,
-        freeStudents,
-        actualEarnings,
-        declaredStudents,
-        remainingStudents,
-        projectedPotential,
-        goalProgressPercent,
-      );
+    totalStudents,
+    activePaidStudents,
+    freeStudents,
+    actualEarnings,
+    declaredStudents,
+    remainingStudents,
+    projectedPotential,
+    goalProgressPercent,
+    studentsThisMonth,
+    earningsThisMonth,
+  );
 }
 
 /// Computes live metrics across enrolled students, earnings, and declared potential.
@@ -72,14 +86,26 @@ final teacherOverviewStatsProvider = Provider<TeacherOverviewStats>((ref) {
   final earnings = earningsAsync.value ?? [];
 
   final totalStudents = students.length;
-  final activePaidStudents =
-      students.where((s) {
-        final enrollments = s.subjectEnrollments ?? [];
-        return enrollments.any((e) => e.discountApplied);
-      }).length;
+  final activePaidStudents = students.where((s) {
+    final enrollments = s.subjectEnrollments ?? [];
+    return enrollments.any((e) => e.discountApplied);
+  }).length;
   final freeStudents = totalStudents - activePaidStudents;
 
   final actualEarnings = earnings.fold<double>(0, (sum, r) => sum + r.amount);
+
+  final now = DateTime.now();
+  bool isThisMonth(DateTime d) {
+    final local = d.toLocal();
+    return local.year == now.year && local.month == now.month;
+  }
+
+  final studentsThisMonth = students
+      .where((s) => isThisMonth(s.createdAt))
+      .length;
+  final earningsThisMonth = earnings
+      .where((r) => isThisMonth(r.createdAt))
+      .fold<double>(0, (sum, r) => sum + r.amount);
 
   // No fallback to a fabricated goal — an undeclared count means there's
   // genuinely no target yet, and the guards below already render that
@@ -89,8 +115,9 @@ final teacherOverviewStatsProvider = Provider<TeacherOverviewStats>((ref) {
   final remainingStudents = (declared - totalStudents).clamp(0, 99999);
   // Average expected commission of Rs. 500 per student bundle
   final projectedPotential = remainingStudents * 500.0;
-  final goalProgressPercent =
-      declared > 0 ? (totalStudents / declared).clamp(0.0, 1.0) : 0.0;
+  final goalProgressPercent = declared > 0
+      ? (totalStudents / declared).clamp(0.0, 1.0)
+      : 0.0;
 
   return TeacherOverviewStats(
     totalStudents: totalStudents,
@@ -101,6 +128,8 @@ final teacherOverviewStatsProvider = Provider<TeacherOverviewStats>((ref) {
     remainingStudents: remainingStudents,
     projectedPotential: projectedPotential,
     goalProgressPercent: goalProgressPercent,
+    studentsThisMonth: studentsThisMonth,
+    earningsThisMonth: earningsThisMonth,
   );
 });
 

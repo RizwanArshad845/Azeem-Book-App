@@ -17,5 +17,12 @@ abstract class Subject with _$Subject {
     /// `SubjectEnrollment` — null otherwise (including always-null for
     /// teacher-role callers, per backend contract).
     int? discountedPrice,
+    /// Content language: `"en"` (default) or `"ur"`. Urdu subjects render
+    /// their content in Nastaleeq, right-to-left (see `UrduAwareText`).
+    @Default('en') String language,
   }) = _Subject;
+
+  const Subject._();
+
+  bool get isUrdu => language == 'ur';
 }

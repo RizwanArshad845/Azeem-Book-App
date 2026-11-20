@@ -16,6 +16,10 @@ abstract class SubmissionAnswerDto with _$SubmissionAnswerDto {
     QuestionType? type,
     String? questionText,
     String? answerText,
+    /// Result only: the question's options in their *stored* order —
+    /// `selectedOptionIndex`/`correctOptionIndex` index into this list
+    /// (not the per-attempt shuffled order shown while answering).
+    List<String>? options,
     int? selectedOptionIndex,
     int? correctOptionIndex,
     String? correctOptionText,
@@ -36,6 +40,7 @@ abstract class SubmissionAnswerDto with _$SubmissionAnswerDto {
     type: type,
     questionText: questionText,
     answerText: answerText,
+    options: options,
     selectedOptionIndex: selectedOptionIndex,
     correctOptionIndex: correctOptionIndex,
     correctOptionText: correctOptionText,
@@ -54,6 +59,7 @@ abstract class SubmissionAnswerDto with _$SubmissionAnswerDto {
         type: entity.type,
         questionText: entity.questionText,
         answerText: entity.answerText,
+        options: entity.options,
         selectedOptionIndex: entity.selectedOptionIndex,
         correctOptionIndex: entity.correctOptionIndex,
         correctOptionText: entity.correctOptionText,

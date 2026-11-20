@@ -18,6 +18,7 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.textPrimary,
     required this.textSecondary,
     required this.divider,
+    required this.info,
     required this.youtubeRed,
   });
 
@@ -42,6 +43,11 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color textSecondary;
   final Color divider;
 
+  /// Neutral informational accent (e.g. "new test uploaded" / "result ready"
+  /// notification badges) — distinct from the brand green/orange and from
+  /// the semantic success/warning/error trio.
+  final Color info;
+
   /// YouTube brand red, used only for the video-lecture play badge.
   final Color youtubeRed;
 
@@ -61,6 +67,7 @@ class AppColors extends ThemeExtension<AppColors> {
     textPrimary: Color(0xFF1A1A1A),
     textSecondary: Color(0xFF5C6B65),
     divider: Color(0xFFE0E4E1),
+    info: Color(0xFF2563EB),
     youtubeRed: Color(0xFFFF0033),
   );
 
@@ -69,6 +76,14 @@ class AppColors extends ThemeExtension<AppColors> {
   /// duplicated across buttons, cards and badges.
   LinearGradient get brandGradient => LinearGradient(
     colors: [primary, Color.lerp(primary, secondary, 0.45) ?? secondary],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  /// Deep green→success gradient for dark "money" hero surfaces (Earnings
+  /// tab). Text/icons on it use [onPrimary]; highlights use [secondary].
+  LinearGradient get earningsGradient => LinearGradient(
+    colors: [primary, Color.lerp(primary, success, 0.6) ?? success],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -90,6 +105,7 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? textPrimary,
     Color? textSecondary,
     Color? divider,
+    Color? info,
     Color? youtubeRed,
   }) {
     return AppColors(
@@ -108,6 +124,7 @@ class AppColors extends ThemeExtension<AppColors> {
       textPrimary: textPrimary ?? this.textPrimary,
       textSecondary: textSecondary ?? this.textSecondary,
       divider: divider ?? this.divider,
+      info: info ?? this.info,
       youtubeRed: youtubeRed ?? this.youtubeRed,
     );
   }
@@ -131,6 +148,7 @@ class AppColors extends ThemeExtension<AppColors> {
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       divider: Color.lerp(divider, other.divider, t)!,
+      info: Color.lerp(info, other.info, t)!,
       youtubeRed: Color.lerp(youtubeRed, other.youtubeRed, t)!,
     );
   }

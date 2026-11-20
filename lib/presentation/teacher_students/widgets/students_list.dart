@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/fade_slide_in.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../teacher_overview/viewmodel/teacher_overview_viewmodel.dart';
@@ -75,8 +76,9 @@ class _StudentsListState extends ConsumerState<StudentsList> {
 
     final totalStudents = filteredStudents.length;
     final totalPages = (totalStudents / StudentsList._pageSize).ceil();
-    final effectivePage =
-        currentPage.clamp(1, totalPages > 0 ? totalPages : 1).toInt();
+    final effectivePage = currentPage
+        .clamp(1, totalPages > 0 ? totalPages : 1)
+        .toInt();
 
     final startIndex = (effectivePage - 1) * StudentsList._pageSize;
     final endIndex = (startIndex + StudentsList._pageSize).clamp(
@@ -107,7 +109,6 @@ class _StudentsListState extends ConsumerState<StudentsList> {
                 ),
                 style: context.textStyles.bodySmall?.copyWith(
                   color: context.colors.textSecondary,
-                  fontSize: 11.5,
                 ),
               ),
               if (totalPages > 1)
@@ -116,7 +117,6 @@ class _StudentsListState extends ConsumerState<StudentsList> {
                   style: context.textStyles.bodySmall?.copyWith(
                     color: context.colors.primary,
                     fontWeight: FontWeight.w600,
-                    fontSize: 11.5,
                   ),
                 ),
             ],
@@ -124,29 +124,31 @@ class _StudentsListState extends ConsumerState<StudentsList> {
         ),
 
         // Students Cards
-        for (final student in pageStudents) ...[
-          Padding(
-            padding: EdgeInsets.only(bottom: context.dimens.sm),
-            child: StudentCard(
-              student: student,
-              subjectNames:
-                  currentTeacherId == null
-                      ? const <String>[]
-                      : (student.subjectEnrollments ?? [])
+        for (final (i, student) in pageStudents.indexed)
+          FadeSlideIn(
+            // Keyed per page so a page change replays the entrance.
+            key: ValueKey('${effectivePage}_${student.id}'),
+            delay: Duration(milliseconds: 40 * i),
+            child: Padding(
+              padding: EdgeInsets.only(bottom: context.dimens.sm),
+              child: StudentCard(
+                student: student,
+                subjectNames: currentTeacherId == null
+                    ? const <String>[]
+                    : (student.subjectEnrollments ?? [])
                           .where((e) => e.teacherId == currentTeacherId)
                           .map(
                             (e) =>
                                 subjectsById[e.subjectId]?.name ?? e.subjectId,
                           )
                           .toList(),
-              campusName: campusesById[student.campusId]?.name,
-              onTap:
-                  () => context.push(
-                    AppRoutes.teacherStudentProgressDetailPath(student.id),
-                  ),
+                campusName: campusesById[student.campusId]?.name,
+                onTap: () => context.push(
+                  AppRoutes.teacherStudentProgressDetailPath(student.id),
+                ),
+              ),
             ),
           ),
-        ],
 
         // Modern Interactive Pagination Bar
         if (totalPages > 1) ...[
@@ -168,13 +170,12 @@ class _StudentsListState extends ConsumerState<StudentsList> {
               children: [
                 // Previous Button
                 IconButton(
-                  icon: const Icon(Icons.chevron_left_rounded, size: 20),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  onPressed:
-                      effectivePage > 1
-                          ? () => _goToPage(effectivePage - 1)
-                          : null,
+                  tooltip: context.l10n.tchPreviousPage,
+                  icon: const Icon(Icons.chevron_left_rounded),
+                  color: context.colors.primary,
+                  onPressed: effectivePage > 1
+                      ? () => _goToPage(effectivePage - 1)
+                      : null,
                 ),
                 SizedBox(width: context.dimens.xs),
 
@@ -186,32 +187,31 @@ class _StudentsListState extends ConsumerState<StudentsList> {
                     ),
                     onTap: () => _goToPage(p),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
+                      constraints: BoxConstraints(
+                        minWidth: context.dimens.xl,
+                        minHeight: context.dimens.xl,
                       ),
-                      margin: const EdgeInsets.symmetric(horizontal: 2),
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.symmetric(
+                        horizontal: context.dimens.xs / 2,
+                      ),
                       decoration: BoxDecoration(
-                        color:
-                            p == effectivePage
-                                ? context.colors.primary
-                                : Colors.transparent,
+                        color: p == effectivePage
+                            ? context.colors.primary
+                            : Colors.transparent,
                         borderRadius: BorderRadius.circular(
                           context.dimens.radiusSm,
                         ),
                       ),
                       child: Text(
                         '$p',
-                        style: TextStyle(
-                          color:
-                              p == effectivePage
-                                  ? Colors.white
-                                  : context.colors.textPrimary,
-                          fontWeight:
-                              p == effectivePage
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                          fontSize: 12,
+                        style: context.textStyles.bodySmall?.copyWith(
+                          color: p == effectivePage
+                              ? context.colors.onPrimary
+                              : context.colors.textPrimary,
+                          fontWeight: p == effectivePage
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                       ),
                     ),
@@ -221,13 +221,12 @@ class _StudentsListState extends ConsumerState<StudentsList> {
                 SizedBox(width: context.dimens.xs),
                 // Next Button
                 IconButton(
-                  icon: const Icon(Icons.chevron_right_rounded, size: 20),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  onPressed:
-                      effectivePage < totalPages
-                          ? () => _goToPage(effectivePage + 1)
-                          : null,
+                  tooltip: context.l10n.tchNextPage,
+                  icon: const Icon(Icons.chevron_right_rounded),
+                  color: context.colors.primary,
+                  onPressed: effectivePage < totalPages
+                      ? () => _goToPage(effectivePage + 1)
+                      : null,
                 ),
               ],
             ),

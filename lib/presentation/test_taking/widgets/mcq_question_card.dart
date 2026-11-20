@@ -3,9 +3,14 @@ import 'package:flutter/services.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/urdu_aware_text.dart';
 import '../../../domain/test_taking/entities/attempt_question.dart';
 
-/// Renders a single mcq [AttemptQuestion] as tappable radio-style option rows
+/// Renders an [AttemptQuestion] that has options (an mcq, or a short
+/// question answered by choosing — MOBILE_CHANGES.md §9) as tappable
+/// radio-style option rows. The tapped position is sent as-is: options
+/// arrive shuffled per attempt and the server maps the position back (§10).
+/// Urdu text renders in Nastaleeq, right-to-left (`UrduAwareText`).
 /// (project_spec.md §10.1 — cards for scannable data, shared widget kit
 /// only, `context.colors`/`context.dimens`, no per-screen bespoke variant).
 class McqQuestionCard extends StatelessWidget {
@@ -28,7 +33,10 @@ class McqQuestionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(question.questionText, style: context.textStyles.bodyLarge),
+          UrduAwareText(
+            question.questionText,
+            style: context.textStyles.bodyLarge,
+          ),
           SizedBox(height: context.dimens.md),
           for (var i = 0; i < options.length; i++)
             Padding(
@@ -59,6 +67,7 @@ class _OptionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(context.dimens.radiusMd);
+    final urdu = containsUrdu(label);
     final color = selected ? context.colors.primary : context.colors.divider;
 
     return Material(
@@ -71,19 +80,34 @@ class _OptionRow extends StatelessWidget {
           onTap();
         },
         child: Container(
-          padding: EdgeInsets.all(context.dimens.sm),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.dimens.sm,
+            vertical: urdu ? context.dimens.xs : context.dimens.sm,
+          ),
           decoration: BoxDecoration(
             border: Border.all(color: color, width: selected ? 2 : 1),
             borderRadius: radius,
           ),
+          // Urdu option: the radio sits on the right, as an Urdu reader expects.
           child: Row(
+            textDirection: urdu ? TextDirection.rtl : null,
             children: [
               Icon(
-                selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                color: selected ? context.colors.primary : context.colors.textSecondary,
+                selected
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_unchecked,
+                color: selected
+                    ? context.colors.primary
+                    : context.colors.textSecondary,
               ),
               SizedBox(width: context.dimens.sm),
-              Expanded(child: Text(label, style: context.textStyles.bodyMedium)),
+              Expanded(
+                child: UrduAwareText(
+                  label,
+                  urdu: urdu,
+                  style: context.textStyles.bodyMedium,
+                ),
+              ),
             ],
           ),
         ),

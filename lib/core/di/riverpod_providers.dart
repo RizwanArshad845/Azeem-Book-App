@@ -16,6 +16,7 @@ import '../../domain/catalog/usecases/get_subjects_usecase.dart';
 import '../../domain/catalog/usecases/get_tests_usecase.dart';
 import '../../domain/ebook_offline/repositories/ebook_offline_repository.dart';
 import '../../domain/notifications/repositories/notification_repository.dart';
+import '../../domain/study_activity/repositories/study_activity_repository.dart';
 import '../services/logger.dart';
 import 'injection.dart';
 
@@ -40,6 +41,11 @@ final getEbookUseCaseProvider =
     Provider<GetEbookUseCase>((ref) => sl<GetEbookUseCase>());
 final getEbookPagesUseCaseProvider =
     Provider<GetEbookPagesUseCase>((ref) => sl<GetEbookPagesUseCase>());
+
+// study-activity
+final studyActivityRepositoryProvider = Provider<StudyActivityRepository>(
+  (ref) => sl<StudyActivityRepository>(),
+);
 
 // ebook-offline
 final ebookOfflineRepositoryProvider =

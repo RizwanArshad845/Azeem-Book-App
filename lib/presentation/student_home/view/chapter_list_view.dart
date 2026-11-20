@@ -13,13 +13,14 @@ import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../../domain/catalog/entities/chapter.dart';
-import '../../../domain/catalog/entities/subject.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
 import '../../student_cart/widgets/payment_processing_banner.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
 import '../../student_progress/viewmodel/student_progress_viewmodel.dart';
 import '../../test_taking/viewmodel/free_attempts_provider.dart';
 import '../viewmodel/student_home_viewmodel.dart';
+import '../../../core/widgets/urdu_aware_text.dart';
+import '../widgets/locked_content_sheet.dart';
 import '../widgets/subject_bundle_header.dart';
 import '../widgets/teacher_assignment_card.dart';
 
@@ -72,7 +73,12 @@ class ChapterListView extends ConsumerWidget {
         if (chapter.youtubeUrl == null) {
           AppSnackbar.show(context, context.l10n.chapterVideoUnavailable);
         } else if (!isOwned && !chapter.isFreeSample) {
-          AppSnackbar.show(context, context.l10n.chapterVideoLocked);
+          LockedContentSheet.show(
+            context,
+            title: context.l10n.stuLockedVideoTitle,
+            subjectId: subjectId,
+            subjectName: subjectName,
+          );
         } else {
           context.push(AppRoutes.chapterLecturePath(subjectId, chapter.id));
         }
@@ -92,27 +98,11 @@ class ChapterListView extends ConsumerWidget {
     WidgetRef ref, {
     String? fallbackName,
   }) async {
-    var subject = ref.read(subjectByIdProvider(subjectId)).value ??
-        await ref.read(subjectByIdProvider(subjectId).future);
-    if (subject == null && fallbackName != null) {
-      // bundlePrice: 0 is a placeholder only — the server looks up the real
-      // Subject.bundlePrice from subjectId, this fallback object's price
-      // never reaches it (see AddCartItemRequestDto, which has no price field).
-      subject = Subject(
-        id: subjectId,
-        boardClassId: '',
-        name: fallbackName,
-        bundlePrice: 0,
-      );
-    }
-    final tests =
-        ref.read(testsForSubjectProvider(subjectId)).value ??
-        await ref.read(testsForSubjectProvider(subjectId).future);
-    if (subject != null && tests != null && tests.isNotEmpty) {
-      await ref
-          .read(studentCartViewModelProvider.notifier)
-          .addSubjectBundle(subject, tests);
-    }
+    await addSubjectBundleToCart(
+      ref,
+      subjectId: subjectId,
+      fallbackName: fallbackName,
+    );
     if (context.mounted) {
       context.go(AppRoutes.studentCart);
     }
@@ -208,6 +198,8 @@ class ChapterListView extends ConsumerWidget {
                     if (chapters.isEmpty) {
                       return EmptyStateView(
                         message: context.l10n.chapterListEmpty,
+                        actionLabel: context.l10n.commonBack,
+                        onAction: () => context.pop(),
                       );
                     }
                     return ListView.separated(
@@ -253,7 +245,7 @@ class ChapterListView extends ConsumerWidget {
                                           ),
                                     ),
                                     SizedBox(height: context.dimens.xs / 2),
-                                    Text(
+                                    UrduAwareText(
                                       chapter.title,
                                       style: context.textStyles.bodyLarge,
                                     ),

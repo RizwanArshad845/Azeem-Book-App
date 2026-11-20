@@ -12,6 +12,9 @@ _SubmissionAnswerDto _$SubmissionAnswerDtoFromJson(Map<String, dynamic> json) =>
       type: $enumDecodeNullable(_$QuestionTypeEnumMap, json['type']),
       questionText: json['questionText'] as String?,
       answerText: json['answerText'] as String?,
+      options: (json['options'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       selectedOptionIndex: (json['selectedOptionIndex'] as num?)?.toInt(),
       correctOptionIndex: (json['correctOptionIndex'] as num?)?.toInt(),
       correctOptionText: json['correctOptionText'] as String?,
@@ -33,6 +36,7 @@ Map<String, dynamic> _$SubmissionAnswerDtoToJson(
   'type': _$QuestionTypeEnumMap[instance.type],
   'questionText': instance.questionText,
   'answerText': instance.answerText,
+  'options': instance.options,
   'selectedOptionIndex': instance.selectedOptionIndex,
   'correctOptionIndex': instance.correctOptionIndex,
   'correctOptionText': instance.correctOptionText,

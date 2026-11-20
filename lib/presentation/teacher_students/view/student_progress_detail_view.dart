@@ -41,7 +41,9 @@ class StudentProgressDetailView extends ConsumerWidget {
         const <String, Campus>{};
 
     return Scaffold(
-      appBar: AppBar(title: AppBarTitle(context.l10n.studentProgressDetailTitle)),
+      appBar: AppBar(
+        title: AppBarTitle(context.l10n.studentProgressDetailTitle),
+      ),
       body: BlurredLogoBackdrop(
         child: SafeArea(
           child: RefreshIndicator(
@@ -52,8 +54,8 @@ class StudentProgressDetailView extends ConsumerWidget {
             },
             child: AsyncValueWidget<Student?>(
               value: studentAsync,
-              onRetry:
-                  () => ref.invalidate(teacherViewedStudentProvider(studentId)),
+              onRetry: () =>
+                  ref.invalidate(teacherViewedStudentProvider(studentId)),
               skeleton: Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: context.dimens.lg,
@@ -92,17 +94,15 @@ class StudentProgressDetailView extends ConsumerWidget {
                 }
 
                 // Scope enrolled subjects ONLY to this teacher
-                final teacherScopedSubjects =
-                    teacher == null
-                        ? const <String>[]
-                        : (student.subjectEnrollments ?? [])
-                            .where((e) => e.teacherId == teacher.id)
-                            .map(
-                              (e) =>
-                                  subjectsById[e.subjectId]?.name ??
-                                  e.subjectId,
-                            )
-                            .toList();
+                final teacherScopedSubjects = teacher == null
+                    ? const <String>[]
+                    : (student.subjectEnrollments ?? [])
+                          .where((e) => e.teacherId == teacher.id)
+                          .map(
+                            (e) =>
+                                subjectsById[e.subjectId]?.name ?? e.subjectId,
+                          )
+                          .toList();
 
                 final isPaid = (student.subjectEnrollments ?? []).any(
                   (e) => e.discountApplied,
@@ -111,10 +111,8 @@ class StudentProgressDetailView extends ConsumerWidget {
 
                 return AsyncValueWidget<List<TestAttempt>>(
                   value: attemptsAsync,
-                  onRetry:
-                      () => ref.invalidate(
-                        teacherStudentAttemptsProvider(studentId),
-                      ),
+                  onRetry: () =>
+                      ref.invalidate(teacherStudentAttemptsProvider(studentId)),
                   skeleton: const SkeletonList(itemCount: 4),
                   data: (attempts) {
                     return ListView(
@@ -204,14 +202,13 @@ class _StudentHeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor =
-        isPaid ? const Color(0xFF059669) : const Color(0xFF64748B);
-    final statusBg =
-        isPaid
-            ? const Color(0xFF059669).withValues(alpha: 0.1)
-            : const Color(0xFF64748B).withValues(alpha: 0.1);
-    final statusLabel =
-        isPaid ? context.l10n.teacherActivePaid : context.l10n.teacherFreeUnpaid;
+    final statusColor = isPaid
+        ? context.colors.success
+        : context.colors.textSecondary;
+    final statusBg = statusColor.withValues(alpha: 0.1);
+    final statusLabel = isPaid
+        ? context.l10n.teacherActivePaid
+        : context.l10n.teacherFreeUnpaid;
 
     return AppFrostedCard(
       padding: EdgeInsets.all(context.dimens.lg),
@@ -221,20 +218,17 @@ class _StudentHeaderCard extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                radius: 24,
-                backgroundColor:
-                    isPaid
-                        ? context.colors.primary.withValues(alpha: 0.15)
-                        : context.colors.divider.withValues(alpha: 0.5),
+                radius: context.dimens.avatarMd / 2,
+                backgroundColor: isPaid
+                    ? context.colors.primary.withValues(alpha: 0.15)
+                    : context.colors.divider.withValues(alpha: 0.5),
                 child: Text(
                   student.name.isNotEmpty ? student.name[0].toUpperCase() : 'S',
-                  style: TextStyle(
-                    color:
-                        isPaid
-                            ? context.colors.primary
-                            : context.colors.textSecondary,
+                  style: context.textStyles.titleLarge?.copyWith(
+                    color: isPaid
+                        ? context.colors.primary
+                        : context.colors.textSecondary,
                     fontWeight: FontWeight.bold,
-                    fontSize: 20,
                   ),
                 ),
               ),
@@ -271,9 +265,8 @@ class _StudentHeaderCard extends StatelessWidget {
                 ),
                 child: Text(
                   statusLabel,
-                  style: TextStyle(
+                  style: context.textStyles.labelSmall?.copyWith(
                     color: statusColor,
-                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

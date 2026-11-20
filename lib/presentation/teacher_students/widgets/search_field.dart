@@ -13,9 +13,8 @@ class StudentSearchField extends ConsumerWidget {
     return AppTextField(
       label: context.l10n.teacherStudentsSearch,
       hint: context.l10n.teacherStudentsSearchHint,
-      onChanged: (value) => ref
-          .read(teacherStudentsSearchQueryProvider.notifier)
-          .setQuery(value),
+      onChanged: (value) =>
+          ref.read(teacherStudentsSearchQueryProvider.notifier).setQuery(value),
     );
   }
 }

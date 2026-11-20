@@ -3263,6 +3263,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{subject} added. Open it to choose a teacher.'**
   String addSubjectSuccess(String subject);
+
+  /// No description provided for @downloadsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My downloaded books'**
+  String get downloadsTitle;
+
+  /// No description provided for @downloadsCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 book ready to read offline} other{{count} books ready to read offline}}'**
+  String downloadsCardSubtitle(int count);
+
+  /// No description provided for @downloadsNoneYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No books downloaded yet'**
+  String get downloadsNoneYet;
+
+  /// No description provided for @downloadsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No downloaded books yet.\nOpen a subject\'s Ebook card and tap \"Save for offline reading\".'**
+  String get downloadsEmpty;
+
+  /// No description provided for @downloadsPages.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 page} other{{count} pages}}'**
+  String downloadsPages(int count);
+
+  /// No description provided for @downloadsSwipeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe a book left to remove it from this device.'**
+  String get downloadsSwipeHint;
+
+  /// No description provided for @downloadsRemoveMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes the saved copy from this device. You can download it again any time you\'re online.'**
+  String get downloadsRemoveMessage;
+
+  /// No description provided for @offlineCheckingAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking again automatically…'**
+  String get offlineCheckingAgain;
+
+  /// No description provided for @stuContinueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue where you left off'**
+  String get stuContinueTitle;
+
+  /// No description provided for @stuContinueButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get stuContinueButton;
+
+  /// No description provided for @stuActivitySubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get stuActivitySubject;
+
+  /// No description provided for @stuActivityTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Online test'**
+  String get stuActivityTest;
+
+  /// No description provided for @stuActivityEbook.
+  ///
+  /// In en, this message translates to:
+  /// **'Ebook'**
+  String get stuActivityEbook;
+
+  /// No description provided for @stuActivityEbookPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Ebook · Page {page}'**
+  String stuActivityEbookPage(int page);
+
+  /// No description provided for @stuStreakChip.
+  ///
+  /// In en, this message translates to:
+  /// **'🔥 {count}-day streak'**
+  String stuStreakChip(int count);
+
+  /// No description provided for @stuWelcomeSubtitleNeutral.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to learn today?'**
+  String get stuWelcomeSubtitleNeutral;
+
+  /// No description provided for @stuScoreGreat.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding! You\'ve really mastered this one.'**
+  String get stuScoreGreat;
+
+  /// No description provided for @stuScoreGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good effort! Review your answers to push your score higher.'**
+  String get stuScoreGood;
+
+  /// No description provided for @stuScoreLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t give up — every attempt makes you stronger. Give it another go!'**
+  String get stuScoreLow;
+
+  /// No description provided for @stuTestBadgeNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get stuTestBadgeNew;
+
+  /// No description provided for @stuTestBestScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Best {percent}%'**
+  String stuTestBestScore(int percent);
+
+  /// No description provided for @stuLockedEbookTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This ebook is locked'**
+  String get stuLockedEbookTitle;
+
+  /// No description provided for @stuLockedVideoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This lecture is locked'**
+  String get stuLockedVideoTitle;
+
+  /// No description provided for @stuLockedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add this subject to your cart to unlock its ebook, video lectures and all tests.'**
+  String get stuLockedBody;
+
+  /// No description provided for @stuBrowseSubjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse subjects'**
+  String get stuBrowseSubjects;
+
+  /// No description provided for @stuTakeATest.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a test'**
+  String get stuTakeATest;
+
+  /// No description provided for @stuRecentAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent attempts'**
+  String get stuRecentAttempts;
+
+  /// No description provided for @stuEbookPageOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {current} of {total}'**
+  String stuEbookPageOf(int current, int total);
+
+  /// No description provided for @stuAttemptScore.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% score'**
+  String stuAttemptScore(int percent);
+
+  /// No description provided for @tchStatsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'At a glance'**
+  String get tchStatsHeading;
+
+  /// No description provided for @tchStatNewThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'New this month'**
+  String get tchStatNewThisMonth;
+
+  /// No description provided for @tchStatActiveStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Active students'**
+  String get tchStatActiveStudents;
+
+  /// No description provided for @tchStatEarnedThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Earned this month (Rs.)'**
+  String get tchStatEarnedThisMonth;
+
+  /// No description provided for @tchEarningsLinkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Projected earnings'**
+  String get tchEarningsLinkTitle;
+
+  /// No description provided for @tchEarningsLinkSub.
+  ///
+  /// In en, this message translates to:
+  /// **'See your potential and commission history'**
+  String get tchEarningsLinkSub;
+
+  /// No description provided for @tchPreviousPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous page'**
+  String get tchPreviousPage;
+
+  /// No description provided for @tchNextPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Next page'**
+  String get tchNextPage;
 }
 
 class _AppLocalizationsDelegate

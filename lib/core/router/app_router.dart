@@ -5,8 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../domain/auth/entities/user_role.dart';
+import '../../domain/common/failure.dart';
 import '../../presentation/auth/view/otp_verify_view.dart';
 import '../../presentation/chapter_video/view/chapter_video_view.dart';
+import '../../presentation/ebook_reader/view/downloaded_books_view.dart';
 import '../../presentation/ebook_reader/view/ebook_reader_view.dart';
 import '../../presentation/subject_hub/view/subject_hub_view.dart';
 import '../../presentation/auth/view/phone_entry_view.dart';
@@ -122,15 +124,18 @@ List<BottomNavDestinationSpec> _buildStudentDestinations(
   return [
     BottomNavDestinationSpec(
       icon: Icons.home_outlined,
+      selectedIcon: Icons.home_rounded,
       label: context.l10n.navHome,
     ),
     BottomNavDestinationSpec(
       icon: Icons.shopping_cart_outlined,
+      selectedIcon: Icons.shopping_cart,
       label: context.l10n.navCart,
       badgeCount: cartCount,
     ),
     BottomNavDestinationSpec(
       icon: Icons.insights_outlined,
+      selectedIcon: Icons.insights,
       label: context.l10n.navProgress,
     ),
   ];
@@ -140,14 +145,17 @@ List<BottomNavDestinationSpec> _buildTeacherDestinations(BuildContext context) {
   return [
     BottomNavDestinationSpec(
       icon: Icons.home_outlined,
+      selectedIcon: Icons.home_rounded,
       label: context.l10n.navHome,
     ),
     BottomNavDestinationSpec(
       icon: Icons.people_outline,
+      selectedIcon: Icons.people,
       label: context.l10n.navStudents,
     ),
     BottomNavDestinationSpec(
       icon: Icons.account_balance_wallet_outlined,
+      selectedIcon: Icons.account_balance_wallet,
       label: context.l10n.navEarnings,
     ),
   ];
@@ -192,6 +200,7 @@ const _outsideShellRoutes = {
   AppRoutes.teacherProfile,
   AppRoutes.studentNotifications,
   AppRoutes.teacherNotifications,
+  AppRoutes.downloads,
 };
 
 bool _isOutsideShellRoute(String location) =>
@@ -323,6 +332,21 @@ String? _redirectFor(Ref ref, String location) {
   // real Student record starts existing. Trusting the stale status first
   // would leave a freshly-submitted student stuck on the review screen
   // indefinitely (still "allowed" there, never advanced to Home).
+  // No connection (cold start offline): the record can't be fetched, but
+  // that says nothing about whether the student is registered — don't
+  // bounce a returning student into onboarding. Hold on splash (the offline
+  // overlay covers it) while still allowing the offline-safe screens;
+  // `App` re-fetches the record once the connection is back.
+  final error = studentAsync.error;
+  if (studentAsync.value == null && error is NetworkFailure) {
+    final offlineSafe =
+        location == AppRoutes.downloads ||
+        location.startsWith('/ebook-reader/');
+    return offlineSafe || location == AppRoutes.splash
+        ? null
+        : AppRoutes.splash;
+  }
+
   final student = studentAsync.value;
   if (student != null) {
     final allowed =
@@ -579,6 +603,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             offline: state.uri.queryParameters['offline'] == '1',
           ),
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.downloads,
+        pageBuilder: (context, state) =>
+            _appPage(state, const DownloadedBooksView()),
       ),
       GoRoute(
         path: AppRoutes.chapterLecture,

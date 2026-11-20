@@ -55,16 +55,27 @@ class ReviewAnswersSheet extends StatelessWidget {
       questionText: answer.questionText ?? '',
       scoreLabel: '$earned/$marks',
       correctAnswerLabel: context.l10n.reviewCorrectAnswerLabel,
-      // `expectedAnswer` covers short/long-answer questions; `correctOptionText`
-      // covers mcq questions. Fall back to an index-based label only if
-      // neither is present (e.g. against an older backend response).
-      correctAnswer: answer.expectedAnswer ??
-          answer.correctOptionText ??
-          (answer.correctOptionIndex != null
-              ? 'Option ${answer.correctOptionIndex! + 1}'
-              : null),
+      correctAnswer: correctAnswerText(answer),
       solutionLabel: context.l10n.testResultsSolutionLabel,
       solution: answer.justification ?? answer.solutionExplanation,
     );
   }
+}
+
+/// Any option-answered question (mcq, or a short question answered by
+/// choosing — MOBILE_CHANGES.md §9) shows the correct *option*. The
+/// result's `options` are in stored order, which is what
+/// `correctOptionIndex` indexes — never the shuffled order shown during
+/// the attempt (§10). Text-answered questions show `expectedAnswer`.
+@visibleForTesting
+String? correctAnswerText(SubmissionAnswer answer) {
+  final index = answer.correctOptionIndex;
+  final options = answer.options;
+  if (answer.correctOptionText != null) return answer.correctOptionText;
+  if (index != null && options != null && index < options.length) {
+    return options[index];
+  }
+  if (answer.expectedAnswer != null) return answer.expectedAnswer;
+  // Older backend response without option text.
+  return index != null ? 'Option ${index + 1}' : null;
 }

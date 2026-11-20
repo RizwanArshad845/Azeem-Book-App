@@ -69,11 +69,18 @@ class QuestionBody extends ConsumerWidget {
             totalSteps: snapshot.questions.length,
           ),
           SizedBox(height: context.dimens.sm),
-          _QuestionTypeBadge(type: question.type),
+          _QuestionTypeBadge(
+            type: question.type,
+            choosesOption: question.options?.isNotEmpty ?? false,
+          ),
           SizedBox(height: context.dimens.md),
           Expanded(
             child: SingleChildScrollView(
-              child: question.type == QuestionType.mcq
+              // Any question that comes with options is answered by picking
+              // one, whatever its type — Urdu/Maths short questions included
+              // (MOBILE_CHANGES.md §9). Only option-less short/long answer
+              // questions get a text box.
+              child: (question.options?.isNotEmpty ?? false)
                   ? McqQuestionCard(
                       question: question,
                       selectedOptionIndex: currentAnswer?.selectedOptionIndex,
@@ -120,9 +127,13 @@ class QuestionBody extends ConsumerWidget {
 /// Small icon/badge near the question header identifying its type — mcq,
 /// short answer, or long answer (Workstream 6 icon vocabulary).
 class _QuestionTypeBadge extends StatelessWidget {
-  const _QuestionTypeBadge({required this.type});
+  const _QuestionTypeBadge({required this.type, required this.choosesOption});
 
   final QuestionType type;
+
+  /// Option-answered short question: show the "choose an option" icon so
+  /// the badge matches what's on screen, but keep the type's label.
+  final bool choosesOption;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +155,11 @@ class _QuestionTypeBadge extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: context.dimens.iconSm, color: context.colors.primary),
+        Icon(
+          choosesOption ? Icons.radio_button_checked : icon,
+          size: context.dimens.iconSm,
+          color: context.colors.primary,
+        ),
         SizedBox(width: context.dimens.xs),
         Text(
           label,

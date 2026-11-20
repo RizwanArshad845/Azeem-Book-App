@@ -5,26 +5,25 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
-import '../../../core/utils/subject_icons.dart';
-import '../../../core/utils/subject_illustration.dart';
 import '../../../core/widgets/app_bar_actions.dart';
 import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/delayed_loader.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/fade_slide_in.dart';
 import '../../../core/widgets/greeting_hero_card.dart';
-import '../../../core/widgets/illustrated_list_card.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../core/widgets/promo_carousel.dart';
 import '../../../core/widgets/skeleton.dart';
-import '../../../core/widgets/status_badge.dart';
 import '../../../core/widgets/subject_view_toggle.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/catalog/entities/subject.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
 import '../../test_taking/widgets/practice_question_bank_sheet.dart';
 import '../viewmodel/student_home_viewmodel.dart';
+import '../viewmodel/study_activity_viewmodel.dart';
 import '../widgets/add_subject_sheet.dart';
+import '../widgets/continue_learning_card.dart';
 import '../widgets/subject_card.dart';
 
 /// Student shell Home tab root (§10.2: "Selected subjects, promo carousel,
@@ -41,6 +40,7 @@ class StudentHomeView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final student = ref.watch(currentStudentProvider);
+    final streak = ref.watch(studyStreakProvider);
     // An onboarded student can add more subjects any time (needs a board
     // class — the backend rejects enrolment without one).
     final canAddSubjects = (student?.boardClassId ?? '').isNotEmpty;
@@ -103,12 +103,16 @@ class StudentHomeView extends ConsumerWidget {
                         greeting: context.l10n.studentHomeWelcomeName(
                           student.name,
                         ),
-                        subtitle: context.l10n.studentHomeWelcomeSubtitle,
+                        subtitle: streak > 0
+                            ? null
+                            : context.l10n.stuWelcomeSubtitleNeutral,
+                        footer: streak > 0 ? _StreakChip(days: streak) : null,
                       ),
                     ),
+                    const ContinueLearningCard(),
                     const _PromoSection(),
                     SizedBox(height: context.dimens.xl),
-                    const _SubjectsSection(),
+                    _SubjectsSection(canAddSubjects: canAddSubjects),
                   ],
                 ),
               ),
@@ -154,8 +158,8 @@ class _PromoSection extends ConsumerWidget {
           fallbackIcon: Icons.local_offer_outlined,
           imageAsset: AppAssets.promoDiscount,
           gradientColors: [
-            const Color(0xFF1E6B52),
             context.colors.secondary,
+            context.colors.primary,
           ],
           onTap: () => context.go(AppRoutes.studentCart),
         ),
@@ -172,7 +176,7 @@ class _PromoSection extends ConsumerWidget {
           imageAsset: AppAssets.practiceBank,
           gradientColors: [
             context.colors.primary,
-            const Color(0xFF2A7B62),
+            context.colors.accent,
           ],
           onTap: () => PracticeQuestionBankSheet.show(context),
         ),
@@ -194,6 +198,8 @@ class _PromoSection extends ConsumerWidget {
     return Padding(
       padding: EdgeInsets.only(top: context.dimens.lg),
       child: PromoCarousel(
+        // A slim strip: secondary to the "Continue" card above it.
+        height: 100,
         banners: banners,
         onDismiss: (id) =>
             ref.read(dismissedPromoBannersProvider.notifier).dismiss(id),
@@ -205,14 +211,13 @@ class _PromoSection extends ConsumerWidget {
 /// Owns the subject-list/grid watches (enrolled subjects, purchased ids,
 /// cart, view mode) so the Home root doesn't have to.
 class _SubjectsSection extends ConsumerWidget {
-  const _SubjectsSection();
+  const _SubjectsSection({required this.canAddSubjects});
+
+  final bool canAddSubjects;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final subjectsAsync = ref.watch(enrolledSubjectsProvider);
-    final purchasedIds = ref.watch(purchasedSubjectIdsProvider).value;
-    final cartState = ref.watch(studentCartViewModelProvider).value;
-    final cartItems = cartState?.items;
     final viewMode = ref.watch(subjectViewModeProvider);
 
     return Column(
@@ -257,9 +262,23 @@ class _SubjectsSection extends ConsumerWidget {
             data: (subjects) {
               if (subjects.isEmpty) {
                 return EmptyStateView(
+                  icon: Icons.menu_book_outlined,
                   message: context.l10n.studentHomeNoSubjects,
+                  actionLabel:
+                      canAddSubjects ? context.l10n.addSubjectButton : null,
+                  onAction: canAddSubjects
+                      ? () => AddSubjectSheet.show(context)
+                      : null,
                 );
               }
+
+              Widget item(int index) => FadeSlideIn(
+                delay: Duration(milliseconds: 40 * index.clamp(0, 8)),
+                child: SubjectCard(
+                  subject: subjects[index],
+                  grid: viewMode == SubjectViewMode.grid,
+                ),
+              );
 
               if (viewMode == SubjectViewMode.grid) {
                 return GridView.builder(
@@ -272,10 +291,7 @@ class _SubjectsSection extends ConsumerWidget {
                     crossAxisSpacing: context.dimens.md,
                     childAspectRatio: 0.78,
                   ),
-                  itemBuilder: (context, index) {
-                    final subject = subjects[index];
-                    return SubjectCard(subject: subject);
-                  },
+                  itemBuilder: (context, index) => item(index),
                 );
               }
 
@@ -283,47 +299,44 @@ class _SubjectsSection extends ConsumerWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: subjects.length,
-                separatorBuilder: (_, _) =>
-                    SizedBox(height: context.dimens.sm + 2),
-                itemBuilder: (context, index) {
-                  final subject = subjects[index];
-                  final isOwned =
-                      purchasedIds?.contains(subject.id) ?? false;
-                  final isInCart = cartItems != null &&
-                      cartItems.any((i) => i.subjectId == subject.id);
-
-                  return IllustratedListCard(
-                    title: context.l10n.localizedSubjectName(subject.name),
-                    imageAsset: subjectIllustration(subject.name),
-                    fallbackIcon: subjectIcon(subject.name),
-                    badge: isOwned
-                        ? StatusBadge(
-                            label: context.l10n.subjectCardOwnedBadge,
-                            color: context.colors.success,
-                          )
-                        : isInCart
-                            ? StatusBadge(
-                                label: context.l10n.subjectCardInCartBadge,
-                                color: context.colors.primary,
-                              )
-                            : null,
-                    meta: Text(
-                      context.l10n.subjectCardExploreHint,
-                      style: context.textStyles.bodySmall?.copyWith(
-                        color: context.colors.textSecondary,
-                      ),
-                    ),
-                    onTap: () => context.push(
-                      AppRoutes.subjectHubPath(subject.id),
-                      extra: subject.name,
-                    ),
-                  );
-                },
+                separatorBuilder: (_, _) => SizedBox(height: context.dimens.sm),
+                itemBuilder: (context, index) => item(index),
               );
             },
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Small translucent "🔥 N-day streak" pill for the greeting hero card.
+class _StreakChip extends StatelessWidget {
+  const _StreakChip({required this.days});
+
+  final int days;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.dimens.sm,
+          vertical: context.dimens.xs / 2,
+        ),
+        decoration: BoxDecoration(
+          color: context.colors.onPrimary.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(context.dimens.pillRadius),
+        ),
+        child: Text(
+          context.l10n.stuStreakChip(days),
+          style: context.textStyles.labelMedium?.copyWith(
+            color: context.colors.onPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
     );
   }
 }

@@ -4,9 +4,11 @@ import 'package:intl/intl.dart';
 import '../../../core/extensions/context_extensions.dart';
 
 /// Interactive Projected Earnings card highlighting current commission vs.
-/// potential earnings as more declared students purchase test packs.
+/// potential earnings as more declared students purchase test packs, plus
+/// the declared-students goal progress. This is the single home for
+/// projected earnings — the Overview tab only links here.
 ///
-/// Takes the two primitives it actually uses rather than the whole
+/// Takes the primitives it actually uses rather than the whole
 /// `TeacherOverviewStats` object, so callers can `.select` just these fields
 /// from Riverpod instead of watching the entire stats provider.
 class EarningsProjectedCalculatorCard extends StatefulWidget {
@@ -14,10 +16,18 @@ class EarningsProjectedCalculatorCard extends StatefulWidget {
     super.key,
     required this.actualEarnings,
     required this.remainingStudents,
+    required this.declaredStudents,
+    required this.onboardedStudents,
+    required this.goalProgress,
   });
 
   final double actualEarnings;
   final int remainingStudents;
+  final int declaredStudents;
+  final int onboardedStudents;
+
+  /// 0..1 share of declared students already onboarded.
+  final double goalProgress;
 
   @override
   State<EarningsProjectedCalculatorCard> createState() =>
@@ -36,45 +46,44 @@ class _EarningsProjectedCalculatorCardState
   @override
   void initState() {
     super.initState();
-    _simulatedAdditionalStudents =
-        widget.remainingStudents.toDouble().clamp(0.0, 100.0);
+    _simulatedAdditionalStudents = widget.remainingStudents.toDouble().clamp(
+      0.0,
+      100.0,
+    );
   }
 
   @override
   void didUpdateWidget(covariant EarningsProjectedCalculatorCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.remainingStudents != widget.remainingStudents) {
-      _simulatedAdditionalStudents =
-          widget.remainingStudents.toDouble().clamp(0.0, 100.0);
+      _simulatedAdditionalStudents = widget.remainingStudents.toDouble().clamp(
+        0.0,
+        100.0,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final text = context.textStyles;
+    final onCard = colors.onPrimary;
+    final highlight = colors.secondary;
+    final muted = onCard.withValues(alpha: 0.8);
+
     final currency = _currency;
     final simulatedCommission = _simulatedAdditionalStudents * 500.0;
     final totalSimulated = widget.actualEarnings + simulatedCommission;
 
     return Container(
       decoration: BoxDecoration(
-        // Same emerald gradient as the actual-earnings hero card on the
-        // Teacher Overview tab (ProjectedEarningsHeroCard), so the simulator
-        // reads as part of the same earnings surface.
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF0D5C3A), // Deep Emerald
-            Color(0xFF13774D),
-            Color(0xFF1E824C),
-          ],
-        ),
+        gradient: colors.earningsGradient,
         borderRadius: BorderRadius.circular(context.dimens.radiusXl),
         boxShadow: [
           BoxShadow(
-            color: context.colors.primary.withValues(alpha: 0.28),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: colors.primary.withValues(alpha: 0.28),
+            blurRadius: context.dimens.lg,
+            offset: Offset(0, context.dimens.sm),
           ),
         ],
       ),
@@ -86,41 +95,46 @@ class _EarningsProjectedCalculatorCardState
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: context.dimens.sm,
-                  vertical: context.dimens.xs / 2,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.amber.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(context.dimens.radiusLg),
-                  border: Border.all(
-                    color: Colors.amber.withValues(alpha: 0.5),
+              Flexible(
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.dimens.sm,
+                    vertical: context.dimens.xs / 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: highlight.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(
+                      context.dimens.pillRadius,
+                    ),
+                    border: Border.all(color: highlight.withValues(alpha: 0.5)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.auto_graph_rounded,
+                        color: highlight,
+                        size: context.dimens.iconSm,
+                      ),
+                      SizedBox(width: context.dimens.xs / 2),
+                      Flexible(
+                        child: Text(
+                          context.l10n.teacherProjectedSimulatorTitle,
+                          style: text.labelSmall?.copyWith(
+                            color: highlight,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.auto_graph_rounded,
-                      color: Colors.amberAccent,
-                      size: 15,
-                    ),
-                    SizedBox(width: context.dimens.xs / 2),
-                    Text(
-                      context.l10n.teacherProjectedSimulatorTitle,
-                      style: const TextStyle(
-                        color: Colors.amberAccent,
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
               ),
+              SizedBox(width: context.dimens.xs),
               Text(
                 context.l10n.teacherPerPackRate,
-                style: const TextStyle(color: Colors.white70, fontSize: 11),
+                style: text.labelSmall?.copyWith(color: muted),
               ),
             ],
           ),
@@ -129,30 +143,24 @@ class _EarningsProjectedCalculatorCardState
           // Total Potential Number
           Text(
             context.l10n.teacherTotalProjectedEarnings,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
-              fontSize: 12.5,
-            ),
+            style: text.bodySmall?.copyWith(color: muted),
           ),
-          SizedBox(height: context.dimens.xs / 3),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
+          SizedBox(height: context.dimens.xs / 2),
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.end,
+            spacing: context.dimens.xs,
             children: [
               Text(
                 currency.format(totalSimulated),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 28,
+                style: text.headlineMedium?.copyWith(
+                  color: onCard,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(width: context.dimens.xs),
               Text(
                 '(+${currency.format(simulatedCommission)})',
-                style: const TextStyle(
-                  color: Colors.amberAccent,
-                  fontSize: 14,
+                style: text.bodyMedium?.copyWith(
+                  color: highlight,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -163,10 +171,7 @@ class _EarningsProjectedCalculatorCardState
             context.l10n.teacherSimulatorPrompt(
               _simulatedAdditionalStudents.toInt(),
             ),
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
-              fontSize: 12,
-            ),
+            style: text.bodySmall?.copyWith(color: muted),
           ),
           SizedBox(height: context.dimens.xs),
 
@@ -174,24 +179,19 @@ class _EarningsProjectedCalculatorCardState
           if (widget.remainingStudents > 0) ...[
             SliderTheme(
               data: SliderTheme.of(context).copyWith(
-                activeTrackColor: Colors.amberAccent,
-                inactiveTrackColor: Colors.white.withValues(alpha: 0.2),
-                thumbColor: Colors.amber,
-                overlayColor: Colors.amber.withValues(alpha: 0.2),
-                trackHeight: 4,
+                activeTrackColor: highlight,
+                inactiveTrackColor: onCard.withValues(alpha: 0.2),
+                thumbColor: highlight,
+                overlayColor: highlight.withValues(alpha: 0.2),
+                trackHeight: context.dimens.xs,
               ),
               child: Slider(
                 value: _simulatedAdditionalStudents,
                 min: 0,
-                max: (widget.remainingStudents > 0
-                        ? widget.remainingStudents
-                        : 50)
-                    .toDouble(),
-                divisions: (widget.remainingStudents > 0
-                        ? widget.remainingStudents
-                        : 50)
-                    .clamp(1, 100),
+                max: widget.remainingStudents.toDouble(),
+                divisions: widget.remainingStudents.clamp(1, 100),
                 onChanged: (val) {
+                  // Ephemeral slider position only — not business state.
                   setState(() {
                     _simulatedAdditionalStudents = val;
                   });
@@ -203,15 +203,16 @@ class _EarningsProjectedCalculatorCardState
               children: [
                 Text(
                   context.l10n.teacherZeroStudentsLabel,
-                  style: const TextStyle(color: Colors.white54, fontSize: 10.5),
+                  style: text.labelSmall?.copyWith(
+                    color: onCard.withValues(alpha: 0.6),
+                  ),
                 ),
                 Text(
                   context.l10n.teacherAllRemainingStudents(
                     widget.remainingStudents,
                   ),
-                  style: const TextStyle(
-                    color: Colors.amberAccent,
-                    fontSize: 10.5,
+                  style: text.labelSmall?.copyWith(
+                    color: highlight,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -221,13 +222,51 @@ class _EarningsProjectedCalculatorCardState
             Container(
               padding: EdgeInsets.all(context.dimens.sm),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.08),
+                color: onCard.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(context.dimens.radiusSm),
               ),
               child: Text(
                 context.l10n.teacherGoalReachedMessage,
-                style: const TextStyle(color: Colors.amberAccent, fontSize: 12),
+                style: text.bodySmall?.copyWith(color: highlight),
               ),
+            ),
+          ],
+
+          // Declared-students goal progress (moved here from the Overview
+          // hero so all projection info lives on this one card).
+          if (widget.declaredStudents > 0) ...[
+            SizedBox(height: context.dimens.md),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(context.dimens.radiusSm),
+              child: LinearProgressIndicator(
+                value: widget.goalProgress,
+                minHeight: context.dimens.xs * 1.5,
+                backgroundColor: onCard.withValues(alpha: 0.2),
+                valueColor: AlwaysStoppedAnimation<Color>(highlight),
+              ),
+            ),
+            SizedBox(height: context.dimens.xs),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    context.l10n.teacherGoalOnboarded(
+                      widget.onboardedStudents,
+                      widget.declaredStudents,
+                    ),
+                    style: text.labelSmall?.copyWith(color: muted),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Text(
+                  '${(widget.goalProgress * 100).toInt()}%',
+                  style: text.labelSmall?.copyWith(
+                    color: highlight,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ],
         ],

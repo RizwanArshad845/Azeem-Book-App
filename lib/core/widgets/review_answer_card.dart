@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../extensions/context_extensions.dart';
 import 'app_card.dart';
+import 'urdu_aware_text.dart';
 
 /// An expandable per-question row for the "Review Answers" sheet: a coloured
 /// status circle, a "QUESTION n • STATUS" overline, the (truncated) question
@@ -41,8 +42,11 @@ class _ReviewAnswerCardState extends State<ReviewAnswerCard> {
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.isCorrect ? context.colors.success : context.colors.error;
-    final hasDetail = (widget.correctAnswer?.isNotEmpty ?? false) ||
+    final color = widget.isCorrect
+        ? context.colors.success
+        : context.colors.error;
+    final hasDetail =
+        (widget.correctAnswer?.isNotEmpty ?? false) ||
         (widget.solution?.isNotEmpty ?? false);
 
     return AppCard(
@@ -76,7 +80,7 @@ class _ReviewAnswerCardState extends State<ReviewAnswerCard> {
                       ),
                     ),
                     SizedBox(height: context.dimens.xs),
-                    Text(
+                    UrduAwareText(
                       widget.questionText,
                       maxLines: _expanded ? null : 2,
                       overflow: _expanded ? null : TextOverflow.ellipsis,
@@ -112,7 +116,8 @@ class _ReviewAnswerCardState extends State<ReviewAnswerCard> {
                   if (widget.correctAnswer?.isNotEmpty ?? false) ...[
                     _detail(
                       context,
-                      widget.correctAnswerLabel ?? context.l10n.reviewCorrectAnswerLabel,
+                      widget.correctAnswerLabel ??
+                          context.l10n.reviewCorrectAnswerLabel,
                       widget.correctAnswer!,
                     ),
                   ],
@@ -122,7 +127,8 @@ class _ReviewAnswerCardState extends State<ReviewAnswerCard> {
                   if (widget.solution?.isNotEmpty ?? false)
                     _detail(
                       context,
-                      widget.solutionLabel ?? context.l10n.testResultsSolutionLabel,
+                      widget.solutionLabel ??
+                          context.l10n.testResultsSolutionLabel,
                       widget.solution!,
                     ),
                 ],
@@ -147,7 +153,7 @@ class _ReviewAnswerCardState extends State<ReviewAnswerCard> {
               fontWeight: FontWeight.w700,
             ),
           ),
-        Text(value, style: context.textStyles.bodySmall),
+        UrduAwareText(value, style: context.textStyles.bodySmall),
       ],
     );
   }

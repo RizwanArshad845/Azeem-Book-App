@@ -7,7 +7,6 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/utils/subject_icons.dart';
 import '../../../core/utils/subject_illustration.dart';
 import '../../../core/widgets/app_bar_title.dart';
-import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/fade_slide_in.dart';
 import '../../../core/widgets/hub_action_card.dart';
 import '../../../core/widgets/illustration_thumbnail.dart';
@@ -18,20 +17,45 @@ import '../../ebook_reader/viewmodel/offline_ebook_viewmodel.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
 import '../../student_home/view/chapter_list_view.dart';
 import '../../student_home/viewmodel/student_home_viewmodel.dart';
+import '../../student_home/viewmodel/study_activity_viewmodel.dart';
+import '../../student_home/widgets/locked_content_sheet.dart';
 import '../widgets/ebook_options_sheet.dart';
 
 /// What a subject offers, as three big cards — Video Lectures, Online Test
 /// and Ebook — opened from a subject card on Student Home. Lectures and
 /// tests lead into the chapter list (in the matching mode); the ebook card
 /// opens the read-online / save-offline sheet.
-class SubjectHubView extends ConsumerWidget {
+class SubjectHubView extends ConsumerStatefulWidget {
   const SubjectHubView({super.key, required this.subjectId, this.subjectName});
 
   final String subjectId;
   final String? subjectName;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SubjectHubView> createState() => _SubjectHubViewState();
+}
+
+class _SubjectHubViewState extends ConsumerState<SubjectHubView> {
+  @override
+  void initState() {
+    super.initState();
+    // Bookmark for Home's "Continue" card. Deferred: providers can't be
+    // modified while the widget tree is building.
+    Future.microtask(() {
+      if (!mounted) return;
+      ref
+          .read(lastActivityProvider.notifier)
+          .recordSubjectHub(
+            subjectId: widget.subjectId,
+            subjectName: widget.subjectName,
+          );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final subjectId = widget.subjectId;
+    final subjectName = widget.subjectName;
     final name =
         subjectName ?? ref.watch(subjectByIdProvider(subjectId)).value?.name;
     final title = name != null
@@ -111,7 +135,11 @@ class SubjectHubView extends ConsumerWidget {
               delay: const Duration(milliseconds: 240),
               child: AspectRatio(
                 aspectRatio: 2.2,
-                child: _EbookCard(subjectId: subjectId, title: title),
+                child: _EbookCard(
+                  subjectId: subjectId,
+                  title: title,
+                  subjectName: name,
+                ),
               ),
             ),
           ],
@@ -125,10 +153,15 @@ class SubjectHubView extends ConsumerWidget {
 /// saved offline / downloading). Status logic carried over from the retired
 /// subject actions sheet.
 class _EbookCard extends ConsumerWidget {
-  const _EbookCard({required this.subjectId, required this.title});
+  const _EbookCard({
+    required this.subjectId,
+    required this.title,
+    this.subjectName,
+  });
 
   final String subjectId;
   final String title;
+  final String? subjectName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -193,7 +226,12 @@ class _EbookCard extends ConsumerWidget {
         canReadOnline: isReady,
       );
     } else if (isLocked) {
-      onTap = () => AppSnackbar.show(context, context.l10n.ebookLockedMessage);
+      onTap = () => LockedContentSheet.show(
+        context,
+        title: context.l10n.stuLockedEbookTitle,
+        subjectId: subjectId,
+        subjectName: subjectName,
+      );
     } else {
       onTap = null;
     }

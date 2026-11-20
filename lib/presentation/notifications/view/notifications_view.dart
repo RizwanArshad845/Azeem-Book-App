@@ -9,6 +9,7 @@ import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/blurred_logo_backdrop.dart';
 import '../../../core/widgets/confirm_dialog.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/fade_slide_in.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../domain/notifications/entities/notification.dart';
 import '../viewmodel/notifications_viewmodel.dart';
@@ -34,9 +35,7 @@ class NotificationsView extends ConsumerWidget {
             tooltip: context.l10n.notificationsMarkAllRead,
             icon: const Icon(Icons.done_all_rounded),
             onPressed: () {
-              ref
-                  .read(notificationsViewModelProvider.notifier)
-                  .markAllAsRead();
+              ref.read(notificationsViewModelProvider.notifier).markAllAsRead();
             },
           ),
           // "Clear all" action
@@ -61,8 +60,8 @@ class NotificationsView extends ConsumerWidget {
       body: BlurredLogoBackdrop(
         child: SafeArea(
           child: RefreshIndicator(
-            onRefresh:
-                () async => ref.invalidate(notificationsViewModelProvider),
+            onRefresh: () async =>
+                ref.invalidate(notificationsViewModelProvider),
             child: AsyncValueWidget<List<Notification>>(
               value: notificationsAsync,
               onRetry: () => ref.invalidate(notificationsViewModelProvider),
@@ -76,17 +75,16 @@ class NotificationsView extends ConsumerWidget {
               data: (notifications) {
                 if (notifications.isEmpty) {
                   return LayoutBuilder(
-                    builder:
-                        (context, constraints) => SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          child: SizedBox(
-                            height: constraints.maxHeight,
-                            child: EmptyStateView(
-                              message: context.l10n.notificationsEmpty,
-                              icon: Icons.notifications_none_outlined,
-                            ),
-                          ),
+                    builder: (context, constraints) => SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        height: constraints.maxHeight,
+                        child: EmptyStateView(
+                          message: context.l10n.notificationsEmpty,
+                          icon: Icons.notifications_none_outlined,
                         ),
+                      ),
+                    ),
                   );
                 }
                 return ListView.separated(
@@ -96,11 +94,16 @@ class NotificationsView extends ConsumerWidget {
                     vertical: context.dimens.md,
                   ),
                   itemCount: notifications.length,
-                  separatorBuilder:
-                      (_, _) => SizedBox(height: context.dimens.sm),
+                  separatorBuilder: (_, _) =>
+                      SizedBox(height: context.dimens.sm),
                   itemBuilder: (context, index) {
                     final notification = notifications[index];
-                    return _NotificationCard(notification: notification);
+                    // Cap the stagger so items lower in the list don't
+                    // wait long to appear.
+                    return FadeSlideIn(
+                      delay: Duration(milliseconds: 40 * index.clamp(0, 8)),
+                      child: _NotificationCard(notification: notification),
+                    );
                   },
                 );
               },
@@ -117,70 +120,70 @@ class _NotificationCard extends ConsumerWidget {
 
   final Notification notification;
 
-  (IconData, Color) get _style => switch (notification.type) {
-    NotificationType.studentRegistered => (
-      Icons.person_add_rounded,
-      const Color(0xFF2563EB), // Royal Blue
-    ),
-    NotificationType.discountAnnouncement => (
-      Icons.local_offer_rounded,
-      const Color(0xFF059669), // Emerald Green
-    ),
-    NotificationType.newTestUploaded => (
-      Icons.assignment_rounded,
-      const Color(0xFF7C3AED), // Purple
-    ),
-    NotificationType.liveTestReminder => (
-      Icons.podcasts_rounded,
-      const Color(0xFFD97706), // Amber
-    ),
-    NotificationType.profileUpdatePending => (
-      Icons.pending_actions_rounded,
-      const Color(0xFFEA580C), // Orange
-    ),
-    NotificationType.teacherAwaitingApproval => (
-      Icons.hourglass_top_rounded,
-      const Color(0xFFD97706), // Amber
-    ),
-    NotificationType.teacherApproved => (
-      Icons.verified_rounded,
-      const Color(0xFF059669), // Emerald Green
-    ),
-    NotificationType.paymentSuccessful || NotificationType.studentEnrolled => (
-      Icons.check_circle_rounded,
-      const Color(0xFF059669), // Emerald Green
-    ),
-    NotificationType.earningsCredited => (
-      Icons.payments_rounded,
-      const Color(0xFF059669), // Emerald Green
-    ),
-    NotificationType.resultReady || NotificationType.liveTestCompleted => (
-      Icons.emoji_events_rounded,
-      const Color(0xFF7C3AED), // Purple
-    ),
-    NotificationType.testGradingFailed => (
-      Icons.error_outline_rounded,
-      const Color(0xFFDC2626), // Red
-    ),
-    // Every other defined `NotificationType` (§8: not yet triggered by any
-    // real backend event today, plus the `unknown` decode fallback) — a
-    // generic bell so an unrecognized/future type still renders instead of
-    // hitting a non-exhaustive-switch build error.
-    _ => (Icons.notifications_rounded, const Color(0xFF64748B)), // Slate
-  };
+  (IconData, Color) _style(BuildContext context) {
+    final colors = context.colors;
+    return switch (notification.type) {
+      NotificationType.studentRegistered => (
+        Icons.person_add_rounded,
+        colors.primary,
+      ),
+      NotificationType.discountAnnouncement => (
+        Icons.local_offer_rounded,
+        colors.secondary,
+      ),
+      NotificationType.newTestUploaded => (
+        Icons.assignment_rounded,
+        colors.info,
+      ),
+      NotificationType.liveTestReminder => (
+        Icons.podcasts_rounded,
+        colors.warning,
+      ),
+      NotificationType.profileUpdatePending => (
+        Icons.pending_actions_rounded,
+        colors.warning,
+      ),
+      NotificationType.teacherAwaitingApproval => (
+        Icons.hourglass_top_rounded,
+        colors.warning,
+      ),
+      NotificationType.teacherApproved => (
+        Icons.verified_rounded,
+        colors.success,
+      ),
+      NotificationType.paymentSuccessful || NotificationType.studentEnrolled =>
+        (Icons.check_circle_rounded, colors.success),
+      NotificationType.earningsCredited => (
+        Icons.payments_rounded,
+        colors.success,
+      ),
+      NotificationType.resultReady || NotificationType.liveTestCompleted => (
+        Icons.emoji_events_rounded,
+        colors.info,
+      ),
+      NotificationType.testGradingFailed => (
+        Icons.error_outline_rounded,
+        colors.error,
+      ),
+      // Every other defined `NotificationType` (§8: not yet triggered by any
+      // real backend event today, plus the `unknown` decode fallback) — a
+      // generic bell so an unrecognized/future type still renders instead of
+      // hitting a non-exhaustive-switch build error.
+      _ => (Icons.notifications_rounded, colors.textSecondary),
+    };
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isUnread = !notification.isRead;
-    final (icon, badgeColor) = _style;
+    final (icon, badgeColor) = _style(context);
 
     return AppFrostedCard(
-      onTap:
-          isUnread
-              ? () => ref
-                  .read(notificationsViewModelProvider.notifier)
-                  .markAsRead(notification.id)
-              : null,
+      onTap: isUnread
+          ? () => ref
+                .read(notificationsViewModelProvider.notifier)
+                .markAsRead(notification.id)
+          : null,
       padding: EdgeInsets.all(context.dimens.md),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,7 +199,7 @@ class _NotificationCard extends ConsumerWidget {
                 width: 1,
               ),
             ),
-            child: Icon(icon, color: badgeColor, size: 20),
+            child: Icon(icon, color: badgeColor, size: context.dimens.iconMd),
           ),
           SizedBox(width: context.dimens.md),
 
@@ -209,20 +212,17 @@ class _NotificationCard extends ConsumerWidget {
                   notification.displayMessage,
                   style: context.textStyles.bodyMedium?.copyWith(
                     fontWeight: isUnread ? FontWeight.bold : FontWeight.normal,
-                    color:
-                        isUnread
-                            ? context.colors.textPrimary
-                            : context.colors.textSecondary,
+                    color: isUnread
+                        ? context.colors.textPrimary
+                        : context.colors.textSecondary,
                   ),
                 ),
                 SizedBox(height: context.dimens.xs / 2),
                 Text(
-                  DateFormat('MMM d, yyyy • h:mm a').format(
-                    notification.createdAt,
-                  ),
+                  DateFormat('MMM d, yyyy • h:mm a')
+                      .format(notification.createdAt),
                   style: context.textStyles.bodySmall?.copyWith(
                     color: context.colors.textSecondary,
-                    fontSize: 11.5,
                   ),
                 ),
               ],
@@ -233,8 +233,8 @@ class _NotificationCard extends ConsumerWidget {
           if (isUnread) ...[
             SizedBox(width: context.dimens.xs),
             Container(
-              width: 8,
-              height: 8,
+              width: context.dimens.sm,
+              height: context.dimens.sm,
               margin: EdgeInsets.only(top: context.dimens.xs),
               decoration: BoxDecoration(
                 color: badgeColor,

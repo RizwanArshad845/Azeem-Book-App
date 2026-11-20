@@ -47,6 +47,9 @@ final teacherStudentAttemptsProvider =
 /// future caller).
 double averageScorePercent(List<TestAttempt> attempts) {
   if (attempts.isEmpty) return 0;
-  final total = attempts.fold<double>(0, (sum, a) => sum + (a.scorePercent ?? 0));
+  final total = attempts.fold<double>(
+    0,
+    (sum, a) => sum + (a.scorePercent ?? 0),
+  );
   return total / attempts.length;
 }

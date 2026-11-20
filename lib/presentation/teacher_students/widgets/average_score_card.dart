@@ -16,8 +16,7 @@ class AverageScoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isGood = averagePercent >= 75;
-    final scoreColor =
-        isGood ? const Color(0xFF059669) : context.colors.primary;
+    final scoreColor = isGood ? context.colors.success : context.colors.primary;
 
     return AppFrostedCard(
       padding: EdgeInsets.all(context.dimens.lg),
@@ -29,11 +28,7 @@ class AverageScoreCard extends StatelessWidget {
               color: scoreColor.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.analytics_outlined,
-              color: scoreColor,
-              size: 28,
-            ),
+            child: Icon(Icons.analytics_outlined, color: scoreColor, size: context.dimens.iconLg),
           ),
           SizedBox(width: context.dimens.md),
           Expanded(

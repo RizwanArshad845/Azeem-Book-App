@@ -8,6 +8,7 @@ import '../../../core/providers/locale_provider.dart';
 import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_frosted_card.dart';
+import '../../../core/widgets/app_list_row.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/confirm_dialog.dart';
@@ -204,7 +205,22 @@ class _StudentProfileViewState extends ConsumerState<StudentProfileView> {
                     ),
                     SizedBox(height: context.dimens.lg),
 
-                    // 3. Language Selector Card
+                    // 3. Downloaded (offline) books
+                    AppListRow(
+                      title: context.l10n.downloadsTitle,
+                      leading: Icon(
+                        Icons.download_for_offline_outlined,
+                        color: context.colors.primary,
+                      ),
+                      trailing: Icon(
+                        Icons.chevron_right_rounded,
+                        color: context.colors.textSecondary,
+                      ),
+                      onTap: () => context.push(AppRoutes.downloads),
+                    ),
+                    SizedBox(height: context.dimens.lg),
+
+                    // 4. Language Selector Card
                     StudentLanguageCard(isEnglish: isEnglish),
                     SizedBox(height: context.dimens.lg),
 

@@ -5,16 +5,18 @@ import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_bar_actions.dart';
 import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/delayed_loader.dart';
+import '../../../core/widgets/fade_slide_in.dart';
 import '../../../core/widgets/greeting_hero_card.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../viewmodel/teacher_overview_viewmodel.dart';
-import '../widgets/projected_earnings_hero_card.dart';
+import '../widgets/teacher_month_stats_row.dart';
 import '../widgets/teacher_quick_actions_grid.dart';
 import '../widgets/teacher_recent_activity_section.dart';
 
-/// Teacher shell Overview tab root (§10.2: "Students onboarded, actual +
-/// projected earnings summary"). Purely a read-only summary over the current
+/// Teacher shell Overview tab root (§10.2: "Students onboarded, actual
+/// earnings summary"). Projected earnings live only on the Earnings tab —
+/// this screen links there instead of duplicating them. Purely a read-only summary over the current
 /// teacher's state, no primary action on this screen (§10.1's
 /// "one primary action per screen" rule doesn't force a button where the
 /// screen's whole purpose is at-a-glance status, mirrors `TeacherEarningsView`).
@@ -54,12 +56,21 @@ class TeacherOverviewView extends ConsumerWidget {
               greeting: context.l10n.teacherOverviewWelcomeName(teacher.name),
               subtitle: context.l10n.teacherOverviewWelcomeSubtitle,
             ),
-            SizedBox(height: context.dimens.xl),
-            const ProjectedEarningsHeroCard(),
-            SizedBox(height: context.dimens.xl),
-            const TeacherQuickActionsGrid(),
-            SizedBox(height: context.dimens.xl),
-            const TeacherRecentActivitySection(),
+            SizedBox(height: context.dimens.lg),
+            const FadeSlideIn(
+              delay: Duration(milliseconds: 60),
+              child: TeacherMonthStatsRow(),
+            ),
+            SizedBox(height: context.dimens.lg),
+            const FadeSlideIn(
+              delay: Duration(milliseconds: 120),
+              child: TeacherQuickActionsGrid(),
+            ),
+            SizedBox(height: context.dimens.lg),
+            const FadeSlideIn(
+              delay: Duration(milliseconds: 180),
+              child: TeacherRecentActivitySection(),
+            ),
           ],
         ),
       ),

@@ -1,32 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../core/constants/app_routes.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/app_card.dart';
-import '../../../core/widgets/app_dropdown_card.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
+import '../../../core/widgets/fade_slide_in.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../../domain/test_taking/entities/test_attempt.dart';
 import '../../test_taking/view/test_results_view.dart';
 import '../viewmodel/student_progress_viewmodel.dart';
+import '../widgets/attempt_card.dart';
 import '../widgets/chapter_progress_pie_chart.dart';
 import '../widgets/overall_mastery_card.dart';
+import '../widgets/progress_view_mode_toggle.dart';
+import '../widgets/subject_progress_list.dart';
 
-/// Student Progress screen (§10.2 / Phase G): Dynamic subject filter,
-/// dynamic attempt filter, overall mastery card, chapter progress pie chart,
-/// per-chapter breakdown cards, and re-using TestResultsView on chapter tap.
+/// Student Progress screen (§10.2 / Phase G): an Overall | By subject
+/// toggle. Overall shows the mastery card, chapter progress pie chart,
+/// per-chapter breakdown cards and recent attempts; By subject shows one
+/// card per subject. Tapping a chapter or attempt re-uses TestResultsView.
 class StudentProgressView extends ConsumerWidget {
   const StudentProgressView({super.key});
 
-  Future<void> _openChapterResult(
-    BuildContext context,
-    ChapterProgressData chapter,
-  ) async {
-    if (chapter.latestAttempt == null) return;
-
+  Future<void> _openResult(
+    BuildContext context, {
+    required String title,
+    required String testId,
+    required TestAttempt attempt,
+  }) async {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -37,10 +44,24 @@ class StudentProgressView extends ConsumerWidget {
         ),
       ),
       builder: (ctx) => _ChapterResultSheet(
-        chapterTitle: chapter.chapterTitle,
-        testId: chapter.testId,
-        attempt: chapter.latestAttempt!,
+        chapterTitle: title,
+        testId: testId,
+        attempt: attempt,
       ),
+    );
+  }
+
+  Future<void> _openChapterResult(
+    BuildContext context,
+    ChapterProgressData chapter,
+  ) async {
+    final attempt = chapter.latestAttempt;
+    if (attempt == null) return;
+    await _openResult(
+      context,
+      title: chapter.chapterTitle,
+      testId: chapter.testId,
+      attempt: attempt,
     );
   }
 
@@ -49,13 +70,9 @@ class StudentProgressView extends ConsumerWidget {
     final attemptsAsync = ref.watch(gradedStudentAttemptsProvider);
     final masteryAsync = ref.watch(filteredOverallMasteryProvider);
     final summaryAsync = ref.watch(filteredChapterProgressSummaryProvider);
-    final subjectsAsync = ref.watch(perSubjectProgressProvider);
     final chaptersAsync = ref.watch(filteredChapterProgressListProvider);
-    final availableFiltersAsync = ref.watch(availableAttemptFiltersProvider);
-
-    final selectedSubjectId = ref.watch(selectedProgressSubjectProvider);
-    final selectedAttemptFilter =
-        ref.watch(selectedProgressAttemptFilterProvider);
+    final testsById = ref.watch(progressTestsByIdProvider).value ?? const {};
+    final mode = ref.watch(progressViewModeProvider);
 
     return Scaffold(
       appBar: AppBar(title: AppBarTitle(context.l10n.progressTitle)),
@@ -67,16 +84,15 @@ class StudentProgressView extends ConsumerWidget {
             ref.invalidate(progressTestsByIdProvider);
             ref.invalidate(perSubjectProgressProvider);
             ref.invalidate(filteredAttemptsProvider);
-            ref.invalidate(availableAttemptFiltersProvider);
             ref.invalidate(filteredOverallMasteryProvider);
             ref.invalidate(filteredChapterProgressSummaryProvider);
             ref.invalidate(filteredChapterProgressListProvider);
           },
           child: AsyncValueWidget<List<TestAttempt>>(
             value: attemptsAsync,
-            skeleton: const Padding(
-              padding: EdgeInsets.all(16),
-              child: SkeletonList(itemCount: 4),
+            skeleton: Padding(
+              padding: EdgeInsets.all(context.dimens.lg),
+              child: const SkeletonList(itemCount: 4),
             ),
             onRetry: () {
               ref.invalidate(studentTestAttemptsProvider);
@@ -91,16 +107,15 @@ class StudentProgressView extends ConsumerWidget {
                         child: SizedBox(
                           height: constraints.maxHeight,
                           child: EmptyStateView(
+                            icon: Icons.insights_rounded,
                             message: context.l10n.progressEmpty,
+                            actionLabel: context.l10n.stuTakeATest,
+                            onAction: () => context.go(AppRoutes.studentHome),
                           ),
                         ),
                       ),
                 );
               }
-
-              final subjectSummaries = subjectsAsync.value ?? const [];
-              final availableFilters =
-                  availableFiltersAsync.value ?? const ['all'];
 
               final mastery = masteryAsync.value ??
                   const OverallMasteryData(
@@ -111,106 +126,79 @@ class StudentProgressView extends ConsumerWidget {
               final summary =
                   summaryAsync.value ?? ChapterProgressSummary.empty;
               final chapterList = chaptersAsync.value ?? const [];
+              // Graded attempts arrive newest first.
+              final recentAttempts = attempts.take(3).toList();
+              final sectionTitleStyle = context.textStyles.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w700);
 
               return ListView(
                 padding: EdgeInsets.all(context.dimens.lg),
                 children: [
-                  OverallMasteryCard(
-                    masteryPercent: mastery.masteryPercent,
-                    testsAttempted: mastery.testsAttempted,
-                  ),
+                  const ProgressViewModeToggle(),
                   SizedBox(height: context.dimens.md),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppDropdownCard<String>(
-                          label: context.l10n.progressSubjectFilterLabel,
-                          items: [
-                            'all',
-                            for (final s in subjectSummaries) s.subjectId,
-                          ],
-                          selectedItem: selectedSubjectId,
-                          itemAsString: (id) {
-                            if (id == 'all') {
-                              return context.l10n.progressAllSubjects;
-                            }
-                            final matched = subjectSummaries
-                                .where((s) => s.subjectId == id)
-                                .firstOrNull;
-                            return matched?.subjectName ?? id;
-                          },
-                          icon: Icons.menu_book_outlined,
-                          onChanged: (val) {
-                            if (val != null) {
-                              ref
-                                  .read(
-                                    selectedProgressSubjectProvider.notifier,
-                                  )
-                                  .setSubjectId(val);
-                            }
-                          },
-                        ),
+                  if (mode == ProgressViewMode.perSubject)
+                    const SubjectProgressList()
+                  else ...[
+                    FadeSlideIn(
+                      child: OverallMasteryCard(
+                        masteryPercent: mastery.masteryPercent,
+                        testsAttempted: mastery.testsAttempted,
                       ),
-                      SizedBox(width: context.dimens.sm),
-                      Expanded(
-                        child: AppDropdownCard<String>(
-                          label: context.l10n.progressAttemptFilterLabel,
-                          items: availableFilters,
-                          selectedItem: selectedAttemptFilter,
-                          itemAsString: (filterKey) {
-                            if (filterKey == 'all') {
-                              return context.l10n.progressAllAttempts;
-                            }
-                            if (filterKey == 'latest') {
-                              return context.l10n.progressLatestAttempt;
-                            }
-                            final n = int.tryParse(filterKey);
-                            if (n != null) {
-                              return context.l10n.attemptNumberLabel(n);
-                            }
-                            return filterKey;
-                          },
-                          icon: Icons.repeat_rounded,
-                          onChanged: (val) {
-                            if (val != null) {
-                              ref
-                                  .read(
-                                    selectedProgressAttemptFilterProvider
-                                        .notifier,
-                                  )
-                                  .setFilter(val);
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: context.dimens.md),
-                  if (summary.total > 0) ...[
-                    ChapterProgressPieChart(summary: summary),
-                    SizedBox(height: context.dimens.lg),
-                  ],
-                  Text(
-                    context.l10n.progressChapterProgressTitle,
-                    style: context.textStyles.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
                     ),
-                  ),
-                  SizedBox(height: context.dimens.sm),
-                  if (chapterList.isEmpty)
-                    EmptyStateView(
-                      message: context.l10n.progressNoChaptersFound,
-                    )
-                  else
-                    for (final chapter in chapterList) ...[
-                      Padding(
-                        padding: EdgeInsets.only(bottom: context.dimens.sm),
-                        child: _ChapterProgressCard(
-                          chapter: chapter,
-                          onTap: () => _openChapterResult(context, chapter),
-                        ),
+                    SizedBox(height: context.dimens.md),
+                    if (summary.total > 0) ...[
+                      FadeSlideIn(
+                        delay: const Duration(milliseconds: 80),
+                        child: ChapterProgressPieChart(summary: summary),
                       ),
+                      SizedBox(height: context.dimens.lg),
                     ],
+                    Text(
+                      context.l10n.progressChapterProgressTitle,
+                      style: sectionTitleStyle,
+                    ),
+                    SizedBox(height: context.dimens.sm),
+                    if (chapterList.isEmpty)
+                      EmptyStateView(
+                        message: context.l10n.progressNoChaptersFound,
+                      )
+                    else
+                      for (final (i, chapter) in chapterList.indexed)
+                        Padding(
+                          padding: EdgeInsets.only(bottom: context.dimens.sm),
+                          child: FadeSlideIn(
+                            delay: Duration(milliseconds: 40 * i.clamp(0, 8)),
+                            child: _ChapterProgressCard(
+                              chapter: chapter,
+                              onTap: () => _openChapterResult(context, chapter),
+                            ),
+                          ),
+                        ),
+                    if (recentAttempts.isNotEmpty) ...[
+                      SizedBox(height: context.dimens.md),
+                      Text(
+                        context.l10n.stuRecentAttempts,
+                        style: sectionTitleStyle,
+                      ),
+                      SizedBox(height: context.dimens.sm),
+                      for (final attempt in recentAttempts)
+                        Padding(
+                          padding: EdgeInsets.only(bottom: context.dimens.sm),
+                          child: AttemptCard(
+                            attempt: attempt,
+                            testTitle: testsById[attempt.testId]?.title ??
+                                context.l10n.testTakingTitle,
+                            onTap: () => _openResult(
+                              context,
+                              title: testsById[attempt.testId]?.title ??
+                                  context.l10n.testTakingTitle,
+                              testId: attempt.testId,
+                              attempt: attempt,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ],
                 ],
               );
             },
@@ -286,7 +274,7 @@ class _ChapterProgressCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: context.dimens.sm),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

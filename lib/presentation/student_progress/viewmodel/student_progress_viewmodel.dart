@@ -574,3 +574,23 @@ final filteredChapterProgressSummaryProvider =
   );
 });
 
+
+/// Every test the student has submitted an attempt for, mapped to their best
+/// graded `scorePercent` (null while no attempt of it is graded yet). Drives
+/// the Tests list's "attempted / best score" vs "New" badges. Empty while
+/// attempts are still loading.
+final bestScoreByTestIdProvider = Provider<Map<String, double?>>((ref) {
+  final attempts = ref.watch(studentTestAttemptsProvider).value;
+  if (attempts == null) return const {};
+  final best = <String, double?>{};
+  for (final attempt in attempts) {
+    final score = attempt.status == TestAttemptStatus.graded
+        ? attempt.scorePercent
+        : null;
+    final current = best[attempt.testId];
+    best[attempt.testId] = current == null
+        ? score
+        : (score == null || current >= score ? current : score);
+  }
+  return best;
+});

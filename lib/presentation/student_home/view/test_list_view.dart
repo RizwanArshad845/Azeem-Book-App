@@ -15,6 +15,7 @@ import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../../domain/catalog/entities/test.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
+import '../../student_progress/viewmodel/student_progress_viewmodel.dart';
 import '../../test_taking/viewmodel/free_attempts_provider.dart';
 import '../../test_taking/widgets/expected_test_preview_sheet.dart';
 import '../../test_taking/widgets/practice_question_bank_sheet.dart';
@@ -59,6 +60,7 @@ class TestListView extends ConsumerWidget {
     final purchasedIds = ref.watch(purchasedSubjectIdsProvider).value;
     final isOwned = purchasedIds?.contains(subjectId) ?? false;
     final attemptsExhausted = ref.watch(attemptsExhaustedProvider);
+    final bestScores = ref.watch(bestScoreByTestIdProvider);
 
     return Scaffold(
       appBar: AppBar(title: AppBarTitle(context.l10n.testListTitle)),
@@ -72,7 +74,11 @@ class TestListView extends ConsumerWidget {
           ),
           data: (tests) {
             if (tests.isEmpty) {
-              return EmptyStateView(message: context.l10n.testListEmpty);
+              return EmptyStateView(
+                message: context.l10n.testListEmpty,
+                actionLabel: context.l10n.commonBack,
+                onAction: () => context.pop(),
+              );
             }
             return ListView(
               padding: EdgeInsets.all(context.dimens.lg),
@@ -86,6 +92,8 @@ class TestListView extends ConsumerWidget {
                         test: tests[i],
                         isOwned: isOwned,
                         attemptsExhausted: attemptsExhausted,
+                        attempted: bestScores.containsKey(tests[i].id),
+                        bestScore: bestScores[tests[i].id],
                         onTap: () => _openTest(context, ref, tests[i], isOwned),
                       ),
                     ),
@@ -104,12 +112,20 @@ class _TestCard extends StatelessWidget {
     required this.test,
     required this.isOwned,
     required this.attemptsExhausted,
+    required this.attempted,
+    required this.bestScore,
     required this.onTap,
   });
 
   final Test test;
   final bool isOwned;
   final bool attemptsExhausted;
+
+  /// The student has submitted at least one attempt of [test].
+  final bool attempted;
+
+  /// Best graded score, or null while no attempt is graded yet.
+  final double? bestScore;
   final VoidCallback onTap;
 
   @override
@@ -132,20 +148,38 @@ class _TestCard extends StatelessWidget {
       title: test.title,
       imageAsset: AppAssets.testPaper,
       fallbackIcon: Icons.assignment_outlined,
-      cornerBadge: Container(
-        padding: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          color: context.colors.primary,
-          shape: BoxShape.circle,
-          border: Border.all(color: context.colors.surface, width: 2),
-        ),
-        child: Icon(Icons.check, size: 10, color: context.colors.onPrimary),
-      ),
-      badge: test.isLive ? const StatusBadge.live() : null,
+      cornerBadge: attempted
+          ? Container(
+              padding: EdgeInsets.all(context.dimens.xs / 2),
+              decoration: BoxDecoration(
+                color: context.colors.success,
+                shape: BoxShape.circle,
+                border: Border.all(color: context.colors.surface, width: 2),
+              ),
+              child: Icon(
+                Icons.check,
+                size: context.dimens.sm + 2,
+                color: context.colors.onPrimary,
+              ),
+            )
+          : null,
+      badge: test.isLive
+          ? const StatusBadge.live()
+          : !attempted
+              ? StatusBadge(
+                  label: context.l10n.stuTestBadgeNew,
+                  color: context.colors.primary,
+                )
+              : bestScore != null
+                  ? StatusBadge(
+                      label: context.l10n.stuTestBestScore(bestScore!.round()),
+                      color: context.colors.success,
+                    )
+                  : null,
       meta: MetaRow([
         MetaItem('${test.questionCount} ${context.l10n.metaQuestions}'),
         MetaItem('${test.durationMinutes} ${context.l10n.metaMinutes}'),
-        if (lockItem != null) lockItem,
+        ?lockItem,
       ]),
       onTap: onTap,
     );

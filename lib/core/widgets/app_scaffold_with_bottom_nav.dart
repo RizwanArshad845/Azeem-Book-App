@@ -8,10 +8,15 @@ class BottomNavDestinationSpec {
   const BottomNavDestinationSpec({
     required this.icon,
     required this.label,
+    this.selectedIcon,
     this.badgeCount,
   });
 
+  /// Outlined icon shown while the tab is not selected.
   final IconData icon;
+
+  /// Filled icon shown while the tab is selected; falls back to [icon].
+  final IconData? selectedIcon;
   final String label;
 
   /// Optional small animated count badge rendered on top of [icon] (e.g. the
@@ -21,6 +26,7 @@ class BottomNavDestinationSpec {
   BottomNavDestinationSpec copyWith({int? badgeCount}) {
     return BottomNavDestinationSpec(
       icon: icon,
+      selectedIcon: selectedIcon,
       label: label,
       badgeCount: badgeCount,
     );

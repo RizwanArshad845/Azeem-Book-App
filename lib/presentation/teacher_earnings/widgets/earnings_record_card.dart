@@ -7,11 +7,7 @@ import '../../../domain/earnings/entities/earnings_record.dart';
 
 /// Scannable commission transaction row with student attribution and amount badge.
 class EarningsRecordCard extends StatelessWidget {
-  const EarningsRecordCard({
-    super.key,
-    required this.record,
-    this.studentName,
-  });
+  const EarningsRecordCard({super.key, required this.record, this.studentName});
 
   final EarningsRecord record;
   final String? studentName;
@@ -33,13 +29,13 @@ class EarningsRecordCard extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(context.dimens.sm),
             decoration: BoxDecoration(
-              color: const Color(0xFF059669).withValues(alpha: 0.12),
+              color: context.colors.success.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.account_balance_wallet_rounded,
-              color: Color(0xFF059669),
-              size: 20,
+              color: context.colors.success,
+              size: context.dimens.iconMd,
             ),
           ),
           SizedBox(width: context.dimens.md),
@@ -63,7 +59,6 @@ class EarningsRecordCard extends StatelessWidget {
                   DateFormat('MMM d, yyyy • h:mm a').format(record.createdAt),
                   style: context.textStyles.bodySmall?.copyWith(
                     color: context.colors.textSecondary,
-                    fontSize: 11.5,
                   ),
                 ),
               ],
@@ -75,15 +70,14 @@ class EarningsRecordCard extends StatelessWidget {
               vertical: context.dimens.xs / 2,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFF059669).withValues(alpha: 0.12),
+              color: context.colors.success.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(context.dimens.radiusSm),
             ),
             child: Text(
               '+${currency.format(record.amount)}',
-              style: const TextStyle(
-                color: Color(0xFF059669),
+              style: context.textStyles.bodyMedium?.copyWith(
+                color: context.colors.success,
                 fontWeight: FontWeight.bold,
-                fontSize: 13,
               ),
             ),
           ),

@@ -57,6 +57,8 @@ class AppRoutes {
   /// [offline] opens the encrypted on-device copy instead of streaming.
   static String ebookReaderOfflinePath(String subjectId) =>
       '/ebook-reader/$subjectId?offline=1';
+  /// Downloaded (offline) ebooks — reachable with no connection.
+  static const String downloads = '/downloads';
   static const String chapterLecture = '/lecture/:subjectId/:chapterId';
   static String chapterLecturePath(String subjectId, String chapterId) =>
       '/lecture/$subjectId/$chapterId';

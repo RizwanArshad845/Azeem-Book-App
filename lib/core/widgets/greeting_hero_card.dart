@@ -13,6 +13,7 @@ class GreetingHeroCard extends StatelessWidget {
     required this.name,
     required this.greeting,
     this.subtitle,
+    this.footer,
   });
 
   /// Full name, used only to derive the avatar initials.
@@ -23,6 +24,9 @@ class GreetingHeroCard extends StatelessWidget {
 
   /// Optional line shown under the greeting.
   final String? subtitle;
+
+  /// Optional small widget under the greeting/subtitle (e.g. a streak chip).
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +81,10 @@ class GreetingHeroCard extends StatelessWidget {
                       color: context.colors.onPrimary.withValues(alpha: 0.85),
                     ),
                   ),
+                ],
+                if (footer != null) ...[
+                  SizedBox(height: context.dimens.xs),
+                  footer!,
                 ],
               ],
             ),

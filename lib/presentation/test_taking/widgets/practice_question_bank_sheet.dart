@@ -15,11 +15,7 @@ import '../viewmodel/free_attempts_provider.dart';
 /// reference): a remaining-free-attempts banner + Upgrade, three how-it-works
 /// bullets, and an "Okay, Got it!" button.
 class PracticeQuestionBankSheet extends ConsumerWidget {
-  const PracticeQuestionBankSheet({
-    super.key,
-    this.subjectId,
-    this.onUpgrade,
-  });
+  const PracticeQuestionBankSheet({super.key, this.subjectId, this.onUpgrade});
 
   final String? subjectId;
   final VoidCallback? onUpgrade;
@@ -58,7 +54,8 @@ class PracticeQuestionBankSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final remaining = ref.watch(remainingFreeAttemptsProvider).value ??
+    final remaining =
+        ref.watch(remainingFreeAttemptsProvider).value ??
         AppConfig.freeAttemptsPerStudent;
 
     return Column(
@@ -108,9 +105,7 @@ class PracticeQuestionBankSheet extends ConsumerWidget {
             ),
           ),
           SizedBox(width: context.dimens.sm),
-          Expanded(
-            child: Text(text, style: context.textStyles.bodyMedium),
-          ),
+          Expanded(child: Text(text, style: context.textStyles.bodyMedium)),
         ],
       ),
     );

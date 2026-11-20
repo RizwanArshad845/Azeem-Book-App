@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../extensions/context_extensions.dart';
@@ -37,7 +38,9 @@ class FloatingGlassNavBar extends StatelessWidget {
             height: context.dimens.xl * 2.6,
             decoration: BoxDecoration(
               color: context.colors.surface.withValues(alpha: 0.88),
-              borderRadius: BorderRadius.circular(context.dimens.radiusXl * 1.5),
+              borderRadius: BorderRadius.circular(
+                context.dimens.radiusXl * 1.5,
+              ),
               border: Border.all(
                 color: context.colors.divider.withValues(alpha: 0.6),
                 width: 1,
@@ -112,7 +115,7 @@ class _NavBarItemTile extends StatelessWidget {
                 clipBehavior: Clip.none,
                 children: [
                   Icon(
-                    spec.icon,
+                    isSelected ? (spec.selectedIcon ?? spec.icon) : spec.icon,
                     color: isSelected ? activeColor : inactiveColor,
                     size: context.dimens.iconMd,
                   ),

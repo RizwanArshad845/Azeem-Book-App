@@ -11,10 +11,9 @@ import '../../../domain/student_onboarding/entities/student.dart';
 import '../viewmodel/teacher_students_viewmodel.dart';
 import '../widgets/students_filter_bar.dart';
 import '../widgets/students_list.dart';
-import '../widgets/students_summary_strip.dart';
 
-/// Redesigned Teacher Students directory tab with stat counters,
-/// live search, sorting, campus filter chips, and pagination.
+/// Teacher Students directory tab: live search, sorting, status filter
+/// chips with counts, and pagination.
 class TeacherStudentsView extends ConsumerWidget {
   const TeacherStudentsView({super.key});
 
@@ -55,27 +54,19 @@ class TeacherStudentsView extends ConsumerWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 1. Status Summary Strip (All | Active | Free)
+                    // 1. Search, Sort & status filter chips (with counts)
                     Padding(
                       padding: EdgeInsets.fromLTRB(
                         context.dimens.lg,
-                        context.dimens.xs,
-                        context.dimens.lg,
                         context.dimens.sm,
-                      ),
-                      child: const StudentsSummaryStrip(),
-                    ),
-
-                    // 2. Search, Sort & Campus Filters Bar
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.dimens.lg,
+                        context.dimens.lg,
+                        0,
                       ),
                       child: const StudentsFilterBar(),
                     ),
                     SizedBox(height: context.dimens.xs),
 
-                    // 3. Paginated Students Roster List
+                    // 2. Paginated Students Roster List
                     const Expanded(child: StudentsList()),
                   ],
                 );

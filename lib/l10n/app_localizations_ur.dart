@@ -1804,4 +1804,147 @@ class AppLocalizationsUr extends AppLocalizations {
   String addSubjectSuccess(String subject) {
     return '$subject شامل ہو گیا۔ استاد چننے کے لیے اسے کھولیں۔';
   }
+
+  @override
+  String get downloadsTitle => 'میری ڈاؤن لوڈ کی گئی کتابیں';
+
+  @override
+  String downloadsCardSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count کتابیں آف لائن پڑھنے کے لیے تیار',
+      one: '1 کتاب آف لائن پڑھنے کے لیے تیار',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get downloadsNoneYet => 'ابھی تک کوئی کتاب ڈاؤن لوڈ نہیں ہوئی';
+
+  @override
+  String get downloadsEmpty =>
+      'ابھی تک کوئی کتاب ڈاؤن لوڈ نہیں ہوئی۔\nکسی مضمون کا ای بک کارڈ کھولیں اور \"آف لائن پڑھنے کے لیے محفوظ کریں\" پر ٹیپ کریں۔';
+
+  @override
+  String downloadsPages(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count صفحات',
+      one: '1 صفحہ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get downloadsSwipeHint =>
+      'کتاب ہٹانے کے لیے اسے بائیں جانب سوائپ کریں۔';
+
+  @override
+  String get downloadsRemoveMessage =>
+      'یہ محفوظ کاپی اس ڈیوائس سے ہٹا دے گا۔ آن لائن ہونے پر آپ اسے دوبارہ ڈاؤن لوڈ کر سکتے ہیں۔';
+
+  @override
+  String get offlineCheckingAgain => 'خودکار طور پر دوبارہ چیک کیا جا رہا ہے…';
+
+  @override
+  String get stuContinueTitle => 'جہاں چھوڑا تھا وہیں سے جاری رکھیں';
+
+  @override
+  String get stuContinueButton => 'جاری رکھیں';
+
+  @override
+  String get stuActivitySubject => 'مضمون';
+
+  @override
+  String get stuActivityTest => 'آن لائن ٹیسٹ';
+
+  @override
+  String get stuActivityEbook => 'ای بک';
+
+  @override
+  String stuActivityEbookPage(int page) {
+    return 'ای بک · صفحہ $page';
+  }
+
+  @override
+  String stuStreakChip(int count) {
+    return '🔥 $count دن کا تسلسل';
+  }
+
+  @override
+  String get stuWelcomeSubtitleNeutral => 'آج آپ کیا سیکھنا چاہیں گے؟';
+
+  @override
+  String get stuScoreGreat => 'شاندار! آپ نے اس ٹیسٹ پر خوب مہارت حاصل کی ہے۔';
+
+  @override
+  String get stuScoreGood =>
+      'اچھی کوشش! اپنا اسکور بہتر کرنے کے لیے اپنے جوابات کا جائزہ لیں۔';
+
+  @override
+  String get stuScoreLow =>
+      'ہمت نہ ہاریں — ہر کوشش آپ کو مضبوط بناتی ہے۔ دوبارہ کوشش کریں!';
+
+  @override
+  String get stuTestBadgeNew => 'نیا';
+
+  @override
+  String stuTestBestScore(int percent) {
+    return 'بہترین $percent%';
+  }
+
+  @override
+  String get stuLockedEbookTitle => 'یہ ای بک لاک ہے';
+
+  @override
+  String get stuLockedVideoTitle => 'یہ لیکچر لاک ہے';
+
+  @override
+  String get stuLockedBody =>
+      'اس کی ای بک، ویڈیو لیکچرز اور تمام ٹیسٹ کھولنے کے لیے یہ مضمون اپنی کارٹ میں شامل کریں۔';
+
+  @override
+  String get stuBrowseSubjects => 'مضامین دیکھیں';
+
+  @override
+  String get stuTakeATest => 'ٹیسٹ دیں';
+
+  @override
+  String get stuRecentAttempts => 'حالیہ کوششیں';
+
+  @override
+  String stuEbookPageOf(int current, int total) {
+    return 'صفحہ $current از $total';
+  }
+
+  @override
+  String stuAttemptScore(int percent) {
+    return '$percent% اسکور';
+  }
+
+  @override
+  String get tchStatsHeading => 'ایک نظر میں';
+
+  @override
+  String get tchStatNewThisMonth => 'اس ماہ نئے';
+
+  @override
+  String get tchStatActiveStudents => 'فعال طلباء';
+
+  @override
+  String get tchStatEarnedThisMonth => 'اس ماہ کی آمدنی (روپے)';
+
+  @override
+  String get tchEarningsLinkTitle => 'متوقع آمدنی';
+
+  @override
+  String get tchEarningsLinkSub => 'اپنی ممکنہ آمدنی اور کمیشن کی تاریخ دیکھیں';
+
+  @override
+  String get tchPreviousPage => 'پچھلا صفحہ';
+
+  @override
+  String get tchNextPage => 'اگلا صفحہ';
 }

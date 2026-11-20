@@ -13,10 +13,16 @@ final _submittedAtFormat = DateFormat('MMM d, yyyy • h:mm a');
 /// status badge. [testTitle] is resolved by the caller from
 /// `progressTestsByIdProvider` since `TestAttempt` only carries a `testId`.
 class AttemptCard extends StatelessWidget {
-  const AttemptCard({super.key, required this.attempt, required this.testTitle});
+  const AttemptCard({
+    super.key,
+    required this.attempt,
+    required this.testTitle,
+    this.onTap,
+  });
 
   final TestAttempt attempt;
   final String testTitle;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +38,7 @@ class AttemptCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${(attempt.scorePercent ?? 0).toStringAsFixed(0)}% score',
+            context.l10n.stuAttemptScore((attempt.scorePercent ?? 0).round()),
             style: secondaryStyle,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -47,6 +53,7 @@ class AttemptCard extends StatelessWidget {
         ],
       ),
       trailing: _ScoreBandBadge(scorePercent: attempt.scorePercent ?? 0),
+      onTap: onTap,
     );
   }
 }
@@ -68,13 +75,13 @@ class _ScoreBandBadge extends StatelessWidget {
     final String label;
     final Color color;
     if (scorePercent < 50) {
-      label = 'Weak';
+      label = context.l10n.progressSubjectWeakChapters;
       color = context.colors.error;
     } else if (scorePercent > 75) {
-      label = 'Strong';
+      label = context.l10n.progressSubjectStrongChapters;
       color = context.colors.success;
     } else {
-      label = 'Average';
+      label = context.l10n.progressSubjectAverageChapters;
       color = context.colors.warning;
     }
     return StatusBadge(label: label, color: color);

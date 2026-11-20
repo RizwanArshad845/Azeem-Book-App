@@ -10,7 +10,11 @@ import '../../../core/extensions/context_extensions.dart';
 /// toward each new value over that window instead of visibly jumping once
 /// per tick.
 class GradingProgressRing extends StatelessWidget {
-  const GradingProgressRing({super.key, required this.progress, this.size = 96});
+  const GradingProgressRing({
+    super.key,
+    required this.progress,
+    this.size = 96,
+  });
 
   /// 0.0-1.0. Values are expected to only ever increase (see the eased
   /// curve in `_pollUntilGraded`), so the tween always animates forward.

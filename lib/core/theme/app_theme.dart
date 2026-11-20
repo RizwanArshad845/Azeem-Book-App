@@ -71,7 +71,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: colors.primary,
           foregroundColor: colors.onPrimary,
-          minimumSize: const Size.fromHeight(52),
+          minimumSize: const Size.fromHeight(AppDimens.buttonHeight),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppDimens.radiusMd),
           ),
@@ -84,10 +84,12 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: colors.primary,
-          minimumSize: const Size.fromHeight(52),
+          minimumSize: const Size.fromHeight(AppDimens.buttonHeight),
           side: BorderSide(color: colors.primary),
+          // Same corner radius as the filled (elevated) button so primary and
+          // secondary actions read as one family.
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimens.pillRadius),
+            borderRadius: BorderRadius.circular(AppDimens.radiusMd),
           ),
         ),
       ),

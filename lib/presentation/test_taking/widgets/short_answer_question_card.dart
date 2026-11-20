@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_text_field.dart';
+import '../../../core/widgets/urdu_aware_text.dart';
 import '../../../domain/catalog/entities/question.dart';
 import '../../../domain/test_taking/entities/attempt_question.dart';
 
@@ -56,15 +57,24 @@ class _ShortAnswerQuestionCardState extends State<ShortAnswerQuestionCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.question.questionText, style: context.textStyles.bodyLarge),
+          UrduAwareText(
+            widget.question.questionText,
+            style: context.textStyles.bodyLarge,
+          ),
           SizedBox(height: context.dimens.md),
-          AppTextField(
-            label: isLong
-                ? context.l10n.testAnswerLongLabel
-                : context.l10n.testAnswerShortLabel,
-            controller: _controller,
-            maxLines: isLong ? 8 : 3,
-            onChanged: widget.onChanged,
+          // Urdu question: the student types Urdu, so the field runs RTL.
+          Directionality(
+            textDirection: containsUrdu(widget.question.questionText)
+                ? TextDirection.rtl
+                : Directionality.of(context),
+            child: AppTextField(
+              label: isLong
+                  ? context.l10n.testAnswerLongLabel
+                  : context.l10n.testAnswerShortLabel,
+              controller: _controller,
+              maxLines: isLong ? 8 : 3,
+              onChanged: widget.onChanged,
+            ),
           ),
         ],
       ),

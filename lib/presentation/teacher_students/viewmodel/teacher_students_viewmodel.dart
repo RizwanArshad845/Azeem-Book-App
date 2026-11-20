@@ -30,18 +30,19 @@ final teacherStudentsProvider = FutureProvider<List<Student>>((ref) async {
 final teacherStudentsSubjectsByIdProvider =
     FutureProvider<Map<String, Subject>>((ref) async {
       final students = await ref.watch(teacherStudentsProvider.future);
-      final boardClassIds =
-          students.map((s) => s.boardClassId).whereType<String>().toSet();
+      final boardClassIds = students
+          .map((s) => s.boardClassId)
+          .whereType<String>()
+          .toSet();
 
       final getSubjects = ref.read(getSubjectsUseCaseProvider);
       final subjectsById = <String, Subject>{};
       for (final boardClassId in boardClassIds) {
         final result = await getSubjects(boardClassId);
         result.when(
-          success:
-              (subjects) => subjectsById.addEntries(
-                subjects.map((subject) => MapEntry(subject.id, subject)),
-              ),
+          success: (subjects) => subjectsById.addEntries(
+            subjects.map((subject) => MapEntry(subject.id, subject)),
+          ),
           failure: (failure) => throw failure,
         );
       }
@@ -58,16 +59,16 @@ final teacherStudentNamesByIdProvider = Provider<Map<String, String>>((ref) {
 });
 
 /// Catalog campuses mapped by ID for student campus name resolution.
-final teacherStudentsCampusesByIdProvider =
-    FutureProvider<Map<String, Campus>>((ref) async {
-      final getCampuses = ref.read(getCampusesUseCaseProvider);
-      final result = await getCampuses();
-      return result.when(
-        success:
-            (campuses) => {for (final campus in campuses) campus.id: campus},
-        failure: (_) => {},
-      );
-    });
+final teacherStudentsCampusesByIdProvider = FutureProvider<Map<String, Campus>>(
+  (ref) async {
+    final getCampuses = ref.read(getCampusesUseCaseProvider);
+    final result = await getCampuses();
+    return result.when(
+      success: (campuses) => {for (final campus in campuses) campus.id: campus},
+      failure: (_) => {},
+    );
+  },
+);
 
 /// Search text query notifier.
 class TeacherStudentsSearchQueryNotifier extends Notifier<String> {
@@ -94,6 +95,15 @@ final teacherStudentsStatusFilterProvider =
     NotifierProvider<TeacherStudentsStatusFilterNotifier, String>(
       TeacherStudentsStatusFilterNotifier.new,
     );
+
+/// Roster counts per status filter chip: (all, active/paid, free).
+final teacherStudentsStatusCountsProvider = Provider<(int, int, int)>((ref) {
+  final students = ref.watch(teacherStudentsProvider).value ?? const [];
+  final active = students
+      .where((s) => (s.subjectEnrollments ?? []).any((e) => e.discountApplied))
+      .length;
+  return (students.length, active, students.length - active);
+});
 
 /// Sorting option notifier.
 class TeacherStudentsSortNotifier extends Notifier<TeacherStudentsSort> {
@@ -126,7 +136,10 @@ final teacherStudentsCurrentPageProvider =
 /// Combined filtered and sorted students list.
 final teacherStudentsFilteredListProvider = Provider<List<Student>>((ref) {
   final students = ref.watch(teacherStudentsProvider).value ?? [];
-  final query = ref.watch(teacherStudentsSearchQueryProvider).trim().toLowerCase();
+  final query = ref
+      .watch(teacherStudentsSearchQueryProvider)
+      .trim()
+      .toLowerCase();
   final statusFilter = ref.watch(teacherStudentsStatusFilterProvider);
   final sort = ref.watch(teacherStudentsSortProvider);
 
@@ -157,8 +170,12 @@ final teacherStudentsFilteredListProvider = Provider<List<Student>>((ref) {
     case TeacherStudentsSort.topPerformers:
       // Active paid students first, then alphabetical
       list.sort((a, b) {
-        final aPaid = (a.subjectEnrollments ?? []).any((e) => e.discountApplied);
-        final bPaid = (b.subjectEnrollments ?? []).any((e) => e.discountApplied);
+        final aPaid = (a.subjectEnrollments ?? []).any(
+          (e) => e.discountApplied,
+        );
+        final bPaid = (b.subjectEnrollments ?? []).any(
+          (e) => e.discountApplied,
+        );
         if (aPaid && !bPaid) return -1;
         if (!aPaid && bPaid) return 1;
         return a.name.compareTo(b.name);

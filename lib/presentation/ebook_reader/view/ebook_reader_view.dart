@@ -15,6 +15,7 @@ import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state_view.dart';
 import '../../../core/widgets/loading_indicator.dart';
 import '../../../domain/ebook_offline/entities/offline_ebook.dart';
+import '../../student_home/viewmodel/study_activity_viewmodel.dart';
 import '../ebook_page_cache.dart';
 import '../offline_reader_presence.dart';
 import '../viewmodel/ebook_reader_viewmodel.dart';
@@ -56,34 +57,45 @@ class EbookReaderView extends ConsumerStatefulWidget {
   ConsumerState<EbookReaderView> createState() => _EbookReaderViewState();
 }
 
-class _EbookReaderViewState extends ConsumerState<EbookReaderView> {
+class _EbookReaderViewState extends ConsumerState<EbookReaderView>
+    with OfflineSafeScreen {
+  @override
+  bool get offlineSafe => widget.offline;
+
   // screen_protector only ships native implementations for Android/iOS —
   // invoking it on desktop/web (this app's dev-loop platforms alongside
   // real devices) throws MissingPluginException, so guard every call.
   static bool get _isScreenProtectorSupported =>
       !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
+  /// 1-based page the student last viewed in this book, reopened on entry.
+  late final int? _resumePage = ref
+      .read(studyActivityRepositoryProvider)
+      .getLastEbookPage(widget.subjectId);
+
+  void _rememberPage(int pageNumber) => ref
+      .read(studyActivityRepositoryProvider)
+      .saveLastEbookPage(widget.subjectId, pageNumber);
+
   @override
   void initState() {
     super.initState();
+    // Bookmark for Home's "Continue" card (deferred: providers can't be
+    // modified mid-build).
+    Future.microtask(() {
+      if (!mounted) return;
+      ref
+          .read(lastActivityProvider.notifier)
+          .recordEbook(subjectId: widget.subjectId, offline: widget.offline);
+    });
     if (_isScreenProtectorSupported) {
       ScreenProtector.preventScreenshotOn();
       ScreenProtector.protectDataLeakageWithBlur();
-    }
-    if (widget.offline) {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) => offlineReaderOpen.value = true,
-      );
     }
   }
 
   @override
   void dispose() {
-    if (widget.offline) {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) => offlineReaderOpen.value = false,
-      );
-    }
     if (_isScreenProtectorSupported) {
       ScreenProtector.preventScreenshotOff();
       ScreenProtector.protectDataLeakageOff();
@@ -112,6 +124,8 @@ class _EbookReaderViewState extends ConsumerState<EbookReaderView> {
         final urls = readerState.loadedPageUrls;
         return _EbookPager(
           pageCount: readerState.pageCount,
+          initialPage: _resumePage,
+          onPageShown: _rememberPage,
           // Identity changes whenever a new window of URLs arrives.
           pagesVersion: urls,
           imageFor: (pageNumber) {
@@ -143,10 +157,14 @@ class _EbookReaderViewState extends ConsumerState<EbookReaderView> {
           return EmptyStateView(
             icon: Icons.wifi_off_rounded,
             message: context.l10n.ebookOfflineMissing,
+            actionLabel: context.l10n.commonBack,
+            onAction: () => Navigator.of(context).maybePop(),
           );
         }
         return _EbookPager(
           pageCount: book.pageCount,
+          initialPage: _resumePage,
+          onPageShown: _rememberPage,
           pagesVersion: book,
           imageFor: (pageNumber) => EncryptedPageImage(
             repository: repository,
@@ -164,11 +182,19 @@ class _EbookPager extends StatefulWidget {
     required this.pageCount,
     required this.pagesVersion,
     required this.imageFor,
+    this.initialPage,
+    this.onPageShown,
     this.onPageViewed,
     this.onPageError,
   });
 
   final int pageCount;
+
+  /// 1-based page to open on (e.g. where the student left off); clamped.
+  final int? initialPage;
+
+  /// Called with the 1-based page number whenever the visible page changes.
+  final ValueChanged<int>? onPageShown;
 
   /// Changes (by identity) when more pages become available, so neighbours
   /// get re-warmed.
@@ -190,11 +216,18 @@ class _EbookPager extends StatefulWidget {
 }
 
 class _EbookPagerState extends State<_EbookPager> {
-  final PageController _pageController = PageController();
+  late final int _initialIndex =
+      widget.pageCount <= 0
+          ? 0
+          : ((widget.initialPage ?? 1) - 1).clamp(0, widget.pageCount - 1);
+
+  late final PageController _pageController = PageController(
+    initialPage: _initialIndex,
+  );
 
   // 0-based index of the visible page, for the page indicator. A notifier so
   // updating it repaints only the indicator, not the PageView.
-  final ValueNotifier<int> _currentPage = ValueNotifier(0);
+  late final ValueNotifier<int> _currentPage = ValueNotifier(_initialIndex);
 
   // Pages for which a reload has already been requested, so a still-loading
   // placeholder frame never re-triggers the same request.
@@ -203,9 +236,10 @@ class _EbookPagerState extends State<_EbookPager> {
   @override
   void initState() {
     super.initState();
-    // Precache page 1's neighbours so the first swipe is loader-free.
+    // Precache the opening page's neighbours so the first swipe is
+    // loader-free.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _precacheNeighbours(0);
+      if (mounted) _precacheNeighbours(_initialIndex);
     });
   }
 
@@ -270,6 +304,7 @@ class _EbookPagerState extends State<_EbookPager> {
     if (target == null || !mounted) return;
     _pageController.jumpToPage(target - 1);
     _currentPage.value = target - 1;
+    widget.onPageShown?.call(target);
     _requestWindowFor(target);
   }
 
@@ -292,6 +327,7 @@ class _EbookPagerState extends State<_EbookPager> {
           itemCount: total,
           onPageChanged: (index) {
             _currentPage.value = index;
+            widget.onPageShown?.call(index + 1);
             _requestWindowFor(index + 1);
             _precacheNeighbours(index);
           },
@@ -410,18 +446,24 @@ class _PageIndicator extends StatelessWidget {
             vertical: context.dimens.xs,
           ),
           decoration: BoxDecoration(
-            color: Colors.black54,
+            color: context.colors.primary.withValues(alpha: 0.9),
             borderRadius: BorderRadius.circular(context.dimens.lg),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.menu_book_outlined,
-                  color: Colors.white, size: 15),
+              Icon(
+                Icons.menu_book_outlined,
+                color: context.colors.onPrimary,
+                size: context.dimens.iconSm,
+              ),
               SizedBox(width: context.dimens.xs),
               Text(
-                '$current / $total',
-                style: const TextStyle(color: Colors.white, fontSize: 13),
+                context.l10n.stuEbookPageOf(current, total),
+                style: context.textStyles.labelMedium?.copyWith(
+                  color: context.colors.onPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),

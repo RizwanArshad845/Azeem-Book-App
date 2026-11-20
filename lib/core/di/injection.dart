@@ -83,6 +83,8 @@ import '../../domain/test_taking/usecases/submit_test_attempt_usecase.dart';
 import '../network/dio_client.dart';
 import '../services/logger.dart';
 import '../storage/local_cache_service.dart';
+import '../../data/study_activity/study_activity_repository_impl.dart';
+import '../../domain/study_activity/repositories/study_activity_repository.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -100,6 +102,11 @@ void setupLocator() {
   sl.registerLazySingleton<Logger>(ConsoleLogger.new);
   sl.registerLazySingleton<LocalCacheService>(LocalCacheService.new);
   sl.registerLazySingleton<Dio>(DioClient.build);
+
+  // study-activity (local-only bookmarks: last activity, ebook page)
+  sl.registerLazySingleton<StudyActivityRepository>(
+    () => StudyActivityRepositoryImpl(sl()),
+  );
 
   // catalog
   sl.registerLazySingleton<CatalogRemoteDataSource>(

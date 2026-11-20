@@ -6,6 +6,7 @@ import '../../../core/widgets/app_bar_title.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/confirm_dialog.dart';
 import '../../student_cart/viewmodel/student_cart_viewmodel.dart';
+import '../../student_home/viewmodel/study_activity_viewmodel.dart';
 import '../viewmodel/test_taking_state.dart';
 import '../viewmodel/test_taking_viewmodel.dart';
 import '../widgets/grading_in_progress_view.dart';
@@ -31,6 +32,22 @@ class TestTakingView extends ConsumerWidget {
     final purchasedIds = ref.watch(purchasedSubjectIdsProvider).value;
     final subjectId = asyncState.value?.test?.subjectId;
     final isOwned = subjectId != null && (purchasedIds?.contains(subjectId) ?? false);
+
+    // Bookmark for Home's "Continue" card once the test has loaded.
+    ref.listen(
+      testTakingViewModelProvider(testId).select((s) => s.value?.test),
+      (previous, test) {
+        if (previous != null || test == null) return;
+        ref
+            .read(lastActivityProvider.notifier)
+            .recordTest(
+              subjectId: test.subjectId,
+              testId: test.id,
+              testTitle: test.title,
+              chapterId: test.chapterId,
+            );
+      },
+    );
 
     return PopScope(
       canPop: status != TestTakingStatus.inProgress &&
