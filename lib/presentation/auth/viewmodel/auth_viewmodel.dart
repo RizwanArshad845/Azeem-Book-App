@@ -3,15 +3,12 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
-import '../../../core/utils/validators.dart';
 import '../../../domain/auth/entities/auth_session.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/auth/usecases/get_stored_session_usecase.dart';
 import '../../../domain/auth/usecases/logout_usecase.dart';
 import '../../../domain/auth/usecases/refresh_session_status_usecase.dart';
-import '../../../domain/auth/usecases/request_otp_usecase.dart';
-import '../../../domain/auth/usecases/verify_otp_usecase.dart';
-import '../../../domain/common/failure.dart';
+import '../../../domain/auth/usecases/sign_in_with_google_usecase.dart';
 import '../../../domain/ebook_offline/repositories/ebook_offline_repository.dart';
 import '../../ebook_reader/ebook_page_cache.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
@@ -23,7 +20,6 @@ import '../../teacher_students/viewmodel/teacher_students_viewmodel.dart'
 
 class AuthViewModel extends AsyncNotifier<AuthSession?> {
   UserRole? _selectedRole;
-  String? _phoneNumber;
 
   @override
   Future<AuthSession?> build() async {
@@ -34,112 +30,38 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
     );
   }
 
-  /// Records which role this phone number is acting as. Called from
-  /// `RoleSelectView` before navigating to phone entry.
+  /// Records which role the user is signing in as. Called from
+  /// `RoleSelectView` before navigating to the Google sign-in screen.
   void selectRole(UserRole role) {
     _selectedRole = role;
   }
 
-  /// Validates and submits [rawPhone] for OTP request.
-  Future<bool> submitPhoneNumber(
-    String rawPhone, {
-    required String invalidPhoneMessage,
-    String? roleRequiredMessage,
-  }) async {
-    final phone = rawPhone.trim();
-    if (!Validators.isValidPhoneLocal(phone)) {
-      state = AsyncError<AuthSession?>(
-        ValidationFailure(invalidPhoneMessage),
-        StackTrace.current,
-      );
-      return false;
-    }
-    return requestOtp(phone, roleRequiredMessage: roleRequiredMessage);
-  }
-
   UserRole get selectedRole => _selectedRole ?? UserRole.student;
 
-  /// The number last entered for OTP, so phone entry can prefill it after a
-  /// role switch (`phone_registered_other_role` -> "Log in as ...").
-  String? get enteredPhoneNumber => _phoneNumber;
-
-  /// Drops the remembered number ("Use a different number").
-  void clearEnteredPhoneNumber() => _phoneNumber = null;
-
-  /// Requests an OTP for [phoneNumber] under the previously selected role.
-  /// Returns `true` on success so the view can navigate to OTP entry.
-  Future<bool> requestOtp(
-    String phoneNumber, {
-    String? roleRequiredMessage,
-  }) async {
+  /// Runs Google Sign-In for the selected role and exchanges the result for
+  /// a backend session. Deliberately does not signal navigation — the router
+  /// redirect reacts to the session landing in `state`. Dismissing Google's
+  /// account picker just leaves the user on the sign-in screen (state back
+  /// to `null`, no error).
+  Future<void> signInWithGoogle() async {
     final role = selectedRole;
-
-    _phoneNumber = phoneNumber;
-    state = const AsyncLoading<AuthSession?>();
-    final result = await sl<RequestOtpUseCase>()(phoneNumber, role);
-    return result.when(
-      success: (_) {
-        // Deliberately does NOT store the returned (unverified, `token:
-        // null`) session in `state` — `currentUserProvider` reads `state`
-        // as "is anyone logged in," and the router/onboarding viewmodels
-        // treat any non-null value as a green light to navigate away from
-        // the auth flow. Doing that here — before the OTP is actually
-        // verified — was kicking the user off the phone-entry screen (and
-        // dismissing the OTP bottom sheet with it) the instant an OTP was
-        // merely requested. `_phoneNumber`/`_selectedRole` already carry
-        // everything `verifyOtp` needs, so `state` can just stay `null`
-        // until a real, verified session exists.
-        state = const AsyncData<AuthSession?>(null);
-        return true;
-      },
-      failure: (failure) {
-        state = AsyncError<AuthSession?>(failure, StackTrace.current);
-        return false;
-      },
-    );
-  }
-
-  /// Verifies [otp] against the phone number/role recorded by
-  /// [requestOtp]. Deliberately does not signal navigation — callers should
-  /// simply let this `AsyncValue` resolve (§ task scope: router redirect is
-  /// wired in a later batch).
-  Future<void> verifyOtp(
-    String otp, {
-    String? otpRequiredMessage,
-  }) async {
-    final role = _selectedRole;
-    final phoneNumber = _phoneNumber;
-    if (role == null || phoneNumber == null) {
-      state = AsyncError<AuthSession?>(
-        ValidationFailure(
-          otpRequiredMessage ?? 'Request an OTP before verifying it.',
-        ),
-        StackTrace.current,
-      );
-      return;
-    }
-
     state = const AsyncLoading<AuthSession?>();
 
-    final result = await sl<VerifyOtpUseCase>()(phoneNumber, otp, role);
+    final result = await sl<SignInWithGoogleUseCase>()(role);
     state = result.when(
       success: (session) => AsyncData<AuthSession?>(session),
       failure: (failure) => AsyncError<AuthSession?>(failure, StackTrace.current),
     );
 
-    if (result.isSuccess) {
+    if (result.isSuccess && state.value != null) {
       // Fire the role-agnostic catalog lookups (campus/board-class/
       // class-level) immediately after login succeeds, instead of only
       // starting them once a screen first watches them. Deliberately NOT
-      // fired before `VerifyOtpUseCase` resolves: these endpoints require
-      // an auth token, so calling them any earlier than this guarantees a
-      // 401 — and since they're plain (non-`.autoDispose`) `FutureProvider`s
-      // with no prior cache on a fresh login, a pre-auth 401 permanently
-      // poisons them into `AsyncError` for the rest of the app session
-      // (confirmed via a real device log capture: this exact 401 storm was
-      // the actual root cause of the Teacher Profile card's raw-id flash —
-      // its lookups depend on these same providers, which never recovered
-      // after being poisoned).
+      // fired before sign-in resolves: these endpoints require an auth
+      // token, so calling them any earlier guarantees a 401 — and since
+      // they're plain (non-`.autoDispose`) `FutureProvider`s with no prior
+      // cache on a fresh login, a pre-auth 401 permanently poisons them into
+      // `AsyncError` for the rest of the app session.
       unawaited(_prefetchLoginCatalogData());
       if (role == UserRole.teacher) {
         unawaited(preloadTeacherProfileLookups());
@@ -245,7 +167,7 @@ final currentUserProvider = Provider<AuthSession?>((ref) {
 
 /// Warms the Teacher Profile "Teaching Scope" card's catalog lookups so the
 /// card never renders raw subject/campus ids before rebuilding with
-/// resolved names. Called from `AuthViewModel.verifyOtp()` right after a
+/// resolved names. Called from `AuthViewModel.signInWithGoogle()` right after a
 /// fresh teacher login succeeds.
 ///
 /// Uses `sl<ProviderContainer>()` (registered in `main.dart`) instead of

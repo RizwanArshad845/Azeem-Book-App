@@ -8,7 +8,6 @@ import '../../../core/widgets/onboarding_scaffold.dart';
 import '../../../core/widgets/onboarding_step_header.dart';
 import '../../../core/widgets/onboarding_summary_item.dart';
 import '../../../domain/common/failure.dart';
-import '../../auth/viewmodel/auth_viewmodel.dart';
 import '../../auth/widgets/account_state_failure_handler.dart';
 import '../../auth/widgets/onboarding_logout_action.dart';
 import '../viewmodel/teacher_onboarding_viewmodel.dart';
@@ -39,6 +38,7 @@ class TeacherOnboardingReviewView extends ConsumerWidget {
         .read(teacherOnboardingViewModelProvider.notifier)
         .submitSignUp(
           name: formState.name.trim(),
+          phoneNumber: formState.phoneNumber.trim(),
           campusId: campus.id,
           subjectIds: formState.selectedSubjectIds.toList(),
           classIds: formState.selectedClassIds.isEmpty
@@ -66,7 +66,7 @@ class TeacherOnboardingReviewView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formState = ref.watch(teacherFormNotifierProvider);
-    final phoneNumber = ref.watch(currentUserProvider)?.phoneNumber ?? '';
+    final phoneNumber = formState.phoneNumber.trim();
     final isSubmitting = ref.watch(
       teacherOnboardingViewModelProvider.select((s) => s.isLoading),
     );

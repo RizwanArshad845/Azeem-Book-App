@@ -47,6 +47,8 @@ class ErrorInterceptor extends Interceptor {
   static const _teacherPendingApproval = 'teacher_pending_approval';
   static const _phoneRegisteredOtherRole = 'phone_registered_other_role';
   static const _phoneAlreadyRegistered = 'phone_already_registered';
+  static const _accountRegisteredOtherRole = 'account_registered_other_role';
+  static const _emailAlreadyRegistered = 'email_already_registered';
 
   /// The `error` object of the `{"error": {"code", "message", ...}}` envelope
   /// (extra fields like `contactEmail`/`existingRole` live next to `code`).
@@ -102,6 +104,13 @@ class ErrorInterceptor extends Interceptor {
         }
       case _phoneAlreadyRegistered when statusCode == 409:
         return const PhoneAlreadyRegisteredFailure();
+      case _accountRegisteredOtherRole when statusCode == 409:
+        final role = _errorBody(err)?['existingRole'];
+        if (role is String && role.isNotEmpty) {
+          return AccountRegisteredOtherRoleFailure(role);
+        }
+      case _emailAlreadyRegistered when statusCode == 409:
+        return const EmailAlreadyRegisteredFailure();
       case 'teacher_not_selectable' when statusCode == 400:
         return const TeacherNotSelectableFailure();
       case 'teacher_locked_after_purchase' when statusCode == 400:

@@ -1942,4 +1942,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tchNextPage => 'Next page';
+
+  @override
+  String get googleSignInTitle => 'Sign in';
+
+  @override
+  String get googleSignInSubtitle => 'Continue with your Google account';
+
+  @override
+  String get googleSignInButton => 'Continue with Google';
+
+  @override
+  String get googleSignInFailedMessage =>
+      'Google sign-in failed. Please try again.';
+
+  @override
+  String get accountRegisteredOtherRoleTitle => 'Account already in use';
+
+  @override
+  String accountRegisteredOtherRoleMessage(String role) {
+    String _temp0 = intl.Intl.selectLogic(role, {
+      'teacher': 'teacher',
+      'student': 'student',
+      'other': '$role',
+    });
+    return 'This Google account is already registered as a $_temp0 account.';
+  }
+
+  @override
+  String get useDifferentGoogleAccount => 'Use a different Google account';
+
+  @override
+  String get emailAlreadyRegisteredMessage =>
+      'An account with this email address already exists.';
 }

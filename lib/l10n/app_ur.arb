@@ -662,5 +662,14 @@
   "tchEarningsLinkTitle": "متوقع آمدنی",
   "tchEarningsLinkSub": "اپنی ممکنہ آمدنی اور کمیشن کی تاریخ دیکھیں",
   "tchPreviousPage": "پچھلا صفحہ",
-  "tchNextPage": "اگلا صفحہ"
+  "tchNextPage": "اگلا صفحہ",
+
+  "googleSignInTitle": "سائن اِن",
+  "googleSignInSubtitle": "اپنے گوگل اکاؤنٹ کے ساتھ جاری رکھیں",
+  "googleSignInButton": "گوگل کے ساتھ جاری رکھیں",
+  "googleSignInFailedMessage": "گوگل سائن اِن ناکام ہو گیا۔ دوبارہ کوشش کریں۔",
+  "accountRegisteredOtherRoleTitle": "اکاؤنٹ پہلے سے استعمال میں ہے",
+  "accountRegisteredOtherRoleMessage": "یہ گوگل اکاؤنٹ پہلے سے {role, select, teacher{استاد} student{طالب علم} other{{role}}} اکاؤنٹ کے طور پر رجسٹرڈ ہے۔",
+  "useDifferentGoogleAccount": "دوسرا گوگل اکاؤنٹ استعمال کریں",
+  "emailAlreadyRegisteredMessage": "اس ای میل کے ساتھ اکاؤنٹ پہلے سے موجود ہے۔"
 }

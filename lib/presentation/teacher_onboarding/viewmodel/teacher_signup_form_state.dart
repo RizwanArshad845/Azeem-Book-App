@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/validators.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
 
 /// Immutable form state for the multi-step teacher onboarding wizard.
@@ -7,11 +8,13 @@ class TeacherFormState {
   const TeacherFormState({
     this.currentStep = 1,
     this.name = '',
+    this.phoneNumber = '',
     this.campus,
     this.studentCount = 0,
     this.selectedClassIds = const {},
     this.selectedSubjectIds = const {},
     this.nameError,
+    this.phoneError,
     this.campusError,
     this.classesError,
     this.subjectsError,
@@ -19,11 +22,13 @@ class TeacherFormState {
 
   final int currentStep;
   final String name;
+  final String phoneNumber;
   final Campus? campus;
   final int studentCount;
   final Set<String> selectedClassIds;
   final Set<String> selectedSubjectIds;
   final String? nameError;
+  final String? phoneError;
   final String? campusError;
   final String? classesError;
   final String? subjectsError;
@@ -33,7 +38,10 @@ class TeacherFormState {
   /// / disabled until all mandatory fields pass validation") without setting
   /// error text just from watching — [TeacherFormNotifier.validateStep1] is
   /// the state-mutating, error-setting counterpart used on tap.
-  bool get isStep1Valid => name.trim().isNotEmpty && campus != null;
+  bool get isStep1Valid =>
+      name.trim().isNotEmpty &&
+      Validators.isValidPhoneLocal(phoneNumber.trim()) &&
+      campus != null;
 
   /// Non-mutating "would this pass `validateStep2`" check — see [isStep1Valid].
   bool get isStep2Valid =>
@@ -42,14 +50,17 @@ class TeacherFormState {
   TeacherFormState copyWith({
     int? currentStep,
     String? name,
+    String? phoneNumber,
     Campus? campus,
     int? studentCount,
     Set<String>? selectedClassIds,
     Set<String>? selectedSubjectIds,
     String? nameError,
+    String? phoneError,
     String? campusError,
     String? classesError,
     String? subjectsError,
+    bool clearPhoneError = false,
     bool clearCampusError = false,
     bool clearClassesError = false,
     bool clearSubjectsError = false,
@@ -57,11 +68,13 @@ class TeacherFormState {
     return TeacherFormState(
       currentStep: currentStep ?? this.currentStep,
       name: name ?? this.name,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
       campus: campus ?? this.campus,
       studentCount: studentCount ?? this.studentCount,
       selectedClassIds: selectedClassIds ?? this.selectedClassIds,
       selectedSubjectIds: selectedSubjectIds ?? this.selectedSubjectIds,
       nameError: nameError ?? this.nameError,
+      phoneError: clearPhoneError ? null : (phoneError ?? this.phoneError),
       campusError: clearCampusError ? null : (campusError ?? this.campusError),
       classesError: clearClassesError ? null : (classesError ?? this.classesError),
       subjectsError: clearSubjectsError ? null : (subjectsError ?? this.subjectsError),
@@ -76,6 +89,10 @@ class TeacherFormNotifier extends Notifier<TeacherFormState> {
 
   void updateName(String name) {
     state = state.copyWith(name: name, nameError: null);
+  }
+
+  void updatePhoneNumber(String phoneNumber) {
+    state = state.copyWith(phoneNumber: phoneNumber, clearPhoneError: true);
   }
 
   void updateCampus(Campus? campus) {
@@ -108,15 +125,19 @@ class TeacherFormNotifier extends Notifier<TeacherFormState> {
 
   bool validateStep1({
     required String requiredNameMsg,
+    required String invalidPhoneMsg,
     required String requiredCampusMsg,
   }) {
     final nameValid = state.name.trim().isNotEmpty;
+    final phoneValid = Validators.isValidPhoneLocal(state.phoneNumber.trim());
     final campusValid = state.campus != null;
     state = state.copyWith(
       nameError: nameValid ? null : requiredNameMsg,
+      phoneError: phoneValid ? null : invalidPhoneMsg,
+      clearPhoneError: phoneValid,
       campusError: campusValid ? null : requiredCampusMsg,
     );
-    return nameValid && campusValid;
+    return nameValid && phoneValid && campusValid;
   }
 
   bool validateStep2({

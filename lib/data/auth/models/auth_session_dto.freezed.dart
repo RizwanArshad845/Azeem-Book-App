@@ -15,8 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthSessionDto {
 
-// Nullable: `POST /auth/otp/request` returns `userId: null`.
- String? get userId; UserRole get role; String get phoneNumber; String? get token; String? get status;
+ String? get userId; UserRole get role; String? get email; String? get name; String? get token; String? get status;
 /// Create a copy of AuthSessionDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +28,16 @@ $AuthSessionDtoCopyWith<AuthSessionDto> get copyWith => _$AuthSessionDtoCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthSessionDto&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.role, role) || other.role == role)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.token, token) || other.token == token)&&(identical(other.status, status) || other.status == status));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthSessionDto&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.role, role) || other.role == role)&&(identical(other.email, email) || other.email == email)&&(identical(other.name, name) || other.name == name)&&(identical(other.token, token) || other.token == token)&&(identical(other.status, status) || other.status == status));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,userId,role,phoneNumber,token,status);
+int get hashCode => Object.hash(runtimeType,userId,role,email,name,token,status);
 
 @override
 String toString() {
-  return 'AuthSessionDto(userId: $userId, role: $role, phoneNumber: $phoneNumber, token: $token, status: $status)';
+  return 'AuthSessionDto(userId: $userId, role: $role, email: $email, name: $name, token: $token, status: $status)';
 }
 
 
@@ -49,7 +48,7 @@ abstract mixin class $AuthSessionDtoCopyWith<$Res>  {
   factory $AuthSessionDtoCopyWith(AuthSessionDto value, $Res Function(AuthSessionDto) _then) = _$AuthSessionDtoCopyWithImpl;
 @useResult
 $Res call({
- String? userId, UserRole role, String phoneNumber, String? token, String? status
+ String? userId, UserRole role, String? email, String? name, String? token, String? status
 });
 
 
@@ -66,12 +65,13 @@ class _$AuthSessionDtoCopyWithImpl<$Res>
 
 /// Create a copy of AuthSessionDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? userId = freezed,Object? role = null,Object? phoneNumber = null,Object? token = freezed,Object? status = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userId = freezed,Object? role = null,Object? email = freezed,Object? name = freezed,Object? token = freezed,Object? status = freezed,}) {
   return _then(_self.copyWith(
 userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String?,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
-as UserRole,phoneNumber: null == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
-as String,token: freezed == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
+as UserRole,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,token: freezed == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
 as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -158,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? userId,  UserRole role,  String phoneNumber,  String? token,  String? status)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? userId,  UserRole role,  String? email,  String? name,  String? token,  String? status)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthSessionDto() when $default != null:
-return $default(_that.userId,_that.role,_that.phoneNumber,_that.token,_that.status);case _:
+return $default(_that.userId,_that.role,_that.email,_that.name,_that.token,_that.status);case _:
   return orElse();
 
 }
@@ -179,10 +179,10 @@ return $default(_that.userId,_that.role,_that.phoneNumber,_that.token,_that.stat
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? userId,  UserRole role,  String phoneNumber,  String? token,  String? status)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? userId,  UserRole role,  String? email,  String? name,  String? token,  String? status)  $default,) {final _that = this;
 switch (_that) {
 case _AuthSessionDto():
-return $default(_that.userId,_that.role,_that.phoneNumber,_that.token,_that.status);case _:
+return $default(_that.userId,_that.role,_that.email,_that.name,_that.token,_that.status);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +199,10 @@ return $default(_that.userId,_that.role,_that.phoneNumber,_that.token,_that.stat
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? userId,  UserRole role,  String phoneNumber,  String? token,  String? status)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? userId,  UserRole role,  String? email,  String? name,  String? token,  String? status)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthSessionDto() when $default != null:
-return $default(_that.userId,_that.role,_that.phoneNumber,_that.token,_that.status);case _:
+return $default(_that.userId,_that.role,_that.email,_that.name,_that.token,_that.status);case _:
   return null;
 
 }
@@ -214,13 +214,13 @@ return $default(_that.userId,_that.role,_that.phoneNumber,_that.token,_that.stat
 @JsonSerializable()
 
 class _AuthSessionDto extends AuthSessionDto {
-  const _AuthSessionDto({this.userId, required this.role, required this.phoneNumber, this.token, this.status}): super._();
+  const _AuthSessionDto({this.userId, required this.role, this.email, this.name, this.token, this.status}): super._();
   factory _AuthSessionDto.fromJson(Map<String, dynamic> json) => _$AuthSessionDtoFromJson(json);
 
-// Nullable: `POST /auth/otp/request` returns `userId: null`.
 @override final  String? userId;
 @override final  UserRole role;
-@override final  String phoneNumber;
+@override final  String? email;
+@override final  String? name;
 @override final  String? token;
 @override final  String? status;
 
@@ -237,16 +237,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthSessionDto&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.role, role) || other.role == role)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.token, token) || other.token == token)&&(identical(other.status, status) || other.status == status));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthSessionDto&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.role, role) || other.role == role)&&(identical(other.email, email) || other.email == email)&&(identical(other.name, name) || other.name == name)&&(identical(other.token, token) || other.token == token)&&(identical(other.status, status) || other.status == status));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,userId,role,phoneNumber,token,status);
+int get hashCode => Object.hash(runtimeType,userId,role,email,name,token,status);
 
 @override
 String toString() {
-  return 'AuthSessionDto(userId: $userId, role: $role, phoneNumber: $phoneNumber, token: $token, status: $status)';
+  return 'AuthSessionDto(userId: $userId, role: $role, email: $email, name: $name, token: $token, status: $status)';
 }
 
 
@@ -257,7 +257,7 @@ abstract mixin class _$AuthSessionDtoCopyWith<$Res> implements $AuthSessionDtoCo
   factory _$AuthSessionDtoCopyWith(_AuthSessionDto value, $Res Function(_AuthSessionDto) _then) = __$AuthSessionDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String? userId, UserRole role, String phoneNumber, String? token, String? status
+ String? userId, UserRole role, String? email, String? name, String? token, String? status
 });
 
 
@@ -274,12 +274,13 @@ class __$AuthSessionDtoCopyWithImpl<$Res>
 
 /// Create a copy of AuthSessionDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? userId = freezed,Object? role = null,Object? phoneNumber = null,Object? token = freezed,Object? status = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userId = freezed,Object? role = null,Object? email = freezed,Object? name = freezed,Object? token = freezed,Object? status = freezed,}) {
   return _then(_AuthSessionDto(
 userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String?,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
-as UserRole,phoneNumber: null == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
-as String,token: freezed == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
+as UserRole,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,token: freezed == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
 as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String?,
   ));

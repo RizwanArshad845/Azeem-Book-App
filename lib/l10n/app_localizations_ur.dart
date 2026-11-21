@@ -1947,4 +1947,37 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get tchNextPage => 'اگلا صفحہ';
+
+  @override
+  String get googleSignInTitle => 'سائن اِن';
+
+  @override
+  String get googleSignInSubtitle => 'اپنے گوگل اکاؤنٹ کے ساتھ جاری رکھیں';
+
+  @override
+  String get googleSignInButton => 'گوگل کے ساتھ جاری رکھیں';
+
+  @override
+  String get googleSignInFailedMessage =>
+      'گوگل سائن اِن ناکام ہو گیا۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String get accountRegisteredOtherRoleTitle => 'اکاؤنٹ پہلے سے استعمال میں ہے';
+
+  @override
+  String accountRegisteredOtherRoleMessage(String role) {
+    String _temp0 = intl.Intl.selectLogic(role, {
+      'teacher': 'استاد',
+      'student': 'طالب علم',
+      'other': '$role',
+    });
+    return 'یہ گوگل اکاؤنٹ پہلے سے $_temp0 اکاؤنٹ کے طور پر رجسٹرڈ ہے۔';
+  }
+
+  @override
+  String get useDifferentGoogleAccount => 'دوسرا گوگل اکاؤنٹ استعمال کریں';
+
+  @override
+  String get emailAlreadyRegisteredMessage =>
+      'اس ای میل کے ساتھ اکاؤنٹ پہلے سے موجود ہے۔';
 }

@@ -18,7 +18,7 @@ void main() {
   final session = AuthSession(
     userId: 'student-1',
     role: UserRole.student,
-    phoneNumber: '03001234567',
+    email: 'student@example.com',
     token: 'token',
     status: 'DASHBOARD',
   );

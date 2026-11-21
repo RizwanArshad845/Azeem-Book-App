@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../data/auth/datasources/google_sign_in_datasource.dart';
 import '../../data/auth/datasources/remote/auth_remote_datasource.dart';
 import '../../data/auth/repositories/auth_repository_impl.dart';
 import '../../data/campus_directory/datasources/remote/campus_remote_datasource.dart';
@@ -13,8 +14,7 @@ import '../../domain/auth/repositories/auth_repository.dart';
 import '../../domain/auth/usecases/get_stored_session_usecase.dart';
 import '../../domain/auth/usecases/logout_usecase.dart';
 import '../../domain/auth/usecases/refresh_session_status_usecase.dart';
-import '../../domain/auth/usecases/request_otp_usecase.dart';
-import '../../domain/auth/usecases/verify_otp_usecase.dart';
+import '../../domain/auth/usecases/sign_in_with_google_usecase.dart';
 import '../../domain/campus_directory/repositories/campus_repository.dart';
 import '../../domain/campus_directory/usecases/get_campuses_usecase.dart';
 import '../../domain/catalog/repositories/catalog_repository.dart';
@@ -45,7 +45,7 @@ import '../../domain/student_onboarding/usecases/set_student_subject_teacher_use
 import '../../domain/student_onboarding/usecases/update_student_subject_enrollments_usecase.dart';
 import '../../domain/teacher_onboarding/repositories/teacher_repository.dart';
 import '../../domain/teacher_onboarding/usecases/delete_teacher_account_usecase.dart';
-import '../../domain/teacher_onboarding/usecases/get_teacher_by_phone_usecase.dart';
+import '../../domain/teacher_onboarding/usecases/get_teacher_by_id_usecase.dart';
 import '../../domain/teacher_onboarding/usecases/sign_up_teacher_usecase.dart';
 import '../../domain/teacher_onboarding/usecases/update_teacher_usecase.dart';
 import '../../data/notifications/datasources/remote/notification_remote_datasource.dart';
@@ -142,11 +142,13 @@ void setupLocator() {
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(sl()),
   );
-  sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(remote: sl()),
+  sl.registerLazySingleton<GoogleSignInDataSource>(
+    () => GoogleSignInDataSourceImpl(),
   );
-  sl.registerLazySingleton(() => RequestOtpUseCase(sl()));
-  sl.registerLazySingleton(() => VerifyOtpUseCase(sl()));
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(remote: sl(), google: sl()),
+  );
+  sl.registerLazySingleton(() => SignInWithGoogleUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
   sl.registerLazySingleton(() => RefreshSessionStatusUseCase(sl()));
   sl.registerLazySingleton(() => GetStoredSessionUseCase(sl()));
@@ -158,7 +160,7 @@ void setupLocator() {
   sl.registerLazySingleton<TeacherRepository>(
     () => TeacherRepositoryImpl(remote: sl()),
   );
-  sl.registerLazySingleton(() => GetTeacherByPhoneUseCase(sl()));
+  sl.registerLazySingleton(() => GetTeacherByIdUseCase(sl()));
   sl.registerLazySingleton(() => SignUpTeacherUseCase(sl()));
   sl.registerLazySingleton(() => UpdateTeacherUseCase(sl()));
   sl.registerLazySingleton(() => DeleteTeacherAccountUseCase(sl()));

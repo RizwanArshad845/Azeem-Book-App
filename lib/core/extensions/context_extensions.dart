@@ -76,6 +76,10 @@ extension FailureLocalization on Failure {
       PhoneRegisteredOtherRoleFailure(:final existingRole) =>
         l10n.phoneRegisteredOtherRoleMessage(existingRole),
       PhoneAlreadyRegisteredFailure() => l10n.phoneAlreadyRegisteredMessage,
+      AccountRegisteredOtherRoleFailure(:final existingRole) =>
+        l10n.accountRegisteredOtherRoleMessage(existingRole),
+      EmailAlreadyRegisteredFailure() => l10n.emailAlreadyRegisteredMessage,
+      GoogleSignInFailure() => l10n.googleSignInFailedMessage,
       TeacherNotSelectableFailure() => l10n.teacherNotSelectableMessage,
       TeacherLockedAfterPurchaseFailure() => l10n.teacherLockedAfterPurchaseMessage,
       AlreadyEnrolledFailure() => l10n.alreadyEnrolledMessage,

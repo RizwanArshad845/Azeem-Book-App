@@ -5,10 +5,10 @@ import '../entities/teacher.dart';
 /// rules. Concrete implementation calls the remote datasource directly —
 /// never called directly from a viewmodel.
 abstract class TeacherRepository {
-  /// Looks up an existing Teacher by phone number, or `null` if none exists
-  /// yet. Used to distinguish a salesman-seeded record (skip signup) from a
-  /// brand new phone number (show the self-signup form).
-  Future<Result<Teacher?>> getTeacherByPhone(String phoneNumber);
+  /// Looks up the Teacher with this user id, or `null` if none exists yet.
+  /// Used to distinguish a seeded record (skip signup) from a brand new
+  /// account (show the self-signup form).
+  Future<Result<Teacher?>> getTeacherById(String teacherId);
 
   /// Creates a new self-signup Teacher record (`pendingAdminApproval`).
   Future<Result<Teacher>> signUp(Teacher teacher);

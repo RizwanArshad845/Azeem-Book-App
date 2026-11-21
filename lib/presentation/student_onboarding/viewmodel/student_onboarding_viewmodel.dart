@@ -32,6 +32,7 @@ export '../../../core/di/riverpod_providers.dart'
 /// declared provider rather than `@riverpod` codegen.
 class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
   String? _name;
+  String? _phoneNumber;
   String? _campusId;
   String? _boardClassId;
   final Set<String> _selectedSubjectIds = {};
@@ -85,6 +86,8 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
 
   String? get name => _name;
 
+  String? get phoneNumber => _phoneNumber;
+
   String? get campusId => _campusId;
 
   String? get boardClassId => _boardClassId;
@@ -98,6 +101,12 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
   /// view's "Continue" handler, mirroring [selectCampus] below.
   void recordName(String name) {
     _name = name.trim();
+  }
+
+  /// Records the phone number entered on `StudentBasicInfoView` — Google
+  /// sign-in doesn't provide one, and signup requires it.
+  void recordPhoneNumber(String phoneNumber) {
+    _phoneNumber = phoneNumber.trim();
   }
 
   /// Records the campus chosen on `CampusSelectView`. Called from that
@@ -158,10 +167,17 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
     final session = ref.read(currentUserProvider);
     final name = _name;
     final campusId = _campusId;
-    if (session == null || name == null || name.isEmpty || campusId == null) {
+    final phoneNumber = _phoneNumber;
+    if (session == null ||
+        name == null ||
+        name.isEmpty ||
+        phoneNumber == null ||
+        phoneNumber.isEmpty ||
+        campusId == null) {
       state = AsyncError<Student?>(
         const ValidationFailure(
-          'Enter your name and select a campus before completing onboarding.',
+          'Enter your name and phone number and select a campus before '
+          'completing onboarding.',
         ),
         StackTrace.current,
       );
@@ -182,7 +198,7 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
     final student = Student(
       id: session.userId!,
       name: name,
-      phoneNumber: session.phoneNumber,
+      phoneNumber: phoneNumber,
       role: session.role,
       isDeleted: false,
       createdAt: now,

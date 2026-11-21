@@ -20,7 +20,9 @@ import '../viewmodel/auth_viewmodel.dart';
 bool isAccountStateFailure(Failure failure) =>
     failure is AccountDeletedFailure ||
     failure is PhoneRegisteredOtherRoleFailure ||
-    failure is PhoneAlreadyRegisteredFailure;
+    failure is PhoneAlreadyRegisteredFailure ||
+    failure is AccountRegisteredOtherRoleFailure ||
+    failure is EmailAlreadyRegisteredFailure;
 
 bool handleAccountStateFailure(
   BuildContext context,
@@ -30,10 +32,26 @@ bool handleAccountStateFailure(
   switch (failure) {
     case AccountDeletedFailure():
       return true;
-    case PhoneRegisteredOtherRoleFailure(:final existingRole):
+    case AccountRegisteredOtherRoleFailure(:final existingRole):
       _showOtherRoleDialog(context, ref, existingRole);
       return true;
+    case PhoneRegisteredOtherRoleFailure(:final existingRole):
+      // Signup only (phone numbers are unique across roles): the number is
+      // taken, so the user must enter another one — let the form show it.
+      _showPhoneTakenDialog(
+        context,
+        context.l10n.phoneRegisteredOtherRoleTitle,
+        context.l10n.phoneRegisteredOtherRoleMessage(existingRole),
+      );
+      return true;
     case PhoneAlreadyRegisteredFailure():
+      _showPhoneTakenDialog(
+        context,
+        context.l10n.phoneAlreadyRegisteredTitle,
+        context.l10n.phoneAlreadyRegisteredMessage,
+      );
+      return true;
+    case EmailAlreadyRegisteredFailure():
       _showAlreadyRegisteredDialog(context, ref);
       return true;
     default:
@@ -53,21 +71,41 @@ Future<void> _backToLogin(
   BuildContext context,
   WidgetRef ref, {
   UserRole? role,
-  bool keepPhone = true,
 }) async {
-  // Everything that needs `context`/`ref` is read up front: closing the OTP
-  // bottom sheet below disposes the widget those belong to.
+  // Everything that needs `context`/`ref` is read up front: navigating below
+  // can dispose the widget those belong to.
   final auth = ref.read(authViewModelProvider.notifier);
   final router = GoRouter.of(context);
   final navigator = Navigator.of(context, rootNavigator: true);
   final hasSession = ref.read(currentUserProvider) != null;
 
   if (role != null) auth.selectRole(role);
-  if (!keepPhone) auth.clearEnteredPhoneNumber();
-  // Close the OTP sheet (a popup route) if this came from verifying a code.
   navigator.popUntil((route) => route is! PopupRoute);
+  // Logging out also forgets the Google account, so the next sign-in shows
+  // the account picker.
   if (hasSession) await auth.logout();
-  router.go(AppRoutes.authPhone);
+  router.go(AppRoutes.authSignIn);
+}
+
+Future<void> _showPhoneTakenDialog(
+  BuildContext context,
+  String title,
+  String message,
+) {
+  return showDialog<void>(
+    context: context,
+    builder: (dialogContext) => AppDialog(
+      title: title,
+      subtitle: message,
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(),
+          child: Text(dialogContext.l10n.commonOk),
+        ),
+      ],
+      child: const SizedBox.shrink(),
+    ),
+  );
 }
 
 Future<void> _showOtherRoleDialog(
@@ -79,17 +117,17 @@ Future<void> _showOtherRoleDialog(
   return showDialog<void>(
     context: context,
     builder: (dialogContext) => AppDialog(
-      title: dialogContext.l10n.phoneRegisteredOtherRoleTitle,
-      subtitle: dialogContext.l10n.phoneRegisteredOtherRoleMessage(
+      title: dialogContext.l10n.accountRegisteredOtherRoleTitle,
+      subtitle: dialogContext.l10n.accountRegisteredOtherRoleMessage(
         existingRole,
       ),
       actions: [
         TextButton(
           onPressed: () {
             Navigator.of(dialogContext).pop();
-            _backToLogin(context, ref, keepPhone: false);
+            _backToLogin(context, ref);
           },
-          child: Text(dialogContext.l10n.phoneUseDifferentNumber),
+          child: Text(dialogContext.l10n.useDifferentGoogleAccount),
         ),
         if (role != null)
           TextButton(
@@ -111,7 +149,7 @@ Future<void> _showAlreadyRegisteredDialog(BuildContext context, WidgetRef ref) {
     barrierDismissible: false,
     builder: (dialogContext) => AppDialog(
       title: dialogContext.l10n.phoneAlreadyRegisteredTitle,
-      subtitle: dialogContext.l10n.phoneAlreadyRegisteredMessage,
+      subtitle: dialogContext.l10n.emailAlreadyRegisteredMessage,
       actions: [
         TextButton(
           onPressed: () {

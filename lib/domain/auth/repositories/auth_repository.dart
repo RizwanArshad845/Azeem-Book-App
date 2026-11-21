@@ -3,45 +3,28 @@ import '../entities/auth_session.dart';
 import '../entities/user_role.dart';
 
 /// Zero Flutter/Riverpod/package dependencies per §2 Clean Architecture
-/// rules. Auth is passwordless — phone number + OTP only (§9.1) — for
-/// Teacher and Student roles.
+/// rules. Auth is passwordless — Google Sign-In only — for Teacher and
+/// Student roles.
 abstract class AuthRepository {
-  /// Triggers sending an OTP to [phoneNumber] for the given [role]. Returns
-  /// an unverified [AuthSession] stub (null `token`) on success so the view
-  /// layer knows the request succeeded before moving to OTP entry.
-  Future<Result<AuthSession>> requestOtp(String phoneNumber, UserRole role);
-
-  /// Verifies [otp] for [phoneNumber]/[role]. On success returns a fully
-  /// populated [AuthSession] (non-null `token`).
-  Future<Result<AuthSession>> verifyOtp(
-    String phoneNumber,
-    String otp,
-    UserRole role,
-  );
+  /// Shows Google's account picker, then exchanges the account's ID token
+  /// with the backend for a session acting as [role]. On success returns a
+  /// fully populated [AuthSession] (non-null `token`), already persisted.
+  /// Returns `null` inside the [Result] if the user dismissed the picker.
+  Future<Result<AuthSession?>> signInWithGoogle(UserRole role);
 
   /// Asks the backend for the current routing status
   /// (`GET /auth/session-status`) and, when one comes back, persists it onto
   /// the stored session so a restart doesn't resurrect a stale status.
   Future<Result<String?>> refreshSessionStatus();
 
-  /// Clears the current session (interceptor token + persisted storage).
+  /// Clears the current session (interceptor token + persisted storage) and
+  /// forgets the Google account so the next login shows the picker again.
   Future<Result<void>> logout();
 
-  /// Triggers sending an OTP to [newPhone] so a signed-in user can confirm a
-  /// phone-number change away from [currentPhone] (`teacher-profile`'s
-  /// phone-edit flow).
-  Future<Result<void>> requestPhoneChangeOtp(
-    String currentPhone,
-    String newPhone,
-  );
-
-  /// Verifies the OTP sent to [newPhone] before the caller commits the
-  /// phone-number edit.
-  Future<Result<void>> verifyPhoneChangeOtp(String newPhone, String otp);
-
   /// Reads the session that was persisted to secure storage on the last
-  /// successful OTP verify. Returns `null` inside the [Result] if no session
-  /// is stored (first install, or after logout). Also restores
-  /// [AuthInterceptor.currentToken] so subsequent API calls are authenticated.
+  /// successful sign-in. Returns `null` inside the [Result] if no session is
+  /// stored (first install, after logout, or a pre-Google-Sign-In session).
+  /// Also restores [AuthInterceptor.currentToken] so subsequent API calls are
+  /// authenticated.
   Future<Result<AuthSession?>> getStoredSession();
 }

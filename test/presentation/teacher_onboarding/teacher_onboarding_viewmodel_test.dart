@@ -4,7 +4,7 @@ import 'package:azeem_book_app/domain/auth/entities/user_role.dart';
 import 'package:azeem_book_app/domain/common/failure.dart';
 import 'package:azeem_book_app/domain/common/result.dart';
 import 'package:azeem_book_app/domain/teacher_onboarding/entities/teacher.dart';
-import 'package:azeem_book_app/domain/teacher_onboarding/usecases/get_teacher_by_phone_usecase.dart';
+import 'package:azeem_book_app/domain/teacher_onboarding/usecases/get_teacher_by_id_usecase.dart';
 import 'package:azeem_book_app/presentation/auth/viewmodel/auth_viewmodel.dart';
 import 'package:azeem_book_app/presentation/teacher_onboarding/viewmodel/teacher_onboarding_viewmodel.dart';
 import 'package:fake_async/fake_async.dart';
@@ -12,14 +12,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockGetTeacherByPhoneUseCase extends Mock
-    implements GetTeacherByPhoneUseCase {}
+class MockGetTeacherByIdUseCase extends Mock
+    implements GetTeacherByIdUseCase {}
 
 void main() {
   final session = AuthSession(
     userId: 'teacher-1',
     role: UserRole.teacher,
-    phoneNumber: '03001234567',
+    email: 'teacher@example.com',
     token: 'token',
     status: 'DASHBOARD',
   );
@@ -37,11 +37,11 @@ void main() {
     approvalStatus: TeacherApprovalStatus.approved,
   );
 
-  late MockGetTeacherByPhoneUseCase mockUseCase;
+  late MockGetTeacherByIdUseCase mockUseCase;
 
   setUp(() {
-    mockUseCase = MockGetTeacherByPhoneUseCase();
-    sl.registerFactory<GetTeacherByPhoneUseCase>(() => mockUseCase);
+    mockUseCase = MockGetTeacherByIdUseCase();
+    sl.registerFactory<GetTeacherByIdUseCase>(() => mockUseCase);
   });
 
   tearDown(sl.reset);

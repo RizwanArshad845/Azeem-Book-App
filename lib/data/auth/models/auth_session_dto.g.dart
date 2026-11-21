@@ -10,7 +10,8 @@ _AuthSessionDto _$AuthSessionDtoFromJson(Map<String, dynamic> json) =>
     _AuthSessionDto(
       userId: json['userId'] as String?,
       role: $enumDecode(_$UserRoleEnumMap, json['role']),
-      phoneNumber: json['phoneNumber'] as String,
+      email: json['email'] as String?,
+      name: json['name'] as String?,
       token: json['token'] as String?,
       status: json['status'] as String?,
     );
@@ -19,7 +20,8 @@ Map<String, dynamic> _$AuthSessionDtoToJson(_AuthSessionDto instance) =>
     <String, dynamic>{
       'userId': instance.userId,
       'role': _$UserRoleEnumMap[instance.role]!,
-      'phoneNumber': instance.phoneNumber,
+      'email': instance.email,
+      'name': instance.name,
       'token': instance.token,
       'status': instance.status,
     };

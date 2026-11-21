@@ -71,7 +71,7 @@ class UnauthorizedFailure extends Failure {
       'You are not authorized to do this.${details != null ? ' $details' : ''}';
 }
 
-/// Backend `account_deleted` (403 on OTP request/verify/signup, 401 on any
+/// Backend `account_deleted` (403 on Google login/signup, 401 on any
 /// authenticated call): the account was soft-deleted and only support can
 /// restore it. [contactEmail] is the backend's optional override; the app
 /// shows its own hardcoded support email regardless.
@@ -84,8 +84,9 @@ class AccountDeletedFailure extends Failure {
   String get message => 'This account has been deleted.';
 }
 
-/// Backend `phone_registered_other_role` (409): the number already belongs to
-/// an account of the other role. [existingRole] is `"teacher"` or `"student"`.
+/// Backend `phone_registered_other_role` (409, at signup): the number already
+/// belongs to an account of the other role. [existingRole] is `"teacher"` or
+/// `"student"`.
 class PhoneRegisteredOtherRoleFailure extends Failure {
   const PhoneRegisteredOtherRoleFailure(this.existingRole);
 
@@ -103,6 +104,40 @@ class PhoneAlreadyRegisteredFailure extends Failure {
 
   @override
   String get message => 'An account with this phone number already exists.';
+}
+
+/// Backend `account_registered_other_role` (409, at Google login): this
+/// Google account already belongs to an account of the other role.
+/// [existingRole] is `"teacher"` or `"student"`.
+class AccountRegisteredOtherRoleFailure extends Failure {
+  const AccountRegisteredOtherRoleFailure(this.existingRole);
+
+  final String existingRole;
+
+  @override
+  String get message =>
+      'This Google account is already registered as a $existingRole account.';
+}
+
+/// Backend `email_already_registered` (409, at signup): another account
+/// already uses this Google account's email.
+class EmailAlreadyRegisteredFailure extends Failure {
+  const EmailAlreadyRegisteredFailure();
+
+  @override
+  String get message => 'An account with this email address already exists.';
+}
+
+/// The Google account picker itself failed (not a user cancel — that isn't a
+/// failure). Usually a misconfigured client id / SHA-1, or no Google account
+/// support on the device.
+class GoogleSignInFailure extends Failure {
+  const GoogleSignInFailure([this.details]);
+
+  final String? details;
+
+  @override
+  String get message => 'Google sign-in failed.${details != null ? ' $details' : ''}';
 }
 
 /// Backend `teacher_not_selectable` (400): the chosen teacher is from another

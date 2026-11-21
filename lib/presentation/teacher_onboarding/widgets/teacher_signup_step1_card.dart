@@ -15,13 +15,16 @@ class TeacherSignupStep1Card extends StatelessWidget {
   const TeacherSignupStep1Card({
     super.key,
     required this.nameController,
+    required this.phoneController,
     required this.campus,
     required this.studentCount,
     required this.campusesAsync,
     required this.nameError,
+    required this.phoneError,
     required this.campusError,
     required this.isNextEnabled,
     required this.onNameChanged,
+    required this.onPhoneChanged,
     required this.onCampusChanged,
     required this.onStudentCountChanged,
     required this.onNext,
@@ -29,13 +32,16 @@ class TeacherSignupStep1Card extends StatelessWidget {
   });
 
   final TextEditingController nameController;
+  final TextEditingController phoneController;
   final Campus? campus;
   final int studentCount;
   final AsyncValue<List<Campus>> campusesAsync;
   final String? nameError;
+  final String? phoneError;
   final String? campusError;
   final bool isNextEnabled;
   final ValueChanged<String> onNameChanged;
+  final ValueChanged<String> onPhoneChanged;
   final ValueChanged<Campus?> onCampusChanged;
   final ValueChanged<int> onStudentCountChanged;
   final VoidCallback onNext;
@@ -61,6 +67,18 @@ class TeacherSignupStep1Card extends StatelessWidget {
           textCapitalization: TextCapitalization.words,
           errorText: nameError,
           onChanged: onNameChanged,
+        ),
+        SizedBox(height: context.dimens.lg),
+        AppTextField(
+          label: context.l10n.phoneLabel,
+          hint: context.l10n.phoneHint,
+          controller: phoneController,
+          isRequired: true,
+          prefixIcon: Icons.phone_outlined,
+          keyboardType: TextInputType.phone,
+          maxLength: 11,
+          errorText: phoneError,
+          onChanged: onPhoneChanged,
         ),
         SizedBox(height: context.dimens.lg),
         AsyncValueWidget<List<Campus>>(

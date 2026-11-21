@@ -6,12 +6,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/auth/entities/user_role.dart';
 import '../../domain/common/failure.dart';
-import '../../presentation/auth/view/otp_verify_view.dart';
 import '../../presentation/chapter_video/view/chapter_video_view.dart';
 import '../../presentation/ebook_reader/view/downloaded_books_view.dart';
 import '../../presentation/ebook_reader/view/ebook_reader_view.dart';
 import '../../presentation/subject_hub/view/subject_hub_view.dart';
-import '../../presentation/auth/view/phone_entry_view.dart';
+import '../../presentation/auth/view/google_sign_in_view.dart';
 import '../../presentation/auth/view/role_select_view.dart';
 import '../../presentation/auth/viewmodel/auth_viewmodel.dart';
 import '../../presentation/notifications/view/notifications_view.dart';
@@ -163,8 +162,7 @@ List<BottomNavDestinationSpec> _buildTeacherDestinations(BuildContext context) {
 
 const _authRoutes = {
   AppRoutes.authRoleSelect,
-  AppRoutes.authPhone,
-  AppRoutes.authOtp,
+  AppRoutes.authSignIn,
 };
 
 const _studentOnboardingRoutes = {
@@ -389,14 +387,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             _appPage(state, const RoleSelectView()),
       ),
       GoRoute(
-        path: AppRoutes.authPhone,
+        path: AppRoutes.authSignIn,
         pageBuilder: (context, state) =>
-            _appPage(state, const PhoneEntryView()),
-      ),
-      GoRoute(
-        path: AppRoutes.authOtp,
-        pageBuilder: (context, state) =>
-            _appPage(state, const OtpVerifyView()),
+            _appPage(state, const GoogleSignInView()),
       ),
 
       // Teacher onboarding (outside shell)

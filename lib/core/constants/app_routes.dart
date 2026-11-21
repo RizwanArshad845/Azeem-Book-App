@@ -5,8 +5,7 @@ class AppRoutes {
 
   // Auth (outside shell)
   static const String authRoleSelect = '/auth/role';
-  static const String authPhone = '/auth/phone';
-  static const String authOtp = '/auth/otp';
+  static const String authSignIn = '/auth/sign-in';
 
   // Teacher onboarding (outside shell)
   static const String teacherOnboardingSignup = '/teacher-onboarding/signup';

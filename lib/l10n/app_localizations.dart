@@ -3485,6 +3485,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next page'**
   String get tchNextPage;
+
+  /// No description provided for @googleSignInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get googleSignInTitle;
+
+  /// No description provided for @googleSignInSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with your Google account'**
+  String get googleSignInSubtitle;
+
+  /// No description provided for @googleSignInButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get googleSignInButton;
+
+  /// No description provided for @googleSignInFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in failed. Please try again.'**
+  String get googleSignInFailedMessage;
+
+  /// No description provided for @accountRegisteredOtherRoleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account already in use'**
+  String get accountRegisteredOtherRoleTitle;
+
+  /// No description provided for @accountRegisteredOtherRoleMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This Google account is already registered as a {role, select, teacher{teacher} student{student} other{{role}}} account.'**
+  String accountRegisteredOtherRoleMessage(String role);
+
+  /// No description provided for @useDifferentGoogleAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a different Google account'**
+  String get useDifferentGoogleAccount;
+
+  /// No description provided for @emailAlreadyRegisteredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email address already exists.'**
+  String get emailAlreadyRegisteredMessage;
 }
 
 class _AppLocalizationsDelegate

@@ -4,15 +4,16 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_routes.dart';
 import '../../../core/extensions/context_extensions.dart';
+import '../../auth/viewmodel/auth_viewmodel.dart';
 import '../viewmodel/teacher_signup_form_providers.dart';
 import '../viewmodel/teacher_signup_form_state.dart';
 import 'teacher_signup_step1_card.dart';
 import 'teacher_signup_step2_card.dart';
 
-/// Riverpod-driven teacher registration form — zero [setState]. Owns a single
-/// `TextEditingController` for the name field (see [_nameController]) since
-/// it's the one widget in this subtree that survives step 1 <-> step 2
-/// switching; everything else stays derived straight from Riverpod state.
+/// Riverpod-driven teacher registration form — zero [setState]. Owns the
+/// `TextEditingController`s for the name and phone fields since they're the
+/// only widgets in this subtree that survive step 1 <-> step 2 switching;
+/// everything else stays derived straight from Riverpod state.
 class TeacherSignupForm extends ConsumerStatefulWidget {
   const TeacherSignupForm({super.key});
 
@@ -22,18 +23,32 @@ class TeacherSignupForm extends ConsumerStatefulWidget {
 
 class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
   late final TextEditingController _nameController;
+  late final TextEditingController _phoneController;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(
-      text: ref.read(teacherFormNotifierProvider).name,
-    );
+    final formState = ref.read(teacherFormNotifierProvider);
+    var name = formState.name;
+    // First visit: prefill the name from the Google account.
+    final googleName = ref.read(currentUserProvider)?.name?.trim();
+    if (name.isEmpty && googleName != null && googleName.isNotEmpty) {
+      name = googleName;
+      // Deferred: providers can't be modified while the tree is building.
+      Future.microtask(() {
+        if (mounted) {
+          ref.read(teacherFormNotifierProvider.notifier).updateName(googleName);
+        }
+      });
+    }
+    _nameController = TextEditingController(text: name);
+    _phoneController = TextEditingController(text: formState.phoneNumber);
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -48,6 +63,7 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
   ) {
     if (notifier.validateStep1(
       requiredNameMsg: context.l10n.teacherSignupNameError,
+      invalidPhoneMsg: context.l10n.phoneInvalid,
       requiredCampusMsg: context.l10n.teacherSignupCampusError,
     )) {
       notifier.setStep(2);
@@ -92,13 +108,16 @@ class _TeacherSignupFormState extends ConsumerState<TeacherSignupForm> {
         ? TeacherSignupStep1Card(
             key: const ValueKey('step1'),
             nameController: _nameController,
+            phoneController: _phoneController,
             campus: formState.campus,
             studentCount: formState.studentCount,
             campusesAsync: ref.watch(teacherSignupCampusesProvider),
             nameError: formState.nameError,
+            phoneError: formState.phoneError,
             campusError: formState.campusError,
             isNextEnabled: formState.isStep1Valid,
             onNameChanged: notifier.updateName,
+            onPhoneChanged: notifier.updatePhoneNumber,
             onCampusChanged: notifier.updateCampus,
             onStudentCountChanged: notifier.updateStudentCount,
             onNext: () => _handleNextStep1(context, notifier),

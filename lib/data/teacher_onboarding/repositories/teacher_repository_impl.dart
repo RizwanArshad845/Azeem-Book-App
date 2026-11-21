@@ -11,9 +11,9 @@ class TeacherRepositoryImpl implements TeacherRepository {
   final TeacherRemoteDataSource remote;
 
   @override
-  Future<Result<Teacher?>> getTeacherByPhone(String phoneNumber) {
+  Future<Result<Teacher?>> getTeacherById(String teacherId) {
     return guardRequest(() async {
-      final dto = await remote.getTeacherByPhone(phoneNumber);
+      final dto = await remote.getTeacherById(teacherId);
       return dto?.toDomain();
     });
   }

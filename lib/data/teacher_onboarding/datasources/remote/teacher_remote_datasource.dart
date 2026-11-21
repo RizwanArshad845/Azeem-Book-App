@@ -4,7 +4,9 @@ import '../../../../core/network/api_endpoints.dart';
 import '../../models/teacher_dto.dart';
 
 abstract class TeacherRemoteDataSource {
-  Future<TeacherDto?> getTeacherByPhone(String phoneNumber);
+  /// `GET /teachers/{id}` — `null` when no teacher row exists yet for this
+  /// user id (the backend 404s before signup).
+  Future<TeacherDto?> getTeacherById(String teacherId);
 
   Future<TeacherDto> signUp(TeacherDto teacher);
 
@@ -22,14 +24,18 @@ class TeacherRemoteDataSourceImpl implements TeacherRemoteDataSource {
   final Dio _dio;
 
   @override
-  Future<TeacherDto?> getTeacherByPhone(String phoneNumber) async {
-    final response = await _dio.get<Map<String, dynamic>?>(
-      ApiEndpoints.teachers,
-      queryParameters: {'phoneNumber': phoneNumber},
-    );
-    final data = response.data;
-    if (data == null) return null;
-    return TeacherDto.fromJson(data);
+  Future<TeacherDto?> getTeacherById(String teacherId) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        ApiEndpoints.teacherById(teacherId),
+      );
+      final data = response.data;
+      if (data == null) return null;
+      return TeacherDto.fromJson(data);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return null;
+      rethrow;
+    }
   }
 
   @override

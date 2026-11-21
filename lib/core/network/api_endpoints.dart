@@ -4,11 +4,8 @@
 class ApiEndpoints {
   const ApiEndpoints._();
 
-  static const String authOtpRequest = '/auth/otp/request';
-  static const String authOtpVerify = '/auth/otp/verify';
+  static const String authGoogle = '/auth/google';
   static const String authSessionStatus = '/auth/session-status';
-  static const String authPhoneChangeRequest = '/auth/phone-change/request';
-  static const String authPhoneChangeVerify = '/auth/phone-change/verify';
 
   static const String catalogClassLevels = '/catalog/class-levels';
   static const String catalogBoardClasses = '/catalog/board-classes';

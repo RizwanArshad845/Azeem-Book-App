@@ -15,7 +15,7 @@ class RoleSelectView extends ConsumerWidget {
 
   void _select(BuildContext context, WidgetRef ref, UserRole role) {
     ref.read(authViewModelProvider.notifier).selectRole(role);
-    context.push(AppRoutes.authPhone);
+    context.push(AppRoutes.authSignIn);
   }
 
   @override

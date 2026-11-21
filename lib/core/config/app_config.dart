@@ -16,14 +16,16 @@ class AppConfig {
   /// `TestListView`/`TestResultsView`'s `isOwned` scoping).
   static const int freeAttemptsPerStudent = 2;
 
-  static const int otpLength = 6;
-
-  /// Client-side-only cooldown between OTP requests for the same phone
-  /// number, and the number of resends after which a warning (not a hard
-  /// block — there's no backend enforcement to back one) is shown. See
-  /// `OtpTimerViewModel`.
-  static const int otpResendCooldownSeconds = 60;
-  static const int otpMaxResendAttempts = 3;
+  /// The Google Cloud **Web application** OAuth client id. Google Sign-In
+  /// issues the ID token for this audience, and the backend only accepts
+  /// tokens issued for the ids in its `GOOGLE_OAUTH_CLIENT_IDS` — the two
+  /// must match. Not a secret. Override per build with
+  /// `--dart-define=GOOGLE_SERVER_CLIENT_ID=...`.
+  static const String googleServerClientId = String.fromEnvironment(
+    'GOOGLE_SERVER_CLIENT_ID',
+    defaultValue:
+        '1052720200226-s0699tea7rm925innbg882gl2hihn2ef.apps.googleusercontent.com',
+  );
 
   static const int splashDelaySeconds = 2;
 }

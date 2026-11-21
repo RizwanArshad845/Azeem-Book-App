@@ -5,7 +5,7 @@ import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/common/result.dart';
 import '../../../domain/teacher_onboarding/entities/teacher.dart';
-import '../../../domain/teacher_onboarding/usecases/get_teacher_by_phone_usecase.dart';
+import '../../../domain/teacher_onboarding/usecases/get_teacher_by_id_usecase.dart';
 import '../../../domain/teacher_onboarding/usecases/sign_up_teacher_usecase.dart';
 import '../../auth/viewmodel/auth_viewmodel.dart';
 
@@ -18,11 +18,11 @@ import '../../auth/viewmodel/auth_viewmodel.dart';
 /// fields once a record exists. Consumed by the (separate, later-batch)
 /// router redirect logic to decide signup-form vs. pending-approval-screen
 /// vs. shell-entry:
-/// - `AsyncValue.loading` -> still checking phone number, show a spinner.
+/// - `AsyncValue.loading` -> still looking up the teacher, show a spinner.
 /// - `AsyncValue.data(null)` -> no Teacher record yet, show the signup form.
 /// - `AsyncValue.data(teacher)` -> inspect [teacherOnboardingStageOf].
 enum TeacherOnboardingStage {
-  /// Salesman-seeded record matched this phone number — signup was skipped
+  /// Salesman-seeded record linked to this account — signup was skipped
   /// entirely and the teacher is already approved.
   seededPassThrough,
 
@@ -45,7 +45,7 @@ TeacherOnboardingStage teacherOnboardingStageOf(Teacher teacher) {
 }
 
 /// Drives the teacher onboarding flow (§9.1): on `build()`, checks whether a
-/// Teacher record already exists for the logged-in phone number (salesman
+/// Teacher record already exists for the logged-in user id (salesman/admin
 /// seeded) or whether the self-signup form needs to be shown. Exposes
 /// [submitSignUp] for the form's single submit action.
 class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
@@ -55,18 +55,19 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
     // `status` is refreshed (`AuthViewModel.refreshSessionStatus`), which
     // would otherwise re-fetch the teacher on every status poll.
     ref.watch(
-      currentUserProvider.select((s) => (s?.userId, s?.phoneNumber, s?.role)),
+      currentUserProvider.select((s) => (s?.userId, s?.role)),
     );
     final session = ref.read(currentUserProvider);
-    if (session == null) return null;
+    final userId = session?.userId;
+    if (session == null || userId == null) return null;
 
     // A student session has no row in the teachers table by definition —
     // resolve to null immediately instead of firing a guaranteed-404/
-    // not-found `GET /teachers?phoneNumber=...` (mirrors the same fix on
+    // not-found `GET /teachers/{id}` (mirrors the same fix on
     // `StudentOnboardingViewModel.build()`).
     if (session.role != UserRole.teacher) return null;
 
-    var result = await sl<GetTeacherByPhoneUseCase>()(session.phoneNumber);
+    var result = await sl<GetTeacherByIdUseCase>()(userId);
     if (result is ResultFailure<Teacher> && result.failure is NetworkFailure) {
       // Absorb a single transient *network* blip (e.g. a fresh login
       // racing a still-settling connection) with one retry before giving
@@ -75,7 +76,7 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
       // fixed by waiting 800ms and retrying, so don't pay that cost for
       // failures a retry can't help.
       await Future.delayed(const Duration(milliseconds: 800));
-      result = await sl<GetTeacherByPhoneUseCase>()(session.phoneNumber);
+      result = await sl<GetTeacherByIdUseCase>()(userId);
     }
     return result.when(
       success: (teacher) => teacher,
@@ -84,9 +85,9 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
   }
 
   /// Submits the self-signup form. Only meaningful when [build] resolved to
-  /// `null` (no salesman-seeded record matched this phone number). Builds
-  /// the new `Teacher` from the current `AuthSession` (`id`/`phoneNumber`/
-  /// `role`) plus the form's own fields, and always creates it as
+  /// `null` (no seeded record for this account). Builds the new `Teacher`
+  /// from the current `AuthSession` (`id`/`role`) plus the form's own fields
+  /// (including the phone number, which Google sign-in doesn't provide), and always creates it as
   /// `selfSignup` per §9.1 — `approvalStatus` is `pendingAdminApproval` in
   /// real-API mode, but auto-`approved` in mock mode (see inline comment
   /// below) since there's no in-app way to approve it otherwise. Deliberately
@@ -94,6 +95,7 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
   /// router redirect logic lands in a later batch.
   Future<bool> submitSignUp({
     required String name,
+    required String phoneNumber,
     required String campusId,
     required List<String> subjectIds,
     List<String>? classIds,
@@ -112,7 +114,7 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
     final teacher = Teacher(
       id: session.userId!,
       name: name,
-      phoneNumber: session.phoneNumber,
+      phoneNumber: phoneNumber,
       role: session.role,
       isDeleted: false,
       createdAt: now,
@@ -135,7 +137,7 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
     return result.when(
       success: (created) {
         state = AsyncData<Teacher?>(created);
-        // The session's `status` is a snapshot from OTP-verify time
+        // The session's `status` is a snapshot from sign-in time
         // (`NOT_REGISTERED`) — advance it so routing matches the backend,
         // which now reports `PENDING_APPROVAL` for this teacher. Persisted
         // by the next `refreshSessionStatus()`.
@@ -153,7 +155,7 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
     );
   }
 
-  /// Re-runs the phone lookup (e.g. a "check status" tap on the pending
+  /// Re-runs the teacher lookup (e.g. a "check status" tap on the pending
   /// approval screen).
   void refresh() => ref.invalidateSelf();
 
