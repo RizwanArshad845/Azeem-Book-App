@@ -125,7 +125,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneTitle => 'Phone Number';
 
   @override
-  String get phoneWelcomeTitle => 'Welcome to Azeem Books!';
+  String get signInWelcomeTitle => 'Welcome to Azeem Books!';
 
   @override
   String get phoneSubtitle => 'We\'ll send a verification code to this number';

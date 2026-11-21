@@ -16,6 +16,7 @@ class AppButton extends StatelessWidget {
     this.loading = false,
     this.icon,
     this.iconPosition = AppButtonIconPosition.trailing,
+    this.leading,
   });
 
   final String label;
@@ -24,6 +25,10 @@ class AppButton extends StatelessWidget {
   final bool loading;
   final IconData? icon;
   final AppButtonIconPosition iconPosition;
+
+  /// Custom widget (e.g. a brand logo) shown before the label. Takes
+  /// precedence over [icon] and is always placed leading.
+  final Widget? leading;
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +43,10 @@ class AppButton extends StatelessWidget {
       ),
     );
 
-    final iconWidget =
-        icon != null ? Icon(icon, size: context.dimens.iconMd) : null;
+    final iconWidget = leading ??
+        (icon != null ? Icon(icon, size: context.dimens.iconMd) : null);
+    final position =
+        leading != null ? AppButtonIconPosition.leading : iconPosition;
 
     final child = loading
         ? SizedBox(
@@ -54,19 +61,19 @@ class AppButton extends StatelessWidget {
               ),
             ),
           )
-        : icon == null
+        : iconWidget == null
             ? Text(label)
             : Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: iconPosition == AppButtonIconPosition.trailing
+                children: position == AppButtonIconPosition.trailing
                     ? [
                         labelWidget,
                         SizedBox(width: context.dimens.sm),
-                        iconWidget!,
+                        iconWidget,
                       ]
                     : [
-                        iconWidget!,
+                        iconWidget,
                         SizedBox(width: context.dimens.sm),
                         labelWidget,
                       ],

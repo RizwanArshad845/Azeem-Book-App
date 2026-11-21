@@ -7,6 +7,9 @@ class ApiEndpoints {
   static const String authGoogle = '/auth/google';
   static const String authSessionStatus = '/auth/session-status';
 
+  /// PUT `{token, platform}` registers this device for push; DELETE removes it.
+  static const String pushDevice = '/push/device';
+
   static const String catalogClassLevels = '/catalog/class-levels';
   static const String catalogBoardClasses = '/catalog/board-classes';
   static const String catalogSubjects = '/catalog/subjects';

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
+import '../../../core/services/push_notification_service.dart';
 import '../../../domain/auth/entities/auth_session.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/auth/usecases/get_stored_session_usecase.dart';
@@ -17,17 +18,13 @@ import '../../teacher_profile/viewmodel/teacher_profile_catalog_providers.dart';
 import '../../teacher_students/viewmodel/teacher_students_viewmodel.dart'
     show teacherStudentsCampusesByIdProvider;
 
-
 class AuthViewModel extends AsyncNotifier<AuthSession?> {
   UserRole? _selectedRole;
 
   @override
   Future<AuthSession?> build() async {
     final result = await sl<GetStoredSessionUseCase>()();
-    return result.when(
-      success: (session) => session,
-      failure: (_) => null,
-    );
+    return result.when(success: (session) => session, failure: (_) => null);
   }
 
   /// Records which role the user is signing in as. Called from
@@ -50,7 +47,8 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
     final result = await sl<SignInWithGoogleUseCase>()(role);
     state = result.when(
       success: (session) => AsyncData<AuthSession?>(session),
-      failure: (failure) => AsyncError<AuthSession?>(failure, StackTrace.current),
+      failure: (failure) =>
+          AsyncError<AuthSession?>(failure, StackTrace.current),
     );
 
     if (result.isSuccess && state.value != null) {
@@ -134,11 +132,14 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
   /// until now — a stale previous session's Teacher/Student data was
   /// silently surviving every logout.
   Future<void> logout() async {
+    // Before the session token is cleared: the request needs it.
+    await sl<PushNotificationService>().unregisterDevice();
     state = const AsyncLoading<AuthSession?>();
     final result = await sl<LogoutUseCase>()();
     state = result.when(
       success: (_) => const AsyncData<AuthSession?>(null),
-      failure: (failure) => AsyncError<AuthSession?>(failure, StackTrace.current),
+      failure: (failure) =>
+          AsyncError<AuthSession?>(failure, StackTrace.current),
     );
     if (state.hasValue && state.value == null) {
       final container = sl<ProviderContainer>();

@@ -314,11 +314,11 @@ abstract class AppLocalizations {
   /// **'Phone Number'**
   String get phoneTitle;
 
-  /// No description provided for @phoneWelcomeTitle.
+  /// No description provided for @signInWelcomeTitle.
   ///
   /// In en, this message translates to:
   /// **'Welcome to Azeem Books!'**
-  String get phoneWelcomeTitle;
+  String get signInWelcomeTitle;
 
   /// No description provided for @phoneSubtitle.
   ///

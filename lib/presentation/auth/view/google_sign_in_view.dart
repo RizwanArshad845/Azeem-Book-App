@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/extensions/context_extensions.dart';
 import '../../../core/widgets/app_button.dart';
@@ -50,13 +51,27 @@ class GoogleSignInView extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           OnboardingStepHeader(
-            title: context.l10n.phoneWelcomeTitle,
+            title: context.l10n.signInWelcomeTitle,
             subtitle: context.l10n.googleSignInSubtitle,
           ),
           SizedBox(height: context.dimens.lg),
-          AppPrimaryButton(
+          AppButton(
             label: context.l10n.googleSignInButton,
             loading: isLoading,
+            // Google branding: the "G" logo sits on a white badge when the
+            // button itself is coloured.
+            leading: Container(
+              padding: EdgeInsets.all(context.dimens.xs),
+              decoration: BoxDecoration(
+                color: context.colors.onPrimary,
+                shape: BoxShape.circle,
+              ),
+              child: SvgPicture.asset(
+                'assets/images/google_g_logo.svg',
+                width: context.dimens.iconSm,
+                height: context.dimens.iconSm,
+              ),
+            ),
             onPressed: isLoading
                 ? null
                 : () => ref

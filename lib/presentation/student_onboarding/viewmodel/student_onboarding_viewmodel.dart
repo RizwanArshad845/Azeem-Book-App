@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
+import '../../../core/services/push_notification_service.dart';
 import '../../../core/di/riverpod_providers.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/campus_directory/entities/campus.dart';
@@ -213,6 +216,8 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
     final result = await sl<CompleteStudentOnboardingUseCase>()(student);
     if (result is Success<Student>) {
       final saved = result.data;
+      // The account exists now — the earliest point push can be registered.
+      unawaited(sl<PushNotificationService>().registerDevice());
       // Preload dashboard network calls (enrolled subjects, tests, chapters, cart)
       // while the submit button is in loading state, so user experiences no lag on dashboard
       await _preloadDashboardData(saved);
@@ -269,10 +274,7 @@ class StudentOnboardingViewModel extends AsyncNotifier<Student?> {
     final session = ref.read(currentUserProvider);
     if (session == null || session.userId == null) return null;
     final result = await sl<GetStudentByIdUseCase>()(session.userId!);
-    final fresh = result.when(
-      success: (s) => s,
-      failure: (_) => null,
-    );
+    final fresh = result.when(success: (s) => s, failure: (_) => null);
     if (fresh != null) {
       state = AsyncData<Student?>(fresh);
     }
@@ -299,9 +301,7 @@ final studentOnboardingViewModelProvider =
 final boardClassesForClassLevelProvider =
     FutureProvider.family<List<BoardClass>, String>((ref, classLevelId) async {
       final boardClasses = await ref.watch(boardClassesProvider.future);
-      return boardClasses
-          .where((b) => b.classLevelId == classLevelId)
-          .toList();
+      return boardClasses.where((b) => b.classLevelId == classLevelId).toList();
     });
 
 final subjectsForBoardClassProvider =
@@ -372,10 +372,11 @@ class SubjectSelectionViewModel extends Notifier<Map<String, String?>> {
   void clear() => state = const {};
 }
 
-final subjectSelectionViewModelProvider = NotifierProvider.autoDispose<
-  SubjectSelectionViewModel,
-  Map<String, String?>
->(SubjectSelectionViewModel.new);
+final subjectSelectionViewModelProvider =
+    NotifierProvider.autoDispose<
+      SubjectSelectionViewModel,
+      Map<String, String?>
+    >(SubjectSelectionViewModel.new);
 
 /// Inline validation error shown on `StudentNameEntryView` when Continue is
 /// tapped with an empty name. `.autoDispose` clears it on leaving the screen.

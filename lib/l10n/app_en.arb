@@ -40,7 +40,7 @@
 
   "onboardingTitle": "Onboarding",
   "phoneTitle": "Phone Number",
-  "phoneWelcomeTitle": "Welcome to Azeem Books!",
+  "signInWelcomeTitle": "Welcome to Azeem Books!",
   "phoneSubtitle": "We'll send a verification code to this number",
   "phoneLabel": "Phone number",
   "phoneHint": "03001234567",

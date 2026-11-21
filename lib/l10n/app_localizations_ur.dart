@@ -127,7 +127,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get phoneTitle => 'فون نمبر';
 
   @override
-  String get phoneWelcomeTitle => 'عظیم بکس میں خوش آمدید!';
+  String get signInWelcomeTitle => 'عظیم بکس میں خوش آمدید!';
 
   @override
   String get phoneSubtitle => 'ہم اس نمبر پر تصدیقی کوڈ بھیجیں گے';

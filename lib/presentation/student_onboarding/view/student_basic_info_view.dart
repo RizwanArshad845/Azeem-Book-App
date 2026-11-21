@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -107,6 +108,7 @@ class _StudentBasicInfoViewState extends ConsumerState<StudentBasicInfoView> {
               hint: context.l10n.phoneHint,
               controller: _phoneController,
               keyboardType: TextInputType.phone,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               maxLength: 11,
               errorText: phoneError,
               isRequired: true,

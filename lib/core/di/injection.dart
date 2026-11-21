@@ -82,6 +82,7 @@ import '../../domain/test_taking/usecases/start_test_attempt_usecase.dart';
 import '../../domain/test_taking/usecases/submit_test_attempt_usecase.dart';
 import '../network/dio_client.dart';
 import '../services/logger.dart';
+import '../services/push_notification_service.dart';
 import '../storage/local_cache_service.dart';
 import '../../data/study_activity/study_activity_repository_impl.dart';
 import '../../domain/study_activity/repositories/study_activity_repository.dart';
@@ -102,6 +103,9 @@ void setupLocator() {
   sl.registerLazySingleton<Logger>(ConsoleLogger.new);
   sl.registerLazySingleton<LocalCacheService>(LocalCacheService.new);
   sl.registerLazySingleton<Dio>(DioClient.build);
+  sl.registerLazySingleton<PushNotificationService>(
+    () => PushNotificationService(sl(), sl()),
+  );
 
   // study-activity (local-only bookmarks: last activity, ebook page)
   sl.registerLazySingleton<StudyActivityRepository>(

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/di/injection.dart';
+import '../../../core/services/push_notification_service.dart';
 import '../../../domain/auth/entities/user_role.dart';
 import '../../../domain/common/failure.dart';
 import '../../../domain/common/result.dart';
@@ -54,9 +57,7 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
     // Rebuild only when WHO is logged in changes — not when just the routing
     // `status` is refreshed (`AuthViewModel.refreshSessionStatus`), which
     // would otherwise re-fetch the teacher on every status poll.
-    ref.watch(
-      currentUserProvider.select((s) => (s?.userId, s?.role)),
-    );
+    ref.watch(currentUserProvider.select((s) => (s?.userId, s?.role)));
     final session = ref.read(currentUserProvider);
     final userId = session?.userId;
     if (session == null || userId == null) return null;
@@ -137,11 +138,14 @@ class TeacherOnboardingViewModel extends AsyncNotifier<Teacher?> {
     return result.when(
       success: (created) {
         state = AsyncData<Teacher?>(created);
+        // The account exists now — the earliest point push can be registered.
+        unawaited(sl<PushNotificationService>().registerDevice());
         // The session's `status` is a snapshot from sign-in time
         // (`NOT_REGISTERED`) — advance it so routing matches the backend,
         // which now reports `PENDING_APPROVAL` for this teacher. Persisted
         // by the next `refreshSessionStatus()`.
-        if (created.approvalStatus == TeacherApprovalStatus.pendingAdminApproval) {
+        if (created.approvalStatus ==
+            TeacherApprovalStatus.pendingAdminApproval) {
           ref
               .read(authViewModelProvider.notifier)
               .setSessionStatus('PENDING_APPROVAL');

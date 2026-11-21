@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/extensions/context_extensions.dart';
@@ -76,6 +77,7 @@ class TeacherSignupStep1Card extends StatelessWidget {
           isRequired: true,
           prefixIcon: Icons.phone_outlined,
           keyboardType: TextInputType.phone,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           maxLength: 11,
           errorText: phoneError,
           onChanged: onPhoneChanged,

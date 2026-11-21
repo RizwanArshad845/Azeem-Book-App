@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../extensions/context_extensions.dart';
 
@@ -18,6 +19,7 @@ class AppTextField extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.isRequired = false,
     this.enabled = true,
+    this.inputFormatters,
   });
 
   final String label;
@@ -46,6 +48,10 @@ class AppTextField extends StatelessWidget {
   /// a phone number that can't be edited from a profile screen).
   final bool enabled;
 
+  /// Restricts what can be typed (e.g. `FilteringTextInputFormatter.digitsOnly`
+  /// for phone numbers).
+  final List<TextInputFormatter>? inputFormatters;
+
   @override
   Widget build(BuildContext context) {
     return TextField(
@@ -56,6 +62,7 @@ class AppTextField extends StatelessWidget {
       maxLength: maxLength,
       textCapitalization: textCapitalization,
       enabled: enabled,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
         label: isRequired
             ? Text.rich(
