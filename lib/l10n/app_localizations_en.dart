@@ -1953,6 +1953,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get googleSignInButton => 'Continue with Google';
 
   @override
+  String get authBusySigningIn => 'Signing you in…';
+
+  @override
+  String get authBusySigningInHint =>
+      'Pick your Google account, then hold on while we set things up.';
+
+  @override
+  String get authBusyLoggingOut => 'Logging you out…';
+
+  @override
+  String get authBusyLoggingOutHint =>
+      'Removing your downloads and data from this device. Please don\'t close the app.';
+
+  @override
   String get googleSignInFailedMessage =>
       'Google sign-in failed. Please try again.';
 

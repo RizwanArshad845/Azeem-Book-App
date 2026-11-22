@@ -10,6 +10,7 @@ import '../../../domain/auth/usecases/get_stored_session_usecase.dart';
 import '../../../domain/auth/usecases/logout_usecase.dart';
 import '../../../domain/auth/usecases/refresh_session_status_usecase.dart';
 import '../../../domain/auth/usecases/sign_in_with_google_usecase.dart';
+import '../../../domain/common/result.dart';
 import '../../../domain/ebook_offline/repositories/ebook_offline_repository.dart';
 import '../../ebook_reader/ebook_page_cache.dart';
 import '../../student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
@@ -18,8 +19,24 @@ import '../../teacher_profile/viewmodel/teacher_profile_catalog_providers.dart';
 import '../../teacher_students/viewmodel/teacher_students_viewmodel.dart'
     show teacherStudentsCampusesByIdProvider;
 
+/// An app-wide auth action in progress, shown as a blocking loader over the
+/// whole app (`App` builder) so the user knows to wait and can't tap twice.
+enum AuthBusy { none, signingIn, loggingOut }
+
+class AuthBusyNotifier extends Notifier<AuthBusy> {
+  @override
+  AuthBusy build() => AuthBusy.none;
+
+  void set(AuthBusy value) => state = value;
+}
+
+final authBusyProvider =
+    NotifierProvider<AuthBusyNotifier, AuthBusy>(AuthBusyNotifier.new);
+
 class AuthViewModel extends AsyncNotifier<AuthSession?> {
   UserRole? _selectedRole;
+
+  void _setBusy(AuthBusy value) => ref.read(authBusyProvider.notifier).set(value);
 
   @override
   Future<AuthSession?> build() async {
@@ -41,10 +58,17 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
   /// account picker just leaves the user on the sign-in screen (state back
   /// to `null`, no error).
   Future<void> signInWithGoogle() async {
+    if (ref.read(authBusyProvider) != AuthBusy.none) return;
     final role = selectedRole;
     state = const AsyncLoading<AuthSession?>();
+    _setBusy(AuthBusy.signingIn);
 
-    final result = await sl<SignInWithGoogleUseCase>()(role);
+    final Result<AuthSession?> result;
+    try {
+      result = await sl<SignInWithGoogleUseCase>()(role);
+    } finally {
+      _setBusy(AuthBusy.none);
+    }
     state = result.when(
       success: (session) => AsyncData<AuthSession?>(session),
       failure: (failure) =>
@@ -132,8 +156,24 @@ class AuthViewModel extends AsyncNotifier<AuthSession?> {
   /// until now — a stale previous session's Teacher/Student data was
   /// silently surviving every logout.
   Future<void> logout() async {
-    // Before the session token is cleared: the request needs it.
-    await sl<PushNotificationService>().unregisterDevice();
+    // A second tap (or a second entry point) while one is running is a no-op.
+    if (ref.read(authBusyProvider) == AuthBusy.loggingOut) return;
+    _setBusy(AuthBusy.loggingOut);
+    try {
+      await _logout();
+    } finally {
+      _setBusy(AuthBusy.none);
+    }
+  }
+
+  Future<void> _logout() async {
+    // Before the session token is cleared: the request needs it. Best-effort
+    // and time-boxed so a bad connection can't trap the user in the loader.
+    try {
+      await sl<PushNotificationService>()
+          .unregisterDevice()
+          .timeout(const Duration(seconds: 8));
+    } catch (_) {}
     state = const AsyncLoading<AuthSession?>();
     final result = await sl<LogoutUseCase>()();
     state = result.when(

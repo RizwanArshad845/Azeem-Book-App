@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
@@ -33,18 +35,31 @@ class EbookOfflineRepositoryImpl implements EbookOfflineRepository {
     FlutterSecureStorage? secureStorage,
     Future<Directory> Function()? rootDirectory,
     DateTime Function()? clock,
+    this.pageTimeout = const Duration(seconds: 60),
   }) : // Bare client on purpose: page URLs are pre-signed, so the auth
        // token must not be sent to the storage/CDN host.
-       _downloader = downloader ?? Dio(),
+       // Timeouts so one stalled page can't hang the download forever.
+       _downloader = downloader ??
+           Dio(
+             BaseOptions(
+               connectTimeout: const Duration(seconds: 15),
+               receiveTimeout: const Duration(seconds: 30),
+             ),
+           ),
        _storage = secureStorage ?? const FlutterSecureStorage(),
        _rootDirectory = rootDirectory ?? getApplicationSupportDirectory,
        _now = clock ?? DateTime.now;
 
   static const _windowSize = 20;
   static const _parallelDownloads = 4;
+  static const _pageAttempts = 3;
+  static const _windowAttempts = 3;
   static const _metaPrefix = 'ebook_offline_';
 
   final CatalogRepository catalog;
+
+  /// Upper bound for a single page download, including a slow trickle.
+  final Duration pageTimeout;
   final Dio _downloader;
   final FlutterSecureStorage _storage;
   final Future<Directory> Function() _rootDirectory;
@@ -82,13 +97,27 @@ class EbookOfflineRepositoryImpl implements EbookOfflineRepository {
     try {
       var done = 0;
       onProgress?.call(0, pageCount);
-      for (var start = 1; start <= pageCount; start += _windowSize) {
-        var pending = await _fetchWindow(subjectId, start);
-        // A signed URL can expire mid-download — retry the failed pages once
-        // with a freshly signed window.
-        for (var attempt = 0; attempt < 2 && pending.isNotEmpty; attempt++) {
+      // Advance by what the server actually returned, not by the requested
+      // window size — it may cap `count` below [_windowSize].
+      var start = 1;
+      while (start <= pageCount) {
+        final window = await _fetchWindow(subjectId, start);
+        if (window.isEmpty) {
+          throw const NetworkFailure('Ebook page list ended early.');
+        }
+        final windowStart = start;
+        start = window.map((p) => p.pageNumber).reduce(max) + 1;
+
+        var pending = window;
+        // A signed URL can expire mid-download, and on a long book a few
+        // pages will hit a flaky connection — retry failed pages with a
+        // freshly signed window.
+        for (var attempt = 0;
+            attempt < _pageAttempts && pending.isNotEmpty;
+            attempt++) {
           if (attempt > 0) {
-            final fresh = await _fetchWindow(subjectId, start);
+            await Future<void>.delayed(Duration(seconds: attempt));
+            final fresh = await _fetchWindow(subjectId, windowStart);
             final failedNumbers = pending.map((p) => p.pageNumber).toSet();
             pending = fresh
                 .where((p) => failedNumbers.contains(p.pageNumber))
@@ -115,6 +144,12 @@ class EbookOfflineRepositoryImpl implements EbookOfflineRepository {
           throw const NetworkFailure('Some pages failed to download.');
         }
       }
+      // Never mark a book saved with holes in it.
+      for (var p = 1; p <= pageCount; p++) {
+        if (!await File(_pagePath(dir, p)).exists()) {
+          throw NetworkFailure('Page $p is missing from the download.');
+        }
+      }
 
       final meta = _Meta(
         key: base64Encode(await key.extractBytes()),
@@ -139,16 +174,26 @@ class EbookOfflineRepositoryImpl implements EbookOfflineRepository {
     }
   }
 
+  /// A long book needs ~50 of these calls; one network blip must not abort
+  /// the whole download, so transient failures are retried with backoff.
+  /// Auth/permission failures are not retried.
   Future<List<EbookPage>> _fetchWindow(String subjectId, int start) async {
-    final result = await catalog.getEbookPages(
-      subjectId,
-      startPage: start,
-      count: _windowSize,
-    );
-    return switch (result) {
-      Success(:final data) => data.pages,
-      ResultFailure(:final failure) => throw failure,
-    };
+    for (var attempt = 1; ; attempt++) {
+      final result = await catalog.getEbookPages(
+        subjectId,
+        startPage: start,
+        count: _windowSize,
+      );
+      switch (result) {
+        case Success(:final data):
+          return data.pages;
+        case ResultFailure(:final failure):
+          final retryable =
+              failure is NetworkFailure || failure is ServerFailure;
+          if (!retryable || attempt >= _windowAttempts) throw failure;
+          await Future<void>.delayed(Duration(seconds: attempt * 2));
+      }
+    }
   }
 
   Future<bool> _downloadPage(
@@ -158,10 +203,14 @@ class EbookOfflineRepositoryImpl implements EbookOfflineRepository {
     Directory dir,
   ) async {
     try {
-      final response = await _downloader.get<List<int>>(
-        page.url,
-        options: Options(responseType: ResponseType.bytes),
-      );
+      // Hard cap on top of Dio's timeouts (which only bound connect and the
+      // gap between chunks, not a trickling response).
+      final response = await _downloader
+          .get<List<int>>(
+            page.url,
+            options: Options(responseType: ResponseType.bytes),
+          )
+          .timeout(pageTimeout);
       final bytes = response.data;
       if (bytes == null || bytes.isEmpty) return false;
       final box = await _cipher.encrypt(
@@ -173,6 +222,8 @@ class EbookOfflineRepositoryImpl implements EbookOfflineRepository {
           .writeAsBytes(box.concatenation(), flush: true);
       return true;
     } on DioException {
+      return false;
+    } on TimeoutException {
       return false;
     }
   }

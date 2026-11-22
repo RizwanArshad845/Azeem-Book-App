@@ -3504,6 +3504,30 @@ abstract class AppLocalizations {
   /// **'Continue with Google'**
   String get googleSignInButton;
 
+  /// No description provided for @authBusySigningIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Signing you in…'**
+  String get authBusySigningIn;
+
+  /// No description provided for @authBusySigningInHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick your Google account, then hold on while we set things up.'**
+  String get authBusySigningInHint;
+
+  /// No description provided for @authBusyLoggingOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging you out…'**
+  String get authBusyLoggingOut;
+
+  /// No description provided for @authBusyLoggingOutHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Removing your downloads and data from this device. Please don\'t close the app.'**
+  String get authBusyLoggingOutHint;
+
   /// No description provided for @googleSignInFailedMessage.
   ///
   /// In en, this message translates to:

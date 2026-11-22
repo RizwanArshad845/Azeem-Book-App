@@ -16,8 +16,9 @@ class TeacherInfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: context.dimens.xs),
+      // Long values (school name, subject lists) wrap instead of overflowing.
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
@@ -25,7 +26,14 @@ class TeacherInfoRow extends StatelessWidget {
               color: context.colors.textSecondary,
             ),
           ),
-          Text(value, style: context.textStyles.bodyMedium),
+          SizedBox(width: context.dimens.md),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: context.textStyles.bodyMedium,
+            ),
+          ),
         ],
       ),
     );

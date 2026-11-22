@@ -1958,6 +1958,20 @@ class AppLocalizationsUr extends AppLocalizations {
   String get googleSignInButton => 'گوگل کے ساتھ جاری رکھیں';
 
   @override
+  String get authBusySigningIn => 'آپ کو سائن اِن کیا جا رہا ہے…';
+
+  @override
+  String get authBusySigningInHint =>
+      'اپنا گوگل اکاؤنٹ منتخب کریں، پھر ہمارے سیٹ اپ مکمل کرنے تک انتظار کریں۔';
+
+  @override
+  String get authBusyLoggingOut => 'آپ کو لاگ آؤٹ کیا جا رہا ہے…';
+
+  @override
+  String get authBusyLoggingOutHint =>
+      'اس ڈیوائس سے آپ کی ڈاؤن لوڈز اور ڈیٹا ہٹایا جا رہا ہے۔ براہِ کرم ایپ بند نہ کریں۔';
+
+  @override
   String get googleSignInFailedMessage =>
       'گوگل سائن اِن ناکام ہو گیا۔ دوبارہ کوشش کریں۔';
 

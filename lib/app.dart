@@ -5,9 +5,12 @@ import 'core/providers/connectivity_provider.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/extensions/context_extensions.dart';
 import 'core/widgets/account_deleted_dialog.dart';
+import 'core/widgets/blocking_loader_overlay.dart';
 import 'core/widgets/offline_screen.dart';
 import 'presentation/auth/viewmodel/account_deleted_viewmodel.dart';
+import 'presentation/auth/viewmodel/auth_viewmodel.dart';
 import 'presentation/ebook_reader/offline_reader_presence.dart';
 import 'presentation/ebook_reader/widgets/downloaded_books_card.dart';
 import 'presentation/student_onboarding/viewmodel/student_onboarding_viewmodel.dart';
@@ -75,12 +78,48 @@ class App extends ConsumerWidget {
                       const Positioned.fill(
                         child: OfflineScreen(footer: DownloadedBooksCard()),
                       ),
+                    const Positioned.fill(child: _AuthBusyLayer()),
                   ],
                 );
               },
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+/// Blocking "Signing you in…" / "Logging you out…" loader over the whole
+/// app, whichever screen started it. Watches only `authBusyProvider`, so it
+/// rebuilds alone.
+class _AuthBusyLayer extends ConsumerWidget {
+  const _AuthBusyLayer();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final busy = ref.watch(authBusyProvider);
+    final l10n = context.l10n;
+    final (message, hint) = switch (busy) {
+      AuthBusy.none => (null, null),
+      AuthBusy.signingIn => (l10n.authBusySigningIn, l10n.authBusySigningInHint),
+      AuthBusy.loggingOut => (
+        l10n.authBusyLoggingOut,
+        l10n.authBusyLoggingOutHint,
+      ),
+    };
+    // Never intercept taps while idle (or while fading out).
+    return IgnorePointer(
+      ignoring: message == null,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 200),
+        child: message == null
+            ? const SizedBox.shrink()
+            : BlockingLoaderOverlay(
+                key: ValueKey(busy),
+                message: message,
+                hint: hint,
+              ),
       ),
     );
   }
