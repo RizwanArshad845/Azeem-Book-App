@@ -58,9 +58,6 @@ class AppRoutes {
       '/ebook-reader/$subjectId?offline=1';
   /// Downloaded (offline) ebooks — reachable with no connection.
   static const String downloads = '/downloads';
-  static const String chapterLecture = '/lecture/:subjectId/:chapterId';
-  static String chapterLecturePath(String subjectId, String chapterId) =>
-      '/lecture/$subjectId/$chapterId';
   static const String cartCheckout = '/cart/checkout';
   static const String paymentGateway = '/cart/checkout/pay';
   static const String teacherStudentProgressDetail =

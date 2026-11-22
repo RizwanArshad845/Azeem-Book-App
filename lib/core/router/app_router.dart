@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/auth/entities/user_role.dart';
 import '../../domain/common/failure.dart';
-import '../../presentation/chapter_video/view/chapter_video_view.dart';
 import '../../presentation/ebook_reader/view/downloaded_books_view.dart';
 import '../../presentation/ebook_reader/view/ebook_reader_view.dart';
 import '../../presentation/subject_hub/view/subject_hub_view.dart';
@@ -205,7 +204,6 @@ bool _isOutsideShellRoute(String location) =>
     _outsideShellRoutes.contains(location) ||
     location.startsWith('/test-taking/') ||
     location.startsWith('/ebook-reader/') ||
-    location.startsWith('/lecture/') ||
     (location.startsWith('/teacher/students/') &&
         location.endsWith('/progress'));
 
@@ -601,16 +599,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.downloads,
         pageBuilder: (context, state) =>
             _appPage(state, const DownloadedBooksView()),
-      ),
-      GoRoute(
-        path: AppRoutes.chapterLecture,
-        pageBuilder: (context, state) => _appPage(
-          state,
-          ChapterVideoView(
-            subjectId: state.pathParameters['subjectId']!,
-            chapterId: state.pathParameters['chapterId']!,
-          ),
-        ),
       ),
       GoRoute(
         path: AppRoutes.cartCheckout,

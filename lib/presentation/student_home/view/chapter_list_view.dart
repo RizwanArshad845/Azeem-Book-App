@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/app_config.dart';
 import '../../../core/constants/app_routes.dart';
@@ -37,7 +38,7 @@ String _testListPath(String subjectId, String chapterId) => AppRoutes
 const double _teacherDiscountRate = 0.10;
 
 /// What tapping a chapter does, chosen on the Subject Hub: `test` opens the
-/// chapter's tests, `video` opens its lecture.
+/// chapter's tests, `video` opens its lecture in the YouTube app.
 enum ChapterListMode {
   test,
   video;
@@ -80,8 +81,18 @@ class ChapterListView extends ConsumerWidget {
             subjectName: subjectName,
           );
         } else {
-          context.push(AppRoutes.chapterLecturePath(subjectId, chapter.id));
+          _openYoutube(context, chapter.youtubeUrl!);
         }
+    }
+  }
+
+  /// Lectures play in the YouTube app (or browser), never in-app.
+  Future<void> _openYoutube(BuildContext context, String url) async {
+    final uri = Uri.tryParse(url);
+    final launched = uri != null &&
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && context.mounted) {
+      AppSnackbar.show(context, context.l10n.chapterVideoOpenError);
     }
   }
 
