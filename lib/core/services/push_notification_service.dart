@@ -27,11 +27,16 @@ class PushPayload {
   final String? recipientRole;
 }
 
-/// Firebase Cloud Messaging glue: registers this install with FCM and sends
-/// its Firebase Installation ID (FID — FCM's send target) to the backend
-/// (`PUT /push/device`) once there is a signed-up account, unregisters on
-/// logout, and shows pushes that arrive while the app is open (Android doesn't
-/// display those by itself).
+/// Firebase Cloud Messaging glue: sends this install's FCM registration token
+/// to the backend (`PUT /push/device`) once there is a signed-up account,
+/// removes it on logout, and shows pushes that arrive while the app is open
+/// (Android doesn't display those by itself).
+///
+/// Uses the registration-token API (getToken/onTokenRefresh/deleteToken) on
+/// purpose although firebase_messaging 17 marks it deprecated: its
+/// replacement (register() + the onRegistered callback) never delivered an id
+/// on a real Android phone, so no device ever got registered. getToken()
+/// returns the token directly — nothing to miss.
 ///
 /// Everything here is best-effort: push failing must never block login,
 /// logout or app start — notifications are still in the in-app list.
@@ -53,7 +58,6 @@ class PushNotificationService {
   bool _available = false;
   bool _shouldBeRegistered = false;
   bool _unregistering = false;
-  String? _fid;
 
   /// Sets up Firebase and the listeners. [onMessage] runs for every push that
   /// arrives while the app is open; [onTap] when the user taps one (system
@@ -90,10 +94,10 @@ class PushNotificationService {
       FirebaseMessaging.onMessageOpenedApp.listen(
         (message) => onTap(PushPayload.fromData(message.data)),
       );
-      // Fires after register() completes, and again if FCM reassigns the id.
-      FirebaseMessaging.instance.onRegistered.listen((fid) {
-        _fid = fid;
-        if (_shouldBeRegistered) unawaited(_sendFid(fid));
+      // FCM occasionally rotates the token; keep the backend's copy current.
+      // ignore: deprecated_member_use
+      FirebaseMessaging.instance.onTokenRefresh.listen((token) {
+        if (_shouldBeRegistered) unawaited(_sendToken(token));
       });
       _available = true;
     } catch (e, st) {
@@ -110,11 +114,13 @@ class PushNotificationService {
     try {
       final settings = await FirebaseMessaging.instance.requestPermission();
       if (settings.authorizationStatus == AuthorizationStatus.denied) return;
-      // Already registered in this run (e.g. signup right after login): the
-      // id is known, send it now. Otherwise onRegistered sends it.
-      final fid = _fid;
-      if (fid != null) await _sendFid(fid);
-      await FirebaseMessaging.instance.register();
+      // ignore: deprecated_member_use
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token == null) {
+        _logger.w('Push: FCM returned no token');
+        return;
+      }
+      await _sendToken(token);
     } catch (e, st) {
       _logger.e('Push device registration failed', e, st);
     }
@@ -136,24 +142,25 @@ class PushNotificationService {
       // device on the next login, so nothing is lost.
     }
     try {
-      // A fresh id for whoever signs in next on this phone.
-      await FirebaseMessaging.instance.unregister();
-      _fid = null;
+      // A fresh token for whoever signs in next on this phone.
+      // ignore: deprecated_member_use
+      await FirebaseMessaging.instance.deleteToken();
     } catch (_) {}
     _unregistering = false;
   }
 
-  Future<void> _sendFid(String fid) async {
+  Future<void> _sendToken(String token) async {
     try {
       await _dio.put<void>(
         ApiEndpoints.pushDevice,
         data: {
-          'token': fid,
+          'token': token,
           'platform': defaultTargetPlatform == TargetPlatform.iOS
               ? 'ios'
               : 'android',
         },
       );
+      _logger.i('Push: device registered');
     } catch (e) {
       _logger.w('Push device upload failed: $e');
     }
